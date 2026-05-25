@@ -25,11 +25,21 @@ Thumbs.db
 .vscode/
 .idea/
 .cursor/
+*.local
+.eslintcache
+.stylelintcache
 
-# Prisma
-backend/prisma/dev.db
-backend/prisma/dev.db-journal
+# Prisma / Databases
+backend/prisma/*.db
+backend/prisma/*.db-journal
+*.sqlite
+*.db
+*.db-journal
 
 # Uploads / generated files
 backend/uploads/
 frontend/.vite/
+.next/
+out/
+.vercel/
+.turbo/

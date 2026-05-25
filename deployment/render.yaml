@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: voucher-platform-api
+    env: node
+    plan: free
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start

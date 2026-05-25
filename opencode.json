@@ -1,0 +1,9 @@
+{
+  "instructions": [
+    "AGENTS.md",
+    "GEMINI.md",
+    "CLAUDE.md",
+    "docs/README.md"
+  ],
+  "project": "voucher-platform"
+}

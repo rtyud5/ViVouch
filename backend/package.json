@@ -1,0 +1,36 @@
+{
+  "name": "voucher-platform-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "vitest",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "node prisma/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "latest",
+    "bcrypt": "latest",
+    "cors": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "express-rate-limit": "latest",
+    "helmet": "latest",
+    "jsonwebtoken": "latest",
+    "nanoid": "latest",
+    "pino": "latest",
+    "pino-http": "latest",
+    "swagger-ui-express": "latest",
+    "yamljs": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "nodemon": "latest",
+    "prisma": "latest",
+    "supertest": "latest",
+    "vitest": "latest"
+  }
+}
