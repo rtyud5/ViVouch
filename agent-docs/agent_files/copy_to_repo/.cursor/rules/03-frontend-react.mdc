@@ -1,0 +1,13 @@
+---
+globs: frontend/src/**/*.{js,jsx}
+---
+# Cursor Rule — Frontend React
+
+Use React JavaScript components.
+Use React Router v6 for routes.
+Use TanStack Query for server data.
+Use Zustand for auth/UI state.
+Use React Hook Form + Zod for forms.
+Use DaisyUI components and Tailwind classes.
+Use `StatusBadge` for statuses.
+Do not hardcode API base URL.

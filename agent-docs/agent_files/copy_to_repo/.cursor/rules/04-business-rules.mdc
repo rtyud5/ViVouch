@@ -1,0 +1,13 @@
+---
+alwaysApply: true
+---
+# Cursor Rule — Business Rules
+
+Voucher can be sold only after admin approval.
+Sale price must be lower than original price.
+Voucher code is issued only after successful simulated payment.
+Each voucher code must be unique.
+Used/expired/cancelled/locked codes cannot be redeemed.
+Partner can redeem only codes for own voucher/branch/program.
+Sold quantity must not exceed issued quantity.
+Critical operations must create audit logs.

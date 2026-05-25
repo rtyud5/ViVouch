@@ -1,0 +1,15 @@
+---
+alwaysApply: true
+---
+# Cursor Rule — Voucher Project Overview
+
+This is an online discount voucher e-commerce final project.
+
+Use JavaScript, not TypeScript.
+Use React 18 + Vite frontend and Express backend.
+Use PostgreSQL + Prisma, not MongoDB.
+
+Core flow:
+Partner creates voucher -> Admin approves -> Customer buys -> Mock payment -> Issue unique voucher code -> Partner redeems -> Reports/audit logs.
+
+Do not implement real payment, SMS, email, microservices, or MongoDB.

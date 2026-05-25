@@ -1,0 +1,12 @@
+---
+globs: backend/prisma/**/*.prisma,backend/src/**/*.js
+---
+# Cursor Rule — Database and Prisma
+
+Use PostgreSQL through Prisma.
+Do not use MongoDB.
+Separate Voucher from VoucherCode.
+Use enums for statuses.
+Use unique index for voucher code.
+Use transaction/atomic updates for checkout and redeem.
+Do not update voucher quantity outside checkout transaction.

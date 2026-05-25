@@ -1,0 +1,8 @@
+---
+globs: backend/src/**/*.js,backend/tests/**/*.js
+---
+# Cursor Rule — Testing and API Docs
+
+When adding or changing business APIs, update tests and Swagger/OpenAPI docs.
+Minimum critical tests: auth/RBAC, voucher approval, checkout, code issue, redeem, wrong partner, double redeem, audit log.
+Use Vitest + Supertest.

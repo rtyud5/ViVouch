@@ -1,0 +1,11 @@
+---
+globs: backend/src/**/*.js
+---
+# Cursor Rule — Backend Architecture
+
+Use route -> middleware -> controller -> service -> Prisma.
+Business logic must be in service layer.
+Controllers only parse request and return response.
+All protected APIs must use auth middleware and role middleware.
+All critical inputs must use Zod validation.
+Use AppError and centralized error middleware.
