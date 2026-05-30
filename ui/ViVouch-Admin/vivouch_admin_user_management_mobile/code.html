@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Management</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;900&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "inverse-primary": "#ffb95f",
+                        "primary-fixed": "#ffddb8",
+                        "on-secondary-container": "#5c647a",
+                        "tertiary-container": "#1abdff",
+                        "secondary-fixed": "#dae2fd",
+                        "primary-container": "#f59e0b",
+                        "outline": "#867461",
+                        "surface-variant": "#d3e4fe",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "surface-container-high": "#dce9ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "tertiary": "#00658b",
+                        "on-tertiary-container": "#004966",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#d8c3ad",
+                        "on-primary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "secondary": "#565e74",
+                        "on-secondary-fixed": "#131b2e",
+                        "surface-dim": "#cbdbf5",
+                        "on-tertiary-fixed": "#001e2d",
+                        "inverse-on-surface": "#eaf1ff",
+                        "primary": "#855300",
+                        "on-tertiary-fixed-variant": "#004c6a",
+                        "on-primary-fixed-variant": "#653e00",
+                        "tertiary-fixed-dim": "#7fd0ff",
+                        "primary-fixed-dim": "#ffb95f",
+                        "tertiary-fixed": "#c5e7ff",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "on-primary-fixed": "#2a1700",
+                        "on-surface-variant": "#534434",
+                        "inverse-surface": "#213145",
+                        "surface": "#f8f9ff",
+                        "secondary-container": "#dae2fd",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#e5eeff",
+                        "surface-tint": "#855300",
+                        "on-background": "#0b1c30",
+                        "surface-container-low": "#eff4ff",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#613b00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "32px",
+                        "base": "4px",
+                        "row-height-dense": "40px",
+                        "sidebar-width": "260px",
+                        "row-height-standard": "56px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Be Vietnam Pro"],
+                        "title-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "code-sm": ["Courier Prime"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "title-lg": ["18px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "code-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "display-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #855300; /* primary */
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #855300; /* primary */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased w-full min-h-screen flex flex-col mx-auto max-w-[420px] shadow-2xl relative overflow-x-hidden">
+<!-- TopNavBar (Adapted for Mobile layout per JSON requirements) -->
+<header class="bg-surface border-b border-outline-variant shadow-sm docked full-width top-0 sticky z-40 flex justify-between items-center h-row-height-standard px-4 w-full">
+<div class="flex items-center gap-3">
+<button class="text-on-surface p-1 rounded hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined block">menu</span>
+</button>
+<span class="text-title-lg font-title-lg font-black text-on-surface">AdminPanel</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface hover:bg-surface-container-high transition-all rounded-full p-1 relative">
+<span class="material-symbols-outlined block">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant shrink-0">
+<img alt="Administrator" class="w-full h-full object-cover" data-alt="A close-up headshot of a professional adult male with a neutral expression, wearing a dark blazer over a light shirt. The background is a soft, blurred studio grey, lit evenly with high-key lighting to emphasize trust and corporate professionalism. The image has a clean, modern aesthetic suitable for a business dashboard profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAdmiGS-0LNDsV4jQD_7OdskZyugef-DzvM7zqn9Bqjmcxf3FgKQ1v9pU0rNxI6roaw4zvmrnR52vrHJgjjnext4rArYz1B-JN-AS7BllgPxaZWyphGdh1XDWWBCB8vQyu2D8wrTx5ytJP5bBxc6CC-Qat4JhOPkjy7CvY2G1V8O1oLoKq533szUIJS6i_M0OVdmNowiQ8hvxi16u-cR5Wf3g2YYZHav2a30hwY9DGVkyUDhDn7kKwOvGx-KihsVsNZH-w5qVR168"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col p-4 pb-[80px] w-full">
+<!-- Header -->
+<div class="mb-4">
+<h1 class="text-headline-md font-headline-md text-on-surface">Người dùng</h1>
+</div>
+<!-- Search Bar -->
+<div class="relative w-full mb-4">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl text-body-md font-body-md text-on-surface placeholder:text-secondary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors shadow-sm" placeholder="Tìm kiếm theo tên, email..." type="text"/>
+</div>
+<!-- Horizontal Scrollable Filters -->
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-4 -mx-4 px-4 snap-x">
+<button class="flex items-center gap-1 px-3 py-1.5 rounded-full border border-outline-variant bg-surface text-secondary text-label-md font-label-md shrink-0 snap-start active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+                Bộ lọc
+            </button>
+<button class="px-4 py-1.5 rounded-full border border-primary bg-primary text-on-primary text-label-md font-label-md shrink-0 snap-start shadow-sm">
+                Tất cả
+            </button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant bg-surface text-on-surface hover:bg-surface-container-low transition-colors text-label-md font-label-md shrink-0 snap-start">
+                Admin
+            </button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant bg-surface text-on-surface hover:bg-surface-container-low transition-colors text-label-md font-label-md shrink-0 snap-start">
+                Khách hàng
+            </button>
+<button class="px-4 py-1.5 rounded-full border border-outline-variant bg-surface text-on-surface hover:bg-surface-container-low transition-colors text-label-md font-label-md shrink-0 snap-start">
+                Hoạt động
+            </button>
+<div class="w-4 shrink-0"></div> <!-- spacer -->
+</div>
+<!-- User Cards Stack -->
+<div class="flex flex-col gap-3">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center gap-3 shadow-sm active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-surface-variant shrink-0">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A portrait of a young professional woman smiling warmly. She is wearing a light blue top. The background is a soft, blurred office environment with natural daylight. The lighting is bright and cheerful, evoking a welcoming and reliable modern corporate feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkgPS7SbtfFZ8n7FjJP8aKOMsBpubheWSOoU_HX7mXgt0ANu-Mmnwna-DWnzESRp456O_taKthG0Bd3FWn27Hz48BG0i6XYstay33idPJvX9pfVYxAkWPMod84UNnRoy0uTL-IvzIfrqa2_a4ZXGaR8Y84bm4KvhgEcVs3Uw7hyY15hpZiEqizM7DikNN4rfIDP5p20X8XwYAo1q83txmD4lNCnhti6JiEh6Z2Wkb2XqpcI8oBESq6qEQbff_eSn6aLg34uxJ2a7E"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<h3 class="text-title-sm font-title-sm text-on-surface truncate">Nguyễn Trần H.</h3>
+<span class="px-2 py-[2px] bg-primary-container text-on-primary-container rounded text-[10px] font-label-md leading-none whitespace-nowrap">Admin</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary truncate">hoa.nguyen@example.com</p>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-surface appearance-none cursor-pointer z-10 transition-all duration-200 top-[2px] right-0 translate-x-[2px]" id="toggle1" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-primary cursor-pointer transition-colors duration-200" for="toggle1"></label>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center gap-3 shadow-sm active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-surface-variant shrink-0">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A close-up portrait of an adult man with short hair and glasses, looking directly at the camera with a slight, confident smile. He wears a dark casual shirt against a muted, out-of-focus urban background. The lighting is crisp and natural, highlighting a modern, approachable persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCI25Aie9SCyVDiJaZu4K64piG0GuXVh7m7ps4AymnlpqRbrUvybmEmyA7U2hpXqTL3UiU3_Ji6N83pb4DhG_Eb6Rub1KKBsp1UUR7VXKgPsD85ix-VfZzsnxkAWEJhCmw9u7RRYOnW3oOJX8IczU3eP98RPLQEuuNxzksWmqDQu9AT5q8duZXwKNgR5HhnY5JhFeeEnF7eOQDJAmVyI0UhlyVjCFggwbA8KOCvd1xIB54Hhyc_U3990JwzLxiQ3FnkQv93l1dp5M8"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<h3 class="text-title-sm font-title-sm text-on-surface truncate">Lê Văn Đạt</h3>
+<span class="px-2 py-[2px] bg-surface-variant text-on-surface-variant rounded text-[10px] font-label-md leading-none whitespace-nowrap">User</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary truncate">dat.le@example.com</p>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-surface appearance-none cursor-pointer z-10 transition-all duration-200 top-[2px] right-0 translate-x-[2px]" id="toggle2" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-primary cursor-pointer transition-colors duration-200" for="toggle2"></label>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center gap-3 shadow-sm active:bg-surface-container-low transition-colors cursor-pointer opacity-70">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-surface-variant shrink-0 bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="text-title-lg font-title-lg">M</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<h3 class="text-title-sm font-title-sm text-on-surface truncate">Mai Thị Hương</h3>
+<span class="px-2 py-[2px] bg-error-container text-on-error-container rounded text-[10px] font-label-md leading-none whitespace-nowrap">Banned</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary truncate">huong.mai@example.com</p>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-surface appearance-none cursor-pointer z-10 transition-all duration-200 top-[2px] left-[2px]" id="toggle3" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-secondary-fixed-dim cursor-pointer transition-colors duration-200" for="toggle3"></label>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex items-center gap-3 shadow-sm active:bg-surface-container-low transition-colors cursor-pointer">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-surface-variant shrink-0">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A candid profile photo of a young man with a light beard outdoors. The background features lush green foliage softly blurred out of focus. The natural sunlight creates a warm, inviting atmosphere, casting gentle highlights on his face. The mood is relaxed yet professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtjvSnbabG1MG6kbYpTigD3s4J513hJP5HzzSJXeq3M3mqfUL0Nkl7ZofrCUsWTvyOnThW3ZJIKwCHZ3-FbEoeR_vWg45hdXiwLzlXTDphzKr2l-wIYzOm2V-T5YcbeYBbr3eASxQCDthYjepPgumGAxvbs4O3spVgBVCx1wIO2rJEbPGCw2D_7uViyqcwpBy2qtF8Kb_ZZEmKGhzTfl6JCNNxYO8_WfU1AsooLZiuBK6cJTDpqtoqL8QXHqBUmGULCDX27VEa5lA"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2 mb-0.5">
+<h3 class="text-title-sm font-title-sm text-on-surface truncate">Phạm Quốc Huy</h3>
+<span class="px-2 py-[2px] bg-surface-variant text-on-surface-variant rounded text-[10px] font-label-md leading-none whitespace-nowrap">User</span>
+</div>
+<p class="text-body-sm font-body-sm text-secondary truncate">huy.pham99@example.com</p>
+</div>
+<div class="shrink-0 flex items-center justify-center">
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-surface appearance-none cursor-pointer z-10 transition-all duration-200 top-[2px] right-0 translate-x-[2px]" id="toggle4" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-primary cursor-pointer transition-colors duration-200" for="toggle4"></label>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Derived from SideNavBar JSON for Mobile Layout) -->
+<!-- Applying exact active state styles mandated by JSON, adapted structurally for a bottom flex row -->
+<nav class="fixed bottom-0 w-full max-w-[420px] bg-surface z-50 flex justify-between items-stretch shadow-[0_-2px_10px_-4px_rgba(0,0,0,0.1)] h-[68px] pb-safe">
+<!-- Tab 1: Dashboard -->
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-secondary-fixed-dim hover:text-on-primary-fixed hover:bg-secondary-fixed-dim/10 transition-colors duration-150 relative" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="text-[10px] font-label-md truncate w-full text-center px-1">Dashboard</span>
+</a>
+<!-- Tab 2: User Management (ACTIVE) -->
+<!-- Utilizing literal style_active_navigation strings: "flex items-center gap-3 px-4 py-3 border-l-4 border-primary text-on-primary-fixed bg-on-secondary-fixed-variant/10" -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary text-on-primary-fixed bg-on-secondary-fixed-variant/10 flex-1 flex-col justify-center relative !px-1 !py-1 !gap-1 !border-l-0 border-t-4 !border-t-primary active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined text-[24px] text-primary" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[10px] font-label-md font-bold truncate w-full text-center px-1 text-primary">User Management</span>
+</a>
+<!-- Tab 3: Role Permissions -->
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-secondary-fixed-dim hover:text-on-primary-fixed hover:bg-secondary-fixed-dim/10 transition-colors duration-150 relative" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">security</span>
+<span class="text-[10px] font-label-md truncate w-full text-center px-1">Role Permissions</span>
+</a>
+<!-- Tab 4: Audit Logs -->
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-secondary-fixed-dim hover:text-on-primary-fixed hover:bg-secondary-fixed-dim/10 transition-colors duration-150 relative" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">history</span>
+<span class="text-[10px] font-label-md truncate w-full text-center px-1">Audit Logs</span>
+</a>
+<!-- Tab 5: System Settings -->
+<a class="flex-1 flex flex-col items-center justify-center gap-1 text-secondary-fixed-dim hover:text-on-primary-fixed hover:bg-secondary-fixed-dim/10 transition-colors duration-150 relative" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">settings</span>
+<span class="text-[10px] font-label-md truncate w-full text-center px-1">System Settings</span>
+</a>
+</nav>
+<script>
+        // Simple JS for toggle visual feedback logic if needed
+        document.querySelectorAll('.toggle-checkbox').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const card = this.closest('.bg-surface-container-lowest');
+                if(!this.checked) {
+                    card.classList.add('opacity-70');
+                } else {
+                    card.classList.remove('opacity-70');
+                }
+            });
+        });
+    </script>
+</body></html>

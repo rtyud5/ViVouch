@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>ViVouch Partner - Analytics</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#7d5260",
+                      "surface-container-high": "#e9e7eb",
+                      "surface-container": "#F3EDF7",
+                      "error": "#ba1a1a",
+                      "on-tertiary-container": "#ffcbda",
+                      "background": "#faf9fc",
+                      "on-secondary-fixed-variant": "#4a4358",
+                      "surface-dim": "#dbd9dd",
+                      "on-primary-fixed-variant": "#4f378a",
+                      "surface-tint": "#6750a4",
+                      "on-secondary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-background": "#1b1b1e",
+                      "primary-fixed": "#e9ddff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#e0d2ff",
+                      "primary": "#4f378a",
+                      "surface-container-low": "#f5f3f7",
+                      "secondary-container": "#e8def9",
+                      "primary-container": "#6750a4",
+                      "tertiary-fixed-dim": "#eeb8c8",
+                      "on-surface": "#1b1b1e",
+                      "success-green": "#218838",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#e3e2e6",
+                      "on-tertiary-fixed": "#31111d",
+                      "tertiary": "#633b48",
+                      "secondary-fixed-dim": "#ccc2dc",
+                      "inverse-primary": "#cfbcff",
+                      "outline-variant": "#cbc4d2",
+                      "surface-bright": "#faf9fc",
+                      "on-surface-variant": "#494551",
+                      "on-primary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#f2f0f4",
+                      "secondary": "#625b71",
+                      "error-red": "#B3261E",
+                      "tertiary-fixed": "#ffd9e3",
+                      "on-primary-fixed": "#22005d",
+                      "secondary-fixed": "#e8def9",
+                      "on-tertiary-fixed-variant": "#633b48",
+                      "primary-fixed-dim": "#cfbcff",
+                      "outline": "#7a7582",
+                      "inverse-surface": "#303033",
+                      "surface": "#faf9fc",
+                      "surface-container-highest": "#e3e2e6",
+                      "on-secondary-fixed": "#1e192b",
+                      "on-secondary-container": "#686177"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "4px",
+                      "margin-mobile": "16px",
+                      "container-max-width": "1440px",
+                      "margin-desktop": "32px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "label-lg": ["Be Vietnam Pro"],
+                      "body-lg": ["Be Vietnam Pro"],
+                      "headline-lg-mobile": ["Be Vietnam Pro"],
+                      "body-md": ["Be Vietnam Pro"],
+                      "label-sm": ["Be Vietnam Pro"],
+                      "headline-lg": ["Be Vietnam Pro"],
+                      "label-md": ["Be Vietnam Pro"],
+                      "headline-sm": ["Be Vietnam Pro"],
+                      "headline-md": ["Be Vietnam Pro"]
+              },
+              "fontSize": {
+                      "label-lg": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen pb-24">
+<!-- TopNavBar (Adapted for Mobile Context from JSON) -->
+<header class="bg-surface sticky top-0 z-40 flex justify-between items-center w-full px-margin-mobile h-16 max-w-container-max-width mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-headline-sm font-headline-sm font-bold text-primary">ViVouch</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full p-2 flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden">
+<img alt="Partner Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a confident business person in a modern office environment. Soft, natural light illuminates their face, conveying trust and reliability. The background is slightly blurred with subtle corporate elements. The overall aesthetic is clean, bright, and suitable for a high-end enterprise application profile avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDc0ykgHQrOJKvqodpxJGooiimxKCBpgebtrIuVg2gSZM_JTSIPX_5LDxRL5adaKkOx_ExHM-o7ETfv9GDMfeOGVxxAp_U2JgMACRHU_hTLD3QkbRLv4dW5DCbUueaAzJCNaSJy1rg0Se1L71dzAjO3sHJoauceuDc1tdRMYvrRgvVQtc2-8gtZrHQOEXauQVmbmaeZv12eQmOt2E9XYRE0jlZ8P3qIGeOJ9IZMGoWPbS6oGx-asZu70iy-u-xcHeqm2OA1n_FNf0U"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="px-margin-mobile pt-4 flex flex-col gap-6">
+<!-- Header Section -->
+<section class="flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">Báo cáo</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">Hiệu suất chiến dịch</p>
+</div>
+<!-- Compact Date Selector -->
+<button class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-lg border border-outline-variant text-label-md font-label-md text-on-surface">
+<span>Tháng này</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</section>
+<!-- KPI Grid (2x2) -->
+<section class="grid grid-cols-2 gap-3">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<div class="p-1.5 bg-primary-container/10 rounded-lg text-primary">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+<span class="text-label-sm font-label-sm text-success-green flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 12%
+                    </span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Tổng doanh thu</p>
+<p class="text-headline-sm font-headline-sm text-on-surface mt-1">45.2M ₫</p>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<div class="p-1.5 bg-secondary-container/30 rounded-lg text-secondary">
+<span class="material-symbols-outlined text-[20px]">local_activity</span>
+</div>
+<span class="text-label-sm font-label-sm text-success-green flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 8%
+                    </span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Đã phát hành</p>
+<p class="text-headline-sm font-headline-sm text-on-surface mt-1">1,240</p>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<div class="p-1.5 bg-tertiary-container/10 rounded-lg text-tertiary">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<span class="text-label-sm font-label-sm text-success-green flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 24%
+                    </span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Đã sử dụng</p>
+<p class="text-headline-sm font-headline-sm text-on-surface mt-1">856</p>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<div class="p-1.5 bg-error-container/30 rounded-lg text-error">
+<span class="material-symbols-outlined text-[20px]">donut_large</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_flat</span> 0%
+                    </span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Tỷ lệ chuyển đổi</p>
+<p class="text-headline-sm font-headline-sm text-on-surface mt-1">69.0%</p>
+</div>
+</div>
+</section>
+<!-- Charts Stacked Vertically -->
+<section class="flex flex-col gap-4">
+<!-- Chart Card 1: Doanh thu theo thời gian -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-4">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-label-lg font-label-lg text-on-surface">Doanh thu theo ngày</h2>
+<button class="material-symbols-outlined text-on-surface-variant">more_vert</button>
+</div>
+<!-- Mock Line Chart Area -->
+<div class="h-40 w-full relative border-b border-l border-outline-variant/30 mt-2 flex items-end justify-between px-2 pt-4">
+<!-- Grid lines -->
+<div class="absolute w-full h-[1px] bg-outline-variant/20 bottom-10 left-0"></div>
+<div class="absolute w-full h-[1px] bg-outline-variant/20 bottom-20 left-0"></div>
+<div class="absolute w-full h-[1px] bg-outline-variant/20 bottom-30 left-0"></div>
+<!-- SVG Line representing data -->
+<svg class="absolute inset-0 w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="opacity-80" d="M0,80 L20,60 L40,70 L60,30 L80,40 L100,10" fill="none" stroke="#6750a4" stroke-width="2"></path>
+<circle cx="100" cy="10" fill="#6750a4" r="3"></circle>
+</svg>
+<!-- X-axis labels -->
+<div class="absolute -bottom-6 w-full flex justify-between text-[10px] text-on-surface-variant">
+<span>01/10</span>
+<span>08/10</span>
+<span>15/10</span>
+<span>22/10</span>
+<span>30/10</span>
+</div>
+</div>
+<div class="mt-8 flex gap-4">
+<div class="flex items-center gap-1.5 text-label-sm font-label-sm text-on-surface-variant">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+                         Doanh thu thực tế
+                     </div>
+</div>
+</div>
+<!-- Chart Card 2: Phân bổ Voucher -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-4">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-label-lg font-label-lg text-on-surface">Sử dụng Voucher</h2>
+<button class="material-symbols-outlined text-on-surface-variant">more_vert</button>
+</div>
+<!-- Mock Bar Chart Area -->
+<div class="h-40 w-full flex items-end justify-between gap-2 border-b border-outline-variant/30 pb-2">
+<div class="w-full flex flex-col justify-end items-center gap-1 h-full">
+<div class="w-8 bg-primary rounded-t-sm h-[80%]"></div>
+<span class="text-[10px] text-on-surface-variant">T2</span>
+</div>
+<div class="w-full flex flex-col justify-end items-center gap-1 h-full">
+<div class="w-8 bg-primary rounded-t-sm h-[60%]"></div>
+<span class="text-[10px] text-on-surface-variant">T3</span>
+</div>
+<div class="w-full flex flex-col justify-end items-center gap-1 h-full">
+<div class="w-8 bg-primary rounded-t-sm h-[90%]"></div>
+<span class="text-[10px] text-on-surface-variant">T4</span>
+</div>
+<div class="w-full flex flex-col justify-end items-center gap-1 h-full">
+<div class="w-8 bg-primary rounded-t-sm h-[40%]"></div>
+<span class="text-[10px] text-on-surface-variant">T5</span>
+</div>
+<div class="w-full flex flex-col justify-end items-center gap-1 h-full">
+<div class="w-8 bg-primary rounded-t-sm h-[70%]"></div>
+<span class="text-[10px] text-on-surface-variant">T6</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Voucher Performance (Simplified Card View) -->
+<section class="flex flex-col gap-3">
+<div class="flex justify-between items-center">
+<h2 class="text-headline-sm font-headline-sm text-on-surface">Top Voucher</h2>
+<button class="text-label-md font-label-md text-primary font-medium">Xem tất cả</button>
+</div>
+<!-- List Items -->
+<div class="flex flex-col gap-2">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">percent_discount</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-on-surface">Giảm 50K Đơn 200K</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">450 lượt dùng</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-label-md font-label-md text-on-surface font-medium">22.5M ₫</p>
+<span class="inline-flex items-center px-2 py-0.5 rounded-xl bg-secondary-container text-on-secondary-container text-[10px] font-medium mt-1">
+                            Tốt
+                        </span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">redeem</span>
+</div>
+<div>
+<p class="text-label-lg font-label-lg text-on-surface">Freeship Tối Đa 30K</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">210 lượt dùng</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-label-md font-label-md text-on-surface font-medium">6.3M ₫</p>
+<span class="inline-flex items-center px-2 py-0.5 rounded-xl bg-surface-variant text-on-surface-variant text-[10px] font-medium mt-1">
+                            Trung bình
+                        </span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Shared Component implementation) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface dark:bg-on-background rounded-t-xl border-t border-outline-variant shadow-lg pb-safe">
+<!-- Inactive Tab 1 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16" href="#">
+<span class="material-symbols-outlined mb-1">dashboard</span>
+<span class="text-label-sm font-label-sm">Tổng quan</span>
+</a>
+<!-- Inactive Tab 2 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16" href="#">
+<span class="material-symbols-outlined mb-1">local_activity</span>
+<span class="text-label-sm font-label-sm">Voucher</span>
+</a>
+<!-- Inactive Tab 3 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16" href="#">
+<span class="material-symbols-outlined mb-1">verified</span>
+<span class="text-label-sm font-label-sm">Xác thực</span>
+</a>
+<!-- Active Tab 4 ("Báo cáo") -->
+<a class="flex flex-col items-center justify-center w-16" href="#">
+<div class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 mb-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface font-bold">Báo cáo</span>
+</a>
+<!-- Inactive Tab 5 -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-16" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="text-label-sm font-label-sm">Cài đặt</span>
+</a>
+</nav>
+</body></html>

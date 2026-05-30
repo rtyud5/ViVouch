@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch - Voucher của tôi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#410002",
+                        "surface-bright": "#f9f9fc",
+                        "surface-container": "#eeeef0",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffdeac",
+                        "outline": "#6d7a73",
+                        "secondary-fixed-dim": "#ffb4ac",
+                        "secondary": "#b7131a",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9fc",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#7b5500",
+                        "tertiary-container": "#9b6b00",
+                        "primary-fixed-dim": "#68dbae",
+                        "secondary-fixed": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e8e8ea",
+                        "on-secondary-fixed-variant": "#93000d",
+                        "primary-container": "#008560",
+                        "surface-container-low": "#f3f3f6",
+                        "on-secondary-container": "#fffbff",
+                        "on-primary-fixed": "#002115",
+                        "surface-dim": "#dadadc",
+                        "inverse-surface": "#2f3133",
+                        "on-primary-container": "#f5fff7",
+                        "surface-tint": "#006c4e",
+                        "on-surface": "#1a1c1e",
+                        "inverse-on-surface": "#f0f0f3",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "on-background": "#1a1c1e",
+                        "surface-container-highest": "#e2e2e5",
+                        "primary-fixed": "#86f8c9",
+                        "on-tertiary-container": "#fffbff",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#db322f",
+                        "surface-variant": "#e2e2e5",
+                        "on-error": "#ffffff",
+                        "surface": "#f9f9fc",
+                        "on-tertiary-fixed": "#281900",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#3d4943",
+                        "outline-variant": "#bccac1",
+                        "primary": "#00694c",
+                        "on-primary-fixed-variant": "#00513a",
+                        "inverse-primary": "#68dbae"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "gutter": "12px",
+                        "base": "8px",
+                        "container-margin": "16px"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .voucher-cutout-top {
+            clip-path: circle(8px at 50% 0);
+        }
+        .voucher-cutout-bottom {
+            clip-path: circle(8px at 50% 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen flex flex-col">
+<!-- TopNavBar Shared Component -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface w-full h-16 shadow-sm dark:shadow-none sticky top-0 z-50">
+<div class="hidden md:flex items-center justify-between px-container-margin max-w-7xl mx-auto h-full">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed" href="#">
+                    ViVouch
+                </a>
+<nav class="flex items-center gap-6">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+                        Explore
+                    </a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+                        Trending
+                    </a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+                        Deals
+                    </a>
+</nav>
+</div>
+<!-- Search bar placeholder logic -->
+<div class="flex-1 max-w-md mx-8">
+<div class="relative flex items-center w-full h-10 rounded-full bg-surface-container focus-within:ring-2 focus-within:ring-primary transition-shadow">
+<span class="material-symbols-outlined ml-4 text-on-surface-variant" style="font-variation-settings: 'FILL' 0;">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-body-md px-3 text-on-surface placeholder:text-on-surface-variant" placeholder="Tìm kiếm voucher..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors duration-200 text-on-surface-variant cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors duration-200 text-on-surface-variant cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button class="font-label-md text-label-md bg-primary text-on-primary px-4 py-2 rounded-full hover:bg-surface-tint transition-colors duration-200 cursor-pointer active:opacity-80 ml-2 shadow-sm">
+                    Login
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-container-margin py-section-gap">
+<!-- Header Section -->
+<div class="mb-8">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-6">Voucher của tôi</h1>
+<!-- Tab Navigation -->
+<div class="flex border-b border-outline-variant gap-8">
+<button class="pb-3 border-b-2 border-primary text-primary font-label-md text-label-md transition-colors relative">
+                    Chưa dùng (4)
+                </button>
+<button class="pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+                    Đã dùng
+                </button>
+<button class="pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+                    Hết hạn
+                </button>
+</div>
+</div>
+<!-- Voucher Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Active Voucher Card 1 -->
+<article class="flex bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant shadow-sm hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 relative overflow-hidden group h-36">
+<!-- Status Strip -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<!-- Left Details Content -->
+<div class="flex-1 flex items-center p-4 gap-4 pl-6">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 shadow-sm border border-outline-variant/30">
+<img alt="Haidilao Hotpot spread" class="w-full h-full object-cover" data-alt="A vibrant, mouth-watering spread of premium hotpot ingredients arranged on a modern dining table. Bright, warm lighting highlights the fresh red meats, crisp green vegetables, and steaming broth. The aesthetic is clean, appetizing, and inviting, utilizing the rich primary green and soft surface tones of the brand palette to convey high quality and authentic dining experiences." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1d1Y9RGlCM_742-mngx3a8OltvTaU8MlOhrXl_oQuyWGxowtyg4J5TKXtwqUDS9_D4CZndZoF3PxnIYS4bttTkeBdGqsLHfjYmil0F-dKu9Zfm937ED2yS-YHcbrrsIXfsPEy5aUN4WyCTBaux7O8LSgMso4YBJNH9T0xCJB-Z1Ak1GHd8yG4RQxLY1gcAFo846_SoVMxH9CeIq4HKhacCiFrRPEge-9cOu_NuMnQkvxgkhLcjCGhL1zdrz4ywQqAHLegkNp0sfY"/>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed-dim font-label-md text-[10px] w-fit mb-1 border border-primary-fixed/30 uppercase tracking-wider">Còn hiệu lực</span>
+<h2 class="font-headline-md text-[18px] leading-[24px] text-on-surface truncate mb-0.5">Buffet Lẩu Haidilao</h2>
+<p class="font-body-md text-[14px] text-on-surface-variant truncate mb-2">Haidilao Vietnam</p>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">schedule</span>
+<span class="font-body-md text-[12px]">HSD: 30/11/2023</span>
+</div>
+</div>
+</div>
+<!-- Separation Line with Cutouts -->
+<div class="relative w-0 border-l border-dashed border-outline-variant my-2 z-10 flex flex-col justify-between items-center">
+<div class="w-4 h-4 rounded-full bg-surface absolute -top-4 -left-2 border-b border-dashed border-outline-variant"></div>
+<div class="w-4 h-4 rounded-full bg-surface absolute -bottom-4 -left-2 border-t border-dashed border-outline-variant"></div>
+</div>
+<!-- Right Action Content -->
+<div class="w-[120px] bg-surface-container-lowest flex flex-col items-center justify-center p-4 relative cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="p-2 rounded-lg bg-surface-container mb-2 group-hover:bg-primary-fixed/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[32px] text-on-surface-variant group-hover:text-primary" style="font-variation-settings: 'FILL' 0;">qr_code_2</span>
+</div>
+<div class="bg-surface px-2 py-1 rounded border border-outline-variant/30 w-full text-center">
+<span class="font-mono text-[11px] font-bold tracking-widest text-on-surface">HDL88XYZ</span>
+</div>
+<span class="font-label-md text-[10px] text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Sử dụng ngay</span>
+</div>
+</article>
+<!-- Active Voucher Card 2 -->
+<article class="flex bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant shadow-sm hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 relative overflow-hidden group h-36">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex-1 flex items-center p-4 gap-4 pl-6">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 shadow-sm border border-outline-variant/30">
+<img alt="Iced Coffee" class="w-full h-full object-cover" data-alt="A refreshing, perfectly poured iced latte sitting on a light wooden table top in a brightly lit, modern cafe environment. Condensation beads on the glass, catching the soft, natural sunlight streaming through a nearby window. The scene is minimal and crisp, utilizing a high-key light mode aesthetic with subtle warm undertones to evoke a premium coffee shop atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL9cl-EevmKL6AKe0pOcPc6MZPoc0Obtz948qRgzDBbZXtaBs3_eAZ9_pmWesU6Qz_cXQwerI_E_LTyJNWjfl3ZZrCYsfsqjJ8g8ihp8_s8_EWmqZrm5IviDZFdEzCH0iIEAbtzT45BYzl6a_qa--SrBa8lkr2mnTXLtNhCsgJfED35IOuT_mwqHtavdEGkuI_nShrHPMZ9myw3yiDLPpcBgcxbCGaZ_MTMHXUwp1A_3jrB7YP7mAHv5vz9E_AB3thsMUhLRgFsEI"/>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed-dim font-label-md text-[10px] w-fit mb-1 border border-primary-fixed/30 uppercase tracking-wider">Còn hiệu lực</span>
+<h2 class="font-headline-md text-[18px] leading-[24px] text-on-surface truncate mb-0.5">Giảm 50K Đồ Uống</h2>
+<p class="font-body-md text-[14px] text-on-surface-variant truncate mb-2">Highlands Coffee</p>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">schedule</span>
+<span class="font-body-md text-[12px]">HSD: 15/12/2023</span>
+</div>
+</div>
+</div>
+<div class="relative w-0 border-l border-dashed border-outline-variant my-2 z-10 flex flex-col justify-between items-center">
+<div class="w-4 h-4 rounded-full bg-surface absolute -top-4 -left-2 border-b border-dashed border-outline-variant"></div>
+<div class="w-4 h-4 rounded-full bg-surface absolute -bottom-4 -left-2 border-t border-dashed border-outline-variant"></div>
+</div>
+<div class="w-[120px] bg-surface-container-lowest flex flex-col items-center justify-center p-4 relative cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="p-2 rounded-lg bg-surface-container mb-2 group-hover:bg-primary-fixed/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[32px] text-on-surface-variant group-hover:text-primary" style="font-variation-settings: 'FILL' 0;">qr_code_2</span>
+</div>
+<div class="bg-surface px-2 py-1 rounded border border-outline-variant/30 w-full text-center">
+<span class="font-mono text-[11px] font-bold tracking-widest text-on-surface">HL50KNOV</span>
+</div>
+<span class="font-label-md text-[10px] text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Sử dụng ngay</span>
+</div>
+</article>
+<!-- Active Voucher Card 3 -->
+<article class="flex bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant shadow-sm hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 relative overflow-hidden group h-36">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex-1 flex items-center p-4 gap-4 pl-6">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 shadow-sm border border-outline-variant/30 flex items-center justify-center bg-surface-container">
+<span class="material-symbols-outlined text-[40px] text-primary" style="font-variation-settings: 'FILL' 1;">movie</span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed-dim font-label-md text-[10px] w-fit mb-1 border border-primary-fixed/30 uppercase tracking-wider">Còn hiệu lực</span>
+<h2 class="font-headline-md text-[18px] leading-[24px] text-on-surface truncate mb-0.5">Vé Xem Phim 2D</h2>
+<p class="font-body-md text-[14px] text-on-surface-variant truncate mb-2">CGV Cinemas</p>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">schedule</span>
+<span class="font-body-md text-[12px]">HSD: 20/12/2023</span>
+</div>
+</div>
+</div>
+<div class="relative w-0 border-l border-dashed border-outline-variant my-2 z-10 flex flex-col justify-between items-center">
+<div class="w-4 h-4 rounded-full bg-surface absolute -top-4 -left-2 border-b border-dashed border-outline-variant"></div>
+<div class="w-4 h-4 rounded-full bg-surface absolute -bottom-4 -left-2 border-t border-dashed border-outline-variant"></div>
+</div>
+<div class="w-[120px] bg-surface-container-lowest flex flex-col items-center justify-center p-4 relative cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="p-2 rounded-lg bg-surface-container mb-2 group-hover:bg-primary-fixed/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[32px] text-on-surface-variant group-hover:text-primary" style="font-variation-settings: 'FILL' 0;">qr_code_2</span>
+</div>
+<div class="bg-surface px-2 py-1 rounded border border-outline-variant/30 w-full text-center">
+<span class="font-mono text-[11px] font-bold tracking-widest text-on-surface">CGV2D89P</span>
+</div>
+<span class="font-label-md text-[10px] text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Sử dụng ngay</span>
+</div>
+</article>
+<!-- Active Voucher Card 4 -->
+<article class="flex bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant shadow-sm hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 relative overflow-hidden group h-36">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
+<div class="flex-1 flex items-center p-4 gap-4 pl-6">
+<div class="w-20 h-20 rounded-lg overflow-hidden shrink-0 shadow-sm border border-outline-variant/30 flex items-center justify-center bg-surface-container">
+<span class="material-symbols-outlined text-[40px] text-primary" style="font-variation-settings: 'FILL' 1;">local_taxi</span>
+</div>
+<div class="flex flex-col justify-center flex-1 min-w-0">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-fixed/20 text-primary-fixed-dim font-label-md text-[10px] w-fit mb-1 border border-primary-fixed/30 uppercase tracking-wider">Còn hiệu lực</span>
+<h2 class="font-headline-md text-[18px] leading-[24px] text-on-surface truncate mb-0.5">Giảm 20% Chuyến đi</h2>
+<p class="font-body-md text-[14px] text-on-surface-variant truncate mb-2">GrabBike</p>
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 0;">schedule</span>
+<span class="font-body-md text-[12px]">HSD: 31/12/2023</span>
+</div>
+</div>
+</div>
+<div class="relative w-0 border-l border-dashed border-outline-variant my-2 z-10 flex flex-col justify-between items-center">
+<div class="w-4 h-4 rounded-full bg-surface absolute -top-4 -left-2 border-b border-dashed border-outline-variant"></div>
+<div class="w-4 h-4 rounded-full bg-surface absolute -bottom-4 -left-2 border-t border-dashed border-outline-variant"></div>
+</div>
+<div class="w-[120px] bg-surface-container-lowest flex flex-col items-center justify-center p-4 relative cursor-pointer hover:bg-surface-container-low transition-colors group">
+<div class="p-2 rounded-lg bg-surface-container mb-2 group-hover:bg-primary-fixed/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[32px] text-on-surface-variant group-hover:text-primary" style="font-variation-settings: 'FILL' 0;">qr_code_2</span>
+</div>
+<div class="bg-surface px-2 py-1 rounded border border-outline-variant/30 w-full text-center">
+<span class="font-mono text-[11px] font-bold tracking-widest text-on-surface">GB20PCTA</span>
+</div>
+<span class="font-label-md text-[10px] text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Sử dụng ngay</span>
+</div>
+</article>
+</div>
+</main>
+</body></html>

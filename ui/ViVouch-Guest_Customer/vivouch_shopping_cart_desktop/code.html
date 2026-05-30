@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch - Giỏ hàng</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#410002",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#281900",
+                        "outline-variant": "#bccac1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#9b6b00",
+                        "surface": "#f9f9fc",
+                        "on-primary-fixed-variant": "#00513a",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9fc",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e2e2e5",
+                        "primary-container": "#008560",
+                        "on-background": "#1a1c1e",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "on-tertiary-container": "#fffbff",
+                        "on-primary-fixed": "#002115",
+                        "surface-container-low": "#f3f3f6",
+                        "surface-container-high": "#e8e8ea",
+                        "secondary-fixed-dim": "#ffb4ac",
+                        "outline": "#6d7a73",
+                        "inverse-on-surface": "#f0f0f3",
+                        "on-surface": "#1a1c1e",
+                        "inverse-surface": "#2f3133",
+                        "on-surface-variant": "#3d4943",
+                        "primary-fixed": "#86f8c9",
+                        "primary-fixed-dim": "#68dbae",
+                        "tertiary-fixed": "#ffdeac",
+                        "tertiary": "#7b5500",
+                        "on-primary-container": "#f5fff7",
+                        "error-container": "#ffdad6",
+                        "secondary": "#b7131a",
+                        "secondary-container": "#db322f",
+                        "on-error": "#ffffff",
+                        "primary": "#00694c",
+                        "secondary-fixed": "#ffdad6",
+                        "on-secondary-fixed-variant": "#93000d",
+                        "surface-variant": "#e2e2e5",
+                        "surface-dim": "#dadadc",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "surface-tint": "#006c4e",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#68dbae",
+                        "on-secondary-container": "#fffbff",
+                        "error": "#ba1a1a",
+                        "background": "#f9f9fc",
+                        "surface-container": "#eeeef0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "gutter": "12px",
+                        "container-margin": "16px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "price-display": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen pb-[88px] md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface fixed top-0 w-full z-50 border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-container-margin py-base max-w-7xl mx-auto h-[64px]">
+<div class="flex items-center gap-4">
+<button aria-label="Go back" class="text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-headline-md font-headline-md text-primary dark:text-primary-fixed">Giỏ hàng (3)</h1>
+</div>
+<div class="flex items-center gap-2">
+<button aria-label="Shopping Cart" class="text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined filled text-primary">shopping_cart</span>
+</button>
+<button aria-label="Notifications" class="text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[80px] px-container-margin max-w-7xl mx-auto w-full md:grid md:grid-cols-12 gap-gutter pb-section-gap">
+<!-- Cart Items List (Col span 8 on desktop) -->
+<section class="md:col-span-8 flex flex-col gap-base">
+<!-- Select All Checkbox -->
+<div class="flex items-center gap-2 p-4 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] mb-2">
+<input checked="" class="w-5 h-5 text-primary border-outline rounded focus:ring-primary-container" id="selectAll" type="checkbox"/>
+<label class="text-body-md font-body-md text-on-surface cursor-pointer select-none" for="selectAll">Chọn tất cả (3)</label>
+</div>
+<!-- Item 1: Haidilao -->
+<article class="flex flex-col sm:flex-row gap-4 p-4 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-surface-container relative">
+<div class="flex items-center gap-4 flex-shrink-0">
+<input checked="" class="w-5 h-5 text-primary border-outline rounded focus:ring-primary-container" type="checkbox"/>
+<img alt="Haidilao Hotpot" class="w-24 h-24 object-cover rounded-lg" data-alt="A close-up, mouth-watering shot of a steaming hotpot with rich red broth, surrounded by fresh thinly sliced beef and green vegetables on a sleek modern restaurant table. Warm, inviting lighting highlighting the steam, conveying a premium dining experience. High-quality food photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo622L46SXJ5hwsR0yDfMTpOmZcqzGtps6Ss7yTbSmN8G5NK66pWwVPNp6aG7TxH_9SQoaAhewG88anXCqRhs_yZNZp-iKFhIUYxCmah5ethXIZ-MYDYIFeFMmdyj_mtwrKerT_uGLbgqJl4Bej-fl3t7g0mBkXXHZjesO5S8rzZOx7P0QfkPA8Pw5NNSi1nevyO_hPuf-aHjyMBSMW_w31jPg-ohnuT7s0XctnpgrgW7UazU3TYDC-Q4lYC5AU6qKTZy9gvU5C7c"/>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h2 class="text-body-lg font-body-lg text-on-surface line-clamp-2 pr-6">Buffet Lẩu Haidilao - Cơ sở Vincom</h2>
+<button class="text-error hover:text-error-container p-1 rounded-full absolute top-2 right-2 sm:static transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant">Haidilao Việt Nam</p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<span class="text-price-display font-price-display text-primary">350.000đ</span>
+<div class="flex items-center border border-outline-variant rounded-lg overflow-hidden">
+<button class="px-3 py-1 bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface">-</button>
+<span class="px-4 py-1 text-body-md font-body-md text-on-surface bg-surface-container-lowest">2</span>
+<button class="px-3 py-1 bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface">+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 2: Spa (With Ending Soon Badge) -->
+<article class="flex flex-col sm:flex-row gap-4 p-4 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-surface-container relative">
+<div class="absolute top-2 left-2 z-10 bg-error text-on-error text-xs px-2 py-1 rounded-full font-bold shadow-sm">
+                    Sắp hết
+                </div>
+<div class="flex items-center gap-4 flex-shrink-0">
+<input checked="" class="w-5 h-5 text-primary border-outline rounded focus:ring-primary-container" type="checkbox"/>
+<img alt="Spa Massage" class="w-24 h-24 object-cover rounded-lg" data-alt="A serene spa environment featuring a massage bed with crisp white towels, soft ambient lighting, and delicate orchid flowers on smooth basalt stones. The mood is deeply relaxing and luxurious, shot with a shallow depth of field to emphasize the tranquil textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTO5uT5_iR7F5QNuaAOgoryN9AY61e0SKQyIWCp0yPtBYJUvwWIxkiibr91Z4tHCsRF9RXLMHUir0afLiNvKBeM4qJH9fO6YQ9jIKdFKao1MHYu7TtAEXtoB2PQZq-Li42PcdjkW7tzILd9cr7omb2ACVCyxO2vKBtgvkOqYJvvqGBxNMdfOzUtwzQswOm8vOJa5eQBtUwfQB1XuxPZIlYZJH0mM2okFn76XAZnfWp7bJhv9TnoNL1rFfgJowQn4gYd_K8fuwBw8Y"/>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h2 class="text-body-lg font-body-lg text-on-surface line-clamp-2 pr-6">Massage Body Tinh Dầu Trị Liệu - 90 Phút</h2>
+<button class="text-error hover:text-error-container p-1 rounded-full absolute top-2 right-2 sm:static transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant">Sen Spa</p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<span class="text-price-display font-price-display text-primary">199.000đ</span>
+<div class="flex items-center border border-outline-variant rounded-lg overflow-hidden">
+<button class="px-3 py-1 bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface">-</button>
+<span class="px-4 py-1 text-body-md font-body-md text-on-surface bg-surface-container-lowest">1</span>
+<button class="px-3 py-1 bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface">+</button>
+</div>
+</div>
+</div>
+</article>
+<!-- Item 3: Cinema -->
+<article class="flex flex-col sm:flex-row gap-4 p-4 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-surface-container relative opacity-60">
+<div class="flex items-center gap-4 flex-shrink-0">
+<input class="w-5 h-5 text-primary border-outline rounded focus:ring-primary-container" type="checkbox"/>
+<img alt="Cinema Tickets" class="w-24 h-24 object-cover rounded-lg grayscale-[20%]" data-alt="A stylized image of glowing cinema tickets resting on a dark velvet surface in a darkened movie theater setting. Dramatic lighting with neon accents in red and blue, creating an exciting, entertainment-focused atmosphere. Shallow depth of field focusing on the ticket details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5L19xokPgOH4Xf5ownmIuzEgtcFBHGgklII_cAFVcJu_Xgh-LZ8ZMRunK-FyZVAxczXODtTqEjIPQmUJ1D1cWVCZYWU_BVKPMMoWL1aOgCGH9voexhtgk1ucQLC6IndJoQ6jnyB_oj4ufAIkjmJH8OgOTxiR0Nug3iHPBY8ZIvgivjk36dK4jSmHl1MZGUTJshOHHvl3Jt5ObKorhwHFYWWaEB0VNgX_I9aGcFWRhISb036SMYA4hhOmiOsp0ApbVkX_ypTuXzqY"/>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h2 class="text-body-lg font-body-lg text-on-surface line-clamp-2 pr-6">Vé xem phim CGV 2D Cuối Tuần</h2>
+<button class="text-error hover:text-error-container p-1 rounded-full absolute top-2 right-2 sm:static transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant">CGV Cinemas</p>
+</div>
+<div class="flex justify-between items-end mt-4">
+<span class="text-price-display font-price-display text-primary">85.000đ</span>
+<div class="flex items-center border border-outline-variant rounded-lg overflow-hidden">
+<button class="px-3 py-1 bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface">-</button>
+<span class="px-4 py-1 text-body-md font-body-md text-on-surface bg-surface-container-lowest">1</span>
+<button class="px-3 py-1 bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface">+</button>
+</div>
+</div>
+</div>
+</article>
+</section>
+<!-- Summary Section (Col span 4 on desktop, Sticky on desktop) -->
+<aside class="md:col-span-4 mt-section-gap md:mt-0 hidden md:block">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-surface-container p-6 sticky top-[96px]">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-6 border-b border-surface-container pb-4">Tóm tắt đơn hàng</h3>
+<div class="flex flex-col gap-4 mb-6">
+<div class="flex justify-between">
+<span class="text-body-md font-body-md text-on-surface-variant">Tạm tính (3 sản phẩm)</span>
+<span class="text-body-md font-body-md text-on-surface font-semibold">899.000đ</span>
+</div>
+<div class="flex justify-between text-primary">
+<span class="text-body-md font-body-md">Giảm giá</span>
+<span class="text-body-md font-body-md font-semibold">-401.000đ</span>
+</div>
+</div>
+<div class="flex justify-between items-end border-t border-surface-container pt-4 mb-6">
+<span class="text-body-lg font-body-lg text-on-surface font-semibold">Tổng cộng</span>
+<div class="text-right">
+<span class="block text-price-display font-price-display text-secondary">498.000đ</span>
+<span class="text-sm text-on-surface-variant">(Đã bao gồm VAT)</span>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm active:scale-[0.98]">
+                    Thanh toán
+                </button>
+</div>
+</aside>
+</main>
+<!-- Mobile Sticky Checkout Bar (Hidden on md+) -->
+<div class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-surface-container shadow-[0_-4px_20px_rgba(0,0,0,0.08)] p-4 z-40 flex justify-between items-center gap-4">
+<div class="flex flex-col">
+<span class="text-sm text-on-surface-variant line-through">899.000đ</span>
+<span class="text-price-display font-price-display text-secondary">498.000đ</span>
+</div>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-sm active:scale-[0.98] flex-grow">
+            Thanh toán
+        </button>
+</div>
+</body></html>

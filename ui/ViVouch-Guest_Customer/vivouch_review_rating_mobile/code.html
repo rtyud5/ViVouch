@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch - Đánh giá voucher</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-surface": "#2f3133",
+                      "on-error": "#ffffff",
+                      "surface-bright": "#f9f9fc",
+                      "surface": "#f9f9fc",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#9b6b00",
+                      "on-surface": "#1a1c1e",
+                      "on-secondary-fixed": "#410002",
+                      "surface-container-high": "#e8e8ea",
+                      "primary-container": "#008560",
+                      "on-secondary-fixed-variant": "#93000d",
+                      "on-tertiary-container": "#fffbff",
+                      "primary-fixed": "#86f8c9",
+                      "tertiary": "#7b5500",
+                      "primary": "#00694c",
+                      "surface-variant": "#e2e2e5",
+                      "on-background": "#1a1c1e",
+                      "outline": "#6d7a73",
+                      "secondary-container": "#db322f",
+                      "primary-fixed-dim": "#68dbae",
+                      "on-secondary": "#ffffff",
+                      "secondary-fixed-dim": "#ffb4ac",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#ffdad6",
+                      "outline-variant": "#bccac1",
+                      "surface-dim": "#dadadc",
+                      "surface-container": "#eeeef0",
+                      "secondary": "#b7131a",
+                      "surface-container-highest": "#e2e2e5",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed-dim": "#ffba38",
+                      "on-tertiary-fixed-variant": "#604100",
+                      "on-primary": "#ffffff",
+                      "surface-container-low": "#f3f3f6",
+                      "on-primary-fixed": "#002115",
+                      "on-primary-fixed-variant": "#00513a",
+                      "inverse-on-surface": "#f0f0f3",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-container": "#f5fff7",
+                      "on-secondary-container": "#fffbff",
+                      "inverse-primary": "#68dbae",
+                      "background": "#f9f9fc",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#ffdeac",
+                      "surface-tint": "#006c4e",
+                      "on-surface-variant": "#3d4943",
+                      "on-tertiary-fixed": "#281900"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "12px",
+                      "base": "8px",
+                      "section-gap": "32px",
+                      "container-margin": "16px"
+              },
+              "fontFamily": {
+                      "display-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "price-display": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-md": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "price-display": [
+                              "20px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md text-body-md antialiased pb-24 max-w-md mx-auto min-h-screen flex flex-col relative shadow-[0_0_40px_rgba(0,0,0,0.05)] bg-surface-container-lowest">
+<!-- Top App Bar (Task-focused, so no bottom nav) -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center w-full px-container-margin h-16 max-w-[1200px] mx-auto sticky top-0 z-40 bg-surface-container-lowest">
+<button class="text-primary dark:text-primary-fixed hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed truncate">Đánh giá voucher</h1>
+<div class="flex gap-2 opacity-0 pointer-events-none w-10">
+<!-- Spacer for centering -->
+</div>
+</header>
+<main class="flex-1 overflow-y-auto px-container-margin py-6 flex flex-col gap-6">
+<!-- Voucher Summary Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-4 flex gap-4 items-center">
+<img alt="Hotpot meal" class="w-20 h-20 object-cover rounded-lg shrink-0" data-alt="A top-down view of a steaming hotpot meal on a dark table, featuring a split pot with red spicy broth and clear broth. Surrounding the pot are small white plates filled with fresh ingredients like thinly sliced beef, green vegetables, and noodles. The lighting is warm and inviting, typical of a cozy restaurant setting, highlighting the rich colors of the food. The overall style is appetizing, modern, and aligned with a premium dining experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsss3uNM7AKykZCPKoSsUmFOy-autg1nXQXRDYYQgcSH5RZEF4PPo9RqYZyyevHVR1D73qHRTKYqAQO_mzD_ZsCkvxmwYRsccW5kV_n7ntfEmkNPjHFhe8acL_NywX3PqjahKDJxjFo8Fy_0ZKO_lQysbC9iiN4wt3KCK-wOEPBJNDq_TssZNYbRaouH8JKz0zPloYrLRLl2aWS77xybSrExo2eX2PlZmDHjaUfdIdmlqQL3KMDmtTxQwBs8cxznSw2XMW_9mSEHo"/>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant mb-1">Đã sử dụng: 15/10/2023</p>
+<h2 class="font-headline-md text-[16px] leading-[24px] font-semibold text-on-surface line-clamp-2">Buffet Lẩu 2 người – Haidilao</h2>
+</div>
+</div>
+<!-- Rating Section -->
+<div class="flex flex-col items-center gap-4 py-4">
+<h3 class="text-headline-md font-headline-md text-on-surface">Bạn cảm thấy thế nào?</h3>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-[40px] text-tertiary-fixed-dim cursor-pointer" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[40px] text-tertiary-fixed-dim cursor-pointer" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[40px] text-tertiary-fixed-dim cursor-pointer" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[40px] text-tertiary-fixed-dim cursor-pointer" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[40px] text-surface-variant cursor-pointer">star</span>
+</div>
+<p class="text-body-md font-body-md text-primary font-medium">Rất hài lòng</p>
+</div>
+<!-- Review Text Area -->
+<div class="flex flex-col gap-2">
+<label class="text-label-md font-label-md text-on-surface" for="review-text">Chia sẻ trải nghiệm của bạn (Tuỳ chọn)</label>
+<div class="relative">
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-4 text-body-md font-body-md text-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all resize-none placeholder:text-outline" id="review-text" placeholder="Món ăn ngon, nhân viên nhiệt tình..." rows="4"></textarea>
+<div class="absolute bottom-3 right-3 text-[12px] text-outline-variant">
+                    120/500
+                </div>
+</div>
+</div>
+<!-- Photo Upload -->
+<div class="flex flex-col gap-3">
+<h4 class="text-label-md font-label-md text-on-surface">Thêm hình ảnh (Tuỳ chọn)</h4>
+<div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<!-- Upload Button -->
+<button class="w-20 h-20 shrink-0 border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center text-outline hover:bg-surface-container-low transition-colors bg-surface-container-lowest">
+<span class="material-symbols-outlined">add_a_photo</span>
+<span class="text-[10px] mt-1">Thêm ảnh</span>
+</button>
+<!-- Placeholder 1 -->
+<div class="w-20 h-20 shrink-0 relative rounded-lg overflow-hidden border border-outline-variant">
+<img alt="Uploaded food photo 1" class="w-full h-full object-cover" data-alt="A close-up shot of a single juicy beef slice held up by chopsticks over a simmering hotpot broth. The steam rising from the hotpot creates a dynamic, authentic dining atmosphere. The lighting is bright and focused on the meat, highlighting its marbling and freshness. The background is slightly blurred to emphasize the food, fitting a vibrant, user-generated review photo style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbzfyqckPqBPqM3x3F5ssyAo94d8XLQaxyP0p2Loz2WGeuu-He_ITdlTzJmnJ5s6pguwkP3xhMhpxZnjZ1AXo_qpz5N_ZDEj8pKgkhHE2NWgiiV543rC8SQUCsflxZ0pwOLoYWtbJInHDU0QpOXbIeAr_puJ9Zq-jdVivOWzzfm0LtOiOHZY0TPMF8SsmFsIHn7dWAreEVnfatFTcYvaFwh5UUckqb0hjljSMD6QICFqBhaARsZJlcdQeoOFY3E7_OKPk4q32T_OI"/>
+<button class="absolute top-1 right-1 bg-inverse-surface/60 rounded-full w-5 h-5 flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+<!-- Placeholder 2 -->
+<div class="w-20 h-20 shrink-0 relative rounded-lg overflow-hidden border border-outline-variant">
+<img alt="Uploaded food photo 2" class="w-full h-full object-cover" data-alt="A wide shot of a bustling hotpot restaurant interior, showing a table laden with various fresh ingredients like vegetables, mushrooms, and meats. Diners are partially visible in the background, adding life to the scene. The ambient lighting is warm and energetic. The image feels like a candid snapshot taken by a customer to share their dining experience, aligning perfectly with a platform review section." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAkMPyXpLokkBS0-6y2cmvcQKJUd3kNGmLsZ-6nGAFKBEX_GmoyU0gmzSbK2d0YaXszH3m1zbGdUpBo2nvoaaNEAf7BaPi4tbLLneXD4xoB855z-UcWZa1DMtldUu8kds4spva2dDTS2CtQGDJb_05H20J8lPrjrP_4h1k2vtiyOCcaOdraB-EIt84Y2apsQBEa4K18ZodGAEVwVsqFT0aBsvS4ihcHRFdcx6I8-bkXbTCTnt-iE1Hbu7TYL7OeaP1_exiZDGAgdA"/>
+<button class="absolute top-1 right-1 bg-inverse-surface/60 rounded-full w-5 h-5 flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant p-container-margin z-50 max-w-md mx-auto shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full shadow-md hover:bg-surface-tint transition-colors active:scale-[0.98]">
+            Gửi đánh giá
+        </button>
+</div>
+</body></html>

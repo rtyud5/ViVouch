@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>ViVouch Admin - Quản lý đối tác</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#ffddb8",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed": "#001e2d",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "on-surface-variant": "#534434",
+                    "inverse-primary": "#ffb95f",
+                    "surface-tint": "#855300",
+                    "on-primary-fixed": "#2a1700",
+                    "secondary-fixed": "#dae2fd",
+                    "secondary-container": "#dae2fd",
+                    "on-secondary-fixed": "#131b2e",
+                    "surface-variant": "#d3e4fe",
+                    "primary": "#855300",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "on-secondary": "#ffffff",
+                    "inverse-surface": "#213145",
+                    "tertiary-fixed-dim": "#7fd0ff",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#004c6a",
+                    "surface": "#f8f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#e5eeff",
+                    "secondary-fixed-dim": "#bec6e0",
+                    "on-primary-fixed-variant": "#653e00",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#00658b",
+                    "tertiary-fixed": "#c5e7ff",
+                    "tertiary-container": "#1abdff",
+                    "primary-fixed-dim": "#ffb95f",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-tertiary-container": "#004966",
+                    "on-background": "#0b1c30",
+                    "surface-container-low": "#eff4ff",
+                    "outline-variant": "#d8c3ad",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f8f9ff",
+                    "secondary": "#565e74",
+                    "surface-dim": "#cbdbf5",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "on-secondary-container": "#5c647a",
+                    "outline": "#867461",
+                    "primary-container": "#f59e0b",
+                    "on-primary-container": "#613b00",
+                    "background": "#f8f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "sidebar-width": "260px",
+                    "gutter": "24px",
+                    "base": "4px",
+                    "row-height-standard": "56px",
+                    "row-height-dense": "40px",
+                    "container-padding": "32px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Be Vietnam Pro"],
+                    "title-sm": ["Be Vietnam Pro"],
+                    "title-lg": ["Be Vietnam Pro"],
+                    "headline-md": ["Be Vietnam Pro"],
+                    "label-md": ["Be Vietnam Pro"],
+                    "display-lg": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "code-sm": ["Courier Prime"]
+            },
+            "fontSize": {
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "title-sm": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "title-lg": ["18px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "display-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                    "code-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Mobile safe area padding for bottom nav */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-sm antialiased pb-[80px]">
+<!-- Header -->
+<header class="sticky top-0 z-40 w-full bg-surface border-b border-surface-container-high px-gutter py-4">
+<h1 class="font-headline-md text-headline-md text-on-surface">Quản lý đối tác</h1>
+</header>
+<!-- Horizontal Scrollable Filter Bar -->
+<div class="sticky top-[73px] z-30 bg-surface/90 backdrop-blur-sm border-b border-surface-container-high px-gutter py-3 overflow-x-auto hide-scrollbar flex gap-2 items-center">
+<button class="px-4 py-2 bg-primary text-on-primary rounded-full font-label-md text-label-md whitespace-nowrap shadow-sm">Tất cả</button>
+<button class="px-4 py-2 border border-outline-variant bg-surface-container-lowest text-on-surface-variant rounded-full font-label-md text-label-md whitespace-nowrap flex items-center gap-1.5 transition-colors hover:bg-surface-container-low">
+            Chờ duyệt
+            <span class="bg-error text-on-error rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none flex items-center justify-center">5</span>
+</button>
+<button class="px-4 py-2 border border-outline-variant bg-surface-container-lowest text-on-surface-variant rounded-full font-label-md text-label-md whitespace-nowrap transition-colors hover:bg-surface-container-low">Đã duyệt</button>
+<button class="px-4 py-2 border border-outline-variant bg-surface-container-lowest text-on-surface-variant rounded-full font-label-md text-label-md whitespace-nowrap transition-colors hover:bg-surface-container-low">Bị khóa</button>
+</div>
+<!-- Main Content Canvas -->
+<main class="p-gutter flex flex-col gap-4">
+<!-- Partner Card: Chờ duyệt -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="openDetailModal('CÔNG TY TNHH VIVOUCH COFFEE', '0101234567', 'Chờ duyệt')">
+<div class="flex items-start gap-4">
+<img alt="Company Logo" class="w-12 h-12 rounded-full object-cover border border-surface-container-high" data-alt="A professional corporate logo design featuring a minimalist coffee bean geometric shape in deep navy blue and amber tones, set against a pristine white circular background. The logo reflects a modern, high-end corporate identity suitable for an administrative dashboard. The lighting is bright and even, highlighting the crisp vector style of the emblem." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZFKKJ2sH7y8MWRB8jcKI2SEOPypHw5qNerhKIgooLWHYoDwizN7YG_qrYsTjFgJsc_dnK-8fthZMkCTtLKmoj15_krMubymyZdU-ELa9Q26hvASP8UM4g8xNansVZEI_euOygzLWKen4wHSK_9dY6XkE9NCiCA_5Z9drJS6op9ADY1bxExr-fE4aqcs7l553GhSLPxrxGh3eTQGA2fqVD4I5H6X8e6sLIr1u50D2-C0NQd8cwHrrTSfw9Iz93IXEyse4t7GO2Q3o"/>
+<div class="flex-1 min-w-0">
+<h2 class="font-title-sm text-title-sm text-on-surface truncate">CÔNG TY TNHH VIVOUCH COFFEE</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">MST: 0101234567</p>
+</div>
+<div class="bg-surface-variant text-on-surface-variant font-label-md text-label-md px-2 py-1 rounded">Chờ duyệt</div>
+</div>
+<!-- Actions specific to 'Chờ duyệt' -->
+<div class="mt-4 flex gap-2 border-t border-surface-container-high pt-3" onclick="event.stopPropagation()">
+<button class="flex-1 bg-tertiary text-on-tertiary py-2.5 rounded-lg font-label-md text-label-md flex justify-center items-center gap-1.5 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">check_circle</span> Duyệt
+                </button>
+<button class="flex-1 bg-error-container text-on-error-container py-2.5 rounded-lg font-label-md text-label-md flex justify-center items-center gap-1.5 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">cancel</span> Từ chối
+                </button>
+</div>
+</article>
+<!-- Partner Card: Đã duyệt -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="openDetailModal('CHUỖI CỬA HÀNG THE FRESH', '0309876543', 'Đã duyệt')">
+<div class="flex items-start gap-4">
+<img alt="Company Logo" class="w-12 h-12 rounded-full object-cover border border-surface-container-high" data-alt="A clean, modern corporate logo featuring a stylized leaf motif in dark slate and vibrant amber, centered on a pure white circle. The design is tailored for a high-utility administration dashboard, conveying trust and growth. The image uses a flat, vector-graphic aesthetic with soft, bright lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASwt-gxSQILFLv7ESKgSkIiAyckwiFE74AfzvkzafOUk_sQcTF5-eJsdiQ5yBfcLJ7vZj9SSslrGLkWwl3c7VblQWS9RlF7GDWYQhLJm2BrkOMrW5ncdr5PAvJ6or1_y5gytiM4fcuLppbIGifsIbwnp1s0ieTZLA-USUcc7MNsgX_7lk7x55mgUfH6yySbhOOXti6ne_PGSR2y4EEGIldhrT_oSI-6FGyB2jNg_JoKw6HhqH39D-KYp7adyd_5ZVvXNoJS-V1B9A"/>
+<div class="flex-1 min-w-0">
+<h2 class="font-title-sm text-title-sm text-on-surface truncate">CHUỖI CỬA HÀNG THE FRESH</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">MST: 0309876543</p>
+</div>
+<div class="bg-tertiary-container text-on-tertiary-container font-label-md text-label-md px-2 py-1 rounded">Đã duyệt</div>
+</div>
+</article>
+<!-- Partner Card: Bị khóa -->
+<article class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-80" onclick="openDetailModal('NHÀ HÀNG BIỂN XANH QUÁN', '0401122334', 'Bị khóa')">
+<div class="flex items-start gap-4">
+<img alt="Company Logo" class="w-12 h-12 rounded-full object-cover border border-surface-container-high grayscale" data-alt="A muted, greyscale corporate logo showing a minimalist wave and sun icon inside a white circle. The desaturated look signifies an inactive or locked state within a professional administration portal. The design is sleek, using simple geometry and a flat, modern visual style without drop shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA4QURZTdLTKobTCxSldB0U6GHkMtZsrx8Mv65n91C_YHJaju8rsRhQFt14mO8gboegH2xZBgg-7XN6688YugChMwXxq772Z67iXuSaI5kLxPP-W7LFmjksoLkTUerwDVFDRwSIDh13HqZvv5yXJNO9WDbaDvHclaGxeUGUK86hz50NJhJeEyeKrnvUhPgfeYXDkWSdzCALKKh9j804yDoYgaDQblwQkS9rhtP4OVlpd930AO7g3xMGSIcYHc6vRfMBL0x1T1fecc"/>
+<div class="flex-1 min-w-0">
+<h2 class="font-title-sm text-title-sm text-on-surface truncate">NHÀ HÀNG BIỂN XANH QUÁN</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">MST: 0401122334</p>
+</div>
+<div class="bg-error-container text-on-error-container font-label-md text-label-md px-2 py-1 rounded">Bị khóa</div>
+</div>
+</article>
+</main>
+<!-- Bottom Navigation Bar (Shared Component Execution) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-40 flex justify-around items-center h-row-height-standard px-4 pb-safe bg-surface-container-highest dark:bg-on-background shadow-[0_-4px_16px_rgba(0,0,0,0.05)] border-t border-outline-variant">
+<!-- Tab 1: Tổng quan (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined text-[24px] mb-0.5">dashboard</span>
+<span class="font-label-md text-label-md">Tổng quan</span>
+</button>
+<!-- Tab 2: Đối tác (Active) -->
+<button class="flex flex-col items-center justify-center text-primary font-bold active:bg-surface-container scale-95 duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined text-[24px] mb-0.5" style="font-variation-settings: 'FILL' 1;">handshake</span>
+<span class="font-label-md text-label-md">Đối tác</span>
+</button>
+<!-- Tab 3: Đơn hàng (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined text-[24px] mb-0.5">shopping_cart</span>
+<span class="font-label-md text-label-md">Đơn hàng</span>
+</button>
+<!-- Tab 4: Admin (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150 p-2 rounded-lg w-16">
+<span class="material-symbols-outlined text-[24px] mb-0.5">person</span>
+<span class="font-label-md text-label-md">Admin</span>
+</button>
+</nav>
+<!-- Full-Screen Detail Modal (Sub-page representation) -->
+<div class="fixed inset-0 z-50 bg-surface flex flex-col translate-x-full transition-transform duration-300 ease-in-out" id="detail-modal">
+<header class="flex items-center px-gutter py-4 border-b border-surface-container-high bg-surface">
+<button class="p-2 -ml-2 rounded-full hover:bg-surface-container-low text-on-surface active:scale-95 transition-transform" onclick="closeDetailModal()">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="ml-2 font-title-lg text-title-lg text-on-surface">Chi tiết đối tác</h1>
+</header>
+<div class="flex-1 overflow-y-auto p-gutter bg-surface-container-low/30 pb-24">
+<!-- Header Info -->
+<div class="flex flex-col items-center text-center mb-6">
+<div class="w-20 h-20 bg-surface-variant rounded-full flex items-center justify-center mb-3 border-2 border-surface-container-lowest shadow-sm">
+<span class="material-symbols-outlined text-[32px] text-on-surface-variant">storefront</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-1" id="modal-company-name">Tên Doanh Nghiệp</h2>
+<p class="font-body-md text-body-md text-on-surface-variant" id="modal-company-mst">MST: ---------</p>
+<div class="mt-3 bg-surface-variant text-on-surface font-label-md text-label-md px-3 py-1 rounded-full border border-outline-variant" id="modal-status-badge">Trạng thái</div>
+</div>
+<!-- Details Bento-style Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-sm space-y-4">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Người đại diện</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">Nguyễn Văn Đại Diện</span>
+</div>
+<hr class="border-surface-container-high"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Số điện thoại liên hệ</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">090 123 4567</span>
+</div>
+<hr class="border-surface-container-high"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Email doanh nghiệp</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">contact@doanhnghiep.vn</span>
+</div>
+<hr class="border-surface-container-high"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Địa chỉ đăng ký kinh doanh</span>
+<span class="font-body-md text-body-md text-on-surface">Tầng 4, Tòa nhà ViVouch, Quận 1, TP. Hồ Chí Minh</span>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Actions for Modal -->
+<div class="absolute bottom-0 w-full p-4 border-t border-surface-container-high bg-surface flex gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.05)]" id="modal-actions">
+<button class="flex-1 bg-tertiary text-on-tertiary py-3.5 rounded-lg font-title-sm text-title-sm flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
+<span class="material-symbols-outlined">check_circle</span> Duyệt
+            </button>
+<button class="flex-1 bg-error-container text-on-error-container py-3.5 rounded-lg font-title-sm text-title-sm flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-sm">
+<span class="material-symbols-outlined">cancel</span> Từ chối
+            </button>
+</div>
+</div>
+<script>
+        const modal = document.getElementById('detail-modal');
+        const modalName = document.getElementById('modal-company-name');
+        const modalMst = document.getElementById('modal-company-mst');
+        const modalStatus = document.getElementById('modal-status-badge');
+        const modalActions = document.getElementById('modal-actions');
+
+        function openDetailModal(name, mst, status) {
+            // Populate data
+            modalName.textContent = name;
+            modalMst.textContent = `MST: ${mst}`;
+            modalStatus.textContent = status;
+            
+            // Adjust status badge color
+            modalStatus.className = 'mt-3 font-label-md text-label-md px-3 py-1 rounded-full border border-outline-variant inline-block ';
+            if(status === 'Chờ duyệt') {
+                modalStatus.className += 'bg-surface-variant text-on-surface-variant';
+                modalActions.style.display = 'flex';
+            } else if(status === 'Đã duyệt') {
+                modalStatus.className += 'bg-tertiary-container text-on-tertiary-container border-transparent';
+                modalActions.style.display = 'none';
+            } else {
+                modalStatus.className += 'bg-error-container text-on-error-container border-transparent';
+                modalActions.style.display = 'none';
+            }
+
+            // Animate in
+            modal.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeDetailModal() {
+            modal.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        }
+    </script>
+</body></html>

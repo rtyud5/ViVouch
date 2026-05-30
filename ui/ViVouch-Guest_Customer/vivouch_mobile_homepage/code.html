@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch - Homepage</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#fffbff",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#68dbae",
+                        "surface-container": "#eeeef0",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#68dbae",
+                        "on-secondary-fixed": "#410002",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "primary-container": "#008560",
+                        "tertiary-container": "#9b6b00",
+                        "background": "#f9f9fc",
+                        "surface": "#f9f9fc",
+                        "primary": "#00694c",
+                        "surface-dim": "#dadadc",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "secondary-container": "#db322f",
+                        "on-background": "#1a1c1e",
+                        "surface-bright": "#f9f9fc",
+                        "surface-container-low": "#f3f3f6",
+                        "outline-variant": "#bccac1",
+                        "inverse-on-surface": "#f0f0f3",
+                        "on-secondary-container": "#fffbff",
+                        "primary-fixed": "#86f8c9",
+                        "secondary-fixed": "#ffdad6",
+                        "on-tertiary-fixed": "#281900",
+                        "surface-container-highest": "#e2e2e5",
+                        "tertiary": "#7b5500",
+                        "on-surface": "#1a1c1e",
+                        "outline": "#6d7a73",
+                        "surface-container-high": "#e8e8ea",
+                        "on-surface-variant": "#3d4943",
+                        "tertiary-fixed": "#ffdeac",
+                        "surface-variant": "#e2e2e5",
+                        "surface-tint": "#006c4e",
+                        "on-secondary-fixed-variant": "#93000d",
+                        "on-primary-container": "#f5fff7",
+                        "secondary": "#b7131a",
+                        "inverse-surface": "#2f3133",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#00513a",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#002115",
+                        "secondary-fixed-dim": "#ffb4ac"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "16px",
+                        "gutter": "12px",
+                        "base": "8px",
+                        "section-gap": "32px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "price-display": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-[80px] md:pb-0 overflow-x-hidden antialiased flex flex-col md:w-[375px] md:mx-auto md:border-x md:border-surface-variant md:min-h-[812px] md:shadow-2xl bg-surface-container-lowest">
+<!-- Top Navigation (Mobile App Header) -->
+<header class="sticky top-0 z-40 bg-surface dark:bg-background shadow-sm px-container-margin py-base flex justify-between items-center w-full">
+<div class="font-display-lg text-display-lg font-bold text-primary dark:text-primary-fixed text-2xl">
+            ViVouch
+        </div>
+<button class="text-primary p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto hide-scrollbar flex flex-col gap-section-gap px-container-margin pt-6">
+<!-- Hero Section: Flash Deal -->
+<section class="relative rounded-xl overflow-hidden shadow-sm bg-surface-container-high h-[180px] w-full group">
+<img alt="Hero background" class="absolute inset-0 w-full h-full object-cover" data-alt="A vibrant, overhead shot of a healthy, colorful modern brunch spread featuring avocado toast, fresh salads, and bright fruit juices. The lighting is soft, natural, and bright, perfect for a high-end food photography aesthetic. The composition leaves slightly empty space on the left for text overlay. The overall mood is fresh, appetizing, and inviting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcT2xvu4wxxDFBK_rgxGTl3_9IlrDzwmff_REHhDknLSnU0tx1EwooH2gMXDXBvzneaA1ANBV5z2FoYeEEH_ETCNr3E2bh1F7KTQdRj9WD00GBlQt4vc6iGKrONIymGjlTcQ_ZMNcQbcZ9k8FblEdZuHhu29cPxnFYCPSjvLsG4RF6YB-LZ1lxFMlcBw_Yx9vpOiqJt7w4NhP0NCS_oTXcLGZxTB7YEYwWyenifshlUgeabwogHdgdR8_hOm8vHUZ5JkZvrjmdUnQ"/>
+<div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+<div class="relative z-10 h-full flex flex-col justify-center p-6 w-2/3">
+<span class="bg-secondary-container text-on-error w-fit px-3 py-1 rounded-full text-xs font-bold mb-2 shadow-md uppercase tracking-wider">Ưu đãi hôm nay</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-primary mb-3">Giảm đến 50%</h2>
+<div class="flex items-center gap-2 bg-surface/20 backdrop-blur-md px-3 py-2 rounded-lg w-fit border border-surface/30">
+<span class="material-symbols-outlined text-on-primary text-sm">schedule</span>
+<span class="text-on-primary font-bold tracking-widest text-sm" id="countdown">04:29:59</span>
+</div>
+</div>
+</section>
+<!-- Horizontal Categories -->
+<section>
+<h3 class="font-headline-md text-headline-md mb-4">Danh mục</h3>
+<div class="flex overflow-x-auto hide-scrollbar gap-3 pb-2 -mx-container-margin px-container-margin snap-x">
+<button class="flex-none flex flex-col items-center gap-2 w-[72px] snap-start group">
+<div class="w-14 h-14 rounded-full bg-primary-container/20 flex items-center justify-center text-primary group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+<span class="font-label-md text-label-md text-center text-on-surface-variant">Ẩm thực</span>
+</button>
+<button class="flex-none flex flex-col items-center gap-2 w-[72px] snap-start group">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">spa</span>
+</div>
+<span class="font-label-md text-label-md text-center text-on-surface-variant">Làm đẹp</span>
+</button>
+<button class="flex-none flex flex-col items-center gap-2 w-[72px] snap-start group">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">flight_takeoff</span>
+</div>
+<span class="font-label-md text-label-md text-center text-on-surface-variant">Du lịch</span>
+</button>
+<button class="flex-none flex flex-col items-center gap-2 w-[72px] snap-start group">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">shopping_bag</span>
+</div>
+<span class="font-label-md text-label-md text-center text-on-surface-variant">Mua sắm</span>
+</button>
+<button class="flex-none flex flex-col items-center gap-2 w-[72px] snap-start group">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container/20 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">local_activity</span>
+</div>
+<span class="font-label-md text-label-md text-center text-on-surface-variant">Giải trí</span>
+</button>
+</div>
+</section>
+<!-- Main Grid: Vouchers -->
+<section>
+<div class="flex justify-between items-end mb-4">
+<h3 class="font-headline-md text-headline-md">Gợi ý cho bạn</h3>
+<a class="font-label-md text-label-md text-primary hover:underline" href="#">Xem thêm</a>
+</div>
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-surface-variant/50 hover:shadow-md transition-shadow flex flex-col h-full">
+<div class="relative h-32 bg-surface-container">
+<img alt="Burger Meal" class="w-full h-full object-cover" data-alt="A juicy gourmet burger with melting cheese, fresh lettuce, and a crispy bun, served on a rustic wooden board. Bright, appetizing lighting highlights the textures of the food against a softly blurred background. The style is modern, mouth-watering culinary photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV9knWuWnZMnWbdpuYurY_IaRgpvAhySSFrnb7GdX-Zjhx8PD6Kd9MZ__7WARIRetu1dN5ppwn1g5IKWhydtCCst3x1h0uMO1GmJeMsDDWf9U5sySnDKvBk6QHi6fzhLK7cCxVZpZTEOyMyPcMH2DfFhwD4xr-82UPwHrfoB3s2oKn4H4ar-p8NtemfNalaG_jAQtHDc8DLVjWZoxDVruNMhlM5F6ah_FWYfyPIk3NrbPljSlH6pRmvPersHCzSAHa3rlbMqrcvPc"/>
+<div class="absolute top-2 right-2 bg-secondary-container text-on-error font-label-md text-label-md px-2 py-0.5 rounded shadow-sm text-xs">
+                            -30%
+                        </div>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<div class="flex items-center gap-1 mb-1">
+<span class="text-sm">🍔</span>
+<span class="font-label-md text-xs text-on-surface-variant truncate">Burger King</span>
+</div>
+<h4 class="font-body-md text-sm font-semibold text-on-surface line-clamp-2 leading-snug mb-2 flex-1">Combo 2 Burger Bò Nướng Phô Mai</h4>
+<div class="mt-auto">
+<div class="flex items-end gap-2">
+<span class="font-price-display text-price-display text-secondary text-base">99k</span>
+<span class="text-xs text-outline line-through mb-0.5">145k</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-surface-variant/50 hover:shadow-md transition-shadow flex flex-col h-full">
+<div class="relative h-32 bg-surface-container">
+<img alt="Spa Service" class="w-full h-full object-cover" data-alt="A serene spa setting showing rolled white towels, smooth massage stones, and a small bamboo plant on a clean, light wooden surface. Soft, diffused, warm lighting creates a calming, luxurious, and relaxing atmosphere. The visual aesthetic is clean, minimalist, and tranquil." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaEl6l7Sf7fZxfe5pURYPIV1mxcBlnsSpVX07293KjjzC61zPsuOoYZtN2Zbd2j7nsyQDGJ9Q9IeTJJ7Lsi82WgF47glWOZDT5rZqMv9NZiBYOxgTs_g_JB9hgz_enLkXO5Lz6SBr6Z4EEK96F1xo1FCNuoFG6DuQWMF55NzxOYSrxHmixeEgm-69nHuLZ26ByGktgEtnVFsn0laPE6g7hRrzRd1joe-kbvLGXJq-2rgS-R0DtJzUJFfkFZCiBZVQgV0WOfDBuXd4"/>
+<div class="absolute top-2 right-2 bg-secondary-container text-on-error font-label-md text-label-md px-2 py-0.5 rounded shadow-sm text-xs">
+                            -50%
+                        </div>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<div class="flex items-center gap-1 mb-1">
+<span class="text-sm">💆‍♀️</span>
+<span class="font-label-md text-xs text-on-surface-variant truncate">Sen Spa</span>
+</div>
+<h4 class="font-body-md text-sm font-semibold text-on-surface line-clamp-2 leading-snug mb-2 flex-1">Massage Body Tinh Dầu 90 Phút</h4>
+<div class="mt-auto">
+<div class="flex items-end gap-2">
+<span class="font-price-display text-price-display text-secondary text-base">199k</span>
+<span class="text-xs text-outline line-through mb-0.5">400k</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-surface-variant/50 hover:shadow-md transition-shadow flex flex-col h-full">
+<div class="relative h-32 bg-surface-container">
+<img alt="Restaurant Booking" class="w-full h-full object-cover" data-alt="Interior of a modern, upscale Asian fusion restaurant with warm ambient lighting. Empty tables set with elegant dinnerware. The background features stylish wooden partitions and soft bokeh lights. The overall mood is sophisticated, inviting, and premium." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNsiYZXDgcAkzZng08eJkMHS3IJVUe1s4_rViEIIJJJbOUCUn6ZnCHR8VvRbxU_4-Gh02_FefqH493rRuX9XG-ZCOFoc8wa8ExDDL8Fbl2G9UKtcOwTmiYfkIgXGt_gM9Y63RqhXYn1OMnJwnvRPuim7dNXnICNPvg3UMGeYEkAOclm1-Yga1X1arbHteviEs8caSgyB6123fCxua0I7vb9kb1HvzEdYWQKPwiDp7tRC-NmrikA4FW4lxDHGkIC2yJ8grAxWYBEqk"/>
+<div class="absolute top-2 right-2 bg-secondary-container text-on-error font-label-md text-label-md px-2 py-0.5 rounded shadow-sm text-xs">
+                            -20%
+                        </div>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<div class="flex items-center gap-1 mb-1">
+<span class="text-sm">🍣</span>
+<span class="font-label-md text-xs text-on-surface-variant truncate">Sushi Hokkaido</span>
+</div>
+<h4 class="font-body-md text-sm font-semibold text-on-surface line-clamp-2 leading-snug mb-2 flex-1">Set Sashimi Cá Hồi Thượng Hạng</h4>
+<div class="mt-auto">
+<div class="flex items-end gap-2">
+<span class="font-price-display text-price-display text-secondary text-base">450k</span>
+<span class="text-xs text-outline line-through mb-0.5">560k</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-surface-variant/50 hover:shadow-md transition-shadow flex flex-col h-full">
+<div class="relative h-32 bg-surface-container">
+<img alt="Tech Gear" class="w-full h-full object-cover" data-alt="A sleek, modern laptop open on a clean, bright white desk alongside a minimalist ceramic coffee cup. The workspace is bright, productive, and airy, bathed in natural sunlight. The aesthetic is clean, professional, and tech-forward." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChFPdMcF4nbxSc2NRgn_EWHLQjs1w7OKedYhs5GaYmXvVDT4dl_rD_AHNtSmBWJk5LSk6wwztgw8L8SRzTH5CGqVoXNXMr-3nZll0AVLrEJ1MYbIw4gyV63NY5IOoViX-BEfodquuTvUrB0lqom5DMJ1LM3QHFO1JfCE8uWG4YWuL-3jTnGXiUtAEc1ZBzb4A-a8DSyCX4x-qhiDW42uYN60Syz3H8i6Rh_yvL0fcLhCiQD23RDGWL_50prrM49XXPpbGq0Ir89xk"/>
+<div class="absolute top-2 right-2 bg-secondary-container text-on-error font-label-md text-label-md px-2 py-0.5 rounded shadow-sm text-xs">
+                            Giảm 2Tr
+                        </div>
+</div>
+<div class="p-3 flex flex-col flex-1">
+<div class="flex items-center gap-1 mb-1">
+<span class="text-sm">💻</span>
+<span class="font-label-md text-xs text-on-surface-variant truncate">FPT Shop</span>
+</div>
+<h4 class="font-body-md text-sm font-semibold text-on-surface line-clamp-2 leading-snug mb-2 flex-1">Voucher Mua Laptop Apple / Dell</h4>
+<div class="mt-auto">
+<div class="flex items-end gap-2">
+<span class="font-price-display text-price-display text-secondary text-base">Free</span>
+<span class="text-xs text-outline line-through mb-0.5">2,000k</span>
+</div>
+</div>
+</div>
+</article>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Nav Shell) -->
+<nav class="fixed md:absolute bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-surface dark:bg-background shadow-[0_-4px_20px_rgba(0,0,0,0.05)] border-t border-surface-variant/30">
+<!-- Tab 1: Home (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 w-16 transition-transform duration-150 scale-95 group" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-md text-[10px] mt-1 leading-none">Home</span>
+</a>
+<!-- Tab 2: Tìm kiếm (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16 hover:bg-surface-container-high transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="font-label-md text-[10px] mt-1 leading-none group-hover:text-primary transition-colors">Tìm kiếm</span>
+</a>
+<!-- Tab 3: Giỏ hàng (Inactive with Badge) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16 hover:bg-surface-container-high transition-colors rounded-xl group relative" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="absolute top-1 right-2 bg-secondary-container text-on-error text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-sm border border-surface">2</span>
+<span class="font-label-md text-[10px] mt-1 leading-none group-hover:text-primary transition-colors">Giỏ hàng</span>
+</a>
+<!-- Tab 4: Voucher (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16 hover:bg-surface-container-high transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">confirmation_number</span>
+<span class="font-label-md text-[10px] mt-1 leading-none group-hover:text-primary transition-colors">Voucher</span>
+</a>
+<!-- Tab 5: Cá nhân (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16 hover:bg-surface-container-high transition-colors rounded-xl group" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-md text-[10px] mt-1 leading-none group-hover:text-primary transition-colors">Cá nhân</span>
+</a>
+</nav>
+<script>
+        // Simple countdown logic for the hero banner
+        function updateCountdown() {
+            const countdownEl = document.getElementById('countdown');
+            if(!countdownEl) return;
+            
+            let timeStr = countdownEl.innerText;
+            let [hours, minutes, seconds] = timeStr.split(':').map(Number);
+            
+            let totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+            
+            if(totalSeconds > 0) {
+                totalSeconds--;
+                let h = Math.floor(totalSeconds / 3600);
+                let m = Math.floor((totalSeconds % 3600) / 60);
+                let s = totalSeconds % 60;
+                
+                countdownEl.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+        }
+        setInterval(updateCountdown, 1000);
+    </script>
+</body></html>

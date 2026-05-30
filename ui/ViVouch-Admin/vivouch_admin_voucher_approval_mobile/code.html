@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Duyệt Voucher - ViVouch Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#bec6e0",
+                        "on-primary-fixed-variant": "#653e00",
+                        "surface-container": "#e5eeff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f8f9ff",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-tertiary-container": "#004966",
+                        "on-background": "#0b1c30",
+                        "primary-fixed-dim": "#ffb95f",
+                        "tertiary-container": "#1abdff",
+                        "tertiary-fixed": "#c5e7ff",
+                        "tertiary": "#00658b",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#cbdbf5",
+                        "secondary": "#565e74",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "outline-variant": "#d8c3ad",
+                        "on-error": "#ffffff",
+                        "primary-container": "#f59e0b",
+                        "on-primary-container": "#613b00",
+                        "background": "#f8f9ff",
+                        "outline": "#867461",
+                        "on-secondary-container": "#5c647a",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#dce9ff",
+                        "on-tertiary-fixed": "#001e2d",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "inverse-on-surface": "#eaf1ff",
+                        "primary-fixed": "#ffddb8",
+                        "secondary-fixed": "#dae2fd",
+                        "secondary-container": "#dae2fd",
+                        "on-primary-fixed": "#2a1700",
+                        "surface-tint": "#855300",
+                        "inverse-primary": "#ffb95f",
+                        "on-surface-variant": "#534434",
+                        "primary": "#855300",
+                        "surface-variant": "#d3e4fe",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-tertiary-fixed-variant": "#004c6a",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#7fd0ff",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#213145"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "gutter": "24px",
+                        "base": "4px",
+                        "row-height-standard": "56px",
+                        "row-height-dense": "40px",
+                        "container-padding": "32px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "code-sm": ["Courier Prime"],
+                        "body-sm": ["Be Vietnam Pro"],
+                        "title-sm": ["Be Vietnam Pro"],
+                        "title-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "display-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "code-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "title-lg": ["18px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .fill-icon { font-variation-settings: 'FILL' 1; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen pb-row-height-standard">
+<!-- Top App Bar (Mobile Context) -->
+<header class="sticky top-0 z-40 w-full bg-surface border-b border-surface-container-high shadow-sm flex justify-between items-center h-row-height-standard px-gutter">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95 transition-transform" onclick="closeModal()">arrow_back</span>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">Duyệt Voucher</h1>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">filter_list</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">search</span>
+</div>
+</header>
+<!-- Main Content: Pending Vouchers List -->
+<main class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
+<!-- TABS -->
+<div class="flex gap-2 mb-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-full whitespace-nowrap">Chờ duyệt (12)</button>
+<button class="bg-surface-container text-on-surface-variant font-label-md text-label-md px-4 py-2 rounded-full border border-surface-container-high whitespace-nowrap hover:bg-surface-container-high transition-colors">Đã duyệt (45)</button>
+<button class="bg-surface-container text-on-surface-variant font-label-md text-label-md px-4 py-2 rounded-full border border-surface-container-high whitespace-nowrap hover:bg-surface-container-high transition-colors">Đã từ chối (8)</button>
+</div>
+<!-- Voucher Card 1 (Haidilao) -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container-high shadow-sm overflow-hidden active:scale-[0.98] transition-transform cursor-pointer" onclick="openModal()">
+<div class="flex p-3 gap-3">
+<img alt="Haidilao Hotpot" class="w-20 h-20 rounded-lg object-cover bg-surface-container flex-shrink-0" data-alt="A close-up, high-quality photograph of a vibrant, steaming hot pot filled with rich red broth, assorted fresh vegetables, and thinly sliced meats. The setting is a modern, softly lit restaurant table, conveying a warm, inviting dining experience. The image relies on a color palette of deep reds, fresh greens, and warm ambient light, perfectly fitting a premium restaurant aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI6fZ9Lw1rxROMfKVec9XpbcdPgcDm4ZLTJa_QCR0a4oBzKHCU_j5sb98OA8pfs41IdeHciW0fjDWU6SB8MRQaIBWBrtN3qdBGib5aDlI3OI2GB-ID7GsP9BvB-2FIcomw_rDC-wPjEvjKlL3cOeusc0SrrIFmjQq6_TynkSHPmGhPimQJhiTqXMFxGKVI-8i-TXaobWGAIvrkkNk9i6kfM-__RWestXcG5_cgCW_i2ezsQf_WGCmdVnXJofNsVmNwK9H-BQmxXHY"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="bg-primary-container/20 text-on-primary-container font-label-md text-[10px] px-2 py-0.5 rounded-sm">Ẩm thực</span>
+<span class="text-secondary font-label-md text-label-md">2 giờ trước</span>
+</div>
+<h3 class="font-title-sm text-title-sm text-on-surface truncate mb-1">Voucher Buffet Lẩu Haidilao</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Haidilao Việt Nam</p>
+<div class="flex items-center gap-1 mt-2 text-primary font-title-sm text-title-sm">
+<span class="material-symbols-outlined text-[16px]">sell</span>
+<span>Giảm 20%</span>
+</div>
+</div>
+</div>
+<div class="bg-surface px-3 py-2 border-t border-surface-container-high flex justify-end gap-2">
+<button class="px-4 py-1.5 rounded-lg border border-error text-error font-label-md text-label-md hover:bg-error-container transition-colors" onclick="event.stopPropagation()">Từ chối</button>
+<button class="px-4 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:opacity-90 transition-opacity" onclick="event.stopPropagation()">Duyệt nhanh</button>
+</div>
+</div>
+<!-- Voucher Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container-high shadow-sm overflow-hidden">
+<div class="flex p-3 gap-3">
+<img alt="Highlands Coffee" class="w-20 h-20 rounded-lg object-cover bg-surface-container flex-shrink-0" data-alt="A beautifully composed flat lay image of a steaming cup of artisan coffee next to a flaky croissant on a rustic wooden table. The lighting is soft, natural morning light, creating a cozy and welcoming atmosphere. The colors are dominated by warm browns, soft creams, and the dark richness of the coffee, aligning with a sophisticated cafe aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJEeUAkReTtUzgVmlpcoRWKQnImV7TNzFEp0rvUIEe6BMr1WxDxoWcJhmgGlTr14U-pyvuU32SvNa6ynxbqG46pEkT126Ih4dN2aXGnUY4GtltaL8fBfrF5Yr6scovo0P6bGoVLjd67pwEr59cmoiAQfKQO5inDtJsWKzcqyl71e59EOPwp3aEe9mMew93gIflJQnMfgQ_Jqyq-RIUKk0ougyBaXS_s5JoI8R-YdOJNB5JvW3wZ6BaIIRYUHbiHLdXOJYwGtqVH84"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="bg-primary-container/20 text-on-primary-container font-label-md text-[10px] px-2 py-0.5 rounded-sm">Đồ uống</span>
+<span class="text-secondary font-label-md text-label-md">5 giờ trước</span>
+</div>
+<h3 class="font-title-sm text-title-sm text-on-surface truncate mb-1">Voucher Đồng giá 39K Phindi</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Highlands Coffee</p>
+<div class="flex items-center gap-1 mt-2 text-primary font-title-sm text-title-sm">
+<span class="material-symbols-outlined text-[16px]">sell</span>
+<span>Đồng giá 39K</span>
+</div>
+</div>
+</div>
+<div class="bg-surface px-3 py-2 border-t border-surface-container-high flex justify-end gap-2">
+<button class="px-4 py-1.5 rounded-lg border border-error text-error font-label-md text-label-md hover:bg-error-container transition-colors">Từ chối</button>
+<button class="px-4 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:opacity-90 transition-opacity">Duyệt nhanh</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (from JSON) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-30 flex justify-around items-center h-row-height-standard px-4 pb-safe bg-surface-container-highest dark:bg-on-background border-t border-outline-variant shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md mt-1">Tổng quan</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">handshake</span>
+<span class="font-label-md text-label-md mt-1">Đối tác</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold active:bg-surface-container scale-95 duration-150 relative" href="#">
+<div class="absolute -top-1 -right-2 bg-error text-on-error rounded-full h-4 w-4 flex items-center justify-center text-[10px] font-bold">12</div>
+<span class="material-symbols-outlined fill-icon">shopping_cart</span>
+<span class="font-label-md text-label-md mt-1">Đơn hàng</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md mt-1">Admin</span>
+</a>
+</nav>
+<!-- FULL SCREEN MODAL: Voucher Details -->
+<div class="fixed inset-0 z-50 bg-surface flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out" id="voucherModal">
+<!-- Modal Header -->
+<header class="sticky top-0 z-50 w-full bg-surface border-b border-surface-container-high flex justify-between items-center h-row-height-standard px-4">
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-on-surface hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container-low" onclick="closeModal()">close</button>
+<h2 class="font-title-lg text-title-lg font-bold text-on-surface">Chi tiết Voucher</h2>
+</div>
+<span class="bg-primary-container/20 text-on-primary-container font-label-md text-label-md px-3 py-1 rounded-full flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                Chờ duyệt
+            </span>
+</header>
+<!-- Modal Content (Scrollable) -->
+<div class="flex-1 overflow-y-auto pb-[100px] bg-background">
+<!-- Hero Image -->
+<div class="w-full h-48 relative">
+<img alt="Haidilao Banner" class="w-full h-full object-cover" data-alt="A wide, high-resolution shot of a modern hot pot dining setup. The image shows a beautifully arranged table with a simmering divided pot in the center, surrounded by an array of fresh ingredients including thinly sliced wagyu beef, vibrant green leafy vegetables, and delicate mushrooms. The lighting is sophisticated, creating a premium restaurant atmosphere with warm, amber accents and deep shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCg8dxVNEP9YZoSyiv7rwxU0nulSewcJGfP_I_e_KgqO4DWm3qBLuQc0wXS7Vao9WIm3eC_UN2Qj6fRrkq1JV0aBkFdQhTWeWi8pgSouP0-7KoXG3w10th-yaLtqYjpbQb5zC7kq0j8oo71wyHVYuknYsSWQERbqDUX0kc_0M7O6DRk4zBqCkeMvX0Qf3N6FwThJF040ahMdryoR91YeUYYBHnleF5QwFQlo9zL2I4Ozj3onQy-6mntp6Zor2zFgVkEGL1HT0WOkXQ"/>
+<div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-surface to-transparent"></div>
+</div>
+<!-- Main Info -->
+<div class="px-4 -mt-8 relative z-10">
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-surface-container-high">
+<div class="flex items-center gap-2 mb-2">
+<img alt="Partner Logo" class="w-6 h-6 rounded-full" data-alt="A clean, minimalist logo placeholder image. A simple abstract geometric shape on a solid light background, representing a generic corporate brand icon." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfnn5iGspfIgotlfG4SEK2DbT36GDGm3-LOGV6oKW2nT4LmxFVdc4ivfWeycAU_eLNDBCFR4gaUMaHeHsMvrISCUZ8spDXuLoTo6xycOJoPyKhqilICYBLok2BagUhHzRVfSy93o_o0Zaay2ka-_ftKJkX1NJ8wJ98vFBAqLE8wmSfCiTnF5kJhIs8Elb_5PnWZnMT7jh4nKFamlbC_wvfTzaeEtknjyj6owIEuWG1v73z6pt5d6ZObhtoC0jyTeLWmE9J-QACemM"/>
+<span class="font-title-sm text-title-sm text-on-surface-variant">Haidilao Việt Nam</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface mb-2 leading-tight">Voucher Buffet Lẩu Haidilao Giảm 20%</h1>
+<div class="grid grid-cols-2 gap-4 mt-4 py-4 border-t border-surface-container-high">
+<div>
+<p class="font-label-md text-label-md text-secondary mb-1">Giá gốc</p>
+<p class="font-title-lg text-title-lg text-on-surface-variant line-through">450.000đ</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-secondary mb-1">Giá bán</p>
+<p class="font-title-lg text-title-lg text-primary font-bold">360.000đ</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-secondary mb-1">Số lượng</p>
+<p class="font-title-sm text-title-sm text-on-surface">5,000 vé</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-secondary mb-1">Thời hạn sử dụng</p>
+<p class="font-title-sm text-title-sm text-on-surface">30 ngày kể từ ngày mua</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Conditions & Details -->
+<div class="px-4 mt-4 space-y-4">
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-surface-container-high">
+<h3 class="font-title-sm text-title-sm text-on-surface font-bold flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary">description</span> Điều kiện sử dụng
+                    </h3>
+<ul class="space-y-2 font-body-sm text-body-sm text-on-surface-variant list-disc pl-5">
+<li>Áp dụng cho tất cả các chi nhánh Haidilao trên toàn quốc.</li>
+<li>Không áp dụng vào các ngày Lễ, Tết.</li>
+<li>Mỗi voucher áp dụng cho 1 người lớn. Trẻ em dưới 1m2 miễn phí.</li>
+<li>Không áp dụng đồng thời với các chương trình khuyến mãi khác.</li>
+</ul>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-surface-container-high">
+<h3 class="font-title-sm text-title-sm text-on-surface font-bold flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary">store</span> Chi nhánh áp dụng (3)
+                    </h3>
+<div class="space-y-3">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary mt-0.5">location_on</span>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Haidilao Vincom Center Đồng Khởi</p>
+<p class="font-label-md text-label-md text-secondary">Quận 1, TP. HCM</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary mt-0.5">location_on</span>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Haidilao Bitexco Financial Tower</p>
+<p class="font-label-md text-label-md text-secondary">Quận 1, TP. HCM</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary mt-0.5">location_on</span>
+<div>
+<p class="font-title-sm text-title-sm text-on-surface">Haidilao Crescent Mall</p>
+<p class="font-label-md text-label-md text-secondary">Quận 7, TP. HCM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Bottom Actions (Fixed) -->
+<div class="fixed bottom-0 left-0 w-full bg-surface border-t border-surface-container-high p-4 pb-safe flex flex-col gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<!-- Optional Reject Reason Input (Hidden by default, shown via JS if needed, simplified here) -->
+<input class="w-full bg-surface-container-low border border-surface-container-high rounded-lg px-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Lý do từ chối (bắt buộc nếu từ chối)..." type="text"/>
+<div class="flex gap-3 w-full">
+<button class="flex-1 py-3 rounded-lg border border-error text-error font-title-sm text-title-sm font-bold flex justify-center items-center gap-2 hover:bg-error-container transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined text-[20px]">close</span> Từ chối
+                </button>
+<button class="flex-1 py-3 rounded-lg bg-primary text-on-primary font-title-sm text-title-sm font-bold flex justify-center items-center gap-2 shadow-sm hover:opacity-90 transition-opacity" onclick="closeModal()">
+<span class="material-symbols-outlined text-[20px]">check</span> Phê duyệt
+                </button>
+</div>
+</div>
+</div>
+<script>
+        const modal = document.getElementById('voucherModal');
+        
+        // Modal logic
+        function openModal() {
+            modal.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeModal() {
+            modal.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        }
+
+        // Open modal by default as requested in prompt "The modal for 'Buffet Lẩu Haidilao' is shown open."
+        // Added a slight delay to ensure smooth transition rendering on load if needed
+        setTimeout(() => {
+            openModal();
+        }, 100);
+    </script>
+</body></html>

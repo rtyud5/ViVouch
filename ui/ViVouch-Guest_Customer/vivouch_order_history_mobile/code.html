@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=375, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Lịch sử đơn hàng - ViVouch</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#93000d",
+                        "primary-fixed": "#86f8c9",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f3f3f6",
+                        "on-surface-variant": "#3d4943",
+                        "inverse-primary": "#68dbae",
+                        "background": "#f9f9fc",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "inverse-on-surface": "#f0f0f3",
+                        "surface-bright": "#f9f9fc",
+                        "secondary-container": "#db322f",
+                        "on-secondary-fixed": "#410002",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "surface-dim": "#dadadc",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#006c4e",
+                        "on-surface": "#1a1c1e",
+                        "primary-fixed-dim": "#68dbae",
+                        "secondary-fixed-dim": "#ffb4ac",
+                        "on-primary-fixed-variant": "#00513a",
+                        "on-primary-container": "#f5fff7",
+                        "tertiary": "#7b5500",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#9b6b00",
+                        "outline-variant": "#bccac1",
+                        "secondary": "#b7131a",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#fffbff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#281900",
+                        "inverse-surface": "#2f3133",
+                        "primary-container": "#008560",
+                        "surface-variant": "#e2e2e5",
+                        "outline": "#6d7a73",
+                        "on-primary-fixed": "#002115",
+                        "surface": "#f9f9fc",
+                        "on-background": "#1a1c1e",
+                        "tertiary-fixed": "#ffdeac",
+                        "error-container": "#ffdad6",
+                        "on-secondary-container": "#fffbff",
+                        "surface-container": "#eeeef0",
+                        "surface-container-highest": "#e2e2e5",
+                        "surface-container-high": "#e8e8ea",
+                        "error": "#ba1a1a",
+                        "primary": "#00694c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "base": "8px",
+                        "container-margin": "16px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased pb-[80px]">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-section-gap h-16 bg-surface shadow-sm transition-colors duration-200">
+<button aria-label="Go back" class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="flex-1 flex justify-center">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Lịch sử đơn hàng</h1>
+</div>
+<div class="flex gap-2">
+<button aria-label="Filter" class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">filter_list</span>
+</button>
+<button aria-label="Search" class="text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full p-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-16 px-container-margin w-full max-w-[375px] mx-auto">
+<!-- Filter Tabs -->
+<div class="flex space-x-2 overflow-x-auto no-scrollbar py-4 mb-2">
+<button class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap shadow-[0px_4px_20px_rgba(0,0,0,0.05)]">
+                Tất cả
+            </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-high transition-colors">
+                Đã thanh toán
+            </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md whitespace-nowrap hover:bg-surface-container-high transition-colors">
+                Đã hủy
+            </button>
+</div>
+<!-- Order Cards Stack -->
+<div class="space-y-4 pb-container-margin">
+<!-- Card 1: Paid -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 active:scale-[0.98] transition-transform duration-150">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-label-md text-label-md text-on-surface">#VV-00142</span>
+<div class="font-body-md text-body-md text-on-surface-variant mt-1 text-sm">20 Thg 10, 2023 • 2 voucher</div>
+</div>
+<span class="px-2 py-1 rounded bg-primary-container/20 text-primary font-label-md text-label-md text-[12px]">Đã thanh toán</span>
+</div>
+<div class="flex justify-between items-center border-t border-surface-container-high pt-3">
+<span class="font-price-display text-price-display text-on-surface">450.000đ</span>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Card 2: Cancelled -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 active:scale-[0.98] transition-transform duration-150">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-label-md text-label-md text-on-surface">#VV-00141</span>
+<div class="font-body-md text-body-md text-on-surface-variant mt-1 text-sm">18 Thg 10, 2023 • 1 voucher</div>
+</div>
+<span class="px-2 py-1 rounded bg-error-container/40 text-error font-label-md text-label-md text-[12px]">Đã hủy</span>
+</div>
+<div class="flex justify-between items-center border-t border-surface-container-high pt-3">
+<span class="font-price-display text-price-display text-on-surface opacity-60">120.000đ</span>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Card 3: Paid -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 active:scale-[0.98] transition-transform duration-150">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-label-md text-label-md text-on-surface">#VV-00138</span>
+<div class="font-body-md text-body-md text-on-surface-variant mt-1 text-sm">15 Thg 10, 2023 • 4 voucher</div>
+</div>
+<span class="px-2 py-1 rounded bg-primary-container/20 text-primary font-label-md text-label-md text-[12px]">Đã thanh toán</span>
+</div>
+<div class="flex justify-between items-center border-t border-surface-container-high pt-3">
+<span class="font-price-display text-price-display text-on-surface">1.200.000đ</span>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+<!-- Card 4: Paid -->
+<div class="bg-surface-container-lowest rounded-lg p-4 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/30 active:scale-[0.98] transition-transform duration-150">
+<div class="flex justify-between items-start mb-3">
+<div>
+<span class="font-label-md text-label-md text-on-surface">#VV-00130</span>
+<div class="font-body-md text-body-md text-on-surface-variant mt-1 text-sm">02 Thg 10, 2023 • 1 voucher</div>
+</div>
+<span class="px-2 py-1 rounded bg-primary-container/20 text-primary font-label-md text-label-md text-[12px]">Đã thanh toán</span>
+</div>
+<div class="flex justify-between items-center border-t border-surface-container-high pt-3">
+<span class="font-price-display text-price-display text-on-surface">85.000đ</span>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 md:hidden bg-surface shadow-[0px_-2px_10px_rgba(0,0,0,0.05)]">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 transition-opacity p-2">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-md text-label-md text-[10px]">Trang chủ</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 transition-opacity p-2">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">explore</span>
+<span class="font-label-md text-label-md text-[10px]">Khám phá</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary font-bold transform scale-90 duration-200 p-2">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-label-md text-label-md text-[10px]">Đơn hàng</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 transition-opacity p-2">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-md text-label-md text-[10px]">Cá nhân</span>
+</button>
+</nav>
+</body></html>

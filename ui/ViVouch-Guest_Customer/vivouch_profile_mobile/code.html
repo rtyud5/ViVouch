@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch - Tài khoản</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Be Vietnam Pro -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#68dbae",
+                    "secondary-container": "#db322f",
+                    "on-surface-variant": "#3d4943",
+                    "tertiary": "#7b5500",
+                    "surface-tint": "#006c4e",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f3f3f6",
+                    "outline-variant": "#bccac1",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e2e2e5",
+                    "on-surface": "#1a1c1e",
+                    "surface-bright": "#f9f9fc",
+                    "secondary": "#b7131a",
+                    "primary": "#00694c",
+                    "on-secondary-container": "#fffbff",
+                    "primary-container": "#008560",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#68dbae",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#ffdeac",
+                    "surface-container": "#eeeef0",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#e8e8ea",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#86f8c9",
+                    "outline": "#6d7a73",
+                    "on-primary-container": "#f5fff7",
+                    "on-background": "#1a1c1e",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#604100",
+                    "surface-dim": "#dadadc",
+                    "on-tertiary-container": "#fffbff",
+                    "inverse-on-surface": "#f0f0f3",
+                    "tertiary-fixed-dim": "#ffba38",
+                    "inverse-surface": "#2f3133",
+                    "secondary-fixed": "#ffdad6",
+                    "on-secondary-fixed-variant": "#93000d",
+                    "on-primary-fixed": "#002115",
+                    "surface-variant": "#e2e2e5",
+                    "surface": "#f9f9fc",
+                    "secondary-fixed-dim": "#ffb4ac",
+                    "tertiary-container": "#9b6b00",
+                    "background": "#f9f9fc",
+                    "on-tertiary-fixed": "#281900",
+                    "on-secondary-fixed": "#410002",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#00513a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "32px",
+                    "base": "8px",
+                    "gutter": "12px",
+                    "container-margin": "16px"
+            },
+            "fontFamily": {
+                    "price-display": ["Be Vietnam Pro"],
+                    "headline-md": ["Be Vietnam Pro"],
+                    "headline-lg": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "label-md": ["Be Vietnam Pro"],
+                    "headline-lg-mobile": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "display-lg": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                    "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                    "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                    "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                    "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                    "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                    "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                    "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md pb-[80px]">
+<!-- TopAppBar -->
+<header class="bg-surface border-b border-outline-variant/30 flex justify-between items-center w-full px-container-margin py-3 shadow-sm sticky top-0 z-40">
+<div class="flex items-center gap-2">
+<!-- Utilizing product_name from JSON but adapting layout to show "Tài khoản" as requested, keeping brand presence -->
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">Tài khoản</span>
+</div>
+<div class="flex items-center">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container active:scale-95 transition-transform duration-200 focus:outline-none">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-container-margin py-container-margin flex flex-col gap-gutter">
+<!-- Profile Card -->
+<section class="bg-surface rounded-xl p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Avatar" class="w-16 h-16 rounded-full object-cover border-2 border-surface-container" data-alt="A professional, modern headshot of a young Vietnamese male in a well-lit office environment. He is wearing a smart casual outfit, exuding a friendly and approachable demeanor. The background is slightly blurred with soft natural lighting, fitting a corporate yet modern tech platform aesthetic. The overall color tone is warm and inviting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiITETZ0lLe0WpMYMHG8UR7qEK6UbtzfdIay__sxNbDth-CCuxPnRIN-J23RNrkHSsPay4zubRbkPt2WfkK3mmlKcJa51Oj90kx_e0U1jI55sacX6FDwbiDBZvQW_Z-zgy1tJWIsH9SfAnjGtvkJVyas-e2eCaJvkpiVRzjIHqQzoBxxei72tjlhLlAeF3oVqYlX3Yb4xyW9616DF9AxSDtQG7VA2pvUYSIXFsWLhORmFWi5FfQehOkb5IKxjssQxOVT1rEIkg17Q"/>
+<button class="absolute bottom-0 right-0 bg-surface rounded-full p-1 border border-outline-variant/30 shadow-sm text-on-surface-variant hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined text-[16px]">photo_camera</span>
+</button>
+</div>
+<div>
+<h2 class="font-price-display text-price-display text-on-surface">Nguyễn Văn A</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">nguyenvana@email.com</p>
+</div>
+</div>
+<button class="font-label-md text-label-md text-primary font-bold hover:opacity-80 active:scale-95 transition-all focus:outline-none">
+                Chỉnh sửa
+            </button>
+</section>
+<!-- Stats Row -->
+<section class="bg-surface rounded-xl p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] grid grid-cols-3 divide-x divide-outline-variant/30 text-center">
+<div class="flex flex-col items-center justify-center px-2">
+<span class="font-headline-md text-headline-md text-on-surface">12</span>
+<span class="font-label-md text-label-md text-on-surface-variant text-[12px]">Voucher đã mua</span>
+</div>
+<div class="flex flex-col items-center justify-center px-2">
+<span class="font-headline-md text-headline-md text-on-surface">8</span>
+<span class="font-label-md text-label-md text-on-surface-variant text-[12px]">Voucher đã dùng</span>
+</div>
+<div class="flex flex-col items-center justify-center px-2">
+<span class="font-headline-md text-headline-md text-primary">2.5M</span>
+<span class="font-label-md text-label-md text-on-surface-variant text-[12px]">Tổng tiết kiệm</span>
+</div>
+</section>
+<!-- Menu List -->
+<section class="bg-surface rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden mt-4">
+<ul class="flex flex-col divide-y divide-outline-variant/20">
+<li>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container active:bg-surface-container-high transition-colors focus:outline-none">
+<div class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+<span class="font-body-md text-body-md">Thông tin cá nhân</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container active:bg-surface-container-high transition-colors focus:outline-none">
+<div class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-on-surface-variant">lock</span>
+<span class="font-body-md text-body-md">Đổi mật khẩu</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container active:bg-surface-container-high transition-colors focus:outline-none">
+<div class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-on-surface-variant">receipt_long</span>
+<span class="font-body-md text-body-md">Lịch sử đơn hàng</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container active:bg-surface-container-high transition-colors focus:outline-none">
+<div class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-on-surface-variant">confirmation_number</span>
+<span class="font-body-md text-body-md">Voucher của tôi</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container active:bg-surface-container-high transition-colors focus:outline-none">
+<div class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-on-surface-variant">star</span>
+<span class="font-body-md text-body-md">Đánh giá của tôi</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+</li>
+</ul>
+</section>
+<section class="bg-surface rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden mt-2">
+<ul class="flex flex-col divide-y divide-outline-variant/20">
+<li>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container active:bg-surface-container-high transition-colors focus:outline-none">
+<div class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-on-surface-variant">support_agent</span>
+<span class="font-body-md text-body-md">Trợ giúp &amp; CSKH</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+</li>
+<li>
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container active:bg-surface-container-high transition-colors focus:outline-none">
+<div class="flex items-center gap-3 text-on-surface">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+<span class="font-body-md text-body-md">Điều khoản</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</button>
+</li>
+</ul>
+</section>
+<!-- Logout Button -->
+<div class="mt-4 mb-section-gap">
+<button class="w-full bg-error-container text-on-error-container py-3 rounded-lg font-label-md text-label-md text-center flex items-center justify-center gap-2 hover:bg-[#ffdad6]/80 active:scale-95 transition-all focus:outline-none">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+                Đăng xuất
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-base border-t border-outline-variant/20 bg-surface shadow-[0_-4px_20px_rgba(0,0,0,0.05)] pb-safe">
+<!-- Home (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 active:scale-90 transition-all duration-150 group" href="#">
+<span class="material-symbols-outlined mb-1 group-active:text-primary transition-colors">home</span>
+<span class="font-label-md text-[10px] leading-[14px] font-semibold">Home</span>
+</a>
+<!-- Explore (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 active:scale-90 transition-all duration-150 group" href="#">
+<span class="material-symbols-outlined mb-1 group-active:text-primary transition-colors">search</span>
+<span class="font-label-md text-[10px] leading-[14px] font-semibold">Explore</span>
+</a>
+<!-- Vouchers (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:opacity-80 active:scale-90 transition-all duration-150 group" href="#">
+<span class="material-symbols-outlined mb-1 group-active:text-primary transition-colors">confirmation_number</span>
+<span class="font-label-md text-[10px] leading-[14px] font-semibold">Vouchers</span>
+</a>
+<!-- Profile (Active) -->
+<a class="flex flex-col items-center justify-center text-primary active:scale-90 transition-transform duration-150 relative" href="#">
+<div class="absolute -top-3 w-12 h-1 bg-primary rounded-b-full"></div>
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-[10px] leading-[14px] font-semibold">Profile</span>
+</a>
+</nav>
+<style>
+        /* Small utility to handle notch on modern phones */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 8px);
+        }
+    </style>
+</body></html>

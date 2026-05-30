@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VoucherPro - Quản lý Voucher</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdf93",
+                        "surface-tint": "#6750a4",
+                        "surface-bright": "#fef7ff",
+                        "surface-container-high": "#ede5f2",
+                        "inverse-primary": "#cfbcff",
+                        "primary-fixed-dim": "#cfbcff",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#322f38",
+                        "tertiary": "#765b00",
+                        "background": "#fef7ff",
+                        "surface-container": "#f3ebf8",
+                        "on-tertiary-fixed": "#241a00",
+                        "on-secondary-fixed": "#1f1730",
+                        "surface-container-low": "#f8f1fe",
+                        "on-surface-variant": "#494551",
+                        "primary-container": "#6750a4",
+                        "surface": "#fef7ff",
+                        "secondary-fixed-dim": "#cdc1e2",
+                        "on-tertiary-container": "#503d00",
+                        "on-background": "#1d1a23",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#cbc4d2",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#e9ddff",
+                        "on-primary-container": "#e0d2ff",
+                        "surface-variant": "#e7e0ec",
+                        "secondary-container": "#eaddff",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "on-primary-fixed": "#22005d",
+                        "primary": "#4f378a",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#4f378a",
+                        "on-secondary-container": "#69607c",
+                        "on-surface": "#1d1a23",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#635a76",
+                        "surface-dim": "#dfd7e4",
+                        "tertiary-container": "#c9a74d",
+                        "outline": "#7a7582",
+                        "surface-container-highest": "#e7e0ec",
+                        "inverse-on-surface": "#f6eefb",
+                        "secondary-fixed": "#eaddff",
+                        "on-secondary-fixed-variant": "#4b425d",
+                        "tertiary-fixed-dim": "#e7c365"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "32px",
+                        "container-max": "1440px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "code": ["monospace"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "headline-sm": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "code": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-low hidden md:flex flex-col h-screen fixed left-0 top-0 py-6 space-y-4 shadow-md docked left-0 h-full w-64 z-50">
+<div class="px-6 pb-4 border-b border-outline-variant/30 flex flex-col gap-2">
+<span class="font-headline-sm text-primary font-bold">VoucherPro</span>
+<span class="font-label-md text-on-surface-variant">Partner Portal</span>
+</div>
+<div class="px-4 py-2">
+<button class="w-full bg-primary hover:bg-primary/90 text-on-primary rounded-lg py-2 px-4 flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined font-label-md">add</span>
+<span class="font-label-md text-label-md">Issue New Voucher</span>
+</button>
+</div>
+<ul class="flex flex-col flex-1 px-3 space-y-1 mt-2">
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-transform duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-primary border-r-4 border-primary bg-primary-container/10 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">confirmation_number</span>
+<span class="font-label-md text-label-md">My Vouchers</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-transform duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+<span class="font-label-md text-label-md">Validation</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-transform duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</li>
+<li class="mt-auto">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-transform duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col ml-64 h-full bg-surface-container-lowest overflow-hidden">
+<!-- Header Section -->
+<header class="px-gutter py-6 flex justify-between items-center border-b border-outline-variant/30">
+<h1 class="font-headline-md text-headline-md text-on-background">Voucher của tôi</h1>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 hover:bg-primary-fixed-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                Tạo voucher mới
+            </button>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-gutter space-y-6">
+<!-- Filters & Search -->
+<div class="flex flex-col gap-4">
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant/50 w-full overflow-x-auto hide-scrollbar">
+<button class="px-4 py-3 font-label-md text-label-md text-primary border-b-2 border-primary whitespace-nowrap">Tất cả</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary whitespace-nowrap transition-colors">Nháp</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary whitespace-nowrap transition-colors">Chờ duyệt</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary whitespace-nowrap transition-colors">Đang bán</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary whitespace-nowrap transition-colors">Tạm dừng</button>
+<button class="px-4 py-3 font-label-md text-label-md text-on-surface-variant hover:text-primary whitespace-nowrap transition-colors">Hết hạn</button>
+</div>
+<!-- Sub-header Controls -->
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Tìm kiếm voucher..." type="text"/>
+</div>
+<div class="flex items-center gap-2 bg-surface border border-outline-variant rounded-lg px-3 py-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">calendar_today</span>
+<span class="font-body-md text-body-md text-on-surface">01/10/2023 - 31/10/2023</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] cursor-pointer hover:text-primary ml-2">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Data Table Card -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-variant border-b border-outline-variant">
+<tr>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold">Voucher</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold">Trạng thái</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold">Giá bán</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold">Đã bán/Tổng</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold min-w-[120px]">Tỷ lệ dùng</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold">Thời hạn bán</th>
+<th class="px-4 py-3 font-label-md text-label-md text-on-surface-variant font-semibold text-center">Hành động</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/50">
+<!-- Row 1: Active -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-4 py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-md bg-surface-dim overflow-hidden flex-shrink-0">
+<img alt="Restaurant interior" class="w-full h-full object-cover" data-alt="A brightly lit, modern restaurant setting featuring a hot pot table setup. Steaming broth sits in the center, surrounded by fresh ingredients. The atmosphere is vibrant and inviting, consistent with a clean corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxkrlOXVApAVCOodc7ylQiuMUoB8q2Z9HnoXGGq4Q2e4ztLeWm4SB8nUYvSpjQnjJux2RhX75bsval7wH9hJCfz0Ixo_ImK2RHYmQJDWdKKi0i2NY8RjKWvxJ01AtOJWEo3pi-l2lz7RKYCx9c_EfbMe82KRbMhyJQ1rFah-YBWz8tFU6zetee8LyO3jXhuH5Rq7IZjSjZ-pkkNxfC6dOHh5L_YKvNl_VG8MLtbG3vZvaeBcq9Q7zM7TiXqBiRS_QcBZ2PY-Ev8X8"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-background">Buffet Lẩu Haidilao</p>
+<p class="font-label-md text-[11px] text-on-surface-variant mt-0.5">Mã: VL-2023-001</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-primary-fixed text-on-primary-fixed">
+                                        Đang bán
+                                    </span>
+</td>
+<td class="px-4 py-4 font-body-md text-body-md">250.000đ</td>
+<td class="px-4 py-4 font-body-md text-body-md text-on-surface-variant">
+<span class="text-on-background font-medium">45</span>/100
+                                </td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-2">
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 45%"></div>
+</div>
+<span class="font-label-md text-[11px] text-on-surface-variant">45%</span>
+</div>
+</td>
+<td class="px-4 py-4 font-body-md text-[13px] text-on-surface-variant">01/10/23 - 31/10/23</td>
+<td class="px-4 py-4 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-variant/50">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Pending -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-4 py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-md bg-surface-dim overflow-hidden flex-shrink-0">
+<img alt="Sushi platter" class="w-full h-full object-cover" data-alt="A minimalist presentation of premium sushi on a ceramic plate. Soft, natural lighting highlights the fresh textures of the seafood. The setting is clean and professional, matching a high-end corporate dining aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0UHJJJCCG0E-x8K0_HcCFbeV-UmJThvtVY__EdnwUNSdIeBjn1shsAyr0DFWUc3FkuiVl97Zek2D07_kVMVru2eguV54IsHBmjsLEymMW9rmQiYhT7ewTk2QrI9MN9h0DxlD019t7Ah5Qlryd4E-y8P66QS4jcNH-ZEw_ez5VRyHsjSWK5wjdj-LnhVCyF-dGqTXHrU97JKSmDvYshInivA9SPKQDHzvSSqHt_U2xH0Lp95UXes7aImkKzEKRWt7dmvO3zVQ19cQ"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-background">Set Sushi Hokkaido Sachi</p>
+<p class="font-label-md text-[11px] text-on-surface-variant mt-0.5">Mã: VL-2023-002</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-tertiary-container/40 text-on-tertiary-container">
+                                        Chờ duyệt
+                                    </span>
+</td>
+<td class="px-4 py-4 font-body-md text-body-md">500.000đ</td>
+<td class="px-4 py-4 font-body-md text-body-md text-on-surface-variant">
+<span class="text-on-background font-medium">0</span>/50
+                                </td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-2">
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 0%"></div>
+</div>
+<span class="font-label-md text-[11px] text-on-surface-variant">0%</span>
+</div>
+</td>
+<td class="px-4 py-4 font-body-md text-[13px] text-on-surface-variant">15/10/23 - 15/11/23</td>
+<td class="px-4 py-4 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-variant/50">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Draft -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-4 py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-md bg-surface-dim overflow-hidden flex-shrink-0">
+<div class="w-full h-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">image</span>
+</div>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-background">Combo Nướng BBQ</p>
+<p class="font-label-md text-[11px] text-on-surface-variant mt-0.5">Mã: --</p>
+</div>
+</div>
+</td>
+<td class="px-4 py-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-surface-variant text-on-surface-variant">
+                                        Nháp
+                                    </span>
+</td>
+<td class="px-4 py-4 font-body-md text-body-md text-on-surface-variant">--</td>
+<td class="px-4 py-4 font-body-md text-body-md text-on-surface-variant">--</td>
+<td class="px-4 py-4 text-on-surface-variant text-sm">--</td>
+<td class="px-4 py-4 font-body-md text-[13px] text-on-surface-variant">--</td>
+<td class="px-4 py-4 text-center">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-variant/50">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-4 py-3 border-t border-outline-variant/50 bg-surface flex items-center justify-between">
+<div class="font-body-md text-[13px] text-on-surface-variant">
+                        Hiển thị 1-3 trong số 24 voucher
+                    </div>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors font-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors font-label-md">3</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

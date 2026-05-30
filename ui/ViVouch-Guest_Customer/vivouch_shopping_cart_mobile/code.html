@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch - Giỏ hàng</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#410002",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#281900",
+                        "outline-variant": "#bccac1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#9b6b00",
+                        "surface": "#f9f9fc",
+                        "on-primary-fixed-variant": "#00513a",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9fc",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e2e2e5",
+                        "primary-container": "#008560",
+                        "on-background": "#1a1c1e",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "on-tertiary-container": "#fffbff",
+                        "on-primary-fixed": "#002115",
+                        "surface-container-low": "#f3f3f6",
+                        "surface-container-high": "#e8e8ea",
+                        "secondary-fixed-dim": "#ffb4ac",
+                        "outline": "#6d7a73",
+                        "inverse-on-surface": "#f0f0f3",
+                        "on-surface": "#1a1c1e",
+                        "inverse-surface": "#2f3133",
+                        "on-surface-variant": "#3d4943",
+                        "primary-fixed": "#86f8c9",
+                        "primary-fixed-dim": "#68dbae",
+                        "tertiary-fixed": "#ffdeac",
+                        "tertiary": "#7b5500",
+                        "on-primary-container": "#f5fff7",
+                        "error-container": "#ffdad6",
+                        "secondary": "#b7131a",
+                        "secondary-container": "#db322f",
+                        "on-error": "#ffffff",
+                        "primary": "#00694c",
+                        "secondary-fixed": "#ffdad6",
+                        "on-secondary-fixed-variant": "#93000d",
+                        "surface-variant": "#e2e2e5",
+                        "surface-dim": "#dadadc",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "surface-tint": "#006c4e",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#68dbae",
+                        "on-secondary-container": "#fffbff",
+                        "error": "#ba1a1a",
+                        "background": "#f9f9fc",
+                        "surface-container": "#eeeef0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "gutter": "12px",
+                        "container-margin": "16px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "price-display": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        input[type="checkbox"]:checked {
+            background-color: theme('colors.primary');
+            border-color: theme('colors.primary');
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen text-on-surface antialiased font-body-md pb-32 selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-container-margin h-16 bg-surface border-b border-outline-variant">
+<button aria-label="Back" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant active:scale-95 transition-transform">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-headline-md font-headline-md text-primary">ViVouch</h1>
+<button aria-label="Cart" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-primary active:scale-95 transition-transform">
+<span class="material-symbols-outlined fill">shopping_cart</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="pt-20 px-container-margin max-w-lg mx-auto">
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-6">Giỏ hàng (3)</h2>
+<!-- Select All -->
+<div class="flex items-center gap-3 mb-4 bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface-container-lowest" id="selectAll" type="checkbox"/>
+<label class="text-label-md font-label-md text-on-surface cursor-pointer select-none" for="selectAll">Chọn tất cả</label>
+</div>
+<!-- Voucher Items Stack -->
+<div class="flex flex-col gap-4 mb-8">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-start gap-3">
+<input checked="" class="w-5 h-5 mt-4 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface-container-lowest" type="checkbox"/>
+<img alt="Voucher Thumbnail" class="w-24 h-24 rounded-lg object-cover bg-surface-variant flex-shrink-0" data-alt="A mouth-watering high-quality close-up of a gourmet burger meal with crispy fries and a chilled drink, served on a rustic wooden board in a softly lit modern cafe setting. The vibrant colors of the fresh ingredients pop against the warm, inviting background, perfectly matching the premium lifestyle aesthetic of the voucher app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhg00d-cjMelyamvvUxHcgMmEOJ2IuoG9HErEL3Qp1Hqpfm8VUrZ9ptRDMHakZOkdr7_ZzFlSiADqxKflFJ1L7gDRsFSy1yQN1dIy5x0pP4gviWYf9SfSwx-uJJmkl65KuLLeY-EevtwqEY9gLU7F6q32P9cUkMv4gTlbREv0Wapxw0fijJ1bSF-01XXcy-rfh9U_R1WZLbtGAoNkvwnqjs_C3zgvKGRr06eBoKyQh_wUOcaT5zkji0CIeJXBo3Di5K0f6Js7M1iw"/>
+<div class="flex-1 flex flex-col justify-between min-h-[96px]">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-label-md font-label-md text-on-surface line-clamp-2">Combo Burger Thượng Hạng Dành Cho 2 Người</h3>
+<button aria-label="Remove item" class="text-error hover:bg-error-container p-1 rounded-full transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm mt-1">Gogi House</p>
+</div>
+<div class="flex justify-between items-end mt-3">
+<p class="text-price-display font-price-display text-primary">199.000đ</p>
+<!-- Stepper -->
+<div class="flex items-center border border-outline-variant rounded-full overflow-hidden bg-surface">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="text-label-md font-label-md text-on-surface w-6 text-center select-none">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2 (Ending Soon Badge) -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-start gap-3 relative overflow-hidden">
+<input checked="" class="w-5 h-5 mt-4 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface-container-lowest" type="checkbox"/>
+<div class="relative flex-shrink-0">
+<img alt="Voucher Thumbnail" class="w-24 h-24 rounded-lg object-cover bg-surface-variant" data-alt="A serene and luxurious spa setting featuring essential oil bottles, neatly rolled white towels, and smooth hot stones resting on a dark slate surface. Soft, ambient warm lighting casts gentle shadows, creating a deeply relaxing and premium aesthetic aligned with high-end wellness treatments." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBNKeYdsjIIbBu6bsAmkCyC7G3Xq4bk_v-qs6b-ou967P9tQxePlX2EjOtBrcplXkQhwWeb8q9uMjEmaNve1jswky91WCl9SPUhqhIop8SP3zYYowr6XhcOni2R-FF4ypm8rCLGZxCOFhQ8b3Hg76Vjr5TyNrcxDHmTLBmM1l5Pj3X0P675l7f1CRRTuaSvEtkkcIN46w8DTxjlPrsewCXcN8VD9x_zDPbGbJS-J4PpIeVpDMLE8eIZR1eGs878R7_PDqkyUV8ITg"/>
+<span class="absolute -top-2 -left-2 bg-secondary text-on-secondary text-[10px] font-bold px-2 py-1 rounded shadow-sm z-10 transform -rotate-6">Sắp hết</span>
+</div>
+<div class="flex-1 flex flex-col justify-between min-h-[96px]">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-label-md font-label-md text-on-surface line-clamp-2">Gói Massage Trị Liệu Vai Gáy 60 Phút</h3>
+<button aria-label="Remove item" class="text-error hover:bg-error-container p-1 rounded-full transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm mt-1">Sen Spa Wellness</p>
+</div>
+<div class="flex justify-between items-end mt-3">
+<p class="text-price-display font-price-display text-primary">299.000đ</p>
+<!-- Stepper -->
+<div class="flex items-center border border-outline-variant rounded-full overflow-hidden bg-surface">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="text-label-md font-label-md text-on-surface w-6 text-center select-none">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 3 (Unchecked) -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-start gap-3 opacity-60 transition-opacity">
+<input class="w-5 h-5 mt-4 rounded border-outline text-primary focus:ring-primary focus:ring-offset-surface-container-lowest" type="checkbox"/>
+<img alt="Voucher Thumbnail" class="w-24 h-24 rounded-lg object-cover bg-surface-variant flex-shrink-0 grayscale-[20%]" data-alt="An elegant, softly lit fine dining restaurant interior capturing a meticulously arranged table set for two. Shimmering wine glasses and polished silverware reflect the warm, ambient glow of contemporary pendant lights, exuding an atmosphere of upscale sophistication and exclusive culinary experiences." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL6yXLlkeDtZYsDkNNvlRbpwCK1W4CfM7JBbIo-r1u4T2GXMGbI3bjwNZSrsXJhVCQRtzFzl-njWaug2cU5bpPlznwhvb8NrAzQU4HrVXliWjtv6f8OwstQ_Hi5Tioc4C7YbuoeAA2-gTm0egXbo-fPw2UNYP-EsJeNZl0j44PHpaKMVBUUUYS3ksCqSDj0J_tMsaeOVO3cDVUVpfR5y2IkOS7PBSEHEZ7MmYKdjkzgz0bvRGbKIQUNt7F-iqVsiiWnFZK-dY23pc"/>
+<div class="flex-1 flex flex-col justify-between min-h-[96px]">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h3 class="text-label-md font-label-md text-on-surface line-clamp-2">Buffet Hải Sản Cao Cấp Cuối Tuần</h3>
+<button aria-label="Remove item" class="text-error hover:bg-error-container p-1 rounded-full transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm mt-1">Sheraton Hotel</p>
+</div>
+<div class="flex justify-between items-end mt-3">
+<p class="text-price-display font-price-display text-on-surface-variant">850.000đ</p>
+<!-- Stepper -->
+<div class="flex items-center border border-outline-variant rounded-full overflow-hidden bg-surface">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="text-label-md font-label-md text-on-surface w-6 text-center select-none">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Section -->
+<section class="bg-surface-container-lowest p-5 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] mb-8 border border-outline-variant/30">
+<h3 class="text-label-md font-label-md text-on-surface mb-4 uppercase tracking-wider text-xs">Chi tiết thanh toán</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-body-md font-body-md">
+<span class="text-on-surface-variant">Tổng tiền hàng (2 sản phẩm)</span>
+<span class="text-on-surface">1.348.000đ</span>
+</div>
+<div class="flex justify-between items-center text-body-md font-body-md">
+<span class="text-on-surface-variant">Tiết kiệm được</span>
+<span class="text-primary font-medium">-850.000đ</span>
+</div>
+<hr class="border-outline-variant/50 my-2"/>
+<div class="flex justify-between items-center">
+<span class="text-label-md font-label-md text-on-surface">Tạm tính</span>
+<span class="text-price-display font-price-display text-on-surface">498.000đ</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Checkout Bar -->
+<div class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest shadow-[0_-4px_20px_rgba(0,0,0,0.08)] border-t border-outline-variant/20 px-container-margin py-4 pb-safe flex justify-between items-center">
+<div class="flex flex-col">
+<span class="text-body-md font-body-md text-on-surface-variant text-sm">Tổng cộng</span>
+<span class="text-headline-lg-mobile font-headline-lg-mobile text-primary">498.000đ</span>
+</div>
+<button class="bg-primary text-on-primary text-label-md font-label-md px-8 py-3.5 rounded-full hover:bg-surface-tint transition-colors active:scale-95 shadow-md flex items-center gap-2">
+            Thanh toán
+            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</body></html>

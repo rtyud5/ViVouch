@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch Admin - Duyệt Voucher</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;family=Courier+Prime&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#bec6e0",
+                      "on-primary-fixed-variant": "#653e00",
+                      "surface-container": "#e5eeff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface": "#f8f9ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-tertiary-container": "#004966",
+                      "on-background": "#0b1c30",
+                      "primary-fixed-dim": "#ffb95f",
+                      "tertiary-container": "#1abdff",
+                      "tertiary-fixed": "#c5e7ff",
+                      "tertiary": "#00658b",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-dim": "#cbdbf5",
+                      "secondary": "#565e74",
+                      "surface-bright": "#f8f9ff",
+                      "surface-container-low": "#eff4ff",
+                      "outline-variant": "#d8c3ad",
+                      "on-error": "#ffffff",
+                      "primary-container": "#f59e0b",
+                      "on-primary-container": "#613b00",
+                      "background": "#f8f9ff",
+                      "outline": "#867461",
+                      "on-secondary-container": "#5c647a",
+                      "on-error-container": "#93000a",
+                      "surface-container-high": "#dce9ff",
+                      "on-tertiary-fixed": "#001e2d",
+                      "on-tertiary": "#ffffff",
+                      "on-surface": "#0b1c30",
+                      "inverse-on-surface": "#eaf1ff",
+                      "primary-fixed": "#ffddb8",
+                      "secondary-fixed": "#dae2fd",
+                      "secondary-container": "#dae2fd",
+                      "on-primary-fixed": "#2a1700",
+                      "surface-tint": "#855300",
+                      "inverse-primary": "#ffb95f",
+                      "on-surface-variant": "#534434",
+                      "primary": "#855300",
+                      "surface-variant": "#d3e4fe",
+                      "on-secondary-fixed": "#131b2e",
+                      "on-tertiary-fixed-variant": "#004c6a",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed-dim": "#7fd0ff",
+                      "on-secondary-fixed-variant": "#3f465c",
+                      "on-secondary": "#ffffff",
+                      "inverse-surface": "#213145"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "sidebar-width": "260px",
+                      "gutter": "24px",
+                      "base": "4px",
+                      "row-height-standard": "56px",
+                      "row-height-dense": "40px",
+                      "container-padding": "32px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "display-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "code-sm": [
+                              "Courier Prime"
+                      ],
+                      "body-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "title-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "title-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-md": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "title-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        /* Light mode only as per instructions */
+        body { background-color: theme('colors.surface'); color: theme('colors.on-surface'); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen font-body-md relative">
+<!-- TopAppBar -->
+<header class="bg-surface text-primary font-title-sm text-title-sm sticky top-0 z-40 w-full border-b border-surface-container-high shadow-sm flex justify-between items-center h-row-height-standard px-gutter lg:pl-[260px] transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="lg:hidden material-symbols-outlined text-on-surface cursor-pointer">menu</span>
+<!-- Search hidden or adapted to left -->
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-surface-container-high focus-within:border-primary-container focus-within:ring-2 focus-within:ring-primary-container/20 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none outline-none text-body-sm font-body-sm text-on-surface placeholder-on-surface-variant w-64 focus:ring-0 p-0" placeholder="Tìm kiếm voucher..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 border border-surface-container-high">
+<img alt="Admin Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLHUNm3bA5NENoCZIojbxr3eFxZNph7rOaAMam0Knw7TDA-mcdfi-eMQbqiHm9zTUc-m3i_Xl_R-a45koU47YvnXzgnjbTntaNQpr4TRaevmvj0dkuQ5xyAFtZL30ep5cz-KUUYD01EGWf2Uk8_Lvqg8de0UkqC24g4RiTiTrW1qIEBEYu7kHP-frNsn30I0QDUyirrNmgYgs_Tzmx3kZCJszdK8sW02lvuuVi2_85cDxTqzqkgIsd0V6JI7wpq0e-Qsdgc2Reexo"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="bg-on-tertiary-fixed text-primary-fixed font-label-md text-label-md fixed left-0 top-0 h-full w-sidebar-width border-r border-outline-variant hidden lg:flex flex-col h-screen inset-y-0 z-50">
+<div class="p-gutter pb-8">
+<h1 class="font-display-lg text-display-lg font-bold text-surface-lowest flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[32px]" data-icon="verified">verified</span>
+                ViVouch
+            </h1>
+<p class="text-secondary-fixed-dim text-xs mt-1">Hệ thống quản trị</p>
+</div>
+<div class="flex-1 overflow-y-auto flex flex-col gap-1 px-4">
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+                Tổng quan
+            </a>
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+                Người dùng
+            </a>
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="handshake">handshake</span>
+                Đối tác
+            </a>
+<a class="flex items-center gap-base px-gutter py-row-height-dense bg-transparent text-surface-container-lowest border-l-4 border-primary-container transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="confirmation_number">confirmation_number</span>
+                Voucher
+            </a>
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="shopping_cart">shopping_cart</span>
+                Đơn hàng
+            </a>
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="article">article</span>
+                Nội dung
+            </a>
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="history">history</span>
+                Nhật ký
+            </a>
+</div>
+<div class="p-4 border-t border-on-tertiary-fixed-variant mt-auto flex flex-col gap-1">
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+                Cài đặt
+            </a>
+<a class="flex items-center gap-base px-gutter py-row-height-dense text-secondary-fixed-dim hover:text-surface-bright hover:bg-on-tertiary-fixed-variant transition-colors duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="logout">logout</span>
+                Đăng xuất
+            </a>
+</div>
+</nav>
+<!-- BottomNavBar (Mobile) -->
+<nav class="bg-surface-container-highest text-primary font-label-md text-label-md fixed bottom-0 w-full lg:hidden border-t border-outline-variant shadow-lg z-50 flex justify-around items-center h-row-height-standard px-4 pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span>Tổng quan</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="handshake">handshake</span>
+<span>Đối tác</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:bg-surface-container scale-95 duration-150 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_cart">shopping_cart</span>
+<span>Đơn hàng</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold active:bg-surface-container scale-95 duration-150 p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span>Admin</span>
+</a>
+</nav>
+<!-- Main Content -->
+<main class="lg:pl-[260px] pt-8 p-gutter pb-24 lg:pb-gutter min-h-[calc(100vh-56px)]">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Duyệt Voucher</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Quản lý và phê duyệt các voucher mới từ đối tác.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-lowest border border-outline-variant text-on-surface font-title-sm text-title-sm px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                    Lọc
+                </button>
+</div>
+</div>
+<!-- Filter/Tabs -->
+<div class="flex gap-6 border-b border-surface-container-high mb-6">
+<button class="font-title-sm text-title-sm pb-3 border-b-2 border-primary-container text-primary px-1">Chờ duyệt (12)</button>
+<button class="font-title-sm text-title-sm pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface px-1">Đã duyệt (145)</button>
+<button class="font-title-sm text-title-sm pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface px-1">Đã từ chối (8)</button>
+</div>
+<!-- Data Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-container-high overflow-hidden shadow-sm">
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse min-w-[900px]">
+<thead>
+<tr class="bg-slate-50 border-b border-surface-container-high font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
+<th class="py-3 px-4 w-16">Ảnh</th>
+<th class="py-3 px-4">Tên Voucher</th>
+<th class="py-3 px-4">Đối tác</th>
+<th class="py-3 px-4">Danh mục</th>
+<th class="py-3 px-4">Giá (Gốc/Bán)</th>
+<th class="py-3 px-4">Số lượng</th>
+<th class="py-3 px-4">Ngày gửi</th>
+<th class="py-3 px-4 text-right">Thao tác</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<!-- Row 1 -->
+<tr class="border-b border-surface-container-high hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="py-3 px-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Haidilao" class="w-full h-full object-cover" data-alt="A close up, high quality, professional food photography shot of a bubbling hot pot filled with rich red broth, meat slices, and fresh vegetables. The lighting is warm and inviting, highlighting the steam rising from the pot. The background is a slightly blurred, modern restaurant setting with subtle red and dark wood accents. The overall aesthetic is appetizing and vibrant." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDme3qC8317EaDIRAU7nRbN1gnoG7EWQuQuFOBCS0Ujzgt-96uhhZgJfV455yWIb3j2r9um7u-rTNHDfweL7tURKWxX4i-0xyqhJWSuz-BVF-_88pW9-0bwe1cP9UH1CCy3pOMhzom6u235E-wBD-l3MBP0IXGMGoPWs4VaFKrY7rGxoSwV7UikUi6LG4dB8S97hjikWbZE1IlThkwDtzhdzB6wKLtU1b7ORFr_cXd7LwtpETeuc_MBKqqvvcdy-DhmMMTl2XD-cjQ"/>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-title-sm text-on-surface">Buffet Lẩu Haidilao - Giảm 20%</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Mã: VOU-HDL-2023</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest overflow-hidden flex-shrink-0">
+<img alt="Haidilao Logo" class="w-full h-full object-cover" data-alt="A small, stylized, minimalist corporate logo depicting a simplified flame or wave motif in vibrant red against a clean white background. The design is modern, flat, and scalable. The lighting is neutral, highlighting the bold graphic element. The mood is professional and energetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdpqEt6ndhiWMdL_Wx7_uuwoc5VPhkMb_Ct5K0o5NJjbuW1wZwTP8ZbTWtQKug13ait4XaxxUP3Hcsor5MVVjTJjXPeenIZdMhAVdHBkIIKYqVhrigShhzQ80mK4V-XWZslCZT5SF7ajJUG9vscyHwsXWYtt9lFa8eqaTCbbN69pZ0GBieUHEEbZwB1zwgxbMYHdYtBr9A6Tzigd8fzHbW-lRkCtt21qXd_4Qd2VbEvVC-gAlZoUIaqup4Ks95IRNdxJK5zV0C5V8"/>
+</div>
+                                    Haidilao
+                                </div>
+</td>
+<td class="py-3 px-4">
+<span class="bg-surface-container px-2 py-1 rounded text-xs text-on-tertiary-container">Ẩm thực</span>
+</td>
+<td class="py-3 px-4">
+<div><span class="line-through text-on-surface-variant text-xs">500.000đ</span></div>
+<div class="text-error font-medium">400.000đ <span class="text-xs bg-error-container text-on-error-container px-1 rounded ml-1">-20%</span></div>
+</td>
+<td class="py-3 px-4">100</td>
+<td class="py-3 px-4 text-on-surface-variant">10/10/2023<br/><span class="text-xs">09:30</span></td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-1.5 text-error hover:bg-error-container rounded transition-colors" title="Từ chối">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+<button class="p-1.5 text-primary hover:bg-surface-container-highest rounded transition-colors" title="Duyệt">
+<span class="material-symbols-outlined text-[20px]" data-icon="check">check</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-surface-container-high hover:bg-surface-container-low transition-colors">
+<td class="py-3 px-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Highlands" class="w-full h-full object-cover" data-alt="A professional top-down shot of a beautifully crafted iced coffee beverage in a clear plastic cup with a dome lid, resting on a clean, light wood table. The drink features distinct layers of dark espresso and creamy milk. A few coffee beans are scattered artistically nearby. The lighting is bright and natural, creating a fresh, morning mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgTZ2iBVMRQeMI2KIQKX0DT_ANvl1zFs0RBOK13SSPx2fOaAqQiXQ8D29pZgH5BSC-BM5h_pkxxhwr7iV-7fyB5AJo_-PZX81wyShLPOWOjIKoN0Bku2krJw-MaDnHpuIVLjJoQUFpP7TuWKIxCK2DZ4unxGpa9z_OYw7tLRnToMPIyAzr2Si91ZZWJjIBwBtFsiMB1hdPggOujY-Eux_6u_FDsiCR4iC6JJrQ_4NvavV8EFanzKNVGzexIhOce7sdVRChalqrIOw"/>
+</div>
+</td>
+<td class="py-3 px-4">
+<div class="font-title-sm text-on-surface">Combo 2 Phindi Hạnh Nhân</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Mã: VOU-HL-PHIN</div>
+</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest overflow-hidden flex-shrink-0">
+<img alt="Highlands Logo" class="w-full h-full object-cover" data-alt="A clean, modern logo design featuring a stylized coffee cup icon in deep brown and muted gold tones on a stark white background. The lines are crisp and minimalist. The aesthetic is corporate yet inviting, typical of a premium cafe brand. The lighting is flat and uniform for clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA64Ux2Sxj46Y3Osjs6jLjpOyB_YUSTv_HXA9RRfv6vY23jzrRcTUll_MbbTIBVVP6aZgRh52f25QZeH3VMjLRUbtLislw9DX2Z9xuxIqAa2tOJzliS7vnuM4n7569_iQu7mXzkifUbtECV_Anx5r7DtABNh6t2OT87YWfcPoFSzbF8p8YvLICw1GZTVifQOAlqIaFA-vIOK3an2ivB9lb6q2D7h2khS9UZD0m4Wg9Bt8_W5ESTFvb21cqU2kmdkyXNyjRV1ap1l3s"/>
+</div>
+                                    Highlands Coffee
+                                </div>
+</td>
+<td class="py-3 px-4">
+<span class="bg-surface-container px-2 py-1 rounded text-xs text-on-tertiary-container">Đồ uống</span>
+</td>
+<td class="py-3 px-4">
+<div><span class="line-through text-on-surface-variant text-xs">110.000đ</span></div>
+<div class="text-error font-medium">85.000đ <span class="text-xs bg-error-container text-on-error-container px-1 rounded ml-1">-22%</span></div>
+</td>
+<td class="py-3 px-4">500</td>
+<td class="py-3 px-4 text-on-surface-variant">09/10/2023<br/><span class="text-xs">14:15</span></td>
+<td class="py-3 px-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-1.5 text-error hover:bg-error-container rounded transition-colors" title="Từ chối">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+<button class="p-1.5 text-primary hover:bg-surface-container-highest rounded transition-colors" title="Duyệt">
+<span class="material-symbols-outlined text-[20px]" data-icon="check">check</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-surface-container-high flex justify-between items-center text-body-sm text-on-surface-variant">
+<span>Hiển thị 1-2 của 12</span>
+<div class="flex gap-1">
+<button class="p-1 rounded hover:bg-surface-container-low disabled:opacity-50"><span class="material-symbols-outlined text-[20px]" data-icon="chevron_left">chevron_left</span></button>
+<button class="p-1 rounded hover:bg-surface-container-low"><span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 bg-on-background/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 lg:pl-[260px]">
+<!-- Modal Content -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_24px_48px_rgba(0,0,0,0.2)] w-full max-w-4xl max-h-[921px] flex flex-col overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-surface-container-high flex justify-between items-center bg-surface sticky top-0 z-10">
+<h3 class="font-title-lg text-title-lg text-on-surface">Chi tiết Voucher: Chờ duyệt</h3>
+<button class="text-on-surface-variant hover:bg-surface-container-low p-1.5 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Modal Body (Scrollable) -->
+<div class="p-6 overflow-y-auto flex-1 custom-scrollbar">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Left Col: Images & Basic Info -->
+<div class="md:col-span-1 space-y-6">
+<div>
+<div class="aspect-[4/3] rounded-lg overflow-hidden bg-surface-container border border-surface-container-high mb-3">
+<img alt="Haidilao Thumbnail" class="w-full h-full object-cover" data-alt="A vibrant, wide shot of a bustling hot pot restaurant table spread. The table is laden with various raw meats meticulously arranged on plates, fresh greens, and steaming split-pot broth in the center. The lighting is bright and warm, emphasizing the fresh textures of the food. The background hints at a modern, slightly upscale dining environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9NV6jLZV_jy0j8shKA7W765ePTHbQIlw1jhDjd085U_YtC4nEofA2zvJT_uqnydFMipndjyhm6wKjKMpW5QtcchCnkrSXiZts0IJmtXxxeeWl58FPVSRRIH6MlPXKJCcmiJCp9YERvRyoLDB_13TM160w2-rZ7hQfVlwRGcsbcBfUsl3QGerWcIaliVxZkMJMFoNscMTG2V_bFh7gSO3elA-awQ1R5XrHGn1W4Dw4-teSXvVdEOV8dBq3kdQHsZwg4nEvYup1GM4"/>
+</div>
+<div class="flex gap-2">
+<div class="w-16 h-16 rounded border-2 border-primary-container overflow-hidden cursor-pointer">
+<img alt="Thumb 1" class="w-full h-full object-cover" data-alt="A small thumbnail showing a close-up of thinly sliced, marbled beef arranged beautifully on a pristine white plate, ready for hot pot. The lighting is studio-quality, highlighting the red and white textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNsCOBDTVcJwRiRlE64RHge6LP5gBEJ8hFsas2ZV3-q9mviYhgkucDKlDi4E9-bgs1_aFvijCR7K-eu2Dlo7bLkBFIgjM5LaMiyGIXKa7WT6VY6QIc8VSIK8SjhzRie2Nd8Ec4E7iRTbrqfVcdaQGJ8y0AkBXOR_NoqSD6fyQhwFIR8O3qPRMUN1h_oWU5f7Bv4R1FMIKTfrli98x5Wo5sj_lvstMPvX05yB_SiLY_MGRPvFYVXFDBcP-VsbjyVQuZ1VRcEoG8g9s"/>
+</div>
+<div class="w-16 h-16 rounded border border-surface-container-high overflow-hidden opacity-60 hover:opacity-100 cursor-pointer transition-opacity">
+<img alt="Thumb 2" class="w-full h-full object-cover" data-alt="A small thumbnail image of a fresh vegetable platter for hot pot, featuring vibrant green leafy vegetables, enoki mushrooms, and sliced lotus root. The lighting is bright and clean." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRPb5h7NBjyCcAtrrN1DCF7S1Xl1Ozr3s1WQ_J0xeu5I1_ArY7_gtYAHNFKucnFkLAdJPrVYFQhxRBsg06F5lgfiTO2EEz9ofgu-G4mI-V9Fbfw8V7H4fnUL8_wC5DfhbPfFLKfpG9tkHpW6T2KTAEFnQhWrYLjrdAYrRinNZYxfuDAvj2NHuPWDAAiGV-Rk1AJTlNhqs5ES5XFg-OVvb8am-z4V6ymRHAScFvXYrmrIjQCwTLrj4i1xBMD2gdj-NWaLHfIV2xs7k"/>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg border border-surface-container-high">
+<h4 class="font-title-sm text-title-sm text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="storefront">storefront</span>
+                                Thông tin đối tác
+                            </h4>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="Logo" class="w-full h-full object-cover" data-alt="A small, circular profile picture format logo of a stylised flame in red on a white background. Minimalist and corporate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtAIKKKTgxWQpwj4DprMmp-c5cr1nXkKQBJttvhuKbdHU516FUcA0JTyDkBc873KBqzJUNAZP8C894m2e7R2Oeix0TSf_5Ev73NVMO99K00Dlc0OiRbLQDgND3R26Rgt-tP-qHJa4X3ykBaEJi0MmJDBULl1IAngTJimoMgr2F9gjr3HWSr308nQ0ZEpY5FgpLILAB5O8AlgkeShoZQv_mK9exvY78aR5Wo-_cB0oTcavDcONIZeptsvu1QWih4D1AEo7sW4XhV6s"/>
+</div>
+<div>
+<div class="font-title-sm text-on-surface">Haidilao Vietnam</div>
+<div class="text-xs text-on-surface-variant">ID: PART-9921</div>
+</div>
+</div>
+<div class="text-xs text-secondary mt-2 pt-2 border-t border-surface-container-high flex justify-between">
+<span>Đánh giá hệ thống:</span>
+<span class="text-primary font-medium flex items-center"><span class="material-symbols-outlined text-[14px] mr-1" data-icon="star">star</span> 4.9/5</span>
+</div>
+</div>
+</div>
+<!-- Right Col: Details -->
+<div class="md:col-span-2 space-y-6">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Buffet Lẩu Haidilao - Giảm 20%</h2>
+<span class="bg-surface-container-high text-on-surface-variant text-xs px-2 py-1 rounded font-medium border border-outline-variant">Ẩm thực</span>
+</div>
+<p class="text-body-sm text-on-surface-variant">Tận hưởng không gian lẩu cao cấp với mức giá ưu đãi đặc biệt dành riêng cho khách hàng ViVouch.</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="border border-surface-container-high p-4 rounded-lg bg-surface-container-lowest">
+<div class="text-xs text-on-surface-variant mb-1">Giá gốc</div>
+<div class="line-through text-on-surface-variant font-medium">500.000 ₫</div>
+</div>
+<div class="border border-primary-container/30 p-4 rounded-lg bg-surface-container-low">
+<div class="text-xs text-on-surface-variant mb-1">Giá bán trên ViVouch</div>
+<div class="text-error font-title-lg text-title-lg flex items-center gap-2">
+                                    400.000 ₫
+                                    <span class="text-xs bg-error text-on-error px-1.5 py-0.5 rounded-sm font-medium">-20%</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div>
+<div class="text-xs text-on-surface-variant mb-1">Số lượng phát hành</div>
+<div class="font-medium text-on-surface">1,000</div>
+</div>
+<div>
+<div class="text-xs text-on-surface-variant mb-1">Thời hạn sử dụng</div>
+<div class="font-medium text-on-surface">30 ngày <span class="text-[10px] text-secondary font-normal">(kể từ ngày mua)</span></div>
+</div>
+<div>
+<div class="text-xs text-on-surface-variant mb-1">Ngày bắt đầu bán</div>
+<div class="font-medium text-on-surface">15/10/2023</div>
+</div>
+<div>
+<div class="text-xs text-on-surface-variant mb-1">Ngày kết thúc</div>
+<div class="font-medium text-on-surface">31/12/2023</div>
+</div>
+</div>
+<div class="border-t border-surface-container-high pt-6">
+<h4 class="font-title-sm text-title-sm text-on-surface mb-3">Điều khoản &amp; Điều kiện (T&amp;C)</h4>
+<div class="bg-surface p-4 rounded-lg border border-surface-container-high text-body-sm text-on-surface-variant space-y-2 h-32 overflow-y-auto">
+<ul class="list-disc pl-4 space-y-1">
+<li>Áp dụng cho mọi chi nhánh Haidilao trên toàn quốc.</li>
+<li>Không áp dụng đồng thời với các chương trình khuyến mãi khác tại nhà hàng.</li>
+<li>Voucher không có giá trị quy đổi thành tiền mặt, không hoàn trả tiền thừa.</li>
+<li>Mỗi voucher chỉ được sử dụng 01 lần cho 01 hóa đơn.</li>
+<li>Khách hàng vui lòng đặt bàn trước qua hotline để được phục vụ tốt nhất.</li>
+<li>Phụ thu cuối tuần (T7, CN): 50.000đ/người.</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-surface-container-high pt-6">
+<h4 class="font-title-sm text-title-sm text-on-surface mb-3 flex justify-between items-center">
+                                Chi nhánh áp dụng
+                                <span class="text-xs font-normal text-primary bg-surface-container-highest px-2 py-1 rounded">12 chi nhánh</span>
+</h4>
+<div class="flex flex-wrap gap-2">
+<span class="text-xs border border-surface-container-high px-2 py-1 rounded-full text-on-surface-variant bg-surface">Vincom Center Đồng Khởi</span>
+<span class="text-xs border border-surface-container-high px-2 py-1 rounded-full text-on-surface-variant bg-surface">Bitexco Financial Tower</span>
+<span class="text-xs border border-surface-container-high px-2 py-1 rounded-full text-on-surface-variant bg-surface">Crescent Mall</span>
+<span class="text-xs border border-surface-container-high px-2 py-1 rounded-full text-on-surface-variant bg-surface">Landmark 81</span>
+<span class="text-xs border border-surface-container-high px-2 py-1 rounded-full text-on-surface-variant bg-surface cursor-pointer hover:bg-surface-container-low text-primary">+8 chi nhánh khác</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Approval Section at Bottom of Body -->
+<div class="mt-8 bg-surface-container-low p-6 rounded-lg border-2 border-surface-container-high">
+<h4 class="font-title-sm text-title-sm text-on-surface mb-4">Quyết định phê duyệt</h4>
+<div class="space-y-4">
+<div>
+<label class="block text-xs font-medium text-on-surface-variant mb-1">Lý do từ chối (bắt buộc nếu chọn Từ chối)</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-body-sm focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all outline-none resize-none h-24 placeholder-secondary" placeholder="Nhập lý do chi tiết để đối tác điều chỉnh..."></textarea>
+</div>
+<div class="flex justify-end gap-3 pt-2">
+<button class="px-6 py-2 rounded-lg border border-outline-variant text-on-surface font-title-sm hover:bg-surface-container-highest transition-colors">
+                                Hủy bỏ
+                            </button>
+<button class="px-6 py-2 rounded-lg border border-error text-error font-title-sm hover:bg-error-container hover:border-error transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="block">block</span>
+                                Từ chối
+                            </button>
+<button class="px-6 py-2 rounded-lg bg-primary-container text-on-primary-container font-title-sm shadow-sm hover:bg-primary hover:text-on-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                                Duyệt Voucher
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: theme('colors.surface-container-high');
+            border-radius: 20px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+</body></html>

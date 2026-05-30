@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch - Đăng ký</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#281900",
+                        "secondary-fixed-dim": "#ffb4ac",
+                        "surface-container-high": "#e8e8ea",
+                        "error": "#ba1a1a",
+                        "secondary": "#b7131a",
+                        "inverse-on-surface": "#f0f0f3",
+                        "inverse-primary": "#68dbae",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "surface-tint": "#006c4e",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#db322f",
+                        "surface-variant": "#e2e2e5",
+                        "on-primary-fixed-variant": "#00513a",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "on-tertiary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f3f3f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#f5fff7",
+                        "tertiary": "#7b5500",
+                        "inverse-surface": "#2f3133",
+                        "outline-variant": "#bccac1",
+                        "secondary-fixed": "#ffdad6",
+                        "on-surface": "#1a1c1e",
+                        "on-secondary-fixed-variant": "#93000d",
+                        "surface-container-highest": "#e2e2e5",
+                        "primary-fixed-dim": "#68dbae",
+                        "on-error": "#ffffff",
+                        "on-background": "#1a1c1e",
+                        "on-secondary-fixed": "#410002",
+                        "primary-container": "#008560",
+                        "on-secondary-container": "#fffbff",
+                        "on-surface-variant": "#3d4943",
+                        "background": "#f9f9fc",
+                        "surface-dim": "#dadadc",
+                        "primary-fixed": "#86f8c9",
+                        "surface": "#f9f9fc",
+                        "surface-bright": "#f9f9fc",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#9b6b00",
+                        "on-primary-fixed": "#002115",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#eeeef0",
+                        "tertiary-fixed": "#ffdeac",
+                        "primary": "#00694c",
+                        "outline": "#6d7a73"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "section-gap": "32px",
+                        "gutter": "12px",
+                        "container-margin": "16px"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex items-center justify-center p-4">
+<!-- Registration Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-lg w-full max-w-md p-8 relative overflow-hidden">
+<!-- Decorative Background Element -->
+<div class="absolute -top-20 -right-20 w-40 h-40 bg-primary-container rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none"></div>
+<div class="absolute -bottom-20 -left-20 w-40 h-40 bg-secondary-container rounded-full mix-blend-multiply filter blur-3xl opacity-20 pointer-events-none"></div>
+<!-- Header -->
+<div class="flex items-center mb-section-gap relative z-10">
+<button aria-label="Go back" class="text-on-surface-variant hover:text-primary transition-colors focus:outline-none p-2 -ml-2 rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-lg text-headline-lg text-on-surface ml-2">Tạo tài khoản</h1>
+</div>
+<!-- Form -->
+<form class="space-y-6 relative z-10">
+<!-- Full Name Field -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1" for="fullname">Họ và tên</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">person</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="fullname" name="fullname" placeholder="Nguyễn Văn A" type="text"/>
+</div>
+</div>
+<!-- Email Field (ERROR STATE) -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1" for="email">Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-error pointer-events-none">mail</span>
+<input aria-describedby="email-error" aria-invalid="true" class="w-full pl-10 pr-10 py-3 bg-error-container/10 border-2 border-error rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-0 transition-colors" id="email" name="email" type="email" value="invalid-email@"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-error pointer-events-none" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<p class="mt-1 font-label-md text-label-md text-error flex items-center gap-1" id="email-error">
+                    Email không hợp lệ
+                </p>
+</div>
+<!-- Phone Number Field -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1" for="phone">Số điện thoại</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">call</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="phone" name="phone" placeholder="0912 345 678" type="tel"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1" for="password">Mật khẩu</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">lock</span>
+<input class="w-full pl-10 pr-10 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="password" name="password" placeholder="••••••••" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary focus:outline-none" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1" for="confirm_password">Xác nhận mật khẩu</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">lock_reset</span>
+<input class="w-full pl-10 pr-10 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="confirm_password" name="confirm_password" placeholder="••••••••" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary focus:outline-none" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-3 px-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-md hover:bg-on-primary-fixed-variant focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all transform active:scale-[0.98] mt-6" type="button">
+                Đăng ký
+            </button>
+</form>
+<!-- Footer -->
+<div class="mt-6 text-center relative z-10">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Đã có tài khoản? 
+                <a class="text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary rounded" href="#">Đăng nhập</a>
+</p>
+</div>
+</div>
+</body></html>

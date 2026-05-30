@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Vouchers - ViVouch</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#410002",
+                    "surface-bright": "#f9f9fc",
+                    "surface-container": "#eeeef0",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#ffdeac",
+                    "outline": "#6d7a73",
+                    "secondary-fixed-dim": "#ffb4ac",
+                    "secondary": "#b7131a",
+                    "on-error-container": "#93000a",
+                    "background": "#f9f9fc",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#7b5500",
+                    "tertiary-container": "#9b6b00",
+                    "primary-fixed-dim": "#68dbae",
+                    "secondary-fixed": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e8e8ea",
+                    "on-secondary-fixed-variant": "#93000d",
+                    "primary-container": "#008560",
+                    "surface-container-low": "#f3f3f6",
+                    "on-secondary-container": "#fffbff",
+                    "on-primary-fixed": "#002115",
+                    "surface-dim": "#dadadc",
+                    "inverse-surface": "#2f3133",
+                    "on-primary-container": "#f5fff7",
+                    "surface-tint": "#006c4e",
+                    "on-surface": "#1a1c1e",
+                    "inverse-on-surface": "#f0f0f3",
+                    "on-tertiary-fixed-variant": "#604100",
+                    "on-background": "#1a1c1e",
+                    "surface-container-highest": "#e2e2e5",
+                    "primary-fixed": "#86f8c9",
+                    "on-tertiary-container": "#fffbff",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#db322f",
+                    "surface-variant": "#e2e2e5",
+                    "on-error": "#ffffff",
+                    "surface": "#f9f9fc",
+                    "on-tertiary-fixed": "#281900",
+                    "tertiary-fixed-dim": "#ffba38",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#3d4943",
+                    "outline-variant": "#bccac1",
+                    "primary": "#00694c",
+                    "on-primary-fixed-variant": "#00513a",
+                    "inverse-primary": "#68dbae"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "32px",
+                    "gutter": "12px",
+                    "base": "8px",
+                    "container-margin": "16px"
+            },
+            "fontFamily": {
+                    "price-display": [
+                            "Be Vietnam Pro"
+                    ],
+                    "label-md": [
+                            "Be Vietnam Pro"
+                    ],
+                    "body-md": [
+                            "Be Vietnam Pro"
+                    ],
+                    "headline-lg-mobile": [
+                            "Be Vietnam Pro"
+                    ],
+                    "display-lg": [
+                            "Be Vietnam Pro"
+                    ],
+                    "headline-lg": [
+                            "Be Vietnam Pro"
+                    ],
+                    "body-lg": [
+                            "Be Vietnam Pro"
+                    ],
+                    "headline-md": [
+                            "Be Vietnam Pro"
+                    ]
+            },
+            "fontSize": {
+                    "price-display": [
+                            "20px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-lg": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f9f9fc; /* surface */
+        }
+        
+        /* Custom cutout effect for vouchers */
+        .voucher-card::before, .voucher-card::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #f9f9fc; /* matches body background */
+            border-radius: 50%;
+            border: 1px solid #bccac1; /* outline-variant */
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        .voucher-card::before {
+            left: 88px; /* Approx position of dashed line */
+            border-left-color: transparent;
+            border-top-color: transparent;
+            border-bottom-color: transparent;
+            margin-left: -9px;
+        }
+
+        .voucher-card::after {
+            left: 88px;
+            border-right-color: transparent;
+            border-top-color: transparent;
+            border-bottom-color: transparent;
+            margin-left: 7px;
+        }
+        
+        .voucher-cutout-mask {
+            position: absolute;
+            top: 50%;
+            left: 88px;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background-color: #f9f9fc;
+            border-radius: 50%;
+            z-index: 20;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased pb-[88px] selection:bg-primary-container selection:text-on-primary-container max-w-[480px] mx-auto min-h-screen relative shadow-2xl">
+<!-- Header -->
+<header class="sticky top-0 z-40 bg-surface-container-lowest shadow-sm px-4 py-4 flex items-center justify-between">
+<button class="p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors text-on-surface">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-on-surface absolute left-1/2 -translate-x-1/2">Voucher của tôi</h1>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</header>
+<!-- Tabs -->
+<div class="bg-surface-container-lowest border-b border-outline-variant flex justify-around px-2 pt-2 sticky top-[72px] z-30 shadow-sm">
+<button class="flex-1 pb-3 text-center border-b-2 border-primary text-primary font-label-md text-label-md transition-colors">
+            Chưa dùng (4)
+        </button>
+<button class="flex-1 pb-3 text-center border-b-2 border-transparent text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors">
+            Đã dùng
+        </button>
+<button class="flex-1 pb-3 text-center border-b-2 border-transparent text-on-surface-variant font-body-md text-body-md hover:text-primary transition-colors">
+            Hết hạn
+        </button>
+</div>
+<!-- Main Content: Voucher List -->
+<main class="p-4 flex flex-col gap-4 mt-2">
+<!-- Voucher Card 1 (Highlands) -->
+<article class="voucher-card relative bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden flex h-[120px] cursor-pointer hover:shadow-md transition-all active:scale-[0.98]" onclick="openModal('HLD50K', 'Giảm 50K Highland Coffee')">
+<!-- Left Green Strip -->
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary z-10"></div>
+<!-- Thumbnail Area -->
+<div class="w-[96px] h-full flex-shrink-0 bg-surface-container flex items-center justify-center p-3 relative z-0 pl-[14px]">
+<img alt="Highlands Coffee" class="w-full h-full object-cover rounded-lg shadow-sm" data-alt="A modern, high-quality close-up of a premium iced coffee beverage in a minimalist glass cup. The setting is a clean, well-lit modern cafe with a bright white aesthetic. Soft, diffused daylight creates a fresh, vibrant atmosphere, emphasizing retail quality and immediate value. The styling aligns with a corporate yet approachable branding, suitable for a high-end voucher platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWCP_fF5cvEf9nx4JXsDLLKPSNs8BVVqhzgTl68sPpUgIBhew32KIiBHy5vgQMjH05rmg7Y-EQ8fOJrCmoT0hQZSuKRk6-opboJlfrZFPBvq1swdBghPPY6qr7VwIbr4-G_aKh7G8jdTp-vMCuQ-cOKHwopAihn9Y2BBMwhDSbRI5rozrmOelppBxdoQ5gzzvYLNc2duJPIbiMWAKe7X0KDOYa7oJz-71UqpVhNbSKfe5mHRFBxKyEcCqqnwGHvB3CBqkAZtv4QKY"/>
+</div>
+<!-- Dashed Divider & Cutouts -->
+<div class="relative w-0 border-l border-dashed border-outline-variant my-4 z-0">
+<div class="absolute -top-6 -left-3 w-6 h-6 rounded-full bg-surface border-b border-outline-variant"></div>
+<div class="absolute -bottom-6 -left-3 w-6 h-6 rounded-full bg-surface border-t border-outline-variant"></div>
+</div>
+<!-- Details Area -->
+<div class="flex-1 p-3 pl-4 flex flex-col justify-between z-0">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-label-md text-label-md text-on-surface line-clamp-2 leading-tight">Giảm 50% tối đa 50K cho đơn từ 100K</h3>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary-container text-on-primary-container whitespace-nowrap">Còn hiệu lực</span>
+</div>
+<p class="font-body-md text-[12px] text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">storefront</span> Highlands Coffee
+                    </p>
+</div>
+<div class="flex items-end justify-between mt-1">
+<p class="font-body-md text-[11px] text-error font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">timer</span> Hết hạn: Hôm nay
+                    </p>
+<div class="flex items-center gap-2 bg-surface-container-low border border-outline-variant/30 rounded px-2 py-1">
+<span class="font-mono text-[13px] font-bold text-primary tracking-widest">HLD50K</span>
+<span class="material-symbols-outlined text-[16px] text-primary">qr_code_2</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Voucher Card 2 (CGV) -->
+<article class="voucher-card relative bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden flex h-[120px] cursor-pointer hover:shadow-md transition-all active:scale-[0.98]" onclick="openModal('CGVMV', 'Vé xem phim CGV 2D')">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary z-10"></div>
+<div class="w-[96px] h-full flex-shrink-0 bg-surface-container flex items-center justify-center p-3 relative z-0 pl-[14px]">
+<img alt="CGV Cinemas" class="w-full h-full object-cover rounded-lg shadow-sm" data-alt="A cinematic, modern shot of a movie theater setting, featuring stylized popcorn and a clapperboard on a pristine white surface. The lighting is crisp and bright, utilizing a modern light-mode aesthetic rather than a dark room. The image conveys premium entertainment and retail value, designed for a sleek corporate discount application with deep greens and bright whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1O0x7Rvo3cQgjEcA89SZIBiLxG6OQpKA50V5tFMrIyTjrk0P8VoE4oIOf6KReH-fZAN-i035hi_gceoPo2v103V88W7eWkbtL5vy0PQVQHMx71Pck7NfV8eSidkHMX1dOLiDNyHSphPTiU_Q-TRzCZfSGNlTtjnURpo3fwNKwiZUoeRLZ0sbmsbjZLH5BvSCes9KVeN_IwTZRKxLkMNxs0AXCehDtq7UuNO5cngGYJ1SsOfMObmZofJJ8HruiSY4I6CXsXzNuDps"/>
+</div>
+<div class="relative w-0 border-l border-dashed border-outline-variant my-4 z-0">
+<div class="absolute -top-6 -left-3 w-6 h-6 rounded-full bg-surface border-b border-outline-variant"></div>
+<div class="absolute -bottom-6 -left-3 w-6 h-6 rounded-full bg-surface border-t border-outline-variant"></div>
+</div>
+<div class="flex-1 p-3 pl-4 flex flex-col justify-between z-0">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-label-md text-label-md text-on-surface line-clamp-2 leading-tight">Đồng giá 69K vé xem phim 2D tất cả các rạp</h3>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary-container text-on-primary-container whitespace-nowrap">Còn hiệu lực</span>
+</div>
+<p class="font-body-md text-[12px] text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">movie</span> CGV Cinemas
+                    </p>
+</div>
+<div class="flex items-end justify-between mt-1">
+<p class="font-body-md text-[11px] text-on-surface-variant font-medium">
+                        Hết hạn: 15/11/2023
+                    </p>
+<div class="flex items-center gap-2 bg-surface-container-low border border-outline-variant/30 rounded px-2 py-1">
+<span class="font-mono text-[13px] font-bold text-primary tracking-widest">CGVMV</span>
+<span class="material-symbols-outlined text-[16px] text-primary">qr_code_2</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Voucher Card 3 (Shopee) -->
+<article class="voucher-card relative bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden flex h-[120px] cursor-pointer hover:shadow-md transition-all active:scale-[0.98]" onclick="openModal('SHPFS', 'Freeship Shopee')">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary z-10"></div>
+<div class="w-[96px] h-full flex-shrink-0 bg-surface-container flex items-center justify-center p-3 relative z-0 pl-[14px]">
+<div class="w-full h-full bg-[#EE4D2D] rounded-lg shadow-sm flex items-center justify-center flex-col text-white">
+<span class="material-symbols-outlined text-[32px]">local_shipping</span>
+</div>
+</div>
+<div class="relative w-0 border-l border-dashed border-outline-variant my-4 z-0">
+<div class="absolute -top-6 -left-3 w-6 h-6 rounded-full bg-surface border-b border-outline-variant"></div>
+<div class="absolute -bottom-6 -left-3 w-6 h-6 rounded-full bg-surface border-t border-outline-variant"></div>
+</div>
+<div class="flex-1 p-3 pl-4 flex flex-col justify-between z-0">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-label-md text-label-md text-on-surface line-clamp-2 leading-tight">Mã Miễn Phí Vận Chuyển Đơn Từ 0Đ</h3>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary-container text-on-primary-container whitespace-nowrap">Còn hiệu lực</span>
+</div>
+<p class="font-body-md text-[12px] text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">shopping_bag</span> Shopee
+                    </p>
+</div>
+<div class="flex items-end justify-between mt-1">
+<p class="font-body-md text-[11px] text-on-surface-variant font-medium">
+                        Hết hạn: 30/11/2023
+                    </p>
+<div class="flex items-center gap-2 bg-surface-container-low border border-outline-variant/30 rounded px-2 py-1">
+<span class="font-mono text-[13px] font-bold text-primary tracking-widest">SHPFS</span>
+<span class="material-symbols-outlined text-[16px] text-primary">qr_code_2</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Empty State hint (just to fill space beautifully if needed, but 4 is specified, let's add one more) -->
+<article class="voucher-card relative bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant overflow-hidden flex h-[120px] cursor-pointer hover:shadow-md transition-all active:scale-[0.98]" onclick="openModal('GRB20', 'Giảm 20K GrabBike')">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary z-10"></div>
+<div class="w-[96px] h-full flex-shrink-0 bg-surface-container flex items-center justify-center p-3 relative z-0 pl-[14px]">
+<img alt="Grab" class="w-full h-full object-cover rounded-lg shadow-sm" data-alt="A sleek, top-down view of a modern motorcycle helmet resting on a clean, bright minimalist surface. The lighting is pristine and high-key, casting soft shadows. The color palette emphasizes crisp whites and subtle brand accents, portraying a safe, premium, and efficient urban transportation service for a high-end deal platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdNGGKTFlB9-5XWum8ZNj8vE-Wf40MO4viA5AXqp13-JyZ6hEz8rBH5wit4Zn8Xj8btfc04brFy5LPsCBgeFPDjqw4Z0CSDu0LYPElsTkTnojqjjUr6F97Ar3M_hhTiZ8pqvTjL0C6YPl-ZX85uwPMbwHg0HsFKPZVK2XhgJqwD6AaPxo8WTYAj4R7fMZBCZ47bVkBn8Py_NLGQh2rxJFACoFcibU5TdqT2Xz-Ce81mVRs4ZFt8KwyBhSuPgGWvTwzMZfweaZ2VKM"/>
+</div>
+<div class="relative w-0 border-l border-dashed border-outline-variant my-4 z-0">
+<div class="absolute -top-6 -left-3 w-6 h-6 rounded-full bg-surface border-b border-outline-variant"></div>
+<div class="absolute -bottom-6 -left-3 w-6 h-6 rounded-full bg-surface border-t border-outline-variant"></div>
+</div>
+<div class="flex-1 p-3 pl-4 flex flex-col justify-between z-0">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h3 class="font-label-md text-label-md text-on-surface line-clamp-2 leading-tight">Giảm 20K cho chuyến xe GrabBike tiếp theo</h3>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary-container text-on-primary-container whitespace-nowrap">Còn hiệu lực</span>
+</div>
+<p class="font-body-md text-[12px] text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">two_wheeler</span> Grab
+                    </p>
+</div>
+<div class="flex items-end justify-between mt-1">
+<p class="font-body-md text-[11px] text-on-surface-variant font-medium">
+                        Hết hạn: 12/12/2023
+                    </p>
+<div class="flex items-center gap-2 bg-surface-container-low border border-outline-variant/30 rounded px-2 py-1">
+<span class="font-mono text-[13px] font-bold text-primary tracking-widest">GRB20</span>
+<span class="material-symbols-outlined text-[16px] text-primary">qr_code_2</span>
+</div>
+</div>
+</div>
+</article>
+</main>
+<!-- Modal for QR Expansion -->
+<div class="fixed inset-0 z-[100] bg-on-surface/40 backdrop-blur-sm hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300" id="qrModal">
+<div class="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-2xl flex flex-col items-center transform scale-95 transition-transform duration-300" id="qrModalContent">
+<button class="self-end text-on-surface-variant hover:text-on-surface mb-2" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h2 class="font-headline-md text-headline-md text-on-surface text-center mb-6" id="modalTitle">Voucher Name</h2>
+<div class="bg-surface-container p-4 rounded-xl mb-6 shadow-inner">
+<!-- Placeholder for actual QR code rendering -->
+<span class="material-symbols-outlined text-[180px] text-on-surface font-light">qr_code_2</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">Mã của bạn</p>
+<div class="bg-primary-container/20 px-6 py-3 rounded-lg border border-primary/30">
+<p class="font-mono text-[24px] font-bold text-primary tracking-[0.2em]" id="modalCode">CODE</p>
+</div>
+<button class="w-full mt-8 py-3 rounded-full bg-primary text-on-primary font-label-md text-label-md active:scale-95 transition-transform shadow-md" onclick="closeModal()">
+                Đóng
+            </button>
+</div>
+</div>
+<!-- Shared Component: BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface-container-lowest shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-xl max-w-[480px] mx-auto border-t border-outline-variant/10">
+<!-- Inactive: Home -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-all active:scale-95 duration-200 rounded-2xl w-16" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-md text-[10px] mt-1">Home</span>
+</a>
+<!-- Inactive: Explore -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-all active:scale-95 duration-200 rounded-2xl w-16" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="font-label-md text-[10px] mt-1">Explore</span>
+</a>
+<!-- ACTIVE: My Vouchers (Index 2) -->
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-2xl p-2 active:scale-95 duration-200 w-20 shadow-sm relative -top-1" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_activity</span>
+<span class="font-label-md text-[10px] mt-1">My Vouchers</span>
+</a>
+<!-- Inactive: Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-container-high transition-all active:scale-95 duration-200 rounded-2xl w-16" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-md text-[10px] mt-1">Profile</span>
+</a>
+</nav>
+<!-- Top Navigation (Desktop Placeholder to satisfy generic requirements, hidden on mobile) -->
+<nav class="hidden md:flex items-center justify-between px-container-margin max-w-7xl mx-auto w-full h-16 bg-surface-container-lowest shadow-sm fixed top-0 z-50">
+<div class="font-headline-md text-headline-md font-bold text-primary">ViVouch</div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">Explore</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">Trending</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">Deals</a>
+<!-- Active State desktop equivalent -->
+<a class="text-primary font-bold border-b-2 border-primary pb-1 cursor-pointer active:opacity-80" href="#">My Vouchers</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary text-on-surface-variant">shopping_cart</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary text-on-surface-variant">notifications</span>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-full font-label-md text-label-md">Login</button>
+</div>
+</nav>
+<script>
+        // Simple Interaction Logic for QR Modal
+        const modal = document.getElementById('qrModal');
+        const modalContent = document.getElementById('qrModalContent');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCode = document.getElementById('modalCode');
+
+        function openModal(code, title) {
+            modalTitle.textContent = title;
+            modalCode.textContent = code;
+            modal.classList.remove('hidden');
+            // Trigger reflow
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-95');
+            modalContent.classList.add('scale-100');
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+        
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    </script>
+</body></html>

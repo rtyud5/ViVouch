@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order Success - ViVouch</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#b7131a",
+                    "outline-variant": "#bccac1",
+                    "on-tertiary-fixed-variant": "#604100",
+                    "on-secondary-container": "#fffbff",
+                    "surface-variant": "#e2e2e5",
+                    "surface-container": "#eeeef0",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-bright": "#f9f9fc",
+                    "error": "#ba1a1a",
+                    "outline": "#6d7a73",
+                    "on-surface-variant": "#3d4943",
+                    "on-primary": "#ffffff",
+                    "on-primary-container": "#f5fff7",
+                    "background": "#f9f9fc",
+                    "surface-container-low": "#f3f3f6",
+                    "surface": "#f9f9fc",
+                    "tertiary-fixed-dim": "#ffba38",
+                    "inverse-primary": "#68dbae",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#9b6b00",
+                    "secondary-container": "#db322f",
+                    "primary-container": "#008560",
+                    "on-background": "#1a1c1e",
+                    "inverse-on-surface": "#f0f0f3",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#7b5500",
+                    "on-primary-fixed-variant": "#00513a",
+                    "tertiary-fixed": "#ffdeac",
+                    "secondary-fixed-dim": "#ffb4ac",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-highest": "#e2e2e5",
+                    "primary-fixed-dim": "#68dbae",
+                    "on-primary-fixed": "#002115",
+                    "primary": "#00694c",
+                    "on-surface": "#1a1c1e",
+                    "on-secondary-fixed": "#410002",
+                    "surface-dim": "#dadadc",
+                    "on-secondary-fixed-variant": "#93000d",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#86f8c9",
+                    "on-tertiary-fixed": "#281900",
+                    "secondary-fixed": "#ffdad6",
+                    "inverse-surface": "#2f3133",
+                    "surface-tint": "#006c4e",
+                    "surface-container-high": "#e8e8ea",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "16px",
+                    "section-gap": "32px",
+                    "gutter": "12px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["Be Vietnam Pro", "sans-serif"],
+                    "headline-lg": ["Be Vietnam Pro", "sans-serif"],
+                    "headline-lg-mobile": ["Be Vietnam Pro", "sans-serif"],
+                    "body-lg": ["Be Vietnam Pro", "sans-serif"],
+                    "display-lg": ["Be Vietnam Pro", "sans-serif"],
+                    "price-display": ["Be Vietnam Pro", "sans-serif"],
+                    "label-md": ["Be Vietnam Pro", "sans-serif"],
+                    "headline-md": ["Be Vietnam Pro", "sans-serif"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        /* Confetti Animation */
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+        }
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: float-up 3s ease-out infinite;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen relative overflow-x-hidden">
+<!-- Subtle Celebratory Background -->
+<div aria-hidden="true" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="confetti bg-primary left-1/4 top-1/4" style="animation-delay: 0s;"></div>
+<div class="confetti bg-secondary left-3/4 top-1/3" style="animation-delay: 0.5s;"></div>
+<div class="confetti bg-tertiary left-1/2 top-1/2" style="animation-delay: 1s;"></div>
+<div class="confetti bg-inverse-primary left-1/3 top-2/3" style="animation-delay: 1.5s;"></div>
+<div class="confetti bg-primary-container right-1/4 top-3/4" style="animation-delay: 2s;"></div>
+</div>
+<!-- Main Content Canvas (Transactional - Suppress Nav Shell per rules, BUT user requested Bottom Navigation Bar, so we will include it but it's technically against the 'Linear/Transactional' rule. To satisfy the specific prompt while trying to respect the JSON, we'll keep the bottom nav but style it according to the JSON) -->
+<main class="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-container-margin py-section-gap pb-32">
+<!-- Success Checkmark -->
+<div class="mb-6 flex flex-col items-center">
+<div class="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center shadow-lg mb-4">
+<span class="material-symbols-outlined text-on-primary-container" style="font-size: 48px; font-variation-settings: 'FILL' 1;">
+                    check_circle
+                </span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary text-center">
+                Đặt hàng thành công!
+            </h1>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mt-2">
+                Mã đơn: #VV-2024-00142
+            </p>
+</div>
+<!-- Voucher Card -->
+<div class="w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-surface-container-highest p-4 mb-8">
+<div class="flex items-center mb-4 border-b border-surface-container pb-4">
+<div class="w-12 h-12 bg-surface-container rounded-lg overflow-hidden shrink-0">
+<img alt="Restaurant Logo" class="w-full h-full object-cover" data-alt="A close-up shot of a bubbling hot pot filled with fresh vegetables, meats, and spicy broth, representing a premium dining experience. The lighting is warm and inviting, highlighting the steam rising from the pot. The image has a clean, professional food photography style with vibrant reds and fresh greens, fitting a modern culinary voucher platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7ziTsmg7AMcZLEMForb9khuXmeEDokAsXE59e7B8VounzSBR6skcrqWn9KbYa8ejLOUlO64J4XFWQh-EFHPO6BvvVX-8WU70RiAbKjPIIBWmlVOskMEarlZgKWVItjV-ZHCMIO745h1uAjk1YJC6dzf16yuCt_mrr568tA2xBjSGrFrIer5GwUjX_An2QklZut5QXEF-hhAXJ4JDm-wJDK8W-2SAdA1jClSYmWZRq-e58MiIopqPTKiPPWvYbjciD1H3ZVFxSnCI"/>
+</div>
+<div class="ml-4">
+<h2 class="font-headline-md text-headline-md text-on-surface text-lg">Buffet Lẩu 2 người — Haidilao</h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mt-1">Hạn dùng: 31/12/2024</p>
+</div>
+</div>
+<div class="flex flex-col items-center">
+<p class="font-label-md text-label-md text-on-surface-variant mb-2">Quét mã QR để sử dụng</p>
+<div class="w-48 h-48 bg-white border border-surface-container rounded-lg flex items-center justify-center p-2 mb-4">
+<!-- QR Placeholder -->
+<img alt="QR Code" class="w-full h-full object-cover rounded" data-alt="A high-contrast black and white square QR code pattern. The code is crisp and legible, designed for quick scanning on a mobile device. The background is pure white, and the black squares are sharp, fitting a clean, functional digital interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJCubRCU8cumgtIYGutOVq0yx5AjD0OCPtEwg372XhVi4ynz5mM2yBi1UWZQQ1Iw7JgG_KXgErlslEYUjMuEduboZ2zHww_nJi4L6FtTJGbvpLhwLrEiBOP-k7LzI7GOS4t3B4KQC36Qk6HwqR792vU-Gmpq5_RkXZzbf5jQPvrvblQC3HEn1zw6MhQ4JswtTrShsYIfqgihUYDCqZu5SyLfyvZU14LnWERkB9gjlU_9_UkzsdQ_RqL2dMS9aVIblyqbGwFwmFBQ" style="filter: grayscale(100%) contrast(150%);"/>
+</div>
+<div class="w-full bg-surface-container-low rounded-lg p-3 flex justify-between items-center border border-surface-container border-dashed">
+<div>
+<p class="text-xs text-on-surface-variant mb-1">Mã voucher</p>
+<p class="font-mono text-primary font-bold tracking-wider">VC-2024-A8KX92NP</p>
+</div>
+<button aria-label="Copy code" class="p-2 text-primary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">content_copy</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full max-w-sm flex flex-col gap-4">
+<button class="w-full py-3 px-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow hover:opacity-90 active:scale-95 transition-all">
+                Xem tất cả voucher của tôi
+            </button>
+<button class="w-full py-3 px-4 bg-transparent border border-primary text-primary font-label-md text-label-md rounded-lg hover:bg-surface-container-low active:scale-95 transition-all">
+                Về trang chủ
+            </button>
+</div>
+</main>
+<!-- BottomNavBar (Generated from JSON) -->
+<!-- Note: User requested it despite the page being transactional. We will render it to fulfill the prompt, but normally it would be suppressed here based on the 'Semantic Shell' mandate. Since we must render it, we will highlight 'Ưu đãi của tôi' as it's the closest intent to viewing an order success/voucher. -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-container-margin py-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] bg-surface dark:bg-surface-dim z-50 rounded-t-xl md:hidden">
+<!-- Home -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">home</span>
+<span class="font-label-md text-label-md mt-1 text-xs">Trang chủ</span>
+</button>
+<!-- Explore -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">explore</span>
+<span class="font-label-md text-label-md mt-1 text-xs">Khám phá</span>
+</button>
+<!-- My Vouchers (Active Intent) -->
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-on-primary-fixed-variant text-on-primary-container dark:text-on-primary-container rounded-full px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">confirmation_number</span>
+<span class="font-label-md text-label-md mt-1 text-xs">Ưu đãi của tôi</span>
+</button>
+<!-- Profile -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-container-high transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-label-md text-label-md mt-1 text-xs">Cá nhân</span>
+</button>
+</nav>
+<script>
+        // Simple copy functionality
+        document.querySelector('button[aria-label="Copy code"]').addEventListener('click', function() {
+            const icon = this.querySelector('.material-symbols-outlined');
+            icon.textContent = 'check';
+            setTimeout(() => {
+                icon.textContent = 'content_copy';
+            }, 2000);
+        });
+    </script>
+</body></html>

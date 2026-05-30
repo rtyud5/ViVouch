@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ViVouch Admin - System Audit Log</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;900&amp;family=Courier+Prime:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "secondary-container": "#dae2fd",
+                      "surface-container-high": "#dce9ff",
+                      "surface-dim": "#cbdbf5",
+                      "outline": "#867461",
+                      "tertiary": "#00658b",
+                      "secondary-fixed": "#dae2fd",
+                      "surface-container": "#e5eeff",
+                      "secondary": "#565e74",
+                      "on-surface": "#0b1c30",
+                      "error": "#ba1a1a",
+                      "inverse-primary": "#ffb95f",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-background": "#0b1c30",
+                      "primary": "#855300",
+                      "on-tertiary-container": "#004966",
+                      "primary-fixed-dim": "#ffb95f",
+                      "tertiary-container": "#1abdff",
+                      "surface-variant": "#d3e4fe",
+                      "primary-container": "#f59e0b",
+                      "on-error-container": "#93000a",
+                      "on-error": "#ffffff",
+                      "outline-variant": "#d8c3ad",
+                      "surface-tint": "#855300",
+                      "on-tertiary-fixed": "#001e2d",
+                      "on-primary-container": "#613b00",
+                      "surface": "#f8f9ff",
+                      "on-primary": "#ffffff",
+                      "on-primary-fixed-variant": "#653e00",
+                      "primary-fixed": "#ffddb8",
+                      "on-secondary-fixed-variant": "#3f465c",
+                      "on-tertiary": "#ffffff",
+                      "inverse-surface": "#213145",
+                      "secondary-fixed-dim": "#bec6e0",
+                      "on-secondary-container": "#5c647a",
+                      "on-primary-fixed": "#2a1700",
+                      "on-surface-variant": "#534434",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#c5e7ff",
+                      "surface-container-low": "#eff4ff",
+                      "on-tertiary-fixed-variant": "#004c6a",
+                      "background": "#f8f9ff",
+                      "surface-container-highest": "#d3e4fe",
+                      "tertiary-fixed-dim": "#7fd0ff",
+                      "on-secondary-fixed": "#131b2e",
+                      "surface-bright": "#f8f9ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "row-height-dense": "40px",
+                      "gutter": "24px",
+                      "sidebar-width": "260px",
+                      "row-height-standard": "56px",
+                      "container-padding": "32px",
+                      "base": "4px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Be Vietnam Pro"],
+                      "body-sm": ["Be Vietnam Pro"],
+                      "body-md": ["Be Vietnam Pro"],
+                      "title-sm": ["Be Vietnam Pro"],
+                      "code-sm": ["Courier Prime"],
+                      "title-lg": ["Be Vietnam Pro"],
+                      "label-md": ["Be Vietnam Pro"],
+                      "display-lg": ["Be Vietnam Pro"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                      "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                      "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                      "title-sm": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                      "code-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                      "title-lg": ["18px", { "lineHeight": "28px", "fontWeight": "600" }],
+                      "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                      "display-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Mobile Specific Utility */
+        .mobile-canvas {
+            max-width: 375px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: var(--color-background);
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-dim font-body-md text-on-surface">
+<div class="mobile-canvas flex flex-col bg-background">
+<!-- TopAppBar (Mobile Adaptation) -->
+<header class="sticky top-0 z-40 bg-surface-container-lowest border-b border-outline-variant shadow-sm h-row-height-standard px-4 flex justify-between items-center w-full">
+<button class="p-2 -ml-2 text-primary hover:bg-surface-container-high rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-container">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-md text-headline-md font-black text-on-surface">
+            Audit Logs
+        </div>
+<div class="flex items-center gap-1">
+<button class="p-2 -mr-2 text-primary hover:bg-surface-container-high rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col px-4 py-6 gap-6 pb-24 overflow-y-auto">
+<!-- Header -->
+<section>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight">Nhật ký hệ thống</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Theo dõi hoạt động quản trị viên.</p>
+</section>
+<!-- Search & Filter Controls -->
+<section class="flex gap-2 items-center">
+<div class="flex-grow relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-10 pr-3 py-2 font-body-sm text-body-sm text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-shadow" placeholder="Tìm ID, Actor..." type="text"/>
+</div>
+<button class="flex items-center gap-1.5 px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-size: 18px;">tune</span>
+                Lọc
+            </button>
+</section>
+<!-- Audit List (Timeline) -->
+<section class="relative border-l border-outline-variant ml-2 pl-6 flex flex-col gap-6">
+<!-- Timeline Item 1: DUYỆT -->
+<article class="relative flex flex-col gap-2">
+<!-- Timeline Dot -->
+<div class="absolute -left-[31px] top-4 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-secondary-container z-10"></div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-3">
+<span class="font-label-md text-label-md text-on-surface-variant">Hôm nay, 14:32</span>
+<span class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-2 py-0.5 rounded font-bold uppercase tracking-wider">Duyệt</span>
+</div>
+<div class="mb-2">
+<div class="font-title-sm text-title-sm text-on-surface">Admin System</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Phê duyệt chiến dịch mới.</div>
+</div>
+<div class="bg-surface rounded p-2 border border-surface-container flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Mã đối tượng:</span>
+<code class="font-code-sm text-code-sm text-on-surface">CMP-992A-01</code>
+</div>
+</div>
+</article>
+<!-- Timeline Item 2: CẬP NHẬT -->
+<article class="relative flex flex-col gap-2">
+<!-- Timeline Dot -->
+<div class="absolute -left-[31px] top-4 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-tertiary-container z-10"></div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-3">
+<span class="font-label-md text-label-md text-on-surface-variant">Hôm nay, 10:15</span>
+<span class="bg-tertiary-container text-on-tertiary-container font-label-md text-label-md px-2 py-0.5 rounded font-bold uppercase tracking-wider">Cập Nhật</span>
+</div>
+<div class="mb-2">
+<div class="font-title-sm text-title-sm text-on-surface">Nguyen Van A (QTV)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Thay đổi thông tin đối tác chiến lược.</div>
+</div>
+<div class="bg-surface rounded p-2 border border-surface-container flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Mã đối tác:</span>
+<code class="font-code-sm text-code-sm text-on-surface">PRT-8812-BX</code>
+</div>
+</div>
+</article>
+<!-- Timeline Item 3: KHÓA -->
+<article class="relative flex flex-col gap-2">
+<!-- Timeline Dot -->
+<div class="absolute -left-[31px] top-4 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-primary-container z-10"></div>
+<div class="bg-surface-container-lowest border border-primary-container/30 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="absolute right-0 top-0 w-1 h-full bg-primary-container"></div>
+<div class="flex justify-between items-start mb-3">
+<span class="font-label-md text-label-md text-on-surface-variant">Hôm qua, 16:45</span>
+<span class="bg-primary-container text-on-primary-container font-label-md text-label-md px-2 py-0.5 rounded font-bold uppercase tracking-wider">Khóa</span>
+</div>
+<div class="mb-2">
+<div class="font-title-sm text-title-sm text-on-surface">System Auto</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Đình chỉ tài khoản do phát hiện rủi ro.</div>
+</div>
+<div class="bg-surface rounded p-2 border border-surface-container flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Tài khoản:</span>
+<code class="font-code-sm text-code-sm text-on-surface">USR-ERR-403</code>
+</div>
+</div>
+</article>
+<!-- Timeline Item 4: TỪ CHỐI -->
+<article class="relative flex flex-col gap-2">
+<!-- Timeline Dot -->
+<div class="absolute -left-[31px] top-4 w-4 h-4 rounded-full bg-surface-container-lowest border-2 border-error-container z-10"></div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-3">
+<span class="font-label-md text-label-md text-on-surface-variant">Hôm qua, 09:00</span>
+<span class="bg-error-container text-on-error-container font-label-md text-label-md px-2 py-0.5 rounded font-bold uppercase tracking-wider">Từ Chối</span>
+</div>
+<div class="mb-2">
+<div class="font-title-sm text-title-sm text-on-surface">Le Thi B (Kế toán trưởng)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Từ chối yêu cầu xuất chi do thiếu chứng từ.</div>
+</div>
+<div class="bg-surface rounded p-2 border border-surface-container flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Mã giao dịch:</span>
+<code class="font-code-sm text-code-sm text-on-surface">TRX-0091-DECL</code>
+</div>
+</div>
+</article>
+</section>
+<!-- Pagination (Compact) -->
+<section class="flex justify-center items-center gap-1 mt-4">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined" style="font-size: 16px;">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary-container text-on-primary-container font-label-md text-label-md font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-low font-label-md text-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container-low font-label-md text-label-md">3</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+</button>
+</section>
+</main>
+<!-- BottomNavBar (Mobile adaptation of SideNavBar) -->
+<nav class="fixed bottom-0 left-0 right-0 max-w-[375px] mx-auto bg-surface-container-lowest border-t border-outline-variant/30 flex justify-around items-center h-16 z-40 px-2 shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant font-medium hover:bg-surface-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-size: 20px;">dashboard</span>
+<span class="font-label-md text-label-md text-[10px]">Dashboard</span>
+</a>
+<!-- Audit Logs (Active) -->
+<a class="flex flex-col items-center justify-center w-full h-full text-primary-container font-bold relative" href="#">
+<div class="absolute -top-[1px] w-8 h-1 bg-primary-container rounded-b-full"></div>
+<span class="material-symbols-outlined mb-1 fill" style="font-size: 20px;">history</span>
+<span class="font-label-md text-label-md text-[10px]">Audit Logs</span>
+</a>
+<!-- Users -->
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant font-medium hover:bg-surface-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-size: 20px;">group</span>
+<span class="font-label-md text-label-md text-[10px]">Users</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant font-medium hover:bg-surface-variant/20 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-size: 20px;">settings</span>
+<span class="font-label-md text-label-md text-[10px]">Settings</span>
+</a>
+</nav>
+</div>
+</body></html>

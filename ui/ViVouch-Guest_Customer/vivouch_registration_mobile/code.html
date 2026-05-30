@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tạo tài khoản - ViVouch</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#281900",
+                        "secondary-fixed-dim": "#ffb4ac",
+                        "surface-container-high": "#e8e8ea",
+                        "error": "#ba1a1a",
+                        "secondary": "#b7131a",
+                        "inverse-on-surface": "#f0f0f3",
+                        "inverse-primary": "#68dbae",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "surface-tint": "#006c4e",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#db322f",
+                        "surface-variant": "#e2e2e5",
+                        "on-primary-fixed-variant": "#00513a",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "on-tertiary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f3f3f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#f5fff7",
+                        "tertiary": "#7b5500",
+                        "inverse-surface": "#2f3133",
+                        "outline-variant": "#bccac1",
+                        "secondary-fixed": "#ffdad6",
+                        "on-surface": "#1a1c1e",
+                        "on-secondary-fixed-variant": "#93000d",
+                        "surface-container-highest": "#e2e2e5",
+                        "primary-fixed-dim": "#68dbae",
+                        "on-error": "#ffffff",
+                        "on-background": "#1a1c1e",
+                        "on-secondary-fixed": "#410002",
+                        "primary-container": "#008560",
+                        "on-secondary-container": "#fffbff",
+                        "on-surface-variant": "#3d4943",
+                        "background": "#f9f9fc",
+                        "surface-dim": "#dadadc",
+                        "primary-fixed": "#86f8c9",
+                        "surface": "#f9f9fc",
+                        "surface-bright": "#f9f9fc",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#9b6b00",
+                        "on-primary-fixed": "#002115",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#eeeef0",
+                        "tertiary-fixed": "#ffdeac",
+                        "primary": "#00694c",
+                        "outline": "#6d7a73"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "section-gap": "32px",
+                        "gutter": "12px",
+                        "container-margin": "16px"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "display-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-lg-mobile": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "price-display": ["20px", { "lineHeight": "24px", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased max-w-[375px] mx-auto min-h-screen relative flex flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between px-container-margin h-16 w-full z-10 sticky top-0 bg-surface">
+<button aria-label="Back" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface flex-1 text-center pr-10">Tạo tài khoản</h1>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-container-margin py-section-gap flex flex-col gap-6">
+<!-- Welcome Message -->
+<div class="text-center">
+<p class="font-body-lg text-body-lg text-on-surface-variant">Tham gia ViVouch để nhận hàng ngàn ưu đãi hấp dẫn mỗi ngày.</p>
+</div>
+<!-- Registration Form -->
+<form class="flex flex-col gap-4">
+<!-- Họ và tên -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="fullname">Họ và tên</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant transition-colors" id="fullname" name="fullname" placeholder="Nhập họ và tên của bạn" type="text"/>
+</div>
+<!-- Email -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="email">Email</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant transition-colors" id="email" name="email" placeholder="ví dụ: ten@email.com" type="email"/>
+</div>
+<!-- Số điện thoại -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="phone">Số điện thoại</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant transition-colors" id="phone" name="phone" placeholder="Nhập số điện thoại" type="tel"/>
+</div>
+<!-- Mật khẩu -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="password">Mật khẩu</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant transition-colors pr-12" id="password" name="password" placeholder="Tạo mật khẩu" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Xác nhận mật khẩu -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface" for="confirm_password">Xác nhận mật khẩu</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant transition-colors pr-12" id="confirm_password" name="confirm_password" placeholder="Nhập lại mật khẩu" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Terms & Conditions -->
+<div class="flex items-start gap-3 mt-2">
+<div class="flex items-center h-5 mt-1">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface cursor-pointer" id="terms" type="checkbox"/>
+</div>
+<label class="font-body-md text-body-md text-on-surface-variant" for="terms">
+                    Tôi đồng ý với <a class="text-primary underline decoration-primary/50 hover:decoration-primary font-label-md transition-colors" href="#">Điều khoản sử dụng</a> và <a class="text-primary underline decoration-primary/50 hover:decoration-primary font-label-md transition-colors" href="#">Chính sách bảo mật</a> của ViVouch.
+                </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-primary text-on-primary font-headline-md text-headline-md py-4 rounded-xl mt-4 hover:opacity-90 active:scale-[0.98] transition-all shadow-md" type="submit">
+                Đăng ký
+            </button>
+</form>
+<!-- Social Login Separator -->
+<div class="relative flex items-center py-4">
+<div class="flex-grow border-t border-outline-variant"></div>
+<span class="flex-shrink-0 mx-4 text-on-surface-variant font-body-md text-body-md">Hoặc đăng ký bằng</span>
+<div class="flex-grow border-t border-outline-variant"></div>
+</div>
+<!-- Social Login Buttons -->
+<div class="flex gap-4">
+<button class="flex-1 flex items-center justify-center gap-2 py-3 border border-outline-variant rounded-xl bg-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface" style="font-variation-settings: 'FILL' 0;">phone_iphone</span>
+<span class="font-label-md text-label-md text-on-surface">Google</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-2 py-3 border border-outline-variant rounded-xl bg-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface" style="font-variation-settings: 'FILL' 0;">social_leaderboard</span>
+<span class="font-label-md text-label-md text-on-surface">Facebook</span>
+</button>
+</div>
+<!-- Login Link -->
+<div class="text-center mt-6 mb-8">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Đã có tài khoản? <a class="text-primary font-label-md hover:underline transition-all" href="#">Đăng nhập</a>
+</p>
+</div>
+</main>
+<script>
+        // Simple password toggle logic
+        document.querySelectorAll('button[aria-label="Toggle password visibility"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const icon = this.querySelector('span');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility_off';
+                }
+            });
+        });
+    </script>
+</body></html>

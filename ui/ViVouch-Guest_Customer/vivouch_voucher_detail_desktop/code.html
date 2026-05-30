@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chi tiết Voucher - ViVouch</title>
+<!-- Google Fonts: Be Vietnam Pro -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config injected from Design System -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-low": "#f3f3f6",
+                    "on-surface": "#1a1c1e",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#ffb4ac",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed": "#ffdeac",
+                    "outline-variant": "#bccac1",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#3d4943",
+                    "surface-container": "#eeeef0",
+                    "outline": "#6d7a73",
+                    "on-secondary-fixed-variant": "#93000d",
+                    "tertiary-container": "#9b6b00",
+                    "on-primary-container": "#f5fff7",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#008560",
+                    "surface": "#f9f9fc",
+                    "primary": "#00694c",
+                    "surface-container-highest": "#e2e2e5",
+                    "surface-container-high": "#e8e8ea",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#410002",
+                    "surface-dim": "#dadadc",
+                    "tertiary-fixed-dim": "#ffba38",
+                    "on-tertiary-container": "#fffbff",
+                    "inverse-on-surface": "#f0f0f3",
+                    "on-tertiary-fixed-variant": "#604100",
+                    "inverse-surface": "#2f3133",
+                    "on-tertiary-fixed": "#281900",
+                    "on-primary-fixed-variant": "#00513a",
+                    "tertiary": "#7b5500",
+                    "primary-fixed-dim": "#68dbae",
+                    "primary-fixed": "#86f8c9",
+                    "secondary": "#b7131a",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e2e2e5",
+                    "surface-bright": "#f9f9fc",
+                    "secondary-container": "#db322f",
+                    "on-secondary-container": "#fffbff",
+                    "inverse-primary": "#68dbae",
+                    "background": "#f9f9fc",
+                    "on-background": "#1a1c1e",
+                    "on-primary-fixed": "#002115",
+                    "secondary-fixed": "#ffdad6",
+                    "surface-tint": "#006c4e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "32px",
+                    "container-margin": "16px",
+                    "base": "8px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "headline-md": ["Be Vietnam Pro"],
+                    "price-display": ["Be Vietnam Pro"],
+                    "display-lg": ["Be Vietnam Pro"],
+                    "headline-lg": ["Be Vietnam Pro"],
+                    "headline-lg-mobile": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                    "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f3f6; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bccac1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6d7a73; 
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md antialiased selection:bg-primary selection:text-on-primary">
+<!-- Hero Image Section (Task-Focused Layout, Nav Suppressed) -->
+<div class="relative w-full h-[300px] md:h-[450px] bg-surface-container-highest">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A high-quality, mouth-watering overhead shot of a premium Haidilao hotpot spread on a table. The image features a divided boiling pot with rich red and clear broths, surrounded by beautifully plated fresh raw beef slices, assorted vegetables, mushrooms, and dipping sauces. Bright, inviting lighting highlights the freshness of the ingredients. The setting is modern and clean, fitting a high-end dining experience." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1uabrmR5sVKOkXAcJ4S-knGwm7J9xy6Sb-BPeagi2QJbmaKqk4s_dqkzjvLXcLRu9wtp10zS0MVzyEDTMKjR8sKcN-I3OWgvAhpWimdFbBBYO2I328pK95rf2B_EISxVXnhBMC22Wljtor5cAKb-NtUHSk6cZvDSGYbKLfLB-KlIto1u92iluRlVw3BD7CmuOxV26NP1FrQN3XaPDmoliI1N0lMzdiNJjHYoPHlGvgfaWcuvsvdiIisysosQV2ikpYoI1Fg1-o5M');">
+</div>
+<!-- Gradient overlay for top icons visibility -->
+<div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent"></div>
+<!-- Top Overlay Actions -->
+<div class="absolute top-0 left-0 w-full p-container-margin md:p-[32px] flex justify-between items-center z-10 max-w-[1200px] mx-auto left-1/2 -translate-x-1/2">
+<button aria-label="Go back" class="w-10 h-10 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface hover:bg-surface-container-lowest transition-colors shadow-sm cursor-pointer border border-outline-variant/20">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<button aria-label="Share" class="w-10 h-10 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface hover:bg-surface-container-lowest transition-colors shadow-sm cursor-pointer border border-outline-variant/20">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</div>
+<!-- Main Content Grid -->
+<main class="max-w-[1200px] mx-auto px-container-margin md:px-0 py-section-gap flex flex-col md:flex-row gap-gutter relative -mt-[60px] md:-mt-[80px] z-20">
+<!-- Left Column (Main Details) -->
+<div class="flex-1 flex flex-col gap-gutter">
+<!-- Basic Info Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/10">
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-secondary text-on-secondary font-label-md text-label-md px-3 py-1 rounded-full shadow-sm">
+                        -45%
+                    </span>
+<span class="text-on-surface-variant font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="restaurant">restaurant</span>
+                        Ẩm thực
+                    </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg mb-4 text-on-surface">
+                    Buffet Lẩu 2 người — Haidilao
+                </h1>
+<!-- Partner Info -->
+<div class="flex items-center gap-3 mb-6 pb-6 border-b border-outline-variant/30">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/20 bg-surface-container">
+<img alt="Haidilao Vietnam Logo" class="w-full h-full object-cover" data-alt="A professional, clean, circular logo placeholder for a high-end restaurant brand. The design is minimalist, utilizing a crisp white background with a subtle, stylized red abstract icon in the center that hints at heat or spice. The overall aesthetic is polished and corporate, suitable for a premium dining partner." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHIK2sY9CfLxDaU2KfDszm4cMSrxLOWbXlReIF8ABSkfx80Y6Qe2sr69XO1z6df_VPU9Y40qpaZM-ubw49DEXS_i4WXdshDaxe2lsf_MBuY7z4epDa1T-n3GtDCuOrHmqFlwNFkWTvC65C2CHXwrVysIxag-OYSl3Fbag9ui4JXTwiRUHoUkNKXL-GF5JndPMmgoWiqiOH_GEu-8XzTwg4ohhyrRkiOGN0or9VQPxf88cFNIo2KTanjaI19yzTkGnSAuHCY1aLx9o"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Haidilao Vietnam</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Hệ thống Lẩu Tứ Xuyên cao cấp</p>
+</div>
+</div>
+<!-- Pricing -->
+<div class="flex flex-wrap items-end gap-4 mb-6">
+<span class="font-display-lg text-display-lg text-secondary leading-none">179.000đ</span>
+<span class="font-body-lg text-body-lg text-outline line-through mb-1">325.000đ</span>
+<span class="bg-primary-container text-on-primary-container font-label-md text-label-md px-2 py-1 rounded mb-2">
+                        Tiết kiệm 146k
+                    </span>
+</div>
+<!-- Progress & Expiry -->
+<div class="bg-surface-container-low rounded-lg p-4 flex flex-col gap-4">
+<div>
+<div class="flex justify-between items-center mb-2 font-label-md text-label-md">
+<span class="text-on-surface-variant">Tình trạng</span>
+<span class="text-primary">Đã bán 142/200</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500 ease-out" style="width: 71%;"></div>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span>Hết hạn: <strong class="text-error">31/12/2024</strong></span>
+</div>
+</div>
+</div>
+<!-- Tabbed Content Section -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/10 overflow-hidden">
+<!-- Tab Headers -->
+<div class="flex border-b border-outline-variant/30 overflow-x-auto no-scrollbar">
+<button class="flex-1 py-4 px-6 font-label-md text-label-md text-primary border-b-2 border-primary bg-surface text-center whitespace-nowrap">
+                        Mô tả
+                    </button>
+<button class="flex-1 py-4 px-6 font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors text-center whitespace-nowrap border-b-2 border-transparent">
+                        Điều kiện
+                    </button>
+<button class="flex-1 py-4 px-6 font-label-md text-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors text-center whitespace-nowrap border-b-2 border-transparent">
+                        Chi nhánh áp dụng
+                    </button>
+</div>
+<!-- Tab Body -->
+<div class="p-6 font-body-md text-body-md text-on-surface">
+<h3 class="font-headline-md text-headline-md mb-4">Chi tiết ưu đãi</h3>
+<ul class="list-none space-y-3">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5 shrink-0" data-icon="check_circle">check_circle</span>
+<span>Áp dụng cho menu buffet 325k bao gồm bò Mỹ, hải sản và các loại nấm cao cấp.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5 shrink-0" data-icon="check_circle">check_circle</span>
+<span>Miễn phí 2 loại nước lẩu tự chọn (Lẩu Thái, Lẩu Cà Chua, Lẩu Nấm, Lẩu Tứ Xuyên).</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5 shrink-0" data-icon="check_circle">check_circle</span>
+<span>Bao gồm quầy gia vị, kem và trái cây tráng miệng miễn phí.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-error text-[20px] mt-0.5 shrink-0" data-icon="error">error</span>
+<span class="text-on-surface-variant">Giá chưa bao gồm 8% VAT. Khách hàng vui lòng thanh toán thêm tại nhà hàng.</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Reviews Section -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/10">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md">Đánh giá từ khách hàng</h3>
+<div class="flex items-center gap-2">
+<div class="flex text-tertiary-fixed-dim">
+<span class="material-symbols-outlined icon-fill" data-icon="star">star</span>
+<span class="material-symbols-outlined icon-fill" data-icon="star">star</span>
+<span class="material-symbols-outlined icon-fill" data-icon="star">star</span>
+<span class="material-symbols-outlined icon-fill" data-icon="star">star</span>
+<span class="material-symbols-outlined" data-icon="star_half">star_half</span>
+</div>
+<span class="font-headline-md text-headline-md">4.8</span>
+<span class="font-body-md text-body-md text-on-surface-variant">(128 đánh giá)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Review Card 1 -->
+<div class="bg-surface-container-low rounded-lg p-4">
+<div class="flex items-center gap-3 mb-2">
+<img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-outline-variant/20" data-alt="A professional, well-lit headshot of a smiling young Vietnamese professional female in a bright, modern setting. The background is slightly blurred to focus on the subject. The lighting is soft and natural, conveying a friendly and trustworthy persona suitable for a verified user review." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6OPXF1sVPbeVnp8eHNnzcF6Y1zPCVelCLfObFrI3061JkkHGw4aXENjpmue6_p7_sDldrQgfrkkmAnikyNZItEqI-HpBh0Jvv_nfGOnJnBGIRReFD8TM2DHZiGWT5QJVynlVlaTcoVnHz4r6broVPVvWiDnbi6kdnd7cdxjcfi2R2DC4LkLK8yiUebUfDSWqlQWwEjGf-u1sVvyhLKRGZLY9oiV_Xl9pF9GsLltI-R7hVQBnIEehkeiIZT3Ri0azVaYZKN48PUgU"/>
+<div>
+<p class="font-label-md text-label-md">Nguyễn Thị Mai</p>
+<p class="font-body-md text-body-md text-[12px] text-on-surface-variant">2 ngày trước</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-sm text-on-surface-variant">
+                            Voucher dùng rất tiện, nhân viên quán nhiệt tình quét mã QR nhanh chóng. Đồ ăn tươi ngon như mong đợi. Sẽ mua lại!
+                        </p>
+</div>
+<!-- Review Card 2 -->
+<div class="bg-surface-container-low rounded-lg p-4">
+<div class="flex items-center gap-3 mb-2">
+<img alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-outline-variant/20" data-alt="A professional, well-lit headshot of a smiling young Vietnamese professional male in a bright, modern setting. The background is slightly blurred to focus on the subject. The lighting is soft and natural, conveying a friendly and trustworthy persona suitable for a verified user review." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDj4yYfYa556JXfU0hOhoLtX0fvUabyXClu_JPqpPTOxiixUGu0y1NKqsDi5VcL7vkVZ3dP0hrOxXUIxgHmBg_w7lPfsyAXpw_J-pjWbZ2rOVx80VmDkEy5_0pVpVAS9evn7Pnh-0kaFno23mpUS86YSfkbu-iP9ovPZ5Sxy56UBiPDRL6dFtDcNPTwMfVOXBchPncnOCPQtsPx-WIN8PDnSk8LTGN74R7S_OENWWJf0cW4yIw8v8mJcl80_K7GM2r_pachwuh7NLw"/>
+<div>
+<p class="font-label-md text-label-md">Trần Văn Hùng</p>
+<p class="font-body-md text-body-md text-[12px] text-on-surface-variant">1 tuần trước</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-sm text-on-surface-variant">
+                            Giá quá hời cho một bữa ăn tại Haidilao. Nhờ ViVouch mà tiết kiệm được một khoản kha khá. Recommend mọi người nên mua nhé.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column (Sticky Sidebar Actions) -->
+<div class="w-full md:w-[380px] shrink-0">
+<div class="sticky top-[24px] bg-surface-container-lowest rounded-xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-outline-variant/20 flex flex-col gap-6">
+<h3 class="font-headline-md text-headline-md pb-4 border-b border-outline-variant/30 text-on-surface">
+                    Tổng quan đơn hàng
+                </h3>
+<div class="flex justify-between items-center font-body-md text-body-md">
+<span class="text-on-surface-variant">Đơn giá</span>
+<span class="font-price-display text-price-display text-on-surface">179.000đ</span>
+</div>
+<!-- Quantity Stepper -->
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface">Số lượng</span>
+<div class="flex items-center border border-outline-variant rounded-lg overflow-hidden h-10">
+<button aria-label="Decrease quantity" class="w-10 h-full flex items-center justify-center bg-surface-container-lowest hover:bg-surface-container-low text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[20px]" data-icon="remove">remove</span>
+</button>
+<input class="w-12 h-full text-center border-none focus:ring-0 font-label-md text-label-md p-0 bg-surface-container-lowest" readonly="" type="text" value="1"/>
+<button aria-label="Increase quantity" class="w-10 h-full flex items-center justify-center bg-surface-container-lowest hover:bg-surface-container-low text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<span class="font-headline-md text-headline-md text-on-surface">Tổng tiền</span>
+<span class="font-display-lg text-display-lg text-secondary leading-none">179.000đ</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-3 mt-2">
+<button class="w-full py-3 px-6 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-surface-tint transition-colors shadow-md hover:shadow-lg flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_bag">shopping_bag</span>
+                        Mua ngay
+                    </button>
+<button class="w-full py-3 px-6 rounded-lg border border-primary text-primary bg-transparent font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="add_shopping_cart">add_shopping_cart</span>
+                        Thêm vào giỏ
+                    </button>
+</div>
+<div class="flex items-center justify-center gap-2 text-on-surface-variant text-sm mt-2">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified_user">verified_user</span>
+<span>Hoàn tiền 100% nếu không sử dụng</span>
+</div>
+</div>
+</div>
+</main>
+</body></html>
