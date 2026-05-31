@@ -8,11 +8,13 @@
     "start": "node src/server.js",
     "test": "vitest",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "node prisma/seed.js"
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
-    "@prisma/client": "latest",
+    "@prisma/client": "^5.22.0",
     "bcrypt": "latest",
     "cors": "latest",
     "dotenv": "latest",
@@ -29,7 +31,7 @@
   },
   "devDependencies": {
     "nodemon": "latest",
-    "prisma": "latest",
+    "prisma": "^5.22.0",
     "supertest": "latest",
     "vitest": "latest"
   }

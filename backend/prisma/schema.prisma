@@ -7,7 +7,284 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TODO: Implement models:
-// User, Partner, Branch, Category, Voucher, VoucherBranch,
-// Cart, CartItem, Order, OrderItem, Payment,
-// VoucherCode, VoucherUsageLog, Review, AuditLog, Banner, CmsPage.
+enum Role {
+  CUSTOMER
+  PARTNER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  LOCKED
+}
+
+enum PartnerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum VoucherStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  ON_SALE
+  PAUSED
+  EXPIRED
+  REJECTED
+  SUSPENDED
+}
+
+enum VoucherCodeStatus {
+  ISSUED
+  USED
+  EXPIRED
+  CANCELLED
+  LOCKED
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  phone        String?    @unique
+  passwordHash String
+  fullName     String
+  role         Role       @default(CUSTOMER)
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  partner      Partner?
+  cart         Cart?
+  orders       Order[]
+  voucherCodes VoucherCode[]
+  reviews      Review[]
+  auditLogs    AuditLog[]
+}
+
+model Partner {
+  id                 String        @id @default(uuid())
+  userId             String        @unique
+  businessName       String
+  taxCode            String        @unique
+  representativeName String
+  status             PartnerStatus @default(PENDING)
+  rejectReason       String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id])
+  branches   Branch[]
+  vouchers   Voucher[]
+}
+
+model Branch {
+  id        String   @id @default(uuid())
+  partnerId String
+  name      String
+  address   String
+  city      String   @default("Hồ Chí Minh")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  partner          Partner            @relation(fields: [partnerId], references: [id])
+  voucherBranches  VoucherBranch[]
+  usageLogs        VoucherUsageLog[]
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  icon      String?
+  createdAt DateTime  @default(now())
+
+  vouchers  Voucher[]
+}
+
+model Voucher {
+  id             String        @id @default(uuid())
+  partnerId      String
+  categoryId     String
+  title          String
+  description    String?
+  imageUrl       String?
+  originalPrice  Decimal       @db.Decimal(12, 0)
+  salePrice      Decimal       @db.Decimal(12, 0)
+  totalQty       Int
+  soldQty        Int           @default(0)
+  status         VoucherStatus @default(DRAFT)
+  saleStart      DateTime?
+  saleEnd        DateTime?
+  useStart       DateTime?
+  useEnd         DateTime?
+  conditions     String?
+  cancelPolicy   String?
+  rejectReason   String?
+  approvedAt     DateTime?
+  approvedBy     String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  partner         Partner         @relation(fields: [partnerId], references: [id])
+  category        Category        @relation(fields: [categoryId], references: [id])
+  voucherBranches VoucherBranch[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+  voucherCodes    VoucherCode[]
+  reviews         Review[]
+
+  @@index([status])
+  @@index([partnerId])
+  @@index([categoryId])
+}
+
+model VoucherBranch {
+  voucherId String
+  branchId  String
+
+  voucher Voucher @relation(fields: [voucherId], references: [id])
+  branch  Branch  @relation(fields: [branchId], references: [id])
+
+  @@id([voucherId, branchId])
+}
+
+model Cart {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id])
+  items CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  voucherId String
+  qty       Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  voucher Voucher @relation(fields: [voucherId], references: [id])
+
+  @@unique([cartId, voucherId])
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  status      OrderStatus @default(PENDING_PAYMENT)
+  totalAmount Decimal     @db.Decimal(12, 0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id])
+  items        OrderItem[]
+  payment      Payment?
+  voucherCodes VoucherCode[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  voucherId String
+  qty       Int
+  unitPrice Decimal @db.Decimal(12, 0)
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  voucher Voucher @relation(fields: [voucherId], references: [id])
+}
+
+model Payment {
+  id        String        @id @default(uuid())
+  orderId   String        @unique
+  method    String
+  status    PaymentStatus @default(PENDING)
+  amount    Decimal       @db.Decimal(12, 0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model VoucherCode {
+  id        String            @id @default(uuid())
+  code      String            @unique
+  orderId   String
+  voucherId String
+  ownerId   String
+  status    VoucherCodeStatus @default(ISSUED)
+  issuedAt  DateTime          @default(now())
+  expiresAt DateTime?
+  usedAt    DateTime?
+
+  order     Order             @relation(fields: [orderId], references: [id])
+  voucher   Voucher           @relation(fields: [voucherId], references: [id])
+  owner     User              @relation(fields: [ownerId], references: [id])
+  usageLogs VoucherUsageLog[]
+
+  @@index([code])
+  @@index([ownerId])
+  @@index([status])
+}
+
+model VoucherUsageLog {
+  id            String   @id @default(uuid())
+  voucherCodeId String
+  redeemedBy    String
+  branchId      String
+  redeemedAt    DateTime @default(now())
+
+  voucherCode VoucherCode @relation(fields: [voucherCodeId], references: [id])
+  branch      Branch      @relation(fields: [branchId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  voucherId String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  voucher Voucher @relation(fields: [voucherId], references: [id])
+
+  @@unique([userId, voucherId])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  action     String
+  targetType String
+  targetId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
