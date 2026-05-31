@@ -21,12 +21,15 @@
     "react-hook-form": "latest",
     "react-router-dom": "latest",
     "recharts": "latest",
-    "tailwindcss": "latest",
     "zod": "latest",
     "zustand": "latest"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
     "@vitejs/plugin-react": "latest",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.0",
     "vite": "latest",
     "vitest": "latest"
   }

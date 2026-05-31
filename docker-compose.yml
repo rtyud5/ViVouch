@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vivouch_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: voucher_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - vivouch_pgdata:/var/lib/postgresql/data
+
+volumes:
+  vivouch_pgdata:
