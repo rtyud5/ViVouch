@@ -1,1 +1,5 @@
-export function PublicLayout() { return <div>Public Layout</div>; }
+import { Outlet } from "react-router-dom";
+
+export function PublicLayout() {
+  return <Outlet />;
+}
