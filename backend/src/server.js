@@ -4,4 +4,5 @@ import { logger } from "./config/logger.js";
 
 app.listen(env.PORT, () => {
   logger.info(`API server is running on port ${env.PORT}`);
+  console.log(`http://localhost:${env.PORT}`);
 });
