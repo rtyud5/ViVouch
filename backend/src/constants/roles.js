@@ -1,1 +1,1 @@
-export const ROLES = { CUSTOMER: "customer", PARTNER: "partner", ADMIN: "admin" };
+export const ROLES = { CUSTOMER: "CUSTOMER", PARTNER: "PARTNER", ADMIN: "ADMIN" };

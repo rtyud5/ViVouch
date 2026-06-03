@@ -10,6 +10,7 @@ import { env } from "../../config/env.js";
  */
 export const register = async (data) => {
   const { email, password, fullName, phone } = data;
+  const normalizedPhone = phone?.trim() || null;
 
   // Kiểm tra email trùng
   const existingUser = await prisma.user.findUnique({
@@ -22,6 +23,19 @@ export const register = async (data) => {
     throw error;
   }
 
+  // Kiểm tra phone trùng (nếu có cung cấp số điện thoại)
+  if (normalizedPhone) {
+    const existingPhone = await prisma.user.findUnique({
+      where: { phone: normalizedPhone }
+    });
+
+    if (existingPhone) {
+      const error = new Error("Số điện thoại đã tồn tại trong hệ thống");
+      error.statusCode = 409;
+      throw error;
+    }
+  }
+
   // Hash mật khẩu
   const passwordHash = await bcrypt.hash(password, Number(env.BCRYPT_SALT_ROUNDS));
 
@@ -31,7 +45,7 @@ export const register = async (data) => {
       email,
       passwordHash,
       fullName,
-      phone,
+      phone: normalizedPhone,
       role: "CUSTOMER"
     }
   });
