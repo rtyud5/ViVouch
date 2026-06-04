@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 export function CustomerLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
+  const isHomeActive = currentPath === '/customer' || currentPath === '/customer/home';
 
   return (
     <div className="min-h-screen flex flex-col bg-base-100">
@@ -10,7 +11,7 @@ export function CustomerLayout() {
       <div className="navbar bg-green-600 text-white sticky top-0 z-50 shadow-md">
         <div className="flex-1">
           {/* Quay về trang chủ customer */}
-          <Link to="/customer" className="btn btn-ghost normal-case text-xl text-white">ViVouch</Link>
+          <Link to="/customer/home" className="btn btn-ghost normal-case text-xl text-white">ViVouch</Link>
         </div>
         <div className="flex-none hidden md:flex">
           <ul className="menu menu-horizontal px-1 text-white">
@@ -30,8 +31,8 @@ export function CustomerLayout() {
       <div className="btm-nav md:hidden bg-green-600 text-white z-50 pb-safe grid grid-cols-3">
         {/* Nút Home */}
         <Link 
-          to="/customer" 
-          className={`flex flex-col items-center justify-center py-2 transition-colors ${currentPath === '/customer' ? 'active bg-green-700 text-white' : 'text-green-100 hover:bg-green-700'}`}
+          to="/customer/home" 
+          className={`flex flex-col items-center justify-center py-2 transition-colors ${isHomeActive ? 'active bg-green-700 text-white' : 'text-green-100 hover:bg-green-700'}`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
           <span className="btm-nav-label text-[10px] sm:text-xs">Home</span>
