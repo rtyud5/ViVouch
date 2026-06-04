@@ -1,10 +1,66 @@
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { register } from "../../features/auth/api/auth.api";
+
+const registerSchema = z
+  .object({
+    fullName: z.string().trim().min(1, "Vui lòng nhập họ và tên"),
+    email: z.string().email("Email không hợp lệ"),
+    phone: z.string().trim().optional(),
+    password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+    confirmPassword: z.string().min(1, "Vui lòng xác nhận mật khẩu")
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"]
+  });
+
+function getErrorMessage(error) {
+  return error?.response?.data?.message || error?.message || "Đăng ký thất bại";
+}
 
 export function RegisterPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const registerMutation = useMutation({
+    mutationFn: register,
+    onSuccess: () => {
+      navigate("/login", { replace: true });
+    },
+    onError: (error) => {
+      setFormError(getErrorMessage(error));
+    }
+  });
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    setFormError("");
+
+    const formData = new FormData(event.currentTarget);
+    const result = registerSchema.safeParse({
+      fullName: formData.get("fullname"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirm_password")
+    });
+
+    if (!result.success) {
+      setFormError(result.error.issues[0]?.message || "Dữ liệu không hợp lệ");
+      return;
+    }
+
+    const { confirmPassword, phone, ...data } = result.data;
+    registerMutation.mutate({
+      ...data,
+      ...(phone ? { phone } : {})
+    });
+  }
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center p-4">
@@ -23,7 +79,7 @@ export function RegisterPage() {
           </h1>
         </header>
 
-        <form className="flex flex-col gap-4" onSubmit={(event) => event.preventDefault()}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
             <label
               className="font-label-md text-label-md text-on-surface-variant"
@@ -36,6 +92,7 @@ export function RegisterPage() {
               id="fullname"
               name="fullname"
               placeholder="Nhập họ và tên"
+              required
               type="text"
             />
           </div>
@@ -52,6 +109,7 @@ export function RegisterPage() {
               id="email"
               name="email"
               placeholder="Nhập địa chỉ email"
+              required
               type="email"
             />
           </div>
@@ -85,6 +143,7 @@ export function RegisterPage() {
                 id="password"
                 name="password"
                 placeholder="Nhập mật khẩu"
+                required
                 type={showPassword ? "text" : "password"}
               />
               <button
@@ -113,6 +172,7 @@ export function RegisterPage() {
                 id="confirm_password"
                 name="confirm_password"
                 placeholder="Nhập lại mật khẩu"
+                required
                 type={showConfirmPassword ? "text" : "password"}
               />
               <button
@@ -134,6 +194,7 @@ export function RegisterPage() {
                 className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary focus:ring-2 bg-surface-container-lowest cursor-pointer"
                 id="terms"
                 name="terms"
+                required
                 type="checkbox"
               />
             </div>
@@ -158,11 +219,22 @@ export function RegisterPage() {
             </label>
           </div>
 
+          {formError ? (
+            <p className="font-body-md text-body-md text-error" role="alert">
+              {formError}
+            </p>
+          ) : null}
+
           <button
-            className="w-full bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md py-3.5 px-6 rounded-lg transition-colors mt-4 shadow-sm active:scale-[0.98] transform duration-150"
+            className="w-full bg-primary hover:bg-primary-container disabled:bg-outline-variant disabled:cursor-not-allowed text-on-primary font-label-md text-label-md py-3.5 px-6 rounded-lg transition-colors mt-4 shadow-sm active:scale-[0.98] transform duration-150 flex items-center justify-center gap-2"
+            disabled={registerMutation.isPending}
             type="submit"
           >
-            Đăng ký
+            {registerMutation.isPending ? (
+              <span className="loading loading-spinner loading-sm" />
+            ) : (
+              "Đăng ký"
+            )}
           </button>
         </form>
 

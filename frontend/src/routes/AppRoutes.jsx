@@ -42,6 +42,7 @@ export function AppRoutes() {
         {/* Customer Portal */}
         <Route path="/customer" element={<CustomerLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="home" element={<HomePage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="my-vouchers" element={<MyVouchersPage />} />
           <Route path="profile" element={<ProfilePage />} />
