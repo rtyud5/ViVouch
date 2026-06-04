@@ -74,7 +74,7 @@ export const getMe = async (req, res) => {
   try {
     // Giả sử middleware xác thực đã gán userId vào req.user.userId
     const userId = req.user?.userId;
-    
+
     if (!userId) {
       return res.status(401).json({
         success: false,
@@ -96,4 +96,14 @@ export const getMe = async (req, res) => {
       message: error.message || "Lỗi server nội bộ"
     });
   }
+};
+
+/**
+ * Đăng xuất
+ */
+export const logout = (req, res) => {
+  return res.status(200).json({
+    success: true,
+    message: "Đăng xuất thành công"
+  });
 };
