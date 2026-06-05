@@ -31,8 +31,11 @@ export function LoginPage() {
     mutationFn: ({ email, password }) => login(email, password),
     onSuccess: ({ user, accessToken }) => {
       setAuth({ user, accessToken });
-      const returnUrl = location.state?.returnUrl || roleRedirects[user.role] || "/customer/home";
-      navigate(returnUrl, { replace: true });
+      const returnUrl = location.state?.returnUrl;
+      const safeReturnUrl = (returnUrl && returnUrl.startsWith("/") && !returnUrl.startsWith("//"))
+        ? returnUrl
+        : (roleRedirects[user.role] || "/customer/home");
+      navigate(safeReturnUrl, { replace: true });
     },
     onError: (error) => {
       setFormError(getErrorMessage(error));
