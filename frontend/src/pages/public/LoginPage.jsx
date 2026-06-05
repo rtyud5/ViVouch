@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
 import { login } from "../../features/auth/api/auth.api";
 import { useAuthStore } from "../../stores/authStore";
@@ -22,6 +22,7 @@ function getErrorMessage(error) {
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const setAuth = useAuthStore((state) => state.setAuth);
   const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState("");
@@ -30,7 +31,8 @@ export function LoginPage() {
     mutationFn: ({ email, password }) => login(email, password),
     onSuccess: ({ user, accessToken }) => {
       setAuth({ user, accessToken });
-      navigate(roleRedirects[user.role] || "/customer/home", { replace: true });
+      const returnUrl = location.state?.returnUrl || roleRedirects[user.role] || "/customer/home";
+      navigate(returnUrl, { replace: true });
     },
     onError: (error) => {
       setFormError(getErrorMessage(error));
