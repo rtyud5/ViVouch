@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./ProtectedRoute";
+import { RoleRoute } from "./RoleRoute";
 import { PublicLayout } from "../layouts/PublicLayout";
 import { CustomerLayout } from "../layouts/CustomerLayout";
 import { PartnerLayout } from "../layouts/PartnerLayout";
@@ -8,6 +10,8 @@ import { HomePage } from "../pages/public/HomePage";
 import { LoginPage } from "../pages/public/LoginPage";
 import { NotFoundPage } from "../pages/public/NotFoundPage";
 import { RegisterPage } from "../pages/public/RegisterPage";
+import { VoucherListPage } from "../pages/public/VoucherListPage";
+import { VoucherDetailPage } from "../pages/public/VoucherDetailPage";
 
 // Customer
 import { MyVouchersPage } from "../pages/customer/MyVouchersPage"
@@ -33,14 +37,23 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Auth Routes */}
+        {/* Public Routes — không cần đăng nhập */}
         <Route element={<PublicLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="/vouchers" element={<VoucherListPage />} />
+          <Route path="/vouchers/:id" element={<VoucherDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Route>
 
         {/* Customer Portal */}
-        <Route path="/customer" element={<CustomerLayout />}>
+        <Route path="/customer" element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={["CUSTOMER"]}>
+              <CustomerLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }>
           <Route index element={<HomePage />} />
           <Route path="home" element={<HomePage />} />
           <Route path="cart" element={<CartPage />} />
@@ -49,7 +62,13 @@ export function AppRoutes() {
         </Route>
 
         {/* Partner Portal */}
-        <Route path="/partner" element={<PartnerLayout />}>
+        <Route path="/partner" element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={["PARTNER"]}>
+              <PartnerLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }>
           <Route path="dashboard" element={<PartnerDashboardPage />} />
           <Route path="vouchers" element={<PartnerVoucherListPage />} />
           <Route path="validation" element={<RedeemVoucherPage />} />
@@ -58,7 +77,13 @@ export function AppRoutes() {
         </Route>
 
         {/* Admin Portal */}
-        <Route path="/admin" element={<AdminLayout />}>    
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={["ADMIN"]}>
+              <AdminLayout />
+            </RoleRoute>
+          </ProtectedRoute>
+        }>    
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="partners" element={<PartnersPage />} />
           <Route path="users" element={<UsersPage />} />

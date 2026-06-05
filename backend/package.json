@@ -26,7 +26,7 @@
     "nanoid": "latest",
     "pino": "latest",
     "pino-http": "latest",
-    "swagger-jsdoc": "latest",
+    "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "latest",
     "yamljs": "latest",
     "zod": "latest"
