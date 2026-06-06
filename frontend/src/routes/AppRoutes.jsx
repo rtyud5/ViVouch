@@ -40,7 +40,7 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         {/* Test component */}
-        <Route path="/test/fe/tasl3/week1" element={<TestComponentsPage />} />
+        <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} />
 
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />
