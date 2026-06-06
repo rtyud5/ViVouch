@@ -33,11 +33,15 @@ import { VoucherApprovalsPage } from "../pages/admin/VoucherApprovalsPage"
 import { OrdersPage } from "../pages/admin/OrdersPage"
 import { AuditLogsPage } from "../pages/admin/AuditLogsPage"
 
+import { TestComponentsPage } from "../pages/test/TestComponentsPage";
+
 export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes — không cần đăng nhập */}
+        {/* Test component */}
+        <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} />
+
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />
           <Route path="/vouchers" element={<VoucherListPage />} />
