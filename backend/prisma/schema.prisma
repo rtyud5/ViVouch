@@ -301,7 +301,7 @@ model RefreshToken {
   createdAt DateTime @default(now())
   isRevoked Boolean  @default(false)
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
