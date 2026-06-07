@@ -15,7 +15,18 @@ export const listVouchersSchema = z.object({
   maxPrice:    z.coerce.number().nonnegative().optional(),
   minDiscount: z.coerce.number().min(0).max(100).optional(),
   sort:        z.enum(['popularity', 'newest', 'price_asc', 'price_desc']).default('popularity'),
-});
+}).refine(
+  (data) => {
+    if (data.minPrice !== undefined && data.maxPrice !== undefined) {
+      return data.minPrice <= data.maxPrice;
+    }
+    return true;
+  },
+  {
+    message: 'minPrice must be less than or equal to maxPrice',
+    path: ['minPrice'],
+  }
+);
 
 // ── Get voucher by ID params ─────────────────────────────────────────────────
 export const getVoucherByIdSchema = z.object({
