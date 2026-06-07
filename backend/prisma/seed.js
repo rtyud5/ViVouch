@@ -76,24 +76,24 @@ async function main() {
 
   // ── Branches ──────────────────────────────────────────────────────────────
   const hdl_q1 = await prisma.branch.upsert({
-    where: { id: 'branch-hdl-q1' }, update: {},
-    create: { id: 'branch-hdl-q1', partnerId: haiDiLao.id, name: 'Haidilao Quận 1', address: '11 Tôn Đức Thắng, Q.1' }
+    where: { partnerId_name: { partnerId: haiDiLao.id, name: 'Haidilao Quận 1' } }, update: {},
+    create: { partnerId: haiDiLao.id, name: 'Haidilao Quận 1', address: '11 Tôn Đức Thắng, Q.1' }
   })
   const hdl_q7 = await prisma.branch.upsert({
-    where: { id: 'branch-hdl-q7' }, update: {},
-    create: { id: 'branch-hdl-q7', partnerId: haiDiLao.id, name: 'Haidilao Quận 7', address: 'Crescent Mall, Q.7' }
+    where: { partnerId_name: { partnerId: haiDiLao.id, name: 'Haidilao Quận 7' } }, update: {},
+    create: { partnerId: haiDiLao.id, name: 'Haidilao Quận 7', address: 'Crescent Mall, Q.7' }
   })
   const zen_q3 = await prisma.branch.upsert({
-    where: { id: 'branch-zen-q3' }, update: {},
-    create: { id: 'branch-zen-q3', partnerId: zenSpa.id, name: 'Zen Spa Quận 3', address: '28 Võ Văn Tần, Q.3' }
+    where: { partnerId_name: { partnerId: zenSpa.id, name: 'Zen Spa Quận 3' } }, update: {},
+    create: { partnerId: zenSpa.id, name: 'Zen Spa Quận 3', address: '28 Võ Văn Tần, Q.3' }
   })
   const zen_q10 = await prisma.branch.upsert({
-    where: { id: 'branch-zen-q10' }, update: {},
-    create: { id: 'branch-zen-q10', partnerId: zenSpa.id, name: 'Zen Spa Quận 10', address: '152 Lý Thường Kiệt, Q.10' }
+    where: { partnerId_name: { partnerId: zenSpa.id, name: 'Zen Spa Quận 10' } }, update: {},
+    create: { partnerId: zenSpa.id, name: 'Zen Spa Quận 10', address: '152 Lý Thường Kiệt, Q.10' }
   })
   const gt_hcm = await prisma.branch.upsert({
-    where: { id: 'branch-gt-hcm' }, update: {},
-    create: { id: 'branch-gt-hcm', partnerId: goTravel.id, name: 'GoTravel HCMC', address: '45 Lê Lợi, Q.1' }
+    where: { partnerId_name: { partnerId: goTravel.id, name: 'GoTravel HCMC' } }, update: {},
+    create: { partnerId: goTravel.id, name: 'GoTravel HCMC', address: '45 Lê Lợi, Q.1' }
   })
   console.log('✅ Branches: 5')
 
@@ -166,16 +166,16 @@ async function main() {
 
   // ── VoucherBranches ───────────────────────────────────────────────────────
   const vbData = [
-    { voucherId: 'v-hdl-1', branchId: 'branch-hdl-q1' },
-    { voucherId: 'v-hdl-1', branchId: 'branch-hdl-q7' },
-    { voucherId: 'v-hdl-2', branchId: 'branch-hdl-q1' },
-    { voucherId: 'v-hdl-2', branchId: 'branch-hdl-q7' },
-    { voucherId: 'v-hdl-pending', branchId: 'branch-hdl-q1' },
-    { voucherId: 'v-zen-1', branchId: 'branch-zen-q3' },
-    { voucherId: 'v-zen-1', branchId: 'branch-zen-q10' },
-    { voucherId: 'v-zen-2', branchId: 'branch-zen-q3' },
-    { voucherId: 'v-gt-1',  branchId: 'branch-gt-hcm' },
-    { voucherId: 'v-gt-2',  branchId: 'branch-gt-hcm' },
+    { voucherId: 'v-hdl-1', branchId: hdl_q1.id },
+    { voucherId: 'v-hdl-1', branchId: hdl_q7.id },
+    { voucherId: 'v-hdl-2', branchId: hdl_q1.id },
+    { voucherId: 'v-hdl-2', branchId: hdl_q7.id },
+    { voucherId: 'v-hdl-pending', branchId: hdl_q1.id },
+    { voucherId: 'v-zen-1', branchId: zen_q3.id },
+    { voucherId: 'v-zen-1', branchId: zen_q10.id },
+    { voucherId: 'v-zen-2', branchId: zen_q3.id },
+    { voucherId: 'v-gt-1',  branchId: gt_hcm.id },
+    { voucherId: 'v-gt-2',  branchId: gt_hcm.id },
   ]
   for (const vb of vbData) {
     await prisma.voucherBranch.upsert({
@@ -219,9 +219,9 @@ async function main() {
 
     if (codeStatus === 'USED') {
       const branchMap = {
-        'v-hdl-1': 'branch-hdl-q1', 'v-hdl-2': 'branch-hdl-q1',
-        'v-zen-1': 'branch-zen-q3', 'v-zen-2': 'branch-zen-q3',
-        'v-gt-1':  'branch-gt-hcm',
+        'v-hdl-1': hdl_q1.id, 'v-hdl-2': hdl_q1.id,
+        'v-zen-1': zen_q3.id, 'v-zen-2': zen_q3.id,
+        'v-gt-1':  gt_hcm.id,
       }
       await prisma.voucherUsageLog.create({
         data: { voucherCodeId: vc.id, redeemedBy: customer.id, branchId: branchMap[voucherId] }

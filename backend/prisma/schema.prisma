@@ -104,6 +104,8 @@ model Branch {
   partner          Partner            @relation(fields: [partnerId], references: [id])
   voucherBranches  VoucherBranch[]
   usageLogs        VoucherUsageLog[]
+
+  @@unique([partnerId, name])
 }
 
 model Category {
