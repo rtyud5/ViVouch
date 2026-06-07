@@ -154,6 +154,7 @@ model Voucher {
   @@index([status])
   @@index([partnerId])
   @@index([categoryId])
+  @@unique([partnerId, title])
 }
 
 model VoucherBranch {

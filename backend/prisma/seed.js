@@ -101,48 +101,48 @@ async function main() {
   const now = new Date()
   const future = (days) => new Date(now.getTime() + days * 86400000)
 
-  const voucherData = [
+  const vDataRaw = [
     // Haidilao
-    { id: 'v-hdl-1', partnerId: haiDiLao.id, categoryId: categories[0].id,
+    { partnerId: haiDiLao.id, categoryId: categories[0].id, key: 'hdl_1',
       title: 'Buffet Lẩu 2 người — Haidilao', originalPrice: 325000, salePrice: 179000,
       totalQty: 200, soldQty: 142, status: 'ON_SALE',
       description: 'Trải nghiệm buffet lẩu cao cấp cho 2 người tại Haidilao.',
       conditions: 'Áp dụng cho menu buffet 325k. Đặt bàn trước qua hotline.',
       imageUrl: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400' },
-    { id: 'v-hdl-2', partnerId: haiDiLao.id, categoryId: categories[0].id,
+    { partnerId: haiDiLao.id, categoryId: categories[0].id, key: 'hdl_2',
       title: 'Set lẩu 1 người — Haidilao', originalPrice: 180000, salePrice: 120000,
       totalQty: 150, soldQty: 89, status: 'ON_SALE',
       description: 'Set lẩu cá nhân đầy đủ topping cho 1 người.',
       conditions: 'Áp dụng các ngày trong tuần. Không áp dụng cuối tuần.',
       imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400' },
     // Zen Spa
-    { id: 'v-zen-1', partnerId: zenSpa.id, categoryId: categories[1].id,
+    { partnerId: zenSpa.id, categoryId: categories[1].id, key: 'zen_1',
       title: 'Massage thư giãn 90 phút — Zen Spa', originalPrice: 450000, salePrice: 249000,
       totalQty: 100, soldQty: 67, status: 'ON_SALE',
       description: 'Gói massage body toàn thân với tinh dầu thảo mộc 90 phút.',
       conditions: 'Đặt lịch trước 24h. Không hoàn tiền sau khi đặt.',
       imageUrl: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400' },
-    { id: 'v-zen-2', partnerId: zenSpa.id, categoryId: categories[1].id,
+    { partnerId: zenSpa.id, categoryId: categories[1].id, key: 'zen_2',
       title: 'Gói chăm sóc da mặt — Zen Spa', originalPrice: 350000, salePrice: 199000,
       totalQty: 80, soldQty: 34, status: 'ON_SALE',
       description: 'Chăm sóc da mặt chuyên sâu với công nghệ Hàn Quốc 60 phút.',
       conditions: 'Áp dụng cho khách hàng mới. Mỗi khách tối đa 2 voucher.',
       imageUrl: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400' },
     // GoTravel
-    { id: 'v-gt-1', partnerId: goTravel.id, categoryId: categories[2].id,
+    { partnerId: goTravel.id, categoryId: categories[2].id, key: 'gt_1',
       title: 'Tour Đà Lạt 3N2Đ — GoTravel', originalPrice: 1700000, salePrice: 1190000,
       totalQty: 50, soldQty: 12, status: 'ON_SALE',
       description: 'Tour Đà Lạt trọn gói 3 ngày 2 đêm, bao gồm xe + khách sạn + ăn sáng.',
       conditions: 'Khởi hành thứ 6 hàng tuần. Đặt trước 7 ngày.',
       imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400' },
-    { id: 'v-gt-2', partnerId: goTravel.id, categoryId: categories[2].id,
+    { partnerId: goTravel.id, categoryId: categories[2].id, key: 'gt_2',
       title: 'Tour Phú Quốc 4N3Đ — GoTravel', originalPrice: 3200000, salePrice: 2490000,
       totalQty: 30, soldQty: 8, status: 'ON_SALE',
       description: 'Tour Phú Quốc 4 ngày 3 đêm, resort 4 sao, bao gồm vé máy bay.',
       conditions: 'Áp dụng cho đoàn tối thiểu 2 người. Không áp dụng lễ Tết.',
       imageUrl: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=400' },
     // Pending approval
-    { id: 'v-hdl-pending', partnerId: haiDiLao.id, categoryId: categories[0].id,
+    { partnerId: haiDiLao.id, categoryId: categories[0].id, key: 'hdl_pending',
       title: 'Combo BBQ 3 người — Haidilao', originalPrice: 480000, salePrice: 320000,
       totalQty: 100, soldQty: 0, status: 'PENDING_APPROVAL',
       description: 'Combo BBQ đặc biệt cho 3 người.',
@@ -150,11 +150,14 @@ async function main() {
       imageUrl: 'https://images.unsplash.com/photo-1544025162-d76538775a8e?w=400' },
   ]
 
-  for (const v of voucherData) {
-    await prisma.voucher.upsert({
-      where: { id: v.id }, update: {},
+  const v = {}
+  for (const raw of vDataRaw) {
+    const { key, ...data } = raw
+    v[key] = await prisma.voucher.upsert({
+      where: { partnerId_title: { partnerId: data.partnerId, title: data.title } },
+      update: {},
       create: {
-        ...v,
+        ...data,
         saleStart: now,
         saleEnd: future(60),
         useStart: now,
@@ -162,20 +165,20 @@ async function main() {
       }
     })
   }
-  console.log('✅ Vouchers:', voucherData.length)
+  console.log('✅ Vouchers:', Object.keys(v).length)
 
   // ── VoucherBranches ───────────────────────────────────────────────────────
   const vbData = [
-    { voucherId: 'v-hdl-1', branchId: hdl_q1.id },
-    { voucherId: 'v-hdl-1', branchId: hdl_q7.id },
-    { voucherId: 'v-hdl-2', branchId: hdl_q1.id },
-    { voucherId: 'v-hdl-2', branchId: hdl_q7.id },
-    { voucherId: 'v-hdl-pending', branchId: hdl_q1.id },
-    { voucherId: 'v-zen-1', branchId: zen_q3.id },
-    { voucherId: 'v-zen-1', branchId: zen_q10.id },
-    { voucherId: 'v-zen-2', branchId: zen_q3.id },
-    { voucherId: 'v-gt-1',  branchId: gt_hcm.id },
-    { voucherId: 'v-gt-2',  branchId: gt_hcm.id },
+    { voucherId: v.hdl_1.id, branchId: hdl_q1.id },
+    { voucherId: v.hdl_1.id, branchId: hdl_q7.id },
+    { voucherId: v.hdl_2.id, branchId: hdl_q1.id },
+    { voucherId: v.hdl_2.id, branchId: hdl_q7.id },
+    { voucherId: v.hdl_pending.id, branchId: hdl_q1.id },
+    { voucherId: v.zen_1.id, branchId: zen_q3.id },
+    { voucherId: v.zen_1.id, branchId: zen_q10.id },
+    { voucherId: v.zen_2.id, branchId: zen_q3.id },
+    { voucherId: v.gt_1.id,  branchId: gt_hcm.id },
+    { voucherId: v.gt_2.id,  branchId: gt_hcm.id },
   ]
   for (const vb of vbData) {
     await prisma.voucherBranch.upsert({
@@ -187,19 +190,18 @@ async function main() {
   // ── Orders + VoucherCodes + Reviews ───────────────────────────────────────
   const { nanoid } = await import('nanoid')
   const customers = [customer1, customer2, customer3]
-  const onSaleVouchers = ['v-hdl-1', 'v-hdl-2', 'v-zen-1', 'v-zen-2', 'v-gt-1']
+  const onSaleVouchers = [v.hdl_1, v.hdl_2, v.zen_1, v.zen_2, v.gt_1]
 
   for (let i = 0; i < 15; i++) {
     const customer = customers[i % 3]
-    const voucherId = onSaleVouchers[i % onSaleVouchers.length]
-    const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } })
+    const voucher = onSaleVouchers[i % onSaleVouchers.length]
 
     const order = await prisma.order.create({
       data: {
         userId: customer.id,
         status: 'COMPLETED',
         totalAmount: voucher.salePrice,
-        items: { create: { voucherId, qty: 1, unitPrice: voucher.salePrice } },
+        items: { create: { voucherId: voucher.id, qty: 1, unitPrice: voucher.salePrice } },
         payment: { create: { method: 'WALLET', status: 'PAID', amount: voucher.salePrice } },
       }
     })
@@ -209,7 +211,7 @@ async function main() {
       data: {
         code: `VC-2026-${nanoid(10).toUpperCase()}`,
         orderId: order.id,
-        voucherId,
+        voucherId: voucher.id,
         ownerId: customer.id,
         status: codeStatus,
         expiresAt: future(90),
@@ -219,12 +221,12 @@ async function main() {
 
     if (codeStatus === 'USED') {
       const branchMap = {
-        'v-hdl-1': hdl_q1.id, 'v-hdl-2': hdl_q1.id,
-        'v-zen-1': zen_q3.id, 'v-zen-2': zen_q3.id,
-        'v-gt-1':  gt_hcm.id,
+        [v.hdl_1.id]: hdl_q1.id, [v.hdl_2.id]: hdl_q1.id,
+        [v.zen_1.id]: zen_q3.id, [v.zen_2.id]: zen_q3.id,
+        [v.gt_1.id]:  gt_hcm.id,
       }
       await prisma.voucherUsageLog.create({
-        data: { voucherCodeId: vc.id, redeemedBy: customer.id, branchId: branchMap[voucherId] }
+        data: { voucherCodeId: vc.id, redeemedBy: customer.id, branchId: branchMap[voucher.id] }
       })
     }
   }
@@ -232,11 +234,11 @@ async function main() {
 
   // Reviews
   const reviewData = [
-    { userId: customer1.id, voucherId: 'v-hdl-1', rating: 5, comment: 'Lẩu ngon, nhân viên nhiệt tình. Sẽ mua lại!' },
-    { userId: customer2.id, voucherId: 'v-hdl-1', rating: 4, comment: 'Buffet đa dạng, giá hợp lý với voucher.' },
-    { userId: customer3.id, voucherId: 'v-zen-1', rating: 5, comment: 'Massage rất thư giãn, không gian yên tĩnh.' },
-    { userId: customer1.id, voucherId: 'v-zen-2', rating: 4, comment: 'Da mặt mịn hơn sau khi dùng dịch vụ.' },
-    { userId: customer2.id, voucherId: 'v-gt-1',  rating: 5, comment: 'Tour Đà Lạt rất đáng tiền, hướng dẫn viên vui tính.' },
+    { userId: customer1.id, voucherId: v.hdl_1.id, rating: 5, comment: 'Lẩu ngon, nhân viên nhiệt tình. Sẽ mua lại!' },
+    { userId: customer2.id, voucherId: v.hdl_1.id, rating: 4, comment: 'Buffet đa dạng, giá hợp lý với voucher.' },
+    { userId: customer3.id, voucherId: v.zen_1.id, rating: 5, comment: 'Massage rất thư giãn, không gian yên tĩnh.' },
+    { userId: customer1.id, voucherId: v.zen_2.id, rating: 4, comment: 'Da mặt mịn hơn sau khi dùng dịch vụ.' },
+    { userId: customer2.id, voucherId: v.gt_1.id,  rating: 5, comment: 'Tour Đà Lạt rất đáng tiền, hướng dẫn viên vui tính.' },
   ]
   for (const r of reviewData) {
     await prisma.review.upsert({
