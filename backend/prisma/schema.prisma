@@ -71,9 +71,10 @@ model User {
   partner      Partner?
   cart         Cart?
   orders       Order[]
-  voucherCodes VoucherCode[]
-  reviews      Review[]
-  auditLogs    AuditLog[]
+  voucherCodes   VoucherCode[]
+  reviews        Review[]
+  auditLogs      AuditLog[]
+  refreshTokens  RefreshToken[]
 }
 
 model Partner {
@@ -104,6 +105,8 @@ model Branch {
   partner          Partner            @relation(fields: [partnerId], references: [id])
   voucherBranches  VoucherBranch[]
   usageLogs        VoucherUsageLog[]
+
+  @@unique([partnerId, name])
 }
 
 model Category {
@@ -151,6 +154,7 @@ model Voucher {
   @@index([status])
   @@index([partnerId])
   @@index([categoryId])
+  @@unique([partnerId, title])
 }
 
 model VoucherBranch {
@@ -287,4 +291,17 @@ model AuditLog {
   @@index([actorId])
   @@index([action])
   @@index([createdAt])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  isRevoked Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }

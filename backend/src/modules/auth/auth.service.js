@@ -59,7 +59,7 @@ export const register = async (data) => {
  * Đăng nhập
  * @param {string} email
  * @param {string} password
- * @returns {Object} { accessToken, refreshToken, user }
+ * @returns {Object} { accessToken, user }
  */
 export const login = async (email, password) => {
   // Tìm user theo email
@@ -95,17 +95,10 @@ export const login = async (email, password) => {
     { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN }
   );
 
-  const refreshToken = jwt.sign(
-    { userId: user.id },
-    env.JWT_REFRESH_SECRET,
-    { expiresIn: env.REFRESH_TOKEN_EXPIRES_IN }
-  );
-
   const { passwordHash: _, ...userWithoutPassword } = user;
 
   return {
     accessToken,
-    refreshToken,
     user: userWithoutPassword
   };
 };

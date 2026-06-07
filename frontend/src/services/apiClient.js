@@ -1,6 +1,12 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/authStore";
 
+if (!import.meta.env.VITE_API_BASE_URL) {
+  throw new Error(
+    "[apiClient] VITE_API_BASE_URL is not defined. Check your .env file."
+  );
+}
+
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 15000

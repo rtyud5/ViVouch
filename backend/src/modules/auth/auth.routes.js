@@ -85,7 +85,7 @@ router.post("/register", authController.register);
  * /api/auth/login:
  *   post:
  *     summary: Đăng nhập vào hệ thống
- *     description: Xác thực người dùng bằng email và mật khẩu, trả về bộ đôi Access Token và Refresh Token nếu thành công.
+ *     description: Xác thực người dùng bằng email và mật khẩu, trả về Access Token nếu thành công.
  *     tags:
  *       - Auth
  *     requestBody:
@@ -126,10 +126,6 @@ router.post("/register", authController.register);
  *                       type: string
  *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *                       description: JWT Access Token dùng cho các API được bảo vệ (thời hạn ngắn)
- *                     refreshToken:
- *                       type: string
- *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *                       description: JWT Refresh Token dùng để làm mới access token (thời hạn dài)
  *                     user:
  *                       $ref: '#/components/schemas/UserResponse'
  *       400:
