@@ -52,7 +52,8 @@ export default {
         error: "#ba1a1a",
         background: "#f9f9fc",
         "surface-container": "#eeeef0",
-        "inverse-primary": "#68dbae"
+        "inverse-primary": "#68dbae",
+        success: "#00694c"
       },
       borderRadius: {
         DEFAULT: "0.25rem",

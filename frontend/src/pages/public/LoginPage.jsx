@@ -73,6 +73,13 @@ export function LoginPage() {
         </header>
 
         <div className="bg-surface-container-lowest w-full rounded-xl shadow-lg border border-surface-variant/50 p-section-gap">
+           {location.state?.message && (
+            <div className="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg flex items-center gap-3 text-success animate-in fade-in slide-in-from-top-2 duration-300">
+              <span className="material-symbols-outlined text-[20px]">info</span>
+              <p className="font-body-md text-body-md">{location.state.message}</p>
+            </div>
+          )}
+
           <form
             action="#"
             className="space-y-6"
