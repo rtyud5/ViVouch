@@ -145,13 +145,9 @@ export async function findById(id) {
   const originalPrice = toNum(voucher.originalPrice);
   const salePrice     = toNum(voucher.salePrice);
 
-  // Calculate avgRating from DB aggregate for accuracy
-  const reviewAgg = await prisma.review.aggregate({
-    where: { voucherId: id },
-    _avg: { rating: true },
-  });
-  const avgRating = reviewAgg._avg.rating
-    ? Number(reviewAgg._avg.rating.toFixed(1))
+  const ratings = voucher.reviews.map((r) => r.rating);
+  const avgRating = ratings.length
+    ? Number((ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1))
     : 0;
   const totalCount = voucher._count.reviews;
 
