@@ -1,0 +1,217 @@
+{
+  "info": {
+    "name": "ViVouch — Public API",
+    "description": "Postman collection cho 5 endpoints public API của ViVouch.\n\n### Endpoints:\n1. GET /health — Health check\n2. GET /api/categories — Danh sách danh mục\n3. GET /api/vouchers — Danh sách voucher (mặc định)\n4. GET /api/vouchers?... — Danh sách voucher (có filter)\n5. GET /api/vouchers/:id — Chi tiết voucher\n\n### Hướng dẫn:\n- Đặt biến `base_url` = `http://localhost:5000` (hoặc URL server)\n- Chạy theo thứ tự: request 3 sẽ tự lưu `voucherId` cho request 5",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Body has success=true', () => {",
+              "  const res = pm.response.json();",
+              "  pm.expect(res.success).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. List Categories",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Response shape is correct', () => {",
+              "  const res = pm.response.json();",
+              "  pm.expect(res.success).to.eql(true);",
+              "  pm.expect(res.data).to.be.an('array');",
+              "  if (res.data.length > 0) {",
+              "    pm.expect(res.data[0]).to.have.property('name');",
+              "    pm.expect(res.data[0]).to.have.property('slug');",
+              "  }",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/categories",
+          "host": ["{{base_url}}"],
+          "path": ["api", "categories"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. List Vouchers (default)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Response has pagination', () => {",
+              "  const res = pm.response.json();",
+              "  pm.expect(res.success).to.eql(true);",
+              "  pm.expect(res.data).to.be.an('array');",
+              "  pm.expect(res.pagination).to.have.property('page');",
+              "  pm.expect(res.pagination).to.have.property('limit');",
+              "  pm.expect(res.pagination).to.have.property('total');",
+              "  pm.expect(res.pagination).to.have.property('totalPages');",
+              "});",
+              "",
+              "pm.test('Voucher shape is correct', () => {",
+              "  const res = pm.response.json();",
+              "  if (res.data.length > 0) {",
+              "    const v = res.data[0];",
+              "    pm.expect(v).to.have.property('id');",
+              "    pm.expect(v).to.have.property('title');",
+              "    pm.expect(v).to.have.property('discountPct');",
+              "    pm.expect(v).to.have.property('remainingQty');",
+              "    pm.expect(v.remainingQty).to.be.at.least(0);",
+              "    pm.expect(v).to.have.property('avgRating');",
+              "    pm.expect(v).to.have.property('reviewCount');",
+              "    pm.expect(v).to.have.property('partner');",
+              "    pm.expect(v).to.have.property('category');",
+              "",
+              "    // Save first voucher ID for detail request",
+              "    pm.collectionVariables.set('voucherId', v.id);",
+              "  }",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/vouchers",
+          "host": ["{{base_url}}"],
+          "path": ["api", "vouchers"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. List Vouchers (with filters)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Filtered results are valid', () => {",
+              "  const res = pm.response.json();",
+              "  pm.expect(res.success).to.eql(true);",
+              "  pm.expect(res.data).to.be.an('array');",
+              "  pm.expect(res.pagination).to.be.an('object');",
+              "  // All returned vouchers should have salePrice <= maxPrice",
+              "  res.data.forEach(v => {",
+              "    pm.expect(v.salePrice).to.be.at.most(500000);",
+              "  });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/vouchers?page=1&limit=6&maxPrice=500000&sort=price_asc",
+          "host": ["{{base_url}}"],
+          "path": ["api", "vouchers"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "6" },
+            { "key": "maxPrice", "value": "500000" },
+            { "key": "sort", "value": "price_asc" }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Get Voucher Detail",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('Detail response shape', () => {",
+              "  const res = pm.response.json();",
+              "  pm.expect(res.success).to.eql(true);",
+              "  const d = res.data;",
+              "  pm.expect(d).to.have.property('id');",
+              "  pm.expect(d).to.have.property('title');",
+              "  pm.expect(d).to.have.property('description');",
+              "  pm.expect(d).to.have.property('originalPrice');",
+              "  pm.expect(d).to.have.property('salePrice');",
+              "  pm.expect(d).to.have.property('discountPct');",
+              "  pm.expect(d).to.have.property('remainingQty');",
+              "  pm.expect(d.remainingQty).to.be.at.least(0);",
+              "  pm.expect(d).to.have.property('branches');",
+              "  pm.expect(d.branches).to.be.an('array');",
+              "  pm.expect(d).to.have.property('reviews');",
+              "  pm.expect(d).to.have.property('reviewSummary');",
+              "  pm.expect(d.reviewSummary).to.have.property('avgRating');",
+              "  pm.expect(d.reviewSummary).to.have.property('totalCount');",
+              "  pm.expect(d).to.have.property('partner');",
+              "  pm.expect(d).to.have.property('category');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/vouchers/{{voucherId}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "vouchers", "{{voucherId}}"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "voucherId",
+      "value": ""
+    }
+  ]
+}

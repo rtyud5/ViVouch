@@ -20,7 +20,7 @@ function mapVoucherSummary(v, avgRating) {
     originalPrice,
     salePrice,
     discountPct:   calcDiscount(originalPrice, salePrice),
-    remainingQty:  v.totalQty - v.soldQty,
+    remainingQty:  Math.max(0, v.totalQty - v.soldQty),
     soldQty:       v.soldQty,
     avgRating,
     reviewCount:   v._count?.reviews || 0,
@@ -134,6 +134,7 @@ export async function findById(id) {
         },
         orderBy: { createdAt: 'desc' },
       },
+      _count: { select: { reviews: true } },
     },
   });
 
@@ -144,10 +145,15 @@ export async function findById(id) {
   const originalPrice = toNum(voucher.originalPrice);
   const salePrice     = toNum(voucher.salePrice);
 
-  const ratings  = voucher.reviews.map((r) => r.rating);
-  const avgRating = ratings.length
-    ? +(ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
+  // Calculate avgRating from DB aggregate for accuracy
+  const reviewAgg = await prisma.review.aggregate({
+    where: { voucherId: id },
+    _avg: { rating: true },
+  });
+  const avgRating = reviewAgg._avg.rating
+    ? Number(reviewAgg._avg.rating.toFixed(1))
     : 0;
+  const totalCount = voucher._count.reviews;
 
   return {
     id:            voucher.id,
@@ -159,7 +165,7 @@ export async function findById(id) {
     discountPct:   calcDiscount(originalPrice, salePrice),
     totalQty:      voucher.totalQty,
     soldQty:       voucher.soldQty,
-    remainingQty:  voucher.totalQty - voucher.soldQty,
+    remainingQty:  Math.max(0, voucher.totalQty - voucher.soldQty),
     saleStart:     voucher.saleStart,
     saleEnd:       voucher.saleEnd,
     useStart:      voucher.useStart,
@@ -170,6 +176,6 @@ export async function findById(id) {
     category:      voucher.category,
     branches:      voucher.voucherBranches.map((vb) => vb.branch),
     reviews:       voucher.reviews,
-    reviewSummary: { avgRating, totalCount: ratings.length },
+    reviewSummary: { avgRating, totalCount },
   };
 }
