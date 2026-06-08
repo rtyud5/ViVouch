@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from "react";
  */
 export function SearchInput({
   value = "",
-  onChange,
+  onChange = () => {},
   placeholder = "Tìm kiếm voucher...",
   delay = 300,
   className = "",

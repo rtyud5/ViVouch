@@ -170,7 +170,9 @@ export function VoucherCard({ voucher, variant = "home" }) {
               onClick={handleBuyClick}
               className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm"
             >
-              Mua ngay
+              <span className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm">
+                Mua ngay
+              </span>
             </button>
           </div>
         </div>

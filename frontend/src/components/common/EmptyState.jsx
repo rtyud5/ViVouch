@@ -58,6 +58,7 @@ export function EmptyState({ title, description, action, onSuggestion }) {
             {suggestions.map((s) => (
               <button
                 key={s}
+                type="button"
                 onClick={() => onSuggestion(s)}
                 className="
                   px-4 py-1.5

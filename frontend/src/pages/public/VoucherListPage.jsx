@@ -25,13 +25,17 @@ function sortVouchers(vouchers, sortKey) {
   const copy = [...vouchers];
   switch (sortKey) {
     case "popular":
-      return copy.sort((a, b) => b.reviewCount - a.reviewCount);
+      return copy.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
     case "newest":
-      return copy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return copy.sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return (Number.isNaN(timeB) ? 0 : timeB) - (Number.isNaN(timeA) ? 0 : timeA);
+      });
     case "price-asc":
-      return copy.sort((a, b) => a.salePrice - b.salePrice);
+      return copy.sort((a, b) => (a.salePrice || 0) - (b.salePrice || 0));
     case "price-desc":
-      return copy.sort((a, b) => b.salePrice - a.salePrice);
+      return copy.sort((a, b) => (b.salePrice || 0) - (a.salePrice || 0));
     default:
       return copy;
   }
@@ -39,11 +43,13 @@ function sortVouchers(vouchers, sortKey) {
 
 function readFiltersFromParams(searchParams) {
   const keyword = searchParams.get("keyword") ?? searchParams.get("q") ?? "";
+  const pageParam = searchParams.get("page");
+  const parsedPage = pageParam ? parseInt(pageParam, 10) : 1;
   return {
     keyword,
     category: searchParams.get("category") ?? "all",
     sort: searchParams.get("sort") ?? "popular",
-    page: Math.max(1, Number(searchParams.get("page") ?? 1)),
+    page: Number.isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage,
   };
 }
 
