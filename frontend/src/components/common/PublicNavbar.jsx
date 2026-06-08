@@ -112,7 +112,7 @@ export function PublicNavbar() {
                 {/* Avatar chữ cái đầu */}
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-content
                                 flex items-center justify-center text-xs font-bold shrink-0">
-                  {user.fullName?.charAt(0)?.toUpperCase() ?? "U"}
+                  {user.fullName?.[0]?.toUpperCase() ?? "U"}
                 </div>
                 <span className="hidden lg:inline text-base-content">{user.fullName}</span>
               </div>
