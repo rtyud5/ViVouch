@@ -13,7 +13,9 @@ import { useAuthStore } from "../../stores/authStore";
  */
 export function PublicNavbar() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, clearAuth } = useAuthStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
