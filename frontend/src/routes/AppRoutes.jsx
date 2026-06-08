@@ -26,7 +26,7 @@ import { PartnerProfilePage } from "../pages/partner/PartnerProfilePage"
 import { RedeemVoucherPage } from "../pages/partner/RedeemVoucherPage"
 
 // Admin
-import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage"; 
+import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
 import { UsersPage } from "../pages/admin/UsersPage"
 import { PartnersPage } from "../pages/admin/PartnersPage"
 import { VoucherApprovalsPage } from "../pages/admin/VoucherApprovalsPage"
@@ -88,7 +88,7 @@ export function AppRoutes() {
               <AdminLayout />
             </RoleRoute>
           </ProtectedRoute>
-        }>    
+        }>
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="partners" element={<PartnersPage />} />
           <Route path="users" element={<UsersPage />} />
