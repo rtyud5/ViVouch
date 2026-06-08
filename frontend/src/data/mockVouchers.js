@@ -214,7 +214,7 @@ export const mockVouchers = [
   },
   {
     id: "mock-4",
-    name: "Vé Vào Công Khu Vui Chơi VR Cao Cấp",
+    name: "Vé Vào Cổng Khu Vui Chơi VR Cao Cấp",
     partnerName: "Galaxy VR Center",
     category: "giai-tri",
     location: "Quận 7, TP.HCM",
