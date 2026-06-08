@@ -46,9 +46,10 @@ export function AppRoutes() {
           <Route index element={<HomePage />} />
           <Route path="/vouchers" element={<VoucherListPage />} />
           <Route path="/vouchers/:id" element={<VoucherDetailPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
         </Route>
+
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         {/* Customer Portal */}
         <Route path="/customer" element={

@@ -91,6 +91,33 @@ export default {
   },
   plugins: [daisyui],
   daisyui: {
-    themes: ["light"]
+    themes: [
+      {
+        vivouch: {
+          // Màu chủ đạo — xanh lá ViVouch
+          primary: "#00694c",
+          "primary-content": "#ffffff",
+          // Đỏ accent — badge giảm giá, cảnh báo
+          secondary: "#b7131a",
+          "secondary-content": "#ffffff",
+          accent: "#008560",
+          "accent-content": "#ffffff",
+          neutral: "#1a1c1e",
+          "neutral-content": "#ffffff",
+          "base-100": "#ffffff",
+          "base-200": "#f3f4f6",
+          "base-300": "#e5e7eb",
+          "base-content": "#1a1c1e",
+          info: "#0369a1",
+          "info-content": "#ffffff",
+          success: "#00694c",
+          "success-content": "#ffffff",
+          warning: "#d97706",
+          "warning-content": "#ffffff",
+          error: "#ba1a1a",
+          "error-content": "#ffffff",
+        }
+      }
+    ]
   }
 };
