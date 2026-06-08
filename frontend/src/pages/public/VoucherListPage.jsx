@@ -12,6 +12,7 @@ import { mockVouchers } from "../../data/mockVouchers";
 const PAGE_SIZE = 8;
 
 function normalizeVietnamese(str) {
+  if (!str || typeof str !== "string") return "";
   return str
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
