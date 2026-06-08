@@ -1,6 +1,14 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 export function AdminLayout() {
+  const navigate = useNavigate();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate('/login', { replace: true });
+  };
   return (
     <div className="drawer lg:drawer-open">
       <input id="admin-drawer" type="checkbox" className="drawer-toggle" />
@@ -33,6 +41,7 @@ export function AdminLayout() {
           <li className="mb-2"><Link to="/admin/vouchers" className="hover:bg-slate-800 active:bg-slate-700">Voucher Approval</Link></li>
           <li className="mb-2"><Link to="/admin/orders" className="hover:bg-slate-800 active:bg-slate-700">Order Management</Link></li>
           <li className="mb-2"><Link to="/admin/audit" className="hover:bg-slate-800 active:bg-slate-700">System Audit Log</Link></li>
+          <li className="mt-auto pt-4"><button onClick={handleLogout} className="text-red-400 hover:bg-slate-800 hover:text-red-300 font-bold">Logout</button></li>
         </ul>
       </div>
     </div>
