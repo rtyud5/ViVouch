@@ -139,7 +139,7 @@ export function VoucherCard({ voucher }) {
 
         {/* ── Price row ── */}
         <div className="flex items-baseline gap-2 mt-1">
-          {salePrice > 0 ? (
+          {salePrice !== undefined && salePrice !== null && salePrice > 0 ? (
             <>
               {/* Sale price */}
               <span className="text-primary font-bold text-sm">
@@ -152,10 +152,10 @@ export function VoucherCard({ voucher }) {
                 </span>
               )}
             </>
-          ) : (
+          ) : salePrice === 0 ? (
             /* Free voucher */
             <span className="text-success font-bold text-sm">Miễn phí</span>
-          )}
+          ) : null}
         </div>
 
         {/* ── Progress bar ── */}
