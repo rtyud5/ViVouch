@@ -26,7 +26,7 @@ export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formError, setFormError] = useState("");
-
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isSuccess, setIsSuccess] = useState(false);
 
   const registerMutation = useMutation({
@@ -48,6 +48,7 @@ export function RegisterPage() {
   function handleSubmit(event) {
     event.preventDefault();
     setFormError("");
+    setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
     const result = registerSchema.safeParse({
@@ -59,7 +60,11 @@ export function RegisterPage() {
     });
 
     if (!result.success) {
-      setFormError(result.error.issues[0]?.message || "Dữ liệu không hợp lệ");
+      const errors = {};
+      result.error.issues.forEach(issue => {
+        errors[issue.path[0]] = issue.message;
+      });
+      setFieldErrors(errors);
       return;
     }
 
@@ -71,12 +76,21 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center p-4">
-      <main className="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-lg p-section-gap flex flex-col gap-6">
-        <header className="flex items-center gap-4 border-b border-surface-variant pb-4">
+    <div className="flex-1 bg-surface-container-low text-on-surface flex items-center justify-center p-4 min-h-screen relative overflow-hidden">
+      {/* Decorative Background Circles */}
+      <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary-container opacity-20 blur-3xl pointer-events-none z-0"></div>
+      <div className="absolute top-[60%] -right-[10%] w-[30%] h-[30%] rounded-full bg-secondary-container opacity-10 blur-3xl pointer-events-none z-0"></div>
+
+      <main className="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-lg p-8 relative overflow-hidden z-10 border border-surface-variant/50">
+        {/* Decorative Circles inside the card */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary-container rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none"></div>
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-secondary-container rounded-full mix-blend-multiply filter blur-3xl opacity-20 pointer-events-none"></div>
+
+        {/* Header */}
+        <header className="flex items-center gap-4 border-b border-surface-variant pb-4 mb-6 relative z-10">
           <button
             aria-label="Go back"
-            className="text-on-surface hover:text-primary transition-colors flex items-center justify-center p-2 rounded-full hover:bg-surface-container-low"
+            className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-2 -ml-2 rounded-full hover:bg-surface-container-low"
             onClick={() => navigate(-1)}
             type="button"
           >
@@ -88,7 +102,7 @@ export function RegisterPage() {
         </header>
 
         {isSuccess ? (
-          <div className="flex flex-col items-center justify-center py-10 gap-4 text-center animate-in fade-in zoom-in duration-300">
+          <div className="flex flex-col items-center justify-center py-10 gap-4 text-center animate-in fade-in zoom-in duration-300 relative z-10">
             <div className="w-16 h-16 bg-success/10 text-success rounded-full flex items-center justify-center">
               <span className="material-symbols-outlined text-4xl">check_circle</span>
             </div>
@@ -98,76 +112,151 @@ export function RegisterPage() {
             </div>
           </div>
         ) : (
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-2">
+          <form className="space-y-5 relative z-10" onSubmit={handleSubmit}>
+            {formError && (
+              <div className="p-4 bg-error/10 border border-error/20 rounded-lg flex items-center gap-3 text-error animate-in fade-in slide-in-from-top-2 duration-300">
+                <span className="material-symbols-outlined text-[20px]">error</span>
+                <p className="font-body-md text-body-md">{formError}</p>
+              </div>
+            )}
+
+            {/* Full Name Field */}
+            <div>
               <label
-                className="font-label-md text-label-md text-on-surface-variant"
+                className="block font-label-md text-label-md text-on-surface-variant mb-1"
                 htmlFor="fullname"
               >
                 Họ và tên
               </label>
-              <input
-                className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline"
-                id="fullname"
-                name="fullname"
-                placeholder="Nhập họ và tên"
-                required
-                type="text"
-              />
+              <div className="relative">
+                <span className={`material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px] ${fieldErrors.fullName ? "text-error" : "text-on-surface-variant"}`}>
+                  person
+                </span>
+                <input
+                  className={`w-full pl-10 pr-10 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-1 transition-colors ${
+                    fieldErrors.fullName
+                      ? "border-error bg-error-container/10 focus:border-error focus:ring-error"
+                      : "bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+                  }`}
+                  id="fullname"
+                  name="fullname"
+                  placeholder="Nguyễn Văn A"
+                  required
+                  type="text"
+                />
+                {fieldErrors.fullName && (
+                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-error pointer-events-none text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    error
+                  </span>
+                )}
+              </div>
+              {fieldErrors.fullName && (
+                <p className="mt-1.5 font-label-md text-label-md text-error flex items-center gap-1 text-sm">
+                  {fieldErrors.fullName}
+                </p>
+              )}
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* Email Field */}
+            <div>
               <label
-                className="font-label-md text-label-md text-on-surface-variant"
+                className="block font-label-md text-label-md text-on-surface-variant mb-1"
                 htmlFor="email"
               >
                 Email
               </label>
-              <input
-                className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline"
-                id="email"
-                name="email"
-                placeholder="Nhập địa chỉ email"
-                required
-                type="email"
-              />
+              <div className="relative">
+                <span className={`material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px] ${fieldErrors.email ? "text-error" : "text-on-surface-variant"}`}>
+                  mail
+                </span>
+                <input
+                  className={`w-full pl-10 pr-10 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-1 transition-colors ${
+                    fieldErrors.email
+                      ? "border-error bg-error-container/10 focus:border-error focus:ring-error"
+                      : "bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+                  }`}
+                  id="email"
+                  name="email"
+                  placeholder="email@example.com"
+                  required
+                  type="email"
+                />
+                {fieldErrors.email && (
+                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-error pointer-events-none text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    error
+                  </span>
+                )}
+              </div>
+              {fieldErrors.email && (
+                <p className="mt-1.5 font-label-md text-label-md text-error flex items-center gap-1 text-sm">
+                  {fieldErrors.email}
+                </p>
+              )}
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* Phone Number Field */}
+            <div>
               <label
-                className="font-label-md text-label-md text-on-surface-variant"
+                className="block font-label-md text-label-md text-on-surface-variant mb-1"
                 htmlFor="phone"
               >
                 Số điện thoại
               </label>
-              <input
-                className="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline"
-                id="phone"
-                name="phone"
-                placeholder="Nhập số điện thoại"
-                type="tel"
-              />
+              <div className="relative">
+                <span className={`material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px] ${fieldErrors.phone ? "text-error" : "text-on-surface-variant"}`}>
+                  call
+                </span>
+                <input
+                  className={`w-full pl-10 pr-10 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-1 transition-colors ${
+                    fieldErrors.phone
+                      ? "border-error bg-error-container/10 focus:border-error focus:ring-error"
+                      : "bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+                  }`}
+                  id="phone"
+                  name="phone"
+                  placeholder="0912 345 678"
+                  type="tel"
+                />
+                {fieldErrors.phone && (
+                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-error pointer-events-none text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    error
+                  </span>
+                )}
+              </div>
+              {fieldErrors.phone && (
+                <p className="mt-1.5 font-label-md text-label-md text-error flex items-center gap-1 text-sm">
+                  {fieldErrors.phone}
+                </p>
+              )}
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* Password Field */}
+            <div>
               <label
-                className="font-label-md text-label-md text-on-surface-variant"
+                className="block font-label-md text-label-md text-on-surface-variant mb-1"
                 htmlFor="password"
               >
                 Mật khẩu
               </label>
-              <div className="relative w-full">
+              <div className="relative">
+                <span className={`material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px] ${fieldErrors.password ? "text-error" : "text-on-surface-variant"}`}>
+                  lock
+                </span>
                 <input
-                  className="w-full px-4 py-3 pr-12 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline"
+                  className={`w-full pl-10 pr-10 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-1 transition-colors ${
+                    fieldErrors.password
+                      ? "border-error bg-error-container/10 focus:border-error focus:ring-error"
+                      : "bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+                  }`}
                   id="password"
                   name="password"
-                  placeholder="Nhập mật khẩu"
+                  placeholder="••••••••"
                   required
                   type={showPassword ? "text" : "password"}
                 />
                 <button
                   aria-label="Toggle password visibility"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary focus:outline-none p-1 rounded-full hover:bg-surface-container-low transition-colors"
                   onClick={() => setShowPassword((value) => !value)}
                   type="button"
                 >
@@ -176,27 +265,40 @@ export function RegisterPage() {
                   </span>
                 </button>
               </div>
+              {fieldErrors.password && (
+                <p className="mt-1.5 font-label-md text-label-md text-error flex items-center gap-1 text-sm">
+                  {fieldErrors.password}
+                </p>
+              )}
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* Confirm Password Field */}
+            <div>
               <label
-                className="font-label-md text-label-md text-on-surface-variant"
+                className="block font-label-md text-label-md text-on-surface-variant mb-1"
                 htmlFor="confirm_password"
               >
                 Xác nhận mật khẩu
               </label>
-              <div className="relative w-full">
+              <div className="relative">
+                <span className={`material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[20px] ${fieldErrors.confirmPassword ? "text-error" : "text-on-surface-variant"}`}>
+                  lock_reset
+                </span>
                 <input
-                  className="w-full px-4 py-3 pr-12 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-outline"
+                  className={`w-full pl-10 pr-10 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-1 transition-colors ${
+                    fieldErrors.confirmPassword
+                      ? "border-error bg-error-container/10 focus:border-error focus:ring-error"
+                      : "bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+                  }`}
                   id="confirm_password"
                   name="confirm_password"
-                  placeholder="Nhập lại mật khẩu"
+                  placeholder="••••••••"
                   required
                   type={showConfirmPassword ? "text" : "password"}
                 />
                 <button
                   aria-label="Toggle confirm password visibility"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary focus:outline-none p-1 rounded-full hover:bg-surface-container-low transition-colors"
                   onClick={() => setShowConfirmPassword((value) => !value)}
                   type="button"
                 >
@@ -205,12 +307,18 @@ export function RegisterPage() {
                   </span>
                 </button>
               </div>
+              {fieldErrors.confirmPassword && (
+                <p className="mt-1.5 font-label-md text-label-md text-error flex items-center gap-1 text-sm">
+                  {fieldErrors.confirmPassword}
+                </p>
+              )}
             </div>
 
-            <div className="flex items-start gap-3 mt-2">
+            {/* Terms Checkbox */}
+            <div className="flex items-start gap-3 pt-1">
               <div className="flex items-center h-5 mt-0.5">
                 <input
-                  className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary focus:ring-2 bg-surface-container-lowest cursor-pointer"
+                  className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary focus:ring-2 bg-surface cursor-pointer"
                   id="terms"
                   name="terms"
                   required
@@ -238,14 +346,9 @@ export function RegisterPage() {
               </label>
             </div>
 
-            {formError ? (
-              <p className="font-body-md text-body-md text-error" role="alert">
-                {formError}
-              </p>
-            ) : null}
-
+            {/* Submit Button */}
             <button
-              className="w-full bg-primary hover:bg-primary-container disabled:bg-outline-variant disabled:cursor-not-allowed text-on-primary font-label-md text-label-md py-3.5 px-6 rounded-lg transition-colors mt-4 shadow-sm active:scale-[0.98] transform duration-150 flex items-center justify-center gap-2"
+              className="w-full bg-primary hover:bg-surface-tint disabled:bg-outline-variant disabled:cursor-not-allowed text-on-primary font-label-md text-label-md py-3.5 px-6 rounded-lg transition-colors mt-6 shadow-md active:scale-[0.98] transform duration-150 flex items-center justify-center gap-2"
               disabled={registerMutation.isPending}
               type="submit"
             >
@@ -258,11 +361,12 @@ export function RegisterPage() {
           </form>
         )}
 
-        <div className="text-center mt-2">
+        {/* Footer */}
+        <div className="mt-6 text-center relative z-10">
           <p className="font-body-md text-body-md text-on-surface-variant">
-            Đã có tài khoản?
+            Đã có tài khoản?{" "}
             <Link
-              className="text-primary font-label-md hover:underline underline-offset-2 transition-all ml-1"
+              className="text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary rounded ml-1"
               to="/login"
             >
               Đăng nhập
