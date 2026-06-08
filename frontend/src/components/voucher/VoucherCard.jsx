@@ -13,6 +13,7 @@ const PLACEHOLDER_IMAGE = "https://placehold.co/400x300/e2e8f0/94a3b8?text=No+Im
  */
 function calcDiscountPercent(originalPrice, salePrice) {
   if (!originalPrice || originalPrice <= 0) return 0;
+  if (salePrice === undefined || salePrice === null) return 0;
   if (salePrice <= 0) return 100; // Free voucher
   const percent = ((originalPrice - salePrice) / originalPrice) * 100;
   return Math.floor(percent);
