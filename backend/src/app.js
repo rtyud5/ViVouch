@@ -6,6 +6,7 @@ import authRoutes from "./modules/auth/auth.routes.js";
 import { swaggerDocs } from "./docs/swagger.js";
 import categoriesRouter from './modules/categories/categories.routes.js';
 import vouchersRouter from './modules/vouchers/vouchers.routes.js';
+import cartRouter from './modules/cart/cart.routes.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/api-docs", swaggerDocs);
 app.use("/api/auth", authRoutes);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/vouchers', vouchersRouter);
+app.use('/api/cart', cartRouter);
 
 app.use(errorMiddleware);
 
