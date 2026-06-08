@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Minus, Plus } from "lucide-react";
 
 /**
@@ -14,18 +14,32 @@ import { Minus, Plus } from "lucide-react";
  */
 export function QtySelector({ value, onChange, max = 1, disabled = false }) {
   const isOutOfStock = max <= 0;
-  const isMinusDisabled = disabled || isOutOfStock || value <= 1;
-  const isPlusDisabled = disabled || isOutOfStock || value >= max;
+
+  // Sử dụng state nội bộ để cho phép người dùng gõ trống "" hoặc số tùy ý
+  // mà không bắt buộc prop value phải nhận kiểu string.
+  const [localVal, setLocalVal] = useState(String(value || 1));
+
+  // Đồng bộ localVal khi value thay đổi từ bên ngoài (ví dụ qua click button hoặc prop update)
+  useEffect(() => {
+    setLocalVal(String(value || 1));
+  }, [value]);
+
+  const isMinusDisabled = disabled || isOutOfStock || (Number(value) || 1) <= 1;
+  const isPlusDisabled = disabled || isOutOfStock || (Number(value) || 1) >= max;
 
   const handleDecrease = () => {
-    if (value > 1) {
-      onChange(value - 1);
+    // Ép kiểu số an toàn trước khi tính toán để tránh bug nối chuỗi
+    const currentNum = parseInt(String(value), 10) || 1;
+    if (currentNum > 1) {
+      onChange(currentNum - 1);
     }
   };
 
   const handleIncrease = () => {
-    if (value < max) {
-      onChange(value + 1);
+    // Ép kiểu số an toàn trước khi tính toán để tránh bug nối chuỗi
+    const currentNum = parseInt(String(value), 10) || 1;
+    if (currentNum < max) {
+      onChange(currentNum + 1);
     }
   };
 
@@ -36,8 +50,10 @@ export function QtySelector({ value, onChange, max = 1, disabled = false }) {
     // Chỉ cho phép nhập số
     const cleanVal = valStr.replace(/[^0-9]/g, "");
     
+    setLocalVal(cleanVal); // Cập nhật local state để hiển thị đúng những gì người dùng đang gõ
+    
+    // Nếu trống thì tạm thời không emit onChange lên parent để tránh truyền chuỗi rỗng ""
     if (cleanVal === "") {
-      onChange(""); // Cho phép tạm thời trống để người dùng nhập số mới
       return;
     }
 
@@ -47,13 +63,23 @@ export function QtySelector({ value, onChange, max = 1, disabled = false }) {
     } else if (val > max) {
       val = max;
     }
+    
+    // Luôn luôn emit kiểu số nguyên (number)
     onChange(val);
   };
 
   const handleBlur = () => {
     // Khi người dùng click ra ngoài, nếu ô input đang trống hoặc không hợp lệ thì reset về 1
-    if (value === "" || isNaN(value)) {
+    const val = parseInt(localVal, 10);
+    if (isNaN(val) || val < 1) {
+      setLocalVal("1");
       onChange(1);
+    } else if (val > max) {
+      setLocalVal(String(max));
+      onChange(max);
+    } else {
+      setLocalVal(String(val));
+      onChange(val);
     }
   };
 
@@ -75,7 +101,7 @@ export function QtySelector({ value, onChange, max = 1, disabled = false }) {
         
         <input
           type="text"
-          value={value}
+          value={localVal}
           onChange={handleInputChange}
           onBlur={handleBlur}
           disabled={disabled || isOutOfStock}

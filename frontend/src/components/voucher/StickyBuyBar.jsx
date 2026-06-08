@@ -24,19 +24,20 @@ export function StickyBuyBar({
 }) {
   if (!voucher) return null;
 
+  const currentQty = parseInt(String(quantity), 10) || 1;
   const isOutOfStock = voucher.remainingQuantity <= 0;
-  const isMinusDisabled = disabled || isOutOfStock || quantity <= 1;
-  const isPlusDisabled = disabled || isOutOfStock || quantity >= voucher.remainingQuantity;
+  const isMinusDisabled = disabled || isOutOfStock || currentQty <= 1;
+  const isPlusDisabled = disabled || isOutOfStock || currentQty >= voucher.remainingQuantity;
 
   const handleDecrease = () => {
-    if (quantity > 1) {
-      onQuantityChange(quantity - 1);
+    if (currentQty > 1) {
+      onQuantityChange(currentQty - 1);
     }
   };
 
   const handleIncrease = () => {
-    if (quantity < voucher.remainingQuantity) {
-      onQuantityChange(quantity + 1);
+    if (currentQty < voucher.remainingQuantity) {
+      onQuantityChange(currentQty + 1);
     }
   };
 

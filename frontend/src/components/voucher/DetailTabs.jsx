@@ -32,10 +32,9 @@ export function DetailTabs({ description = "", conditions = [], branches = [] })
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 py-4 px-2 sm:px-6 text-sm font-semibold border-b-2 flex items-center justify-center gap-2 transition-all duration-200
-                ${
-                  isActive
-                    ? "border-primary text-primary bg-base-100"
-                    : "border-transparent text-base-content/60 hover:text-base-content hover:bg-base-100/50"
+                ${isActive
+                  ? "border-primary text-primary bg-base-100"
+                  : "border-transparent text-base-content/60 hover:text-base-content hover:bg-base-100/50"
                 }`}
             >
               <Icon size={16} />
@@ -88,7 +87,7 @@ export function DetailTabs({ description = "", conditions = [], branches = [] })
                       <span className="badge badge-primary badge-sm shrink-0">CN {idx + 1}</span>
                       <span className="truncate">{branch.name}</span>
                     </h4>
-                    
+
                     <div className="flex items-start gap-2.5 text-xs sm:text-sm text-base-content/70 mt-1">
                       <MapPin size={16} className="text-primary shrink-0 mt-0.5" />
                       <span>{branch.address}</span>

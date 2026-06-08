@@ -50,7 +50,7 @@ export function useVoucherDetail(id) {
           totalQuantity: 100,
           soldQuantity: 60,
         };
-        
+
         enrichAndSetVoucher(fallbackVoucher);
       } else {
         enrichAndSetVoucher(found);
@@ -67,7 +67,7 @@ export function useVoucherDetail(id) {
   // Hàm bổ sung chi tiết nội dung
   const enrichAndSetVoucher = (baseVoucher) => {
     const remainingQuantity = Math.max(0, baseVoucher.totalQuantity - baseVoucher.soldQuantity);
-    
+
     // Thêm các thông tin mô tả, điều kiện, chi nhánh
     const enriched = {
       ...baseVoucher,
@@ -99,7 +99,7 @@ export function useVoucherDetail(id) {
         }
       ]
     };
-    
+
     setVoucher(enriched);
   };
 

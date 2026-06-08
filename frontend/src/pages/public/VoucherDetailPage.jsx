@@ -57,12 +57,14 @@ export function VoucherDetailPage() {
   // Handlers mua hàng
   const handleAddToCart = () => {
     if (!voucher || voucher.remainingQuantity === 0) return;
-    showToast(`Đã thêm thành công ${quantity} voucher vào giỏ hàng!`);
+    const finalQty = parseInt(String(quantity), 10) || 1;
+    showToast(`Đã thêm thành công ${finalQty} voucher vào giỏ hàng!`);
   };
 
   const handleBuyNow = () => {
     if (!voucher || voucher.remainingQuantity === 0) return;
-    showToast(`Đang chuyển hướng tới trang thanh toán cho ${quantity} voucher...`);
+    const finalQty = parseInt(String(quantity), 10) || 1;
+    showToast(`Đang chuyển hướng tới trang thanh toán cho ${finalQty} voucher...`);
   };
 
   const handleShare = () => {
