@@ -1,6 +1,14 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 export function PartnerLayout() {
+  const navigate = useNavigate();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate('/login', { replace: true });
+  };
   return (
     <div className="drawer lg:drawer-open">
       <input id="partner-drawer" type="checkbox" className="drawer-toggle" />
@@ -32,6 +40,7 @@ export function PartnerLayout() {
           <li className="mb-2"><Link to="/partner/validation" className="hover:bg-purple-800 active:bg-purple-700">Validate Voucher</Link></li>
           <li className="mb-2"><Link to="/partner/reports" className="hover:bg-purple-800 active:bg-purple-700">Analytics & Reports</Link></li>
           <li className="mb-2"><Link to="/partner/profile" className="hover:bg-purple-800 active:bg-purple-700">Branch Profile</Link></li>
+          <li className="mt-auto pt-4"><button onClick={handleLogout} className="text-red-300 hover:bg-purple-800 hover:text-red-200 font-bold">Logout</button></li>
         </ul>
       </div>
     </div>

@@ -1,9 +1,17 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 export function CustomerLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
   const currentPath = location.pathname;
   const isHomeActive = currentPath === '/customer' || currentPath === '/customer/home';
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-base-100">
@@ -19,6 +27,14 @@ export function CustomerLayout() {
             <li><Link to="/customer/my-vouchers" className={`hover:text-green-200 ${currentPath === '/customer/my-vouchers' ? 'font-bold underline' : ''}`}>My Vouchers</Link></li>
             <li><Link to="/customer/profile" className={`hover:text-green-200 ${currentPath === '/customer/profile' ? 'font-bold underline' : ''}`}>Profile</Link></li>
           </ul>
+        </div>
+        <div className="flex-none">
+          <button onClick={handleLogout} className="btn btn-ghost text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+            </svg>
+            <span className="hidden md:inline ml-1">Logout</span>
+          </button>
         </div>
       </div>
 
