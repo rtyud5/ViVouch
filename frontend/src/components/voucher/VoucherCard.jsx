@@ -42,29 +42,31 @@ function RatingRow({ rating, count }) {
   );
 }
 
+/** Map category key → nhãn hiển thị trên card tìm kiếm */
+const CATEGORY_LABELS = {
+  "am-thuc": "Ẩm thực",
+  "lam-dep": "Làm đẹp",
+  "du-lich": "Du lịch",
+  "mua-sam": "Mua sắm",
+  "giai-tri": "Giải trí",
+};
+
 /**
  * VoucherCard — reusable card component for the voucher marketplace.
  *
  * Props:
- *  voucher {object} — voucher product data with these fields:
- *    id            {string}
- *    name          {string}
- *    partnerName   {string}
- *    imageUrl      {string|null}
- *    originalPrice {number}  VND
- *    salePrice     {number}  VND
- *    rating        {number}  0–5
- *    reviewCount   {number}
- *    totalQuantity {number}
- *    soldQuantity  {number}
+ *  voucher {object}
+ *  variant {string} — "home" (mặc định) | "search" (trang kết quả tìm kiếm)
  */
-export function VoucherCard({ voucher }) {
+export function VoucherCard({ voucher, variant = "home" }) {
   const navigate = useNavigate();
 
   const {
     id,
     name,
     partnerName,
+    category,
+    location,
     imageUrl,
     originalPrice,
     salePrice,
@@ -75,6 +77,7 @@ export function VoucherCard({ voucher }) {
   } = voucher;
 
   const discountPercent = calcDiscountPercent(originalPrice, salePrice);
+  const categoryLabel = CATEGORY_LABELS[category] ?? partnerName;
 
   // How many vouchers remain (never below 0)
   const remaining = Math.max(totalQuantity - soldQuantity, 0);
@@ -91,10 +94,91 @@ export function VoucherCard({ voucher }) {
   }
 
   function handleImageError(e) {
-    // If image fails to load, swap to placeholder — prevents broken img icon
     e.currentTarget.src = PLACEHOLDER_IMAGE;
   }
 
+  function handleBuyClick(e) {
+    e.stopPropagation();
+    navigate(`/vouchers/${id}`);
+  }
+
+  // ── Variant search — theo vivouch_search_results mockup ──────────────
+  if (variant === "search") {
+    return (
+      <article
+        className="bg-surface rounded-xl shadow-lg overflow-hidden flex flex-col group relative border border-surface-variant/50 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow duration-300 cursor-pointer"
+        onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && handleClick()}
+        aria-label={`Xem voucher: ${name}`}
+      >
+        <div className="relative h-48 w-full overflow-hidden">
+          <img
+            src={imageUrl || PLACEHOLDER_IMAGE}
+            alt={name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={handleImageError}
+            loading="lazy"
+          />
+          {discountPercent > 0 && (
+            <div className="absolute top-2 right-2 bg-secondary text-on-secondary px-2 py-1 rounded-md font-label-md text-label-md z-10 shadow-md">
+              -{discountPercent}%
+            </div>
+          )}
+        </div>
+
+        <div className="p-4 flex flex-col flex-grow">
+          <div className="text-on-surface-variant text-[12px] font-semibold mb-1 uppercase tracking-wider">
+            {categoryLabel}
+          </div>
+          <h3 className="font-headline-md text-[18px] leading-tight text-on-surface mb-2 line-clamp-2">
+            {name}
+          </h3>
+          <div className="flex items-center gap-1 text-on-surface-variant text-[13px] mb-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-4 h-4 text-tertiary shrink-0"
+              aria-hidden="true"
+            >
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+            </svg>
+            <span>{location ?? "Nhiều chi nhánh"}</span>
+          </div>
+
+          <div className="mt-auto pt-3 border-t border-surface-variant flex justify-between items-end">
+            <div>
+              {originalPrice > salePrice && salePrice > 0 && (
+                <div className="text-on-surface-variant text-[12px] line-through">
+                  {formatCurrency(originalPrice)}
+                </div>
+              )}
+              {salePrice > 0 ? (
+                <div className="font-price-display text-price-display text-primary">
+                  {formatCurrency(salePrice)}
+                </div>
+              ) : (
+                <div className="font-price-display text-price-display text-primary">
+                  Miễn phí
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleBuyClick}
+              className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm"
+            >
+              Mua ngay
+            </button>
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  // ── Variant home — trang chủ ───────────────────────────────────────────
   return (
     <div
       className="card bg-base-100 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden cursor-pointer group"
@@ -160,9 +244,8 @@ export function VoucherCard({ voucher }) {
         {/* ── Progress bar ── */}
         <div className="mt-2">
           <progress
-            className={`progress w-full h-1.5 ${
-              isLowStock ? "progress-error" : "progress-primary"
-            }`}
+            className={`progress w-full h-1.5 ${isLowStock ? "progress-error" : "progress-primary"
+              }`}
             value={soldPercent}
             max={100}
             aria-label={`Đã bán ${soldPercent}%`}

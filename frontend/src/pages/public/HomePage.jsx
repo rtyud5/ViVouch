@@ -153,7 +153,6 @@ function CategoryTabs({ activeCategory, onChange }) {
                 : "btn-ghost border border-base-300 hover:border-primary hover:text-primary"
               }`}
           >
-            {cat.emoji && <span className="mr-1">{cat.emoji}</span>}
             {cat.label}
           </button>
         );
