@@ -37,7 +37,7 @@ export async function findMany(filters) {
   const conditions = [Prisma.sql`v.status = 'ON_SALE'`];
 
   if (keyword) conditions.push(Prisma.sql`v.title ILIKE ${'%' + keyword + '%'}`);
-  if (categoryId) conditions.push(Prisma.sql`v."categoryId" = ${categoryId}::uuid`);
+  if (categoryId) conditions.push(Prisma.sql`v."categoryId" = ${categoryId}`);
   if (city) {
     conditions.push(Prisma.sql`EXISTS (
       SELECT 1 FROM "VoucherBranch" vb
