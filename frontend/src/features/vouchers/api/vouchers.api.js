@@ -6,7 +6,7 @@ export const getVouchers = async (params = {}) => {
 }
 
 export const getVoucherById = async (id) => {
-    const response = await apiClient.get(`vouchers/${id}`);
+    const response = await apiClient.get(`/vouchers/${id}`);
     return response.data;
 }
 
