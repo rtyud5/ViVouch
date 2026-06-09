@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo, useCallback } from "react";
+﻿import { useEffect, useMemo, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { VoucherCard } from "../../components/voucher/VoucherCard";
 import { VoucherCardSkeleton } from "../../components/voucher/VoucherCardSkeleton";
@@ -7,39 +7,12 @@ import { SortDropdown } from "../../components/voucher/SortDropdown";
 import { SearchInput } from "../../components/common/SearchInput";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
-import { mockVouchers } from "../../data/mockVouchers";
+import { ApiErrorToast } from "../../components/common/ApiErrorToast";
+import { useVouchers, useCategories } from "../../features/vouchers/hooks";
+import { buildVoucherQueryParams } from "../../features/vouchers/utils/buildVoucherQueryParams";
+import { mapVoucherForCard } from "../../features/vouchers/utils/mapVoucherForCard";
 
 const PAGE_SIZE = 8;
-
-function normalizeVietnamese(str) {
-  if (!str || typeof str !== "string") return "";
-  return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D")
-    .toLowerCase();
-}
-
-function sortVouchers(vouchers, sortKey) {
-  const copy = [...vouchers];
-  switch (sortKey) {
-    case "popular":
-      return copy.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
-    case "newest":
-      return copy.sort((a, b) => {
-        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return (Number.isNaN(timeB) ? 0 : timeB) - (Number.isNaN(timeA) ? 0 : timeA);
-      });
-    case "price-asc":
-      return copy.sort((a, b) => (a.salePrice || 0) - (b.salePrice || 0));
-    case "price-desc":
-      return copy.sort((a, b) => (b.salePrice || 0) - (a.salePrice || 0));
-    default:
-      return copy;
-  }
-}
 
 function readFiltersFromParams(searchParams) {
   const keyword = searchParams.get("keyword") ?? searchParams.get("q") ?? "";
@@ -67,9 +40,8 @@ export function VoucherListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { keyword, category, sort, page } = readFiltersFromParams(searchParams);
-  const [isLoading, setIsLoading] = useState(true);
+  const { categories } = useCategories();
 
-  // Chuyển ?q=lẩu → ?keyword=lẩu khi vào từ navbar (chạy 1 lần lúc mount)
   useEffect(() => {
     const q = searchParams.get("q");
     if (q && !searchParams.get("keyword")) {
@@ -87,47 +59,40 @@ export function VoucherListPage() {
     [keyword, category, sort, page, setSearchParams]
   );
 
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 400);
-    return () => clearTimeout(timer);
-  }, [keyword, category, sort, page]);
+  const voucherParams = useMemo(
+    () =>
+      buildVoucherQueryParams({
+        keyword,
+        category,
+        sort,
+        page,
+        limit: PAGE_SIZE,
+        categories,
+      }),
+    [keyword, category, sort, page, categories]
+  );
 
-  const { paginatedVouchers, totalPages, totalCount, safePage } = useMemo(() => {
-    let result =
-      category === "all"
-        ? mockVouchers
-        : mockVouchers.filter((v) => v.category === category);
+  const {
+    vouchers: rawVouchers,
+    pagination,
+    isLoading,
+    error,
+  } = useVouchers(voucherParams);
 
-    if (keyword.trim()) {
-      const normalized = normalizeVietnamese(keyword.trim());
-      result = result.filter(
-        (v) =>
-          normalizeVietnamese(v.name).includes(normalized) ||
-          normalizeVietnamese(v.partnerName).includes(normalized)
-      );
-    }
+  const vouchers = useMemo(
+    () => rawVouchers.map((v) => mapVoucherForCard(v, categories)),
+    [rawVouchers, categories]
+  );
 
-    result = sortVouchers(result, sort);
-
-    const totalCount = result.length;
-    const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-    const safePage = Math.min(page, totalPages);
-    const start = (safePage - 1) * PAGE_SIZE;
-
-    return {
-      paginatedVouchers: result.slice(start, start + PAGE_SIZE),
-      totalPages,
-      totalCount,
-      safePage,
-    };
-  }, [keyword, category, sort, page]);
+  const totalPages = Math.max(1, pagination?.totalPages ?? 1);
+  const totalCount = pagination?.total ?? 0;
+  const safePage = pagination?.page ?? page;
 
   useEffect(() => {
-    if (page > totalPages) {
+    if (pagination && page > totalPages) {
       updateFilters({ page: totalPages }, { replace: true });
     }
-  }, [page, totalPages, updateFilters]);
+  }, [page, totalPages, pagination, updateFilters]);
 
   const handleKeywordChange = useCallback(
     (newKeyword) => updateFilters({ keyword: newKeyword, page: 1 }, { replace: true }),
@@ -160,7 +125,11 @@ export function VoucherListPage() {
 
   return (
     <div className="bg-background min-h-screen pb-24 md:pb-0">
-      {/* Header duy nhất — back + search + filter chips (mockup) */}
+      <ApiErrorToast
+        error={error}
+        message="Không thể tải danh sách voucher"
+      />
+
       <header className="sticky top-0 z-40 bg-surface shadow-sm">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex items-center gap-3 px-container-margin py-base h-16">
@@ -193,6 +162,7 @@ export function VoucherListPage() {
           <VoucherFilter
             activeCategory={category}
             onCategoryChange={handleCategoryChange}
+            categories={categories}
           />
         </div>
       </header>
@@ -219,7 +189,7 @@ export function VoucherListPage() {
               <VoucherCardSkeleton key={i} />
             ))}
           </div>
-        ) : paginatedVouchers.length === 0 ? (
+        ) : vouchers.length === 0 ? (
           <EmptyState
             title="Không tìm thấy voucher"
             description={
@@ -241,13 +211,13 @@ export function VoucherListPage() {
           />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter md:gap-6">
-            {paginatedVouchers.map((voucher) => (
+            {vouchers.map((voucher) => (
               <VoucherCard key={voucher.id} voucher={voucher} variant="search" />
             ))}
           </div>
         )}
 
-        {!isLoading && paginatedVouchers.length > 0 && (
+        {!isLoading && vouchers.length > 0 && (
           <Pagination
             currentPage={safePage}
             totalPages={totalPages}
