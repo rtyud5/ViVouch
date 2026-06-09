@@ -5,6 +5,7 @@ import { VoucherCardSkeleton } from "../../components/voucher/VoucherCardSkeleto
 import { useVouchers, useCategories } from "../../features/vouchers/hooks";
 import { buildVoucherQueryParams } from "../../features/vouchers/utils/buildVoucherQueryParams";
 import { mapVoucherForCard } from "../../features/vouchers/utils/mapVoucherForCard";
+import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 
 // ─────────────────────────────────────────────
 // Countdown Timer — dummy 12-hour countdown
@@ -233,13 +234,7 @@ export function HomePage() {
 
   return (
     <main className="max-w-screen-xl mx-auto px-4 py-6">
-      {toastMessage && (
-        <div className="toast toast-top toast-center z-50">
-          <div className="alert alert-error shadow-lg">
-            <span>{toastMessage}</span>
-          </div>
-        </div>
-      )}
+      <ApiErrorToast error={vouchersError || categoriesError} message="Không thể tải dữ liệu voucher" />
 
       <HeroBanner />
 
