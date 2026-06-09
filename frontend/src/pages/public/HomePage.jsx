@@ -224,7 +224,7 @@ export function HomePage() {
 
     const message =
       error.response?.data?.message ??
-      error.message ??
+      error.message ??git
       "Không thể tải dữ liệu voucher";
 
     setToastMessage(message);
