@@ -34,13 +34,15 @@ import { OrdersPage } from "../pages/admin/OrdersPage"
 import { AuditLogsPage } from "../pages/admin/AuditLogsPage"
 
 import { TestComponentsPage } from "../pages/test/TestComponentsPage";
+import VoucherHooksTest from "../pages/test/VoucherHooksTest";
 
 export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Test component */}
-        <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} />
+        <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} /> 
+        <Route path="/test/fe/task2/week2" element={<VoucherHooksTest />} /> 
 
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />

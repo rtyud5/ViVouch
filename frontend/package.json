@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "latest",
     "@tanstack/react-query": "latest",
+    "@tanstack/react-query-devtools": "^5.101.0",
     "axios": "latest",
     "daisyui": "latest",
     "lucide-react": "latest",
