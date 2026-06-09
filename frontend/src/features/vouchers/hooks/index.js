@@ -1,6 +1,6 @@
-import {useCategories} from '../hooks/useCategories'
-import {useVoucherDetail} from '../hooks/useVoucherDetail'
-import {useVouchers} from '../hooks/useVouchers'
+import {useCategories} from './useCategories'
+import {useVoucherDetail} from './useVoucherDetail'
+import {useVouchers} from './useVouchers'
 
 export {
     useCategories,
