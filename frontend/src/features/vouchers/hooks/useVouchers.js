@@ -1,12 +1,12 @@
 import { getVouchers } from '../api/vouchers.api';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 // Hook lấy danh sách vouchers (Cache 60s, tự động refetch khi params đổi)
 export const useVouchers = (params) => {
   const query = useQuery({
     queryKey: ['vouchers', params],
     queryFn: () => getVouchers(params),
     staleTime: 60 * 1000, // 60 giây
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   return {
