@@ -7,5 +7,10 @@ export const useCategories = () => {
     queryFn: getCategories,
     staleTime: Infinity, 
   });
-  return query;
+  return {
+    categories: query.data?.data || [],
+    isLoading: query.isLoading,
+    error: query.error,
+    ...query,
+  };
 };

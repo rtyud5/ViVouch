@@ -78,7 +78,8 @@ export function VoucherCard({ voucher, variant = "home" }) {
   } = voucher;
 
   const discountPercent = calcDiscountPercent(originalPrice, salePrice);
-  const categoryLabel = CATEGORY_LABELS[category] ?? partnerName;
+  const categoryLabel =
+    voucher.categoryLabel ?? CATEGORY_LABELS[category] ?? partnerName;
 
   // How many vouchers remain (never below 0)
   const remaining = Math.max(totalQuantity - soldQuantity, 0);
@@ -171,9 +172,7 @@ export function VoucherCard({ voucher, variant = "home" }) {
               onClick={handleBuyClick}
               className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm"
             >
-              <span className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm">
                 Mua ngay
-              </span>
             </button>
           </div>
         </div>

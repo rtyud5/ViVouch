@@ -1,5 +1,4 @@
-﻿import { useState, useRef, useEffect } from "react";
-import { CATEGORIES } from "../../data/mockVouchers";
+﻿import { useState, useRef, useEffect, useMemo } from "react";
 
 /** Chip filter — giống mockup vivouch_search_results */
 const FILTER_CHIPS = [
@@ -31,13 +30,21 @@ function ChevronDown() {
  * VoucherFilter — hàng chip Danh mục / Khu vực / Giá / Giảm giá
  * (theo vivouch_search_results_desktop & mobile mockup)
  */
-export function VoucherFilter({ activeCategory, onCategoryChange }) {
+export function VoucherFilter({ activeCategory, onCategoryChange, categories = [] }) {
   const [openChip, setOpenChip] = useState(null);
   const panelRef = useRef(null);
 
+  const categoryOptions = useMemo(
+    () => [
+      { key: "all", label: "Tất cả" },
+      ...categories.map((cat) => ({ key: cat.slug, label: cat.name })),
+    ],
+    [categories]
+  );
+
   const isCategoryActive = activeCategory !== "all";
   const activeCategoryLabel =
-    CATEGORIES.find((c) => c.key === activeCategory)?.label ?? "Tất cả";
+    categoryOptions.find((c) => c.key === activeCategory)?.label ?? "Tất cả";
 
   // Đóng dropdown khi click ra ngoài
   useEffect(() => {
@@ -89,7 +96,7 @@ export function VoucherFilter({ activeCategory, onCategoryChange }) {
               {/* Dropdown Danh mục */}
               {chip.key === "category" && openChip === "category" && (
                 <div className="absolute top-full left-0 mt-1 z-50 min-w-[160px] bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg py-1">
-                  {CATEGORIES.map((cat) => (
+                  {categoryOptions.map((cat) => (
                     <button
                       key={cat.key}
                       type="button"
