@@ -2,14 +2,10 @@ import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { VoucherCard } from "../../components/voucher/VoucherCard";
 import { VoucherCardSkeleton } from "../../components/voucher/VoucherCardSkeleton";
+import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { useVouchers, useCategories } from "../../features/vouchers/hooks";
 import { buildVoucherQueryParams } from "../../features/vouchers/utils/buildVoucherQueryParams";
 import { mapVoucherForCard } from "../../features/vouchers/utils/mapVoucherForCard";
-import { ApiErrorToast } from "../../components/common/ApiErrorToast";
-
-// ─────────────────────────────────────────────
-// Countdown Timer — dummy 12-hour countdown
-// ─────────────────────────────────────────────
 
 function getSecondsUntilMidnight() {
   const now = new Date();
@@ -58,7 +54,6 @@ function CountdownTimer() {
           d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"
         />
       </svg>
-
       <span className="font-bold text-error text-lg tabular-nums">{hh}</span>
       <span className="font-bold text-base-content/60">:</span>
       <span className="font-bold text-error text-lg tabular-nums">{mm}</span>
@@ -67,10 +62,6 @@ function CountdownTimer() {
     </div>
   );
 }
-
-// ─────────────────────────────────────────────
-// Hero Banner
-// ─────────────────────────────────────────────
 
 function HeroBanner() {
   return (
@@ -84,9 +75,7 @@ function HeroBanner() {
         className="absolute inset-0 w-full h-full object-cover"
         loading="eager"
       />
-
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
-
       <div className="relative z-10 text-white">
         <h1 className="text-3xl md:text-4xl font-extrabold mb-1 drop-shadow">
           Ưu đãi hôm nay
@@ -94,16 +83,11 @@ function HeroBanner() {
         <p className="text-sm md:text-base text-white/80 mb-4">
           Săn ngàn deal hot, tiết kiệm tối đa cho mọi nhu cầu của bạn.
         </p>
-
         <CountdownTimer />
       </div>
     </section>
   );
 }
-
-// ─────────────────────────────────────────────
-// Category Tabs
-// ─────────────────────────────────────────────
 
 function CategoryTabs({ activeCategory, onChange, categories, isLoading }) {
   if (isLoading) {
@@ -149,10 +133,6 @@ function CategoryTabs({ activeCategory, onChange, categories, isLoading }) {
   );
 }
 
-// ─────────────────────────────────────────────
-// Voucher Grid
-// ─────────────────────────────────────────────
-
 function VoucherGrid({ vouchers, isLoading }) {
   if (isLoading) {
     return (
@@ -182,13 +162,8 @@ function VoucherGrid({ vouchers, isLoading }) {
   );
 }
 
-// ─────────────────────────────────────────────
-// HomePage — main export
-// ─────────────────────────────────────────────
-
 export function HomePage() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [toastMessage, setToastMessage] = useState("");
 
   const {
     categories,
@@ -218,23 +193,12 @@ export function HomePage() {
     [rawVouchers, categories]
   );
 
-  useEffect(() => {
-    const error = vouchersError || categoriesError;
-    if (!error) return;
-
-    const message =
-      error.response?.data?.message ??
-      error.message ??git
-      "Không thể tải dữ liệu voucher";
-
-    setToastMessage(message);
-    const timer = setTimeout(() => setToastMessage(""), 4000);
-    return () => clearTimeout(timer);
-  }, [vouchersError, categoriesError]);
-
   return (
     <main className="max-w-screen-xl mx-auto px-4 py-6">
-      <ApiErrorToast error={vouchersError || categoriesError} message="Không thể tải dữ liệu voucher" />
+      <ApiErrorToast
+        error={vouchersError || categoriesError}
+        message="Không thể tải dữ liệu voucher"
+      />
 
       <HeroBanner />
 
