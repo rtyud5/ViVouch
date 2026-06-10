@@ -30,15 +30,13 @@ export function AdminLayout() {
   return (
     <div className="min-h-screen bg-[#f8f9ff] flex font-['Be_Vietnam_Pro']">
       {/* Mobile Sidebar Overlay */}
-      <div
-        role="button"
-        tabIndex={0}
-        aria-label="Close sidebar"
+      <button
+        type="button"
+        aria-label="Đóng menu"
         className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 lg:hidden ${
           isSidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
         onClick={closeSidebar}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === 'Escape') closeSidebar(); }}
       />
 
       {/* Sidebar - Desktop & Mobile Overlay */}
