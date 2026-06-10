@@ -11,7 +11,7 @@ router.use(requireRole("CUSTOMER"));
 
 /**
  * @swagger
- * /api/cart:
+ * /api/customer/cart:
  *   get:
  *     summary: Lấy chi tiết giỏ hàng của người dùng hiện tại
  *     description: Trả về chi tiết giỏ hàng và danh sách các voucher đang có cùng với các số liệu cartTotal được tính toán tự động. Yêu cầu JWT Access Token hợp lệ.
@@ -115,7 +115,7 @@ router.get("/", cartController.getCart);
 
 /**
  * @swagger
- * /api/cart/items:
+ * /api/customer/cart/items:
  *   post:
  *     summary: Thêm voucher vào giỏ hàng
  *     description: Cho phép thêm voucher vào giỏ hàng. Nếu voucher đã tồn tại trong giỏ thì số lượng sẽ được cộng dồn. Yêu cầu JWT Access Token hợp lệ.
@@ -179,8 +179,8 @@ router.post("/items", cartController.addItem);
 
 /**
  * @swagger
- * /api/cart/items/{id}:
- *   put:
+ * /api/customer/cart/items/{id}:
+ *   patch:
  *     summary: Cập nhật số lượng của voucher trong giỏ hàng
  *     description: Cập nhật trực tiếp số lượng của một dòng sản phẩm trong giỏ hàng. Yêu cầu JWT Access Token hợp lệ.
  *     tags:
@@ -218,11 +218,11 @@ router.post("/items", cartController.addItem);
  *       404:
  *         description: Không tìm thấy sản phẩm trong giỏ hàng
  */
-router.put("/items/:id", cartController.updateQty);
+router.patch("/items/:id", cartController.updateQty);
 
 /**
  * @swagger
- * /api/cart/items/{id}:
+ * /api/customer/cart/items/{id}:
  *   delete:
  *     summary: Xóa voucher khỏi giỏ hàng
  *     description: Xóa hoàn toàn một dòng sản phẩm ra khỏi giỏ hàng. Yêu cầu JWT Access Token hợp lệ.

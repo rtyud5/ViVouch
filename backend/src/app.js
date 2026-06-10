@@ -20,7 +20,7 @@ app.use("/api-docs", swaggerDocs);
 app.use("/api/auth", authRoutes);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/vouchers', vouchersRouter);
-app.use('/api/cart', cartRouter);
+app.use('/api/customer/cart', cartRouter);
 
 app.use(errorMiddleware);
 
