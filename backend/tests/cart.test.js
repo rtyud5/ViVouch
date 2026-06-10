@@ -217,22 +217,22 @@ describe("Cart API Tests", () => {
 
   describe("Auth & Role Validation", () => {
     it("nên chặn truy cập nếu không gửi token", async () => {
-      const res = await request(app).get("/api/cart");
+      const res = await request(app).get("/api/customer/cart");
       expect(res.status).toBe(401);
     });
 
     it("nên chặn truy cập (403) nếu role là PARTNER", async () => {
       const res = await request(app)
-        .get("/api/cart")
+        .get("/api/customer/cart")
         .set("Authorization", `Bearer ${partnerToken}`);
       expect(res.status).toBe(403);
     });
   });
 
-  describe("GET /api/cart", () => {
+  describe("GET /api/customer/cart", () => {
     it("nên trả về giỏ hàng trống nếu chưa có item", async () => {
       const res = await request(app)
-        .get("/api/cart")
+        .get("/api/customer/cart")
         .set("Authorization", `Bearer ${tokenA}`);
       
       expect(res.status).toBe(200);
@@ -243,10 +243,10 @@ describe("Cart API Tests", () => {
     });
   });
 
-  describe("POST /api/cart/items (addItem)", () => {
+  describe("POST /api/customer/cart/items (addItem)", () => {
     it("nên báo lỗi nếu thêm voucher ở trạng thái DRAFT", async () => {
       const res = await request(app)
-        .post("/api/cart/items")
+        .post("/api/customer/cart/items")
         .set("Authorization", `Bearer ${tokenA}`)
         .send({ voucherId: voucherDraft.id, qty: 1 });
       
@@ -256,7 +256,7 @@ describe("Cart API Tests", () => {
 
     it("nên báo lỗi nếu số lượng thêm lớn hơn số lượng còn lại", async () => {
       const res = await request(app)
-        .post("/api/cart/items")
+        .post("/api/customer/cart/items")
         .set("Authorization", `Bearer ${tokenA}`)
         .send({ voucherId: voucherLimited.id, qty: 2 }); // remaining is 1 (5 - 4)
       
@@ -266,7 +266,7 @@ describe("Cart API Tests", () => {
 
     it("nên thêm thành công voucher ON_SALE vào giỏ hàng", async () => {
       const res = await request(app)
-        .post("/api/cart/items")
+        .post("/api/customer/cart/items")
         .set("Authorization", `Bearer ${tokenA}`)
         .send({ voucherId: voucherOnSale.id, qty: 2 });
       
@@ -286,7 +286,7 @@ describe("Cart API Tests", () => {
 
     it("nên cộng dồn qty khi thêm trùng voucherId và không sinh thêm row", async () => {
       const res = await request(app)
-        .post("/api/cart/items")
+        .post("/api/customer/cart/items")
         .set("Authorization", `Bearer ${tokenA}`)
         .send({ voucherId: voucherOnSale.id, qty: 1 });
       
@@ -299,19 +299,19 @@ describe("Cart API Tests", () => {
     });
   });
 
-  describe("PUT /api/cart/items/:id (updateQty) & Access Guard", () => {
+  describe("PATCH /api/customer/cart/items/:id (updateQty) & Access Guard", () => {
     let cartItemId = "";
 
     beforeAll(async () => {
       const res = await request(app)
-        .get("/api/cart")
+        .get("/api/customer/cart")
         .set("Authorization", `Bearer ${tokenA}`);
       cartItemId = res.body.data.items[0].id;
     });
 
     it("nên chặn user B cập nhật cart item của user A (403)", async () => {
       const res = await request(app)
-        .put(`/api/cart/items/${cartItemId}`)
+        .patch(`/api/customer/cart/items/${cartItemId}`)
         .set("Authorization", `Bearer ${tokenB}`)
         .send({ qty: 5 });
       
@@ -320,7 +320,7 @@ describe("Cart API Tests", () => {
 
     it("nên cho phép user A cập nhật số lượng của chính mình", async () => {
       const res = await request(app)
-        .put(`/api/cart/items/${cartItemId}`)
+        .patch(`/api/customer/cart/items/${cartItemId}`)
         .set("Authorization", `Bearer ${tokenA}`)
         .send({ qty: 5 });
       
@@ -330,19 +330,19 @@ describe("Cart API Tests", () => {
     });
   });
 
-  describe("DELETE /api/cart/items/:id (removeItem) & Access Guard", () => {
+  describe("DELETE /api/customer/cart/items/:id (removeItem) & Access Guard", () => {
     let cartItemId = "";
 
     beforeAll(async () => {
       const res = await request(app)
-        .get("/api/cart")
+        .get("/api/customer/cart")
         .set("Authorization", `Bearer ${tokenA}`);
       cartItemId = res.body.data.items[0].id;
     });
 
     it("nên chặn user B xóa cart item của user A (403)", async () => {
       const res = await request(app)
-        .delete(`/api/cart/items/${cartItemId}`)
+        .delete(`/api/customer/cart/items/${cartItemId}`)
         .set("Authorization", `Bearer ${tokenB}`);
       
       expect(res.status).toBe(403);
@@ -350,7 +350,7 @@ describe("Cart API Tests", () => {
 
     it("nên cho phép user A xóa cart item của chính mình", async () => {
       const res = await request(app)
-        .delete(`/api/cart/items/${cartItemId}`)
+        .delete(`/api/customer/cart/items/${cartItemId}`)
         .set("Authorization", `Bearer ${tokenA}`);
       
       expect(res.status).toBe(200);
