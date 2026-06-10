@@ -1,11 +1,13 @@
 import { Router } from "express";
 import * as cartController from "./cart.controller.js";
 import { verifyToken } from "../../middlewares/auth.middleware.js";
+import { requireRole } from "../../middlewares/role.middleware.js";
 
 const router = Router();
 
 // Áp dụng verifyToken cho tất cả các endpoint của giỏ hàng
 router.use(verifyToken);
+router.use(requireRole("CUSTOMER"));
 
 /**
  * @swagger
