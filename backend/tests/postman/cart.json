@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "c1f735f1-39c4-4e31-8db2-df66b72a6b25",
     "name": "ViVouch Cart API",
-    "description": "Postman Collection nháp cho Cart API của dự án ViVouch. Cấu hình xác thực Bearer Token thừa hưởng từ môi trường thông qua biến {{token}}.",
+    "description": "Postman Collection cho Cart API của dự án ViVouch. Cấu hình xác thực Bearer Token thừa hưởng từ môi trường thông qua biến {{token}}.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -11,6 +11,25 @@
       "item": [
         {
           "name": "Get Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has success structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data).to.have.property('items');",
+                  "    pm.expect(jsonData.data).to.have.property('cartTotal');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -29,6 +48,30 @@
         },
         {
           "name": "Add Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Add item success\", function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "if (jsonData.success && jsonData.data && jsonData.data.items) {",
+                  "    pm.test(\"Verify item exists and save cartItemId\", function () {",
+                  "        var addedItem = jsonData.data.items.find(item => item.voucherId === 'b6afab88-4f6b-4001-b5f5-02b70720d6d3');",
+                  "        pm.expect(addedItem).to.not.be.undefined;",
+                  "        pm.environment.set(\"cart_item_id\", addedItem.id);",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -40,7 +83,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"voucherId\": \"d2e3f4a5-6789-0abc-def1-234567890abc\",\n  \"qty\": 2\n}",
+              "raw": "{\n  \"voucherId\": \"b6afab88-4f6b-4001-b5f5-02b70720d6d3\",\n  \"qty\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -63,6 +106,25 @@
         },
         {
           "name": "Update Quantity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Quantity updated successfully\", function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    var item = jsonData.data.items.find(item => item.id === pm.environment.get(\"cart_item_id\"));",
+                  "    pm.expect(item.qty).to.eql(5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -82,14 +144,14 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/cart/items/cart-item-uuid-001",
+              "raw": "{{base_url}}/cart/items/{{cart_item_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "cart",
                 "items",
-                "cart-item-uuid-001"
+                "{{cart_item_id}}"
               ]
             },
             "description": "Cập nhật số lượng của một item xác định trong giỏ hàng."
@@ -98,18 +160,37 @@
         },
         {
           "name": "Remove Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Item removed successfully\", function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    var item = jsonData.data.items.find(item => item.id === pm.environment.get(\"cart_item_id\"));",
+                  "    pm.expect(item).to.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/cart/items/cart-item-uuid-001",
+              "raw": "{{base_url}}/cart/items/{{cart_item_id}}",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "cart",
                 "items",
-                "cart-item-uuid-001"
+                "{{cart_item_id}}"
               ]
             },
             "description": "Xóa hoàn toàn một item ra khỏi giỏ hàng."
