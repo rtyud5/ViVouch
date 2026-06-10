@@ -49,15 +49,15 @@ export function AdminLayout() {
 
           {/* Mobile: hamburger trigger (label opens drawer) + brand */}
           <div className="navbar-start lg:hidden">
-            <label
-              htmlFor="admin-drawer"
+            <button
+              type="button"
               className="btn btn-ghost btn-square"
               aria-label="Mở menu"
               title="Mở menu"
               onClick={() => setIsSidebarOpen(true)}
             >
               <span className="material-symbols-outlined text-[24px] text-[#213145]">menu</span>
-            </label>
+            </button>
             <span className="font-bold text-[#213145] text-lg ml-1">ViVouch Admin</span>
           </div>
 
@@ -123,6 +123,7 @@ export function AdminLayout() {
           aria-label="Đóng menu"
           className="drawer-overlay"
           onClick={closeSidebar}
+          onKeyDown={(e) => (e.key === 'Enter' || e.key === 'Escape') && closeSidebar()}
         />
 
         {/* Sidebar */}
