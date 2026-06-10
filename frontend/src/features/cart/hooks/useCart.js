@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCart, addCartItem, updateCartItem, removeCartItem} from "../api/cart.api";
+import { getCart, addCartItem, updateCartItem, removeCartItem } from "../api/Cart.api";
 
 const CART_KEY = ["cart"];
 
