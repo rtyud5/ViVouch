@@ -116,9 +116,10 @@ export function AdminLayout() {
           {/* Desktop: Search */}
           <div className="hidden lg:flex items-center relative">
             <span className="material-symbols-outlined absolute left-3 text-[#565e74] text-[18px]">search</span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Tìm kiếm..."
+              aria-label="Tìm kiếm"
               className="bg-white border border-[#d8c3ad] rounded px-3 py-1.5 pl-10 text-[14px] w-64 focus:border-[#f59e0b] focus:outline-none focus:ring-1 focus:ring-[#f59e0b]/20 transition-all"
             />
           </div>
