@@ -16,7 +16,7 @@ export function useCart() {
   const cartTotal = cart?.cartTotal ?? null;
 
   // cartCount = tổng qty (dùng cho badge navbar)
-  const cartCount = cart?.items?.reduce((sum, item) => sum + item.qty, 0) ?? 0;
+  const cartCount = cart?.cartTotal?.totalQty ?? 0;
 
   // Shared invalidate helper 
   const invalidateCart = () => queryClient.invalidateQueries({ queryKey: CART_KEY });
