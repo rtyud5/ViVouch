@@ -145,7 +145,7 @@ export function AdminLayout() {
 
       {/* Mobile Bottom Navigation */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#d3e4fe] border-t border-[#d8c3ad] h-16 px-2 pb-safe flex items-center justify-around">
-        {navItems.filter(item => item.label !== 'Người dùng').map((item) => (
+        {navItems.filter(item => item.path !== '/admin/users').map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
