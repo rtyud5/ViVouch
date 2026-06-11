@@ -45,8 +45,16 @@ export const ConfirmModal = ({
 
   return (
     <div 
-      className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 cursor-default"
       onClick={handleOverlayClick}
+      onKeyDown={(e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && !loading) {
+          onCancel();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="Close modal overlay"
     >
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
         <h3 className="text-[18px] font-semibold text-[#0b1c30] mb-2">{title}</h3>
