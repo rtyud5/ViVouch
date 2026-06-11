@@ -15,7 +15,7 @@ function calcDiscountPercent(originalPrice, salePrice) {
   const orig = Number(originalPrice);
   const sale = Number(salePrice);
   if (Number.isNaN(orig) || orig <= 0) return 0;
-  if (Number.isNaN(sale) || sale < 0) return 0;
+  if (Number.isNaN(sale) || sale < 0 || sale >= orig) return 0;
   if (sale === 0) return 100; // Free voucher
   const percent = ((orig - sale) / orig) * 100;
   return Math.floor(percent);
@@ -174,7 +174,7 @@ export function VoucherCard({ voucher, variant = "home" }) {
               onClick={handleBuyClick}
               className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm"
             >
-                Mua ngay
+              Mua ngay
             </button>
           </div>
         </div>

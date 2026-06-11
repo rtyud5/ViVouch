@@ -11,11 +11,10 @@ export function mapVoucherForCard(voucher, categories = []) {
   const totalQuantity =
     voucher.totalQty ?? soldQuantity + remaining;
 
-  const categorySlug =
-    (Array.isArray(categories) &&
-      categories.find((c) => c && c.name === voucher.category?.name)?.slug) ||
-    voucher.category?.slug ||
-    "";
+  const matchedCategory = Array.isArray(categories)
+    ? categories.find((c) => c && c.name === voucher.category?.name)
+    : null;
+  const categorySlug = matchedCategory?.slug || voucher.category?.slug || "";
 
   return {
     id: voucher.id,
