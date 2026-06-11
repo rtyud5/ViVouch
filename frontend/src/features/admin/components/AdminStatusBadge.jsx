@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * AdminStatusBadge component specifically for the Admin Portal.
@@ -43,4 +44,8 @@ export const AdminStatusBadge = ({ status }) => {
       {current.label}
     </span>
   );
+};
+
+AdminStatusBadge.propTypes = {
+  status: PropTypes.string.isRequired,
 };

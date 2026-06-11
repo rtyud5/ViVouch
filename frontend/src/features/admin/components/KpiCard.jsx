@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * KpiCard component for displaying key performance indicators.
@@ -53,4 +54,11 @@ export const KpiCard = ({ label, value, trend, trendType = 'neutral' }) => {
       </div>
     </div>
   );
+};
+
+KpiCard.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  trend: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  trendType: PropTypes.oneOf(['up', 'down', 'neutral']),
 };

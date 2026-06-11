@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * ConfirmModal component for critical actions across the application.
@@ -86,4 +87,15 @@ export const ConfirmModal = ({
       </div>
     </div>
   );
+};
+
+ConfirmModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  confirmLabel: PropTypes.string,
+  confirmVariant: PropTypes.oneOf(['danger', 'warning', 'primary']),
+  onConfirm: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
 };

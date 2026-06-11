@@ -1,4 +1,19 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+const SkeletonRow = ({ columns }) => (
+  <tr className="border-b border-[#dce9ff] animate-pulse">
+    {columns.map((_, index) => (
+      <td key={`skeleton-col-${index}`} className="py-3 px-4">
+        <div className="h-10 bg-[#e5eeff] rounded"></div>
+      </td>
+    ))}
+  </tr>
+);
+
+SkeletonRow.propTypes = {
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 /**
  * AdminTable component for displaying data in a structured format.
@@ -17,16 +32,6 @@ export const AdminTable = ({
   loading = false, 
   emptyMessage = "Không có dữ liệu" 
 }) => {
-  const SkeletonRow = () => (
-    <tr className="border-b border-[#dce9ff] animate-pulse">
-      {columns.map((_, index) => (
-        <td key={index} className="py-3 px-4">
-          <div className="h-10 bg-[#e5eeff] rounded"></div>
-        </td>
-      ))}
-    </tr>
-  );
-
   return (
     <div className="w-full overflow-x-auto rounded-lg border border-[#d8c3ad]">
       <table className="w-full text-left border-collapse min-w-[700px]">
@@ -46,11 +51,11 @@ export const AdminTable = ({
         <tbody className="bg-white">
           {loading ? (
             <>
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
+              <SkeletonRow columns={columns} />
+              <SkeletonRow columns={columns} />
+              <SkeletonRow columns={columns} />
+              <SkeletonRow columns={columns} />
+              <SkeletonRow columns={columns} />
             </>
           ) : data.length === 0 ? (
             <tr>
@@ -64,12 +69,19 @@ export const AdminTable = ({
           ) : (
             data.map((row, rowIndex) => (
               <tr 
-                key={row.id || rowIndex} 
-                onClick={() => onRowClick && onRowClick(row)}
+                key={row.id || `row-${rowIndex}`} 
+                onClick={() => onRowClick?.(row)}
                 className={`border-b border-[#dce9ff] hover:bg-[#eff4ff] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if ((e.key === 'Enter' || e.key === ' ') && onRowClick) {
+                    onRowClick(row);
+                  }
+                }}
               >
                 {columns.map((col) => (
-                  <td key={col.key} className="py-3 px-4 text-[14px] text-[#0b1c30]">
+                  <td key={`${row.id || rowIndex}-${col.key}`} className="py-3 px-4 text-[14px] text-[#0b1c30]">
                     {col.render ? col.render(row) : row[col.key]}
                   </td>
                 ))}
@@ -80,4 +92,19 @@ export const AdminTable = ({
       </table>
     </div>
   );
+};
+
+AdminTable.propTypes = {
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      render: PropTypes.func,
+      width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    })
+  ).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object),
+  onRowClick: PropTypes.func,
+  loading: PropTypes.bool,
+  emptyMessage: PropTypes.string,
 };
