@@ -16,6 +16,7 @@
     "axios": "latest",
     "daisyui": "latest",
     "lucide-react": "latest",
+    "prop-types": "^15.8.1",
     "qrcode.react": "latest",
     "react": "latest",
     "react-dom": "latest",
