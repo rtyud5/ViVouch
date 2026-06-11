@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../../stores/authStore';
 
 /**
  * BottomNav — 5-tab mobile navigation bar.
@@ -8,9 +9,10 @@ import { Link, useLocation } from 'react-router-dom';
  *   cartCount  {number}  – số lượng sản phẩm trong giỏ (dùng để hiển thị badge)
  *   basePath   {string}  – prefix route, ví dụ: '' (public) hoặc '/customer'
  */
-export function BottomNav({ cartCount = 0, basePath = '' }) {
+export function BottomNav({ cartCount = 0, basePath: initialBasePath = '' }) {
   const { pathname } = useLocation();
-
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const basePath = initialBasePath || (isAuthenticated ? '/customer' : '');
   // Xác định tab nào đang active
   const isHome    = pathname === basePath || pathname === `${basePath}/home` || pathname === '/';
   const isSearch  = pathname === `${basePath}/vouchers` || pathname === '/vouchers';
