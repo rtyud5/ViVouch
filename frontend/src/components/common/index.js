@@ -1,3 +1,4 @@
+export * from './BottomNav';
 export * from './ConfirmModal';
 export * from './EmptyState';
 export * from './LoadingSpinner';
