@@ -171,6 +171,9 @@ export function HomePage() {
     error: categoriesError,
   } = useCategories();
 
+  const isCategoryFilterActive = activeCategory && activeCategory !== "all";
+  const shouldWaitCategories = isCategoryFilterActive && categoriesLoading;
+
   const voucherParams = useMemo(
     () =>
       buildVoucherQueryParams({
@@ -186,12 +189,14 @@ export function HomePage() {
     vouchers: rawVouchers,
     isLoading: vouchersLoading,
     error: vouchersError,
-  } = useVouchers(voucherParams);
+  } = useVouchers(voucherParams, { enabled: !shouldWaitCategories });
 
   const vouchers = useMemo(
-    () => rawVouchers.map((v) => mapVoucherForCard(v, categories)),
+    () => rawVouchers.map((v) => mapVoucherForCard(v, categories)).filter(Boolean),
     [rawVouchers, categories]
   );
+
+  const showVouchersLoading = vouchersLoading || shouldWaitCategories;
 
   return (
     <main className="max-w-screen-xl mx-auto px-4 py-6">
@@ -219,7 +224,7 @@ export function HomePage() {
         </Link>
       </div>
 
-      <VoucherGrid vouchers={vouchers} isLoading={vouchersLoading} />
+      <VoucherGrid vouchers={vouchers} isLoading={showVouchersLoading} />
     </main>
   );
 }

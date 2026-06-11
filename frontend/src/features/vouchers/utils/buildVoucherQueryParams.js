@@ -17,19 +17,23 @@ export function buildVoucherQueryParams({
   categories = [],
 }) {
   const params = {
-    page,
-    limit,
+    page: Math.max(1, Number(page) || 1),
+    limit: Math.max(1, Number(limit) || 8),
     sort: SORT_TO_API[sort] ?? "popularity",
   };
 
-  if (keyword?.trim()) {
+  if (keyword && typeof keyword === "string" && keyword.trim()) {
     params.keyword = keyword.trim();
   }
 
-  if (category && category !== "all") {
-    const match = categories.find((c) => c.slug === category);
+  if (category && category !== "all" && Array.isArray(categories)) {
+    const match = categories.find((c) => c && c.slug === category);
     if (match) {
       params.categoryId = match.id;
+    } else if (categories.length > 0) {
+      // Nếu danh sách danh mục đã tải xong mà không khớp slug, đây là slug không hợp lệ.
+      // Dùng nil UUID hợp lệ để API trả về kết quả rỗng thay vì tải tất cả danh mục.
+      params.categoryId = "00000000-0000-0000-0000-000000000000";
     }
   }
 
