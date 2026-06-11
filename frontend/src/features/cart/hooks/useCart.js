@@ -3,13 +3,14 @@ import { getCart, addCartItem, updateCartItem, removeCartItem } from "../api/Car
 
 const CART_KEY = ["cart"];
 
-export function useCart() {
+export function useCart(options = {}) {
   const queryClient = useQueryClient();
 
   // Query 
   const { data: cart, isLoading, error} = useQuery({
     queryKey: CART_KEY,
     queryFn: getCart,
+    ...options,
   });
 
   // cartTotal từ backend
