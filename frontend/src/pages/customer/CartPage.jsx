@@ -9,13 +9,24 @@ import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 export function CartPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading, error, updateQty, removeItem } = useCart();
+  const [mutationError, setMutationError] = React.useState(null);
 
   const handleUpdateQty = async (itemId, newQty) => {
-    await updateQty({ itemId, qty: newQty });
+    try {
+      setMutationError(null);
+      await updateQty({ itemId, qty: newQty });
+    } catch (err) {
+      setMutationError(err);
+    }
   };
 
   const handleRemove = async (itemId) => {
-    await removeItem(itemId);
+    try {
+      setMutationError(null);
+      await removeItem(itemId);
+    } catch (err) {
+      setMutationError(err);
+    }
   };
 
   const handleCheckout = () => {
@@ -47,15 +58,15 @@ export function CartPage() {
 
   // Tổng số lượng và thành tiền
   // Ưu tiên lấy từ backend cartTotal, nếu không tự tính để phòng hờ
-  const totalQty = cartTotal?.totalQty ?? items.reduce((acc, item) => acc + item.qty, 0);
-  const totalAmount = cartTotal?.totalAmount ?? items.reduce((acc, item) => {
+  const totalQty = cartTotal?.totalQty ?? items.filter(item => item.isAvailable).reduce((acc, item) => acc + item.qty, 0);
+  const totalAmount = cartTotal?.totalAmount ?? items.filter(item => item.isAvailable).reduce((acc, item) => {
     const price = Number(item.voucher?.salePrice) || 0;
     return acc + price * item.qty;
   }, 0);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 md:py-10 bg-base-100 min-h-screen">
-      <ApiErrorToast error={error} message="Lỗi khi tải giỏ hàng" />
+      <ApiErrorToast error={error || mutationError} message={error ? "Lỗi khi tải giỏ hàng" : "Lỗi thao tác giỏ hàng"} />
 
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-base-content tracking-tight">
@@ -144,6 +155,7 @@ export function CartPage() {
                 <button 
                   className="btn btn-primary w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/20 text-base"
                   onClick={handleCheckout}
+                  disabled={totalQty === 0}
                 >
                   Thanh toán ngay <ArrowRight size={18} />
                 </button>

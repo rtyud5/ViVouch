@@ -12,7 +12,7 @@ export function CartItem({ item, onUpdateQty, onRemove }) {
 
   const title = voucher.title || voucher.name || "Voucher";
   const partnerName = voucher.partner?.businessName || voucher.partnerName || "";
-  const remaining = voucher.remainingQty ?? Math.max(0, (voucher.totalQuantity || 0) - (voucher.soldQuantity || voucher.soldQty || 0));
+  const remaining = voucher.remainingQty ?? Math.max(0, (voucher.totalQty ?? 0) - (voucher.soldQuantity ?? voucher.soldQty ?? 0));
   const salePrice = Number(voucher.salePrice) || 0;
   const originalPrice = Number(voucher.originalPrice) || 0;
   

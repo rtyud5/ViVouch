@@ -8,9 +8,9 @@ export function useCart(options = {}) {
 
   // Query 
   const { data: cart, isLoading, error} = useQuery({
+    ...options,
     queryKey: CART_KEY,
     queryFn: getCart,
-    ...options,
   });
 
   // cartTotal từ backend
