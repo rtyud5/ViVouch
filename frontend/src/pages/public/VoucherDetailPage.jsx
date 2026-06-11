@@ -290,7 +290,7 @@ export function VoucherDetailPage() {
               <div className="flex text-warning">
                 <Star size={16} fill="currentColor" />
               </div>
-              <span className="font-bold text-base-content">{voucher.rating}</span>
+              <span className="font-bold text-base-content">{(Number(voucher.rating) || 0).toFixed(1)}</span>
               <span className="text-base-content/40">|</span>
               <span className="text-base-content/60 font-medium">({voucher.reviewCount} đánh giá)</span>
             </div>

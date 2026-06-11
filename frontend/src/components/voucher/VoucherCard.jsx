@@ -12,10 +12,12 @@ const PLACEHOLDER_IMAGE = "https://placehold.co/400x300/e2e8f0/94a3b8?text=No+Im
  * @returns {number} Discount percent (0–100), rounded down
  */
 function calcDiscountPercent(originalPrice, salePrice) {
-  if (!originalPrice || originalPrice <= 0) return 0;
-  if (salePrice === undefined || salePrice === null) return 0;
-  if (salePrice <= 0) return 100; // Free voucher
-  const percent = ((originalPrice - salePrice) / originalPrice) * 100;
+  const orig = Number(originalPrice);
+  const sale = Number(salePrice);
+  if (Number.isNaN(orig) || orig <= 0) return 0;
+  if (Number.isNaN(sale) || sale < 0) return 0;
+  if (sale === 0) return 100; // Free voucher
+  const percent = ((orig - sale) / orig) * 100;
   return Math.floor(percent);
 }
 
@@ -37,7 +39,7 @@ function RatingRow({ rating, count }) {
       >
         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
       </svg>
-      <span className="font-semibold text-base-content">{rating.toFixed(1)}</span>
+      <span className="font-semibold text-base-content">{(Number(rating) || 0).toFixed(1)}</span>
       <span>({count})</span>
     </div>
   );

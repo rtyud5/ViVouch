@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { VoucherCard } from "../../components/voucher/VoucherCard";
 import { VoucherCardSkeleton } from "../../components/voucher/VoucherCardSkeleton";
@@ -28,10 +28,12 @@ function readFiltersFromParams(searchParams) {
 
 function buildSearchParams({ keyword, category, sort, page }) {
   const params = {};
-  if (keyword.trim()) params.keyword = keyword.trim();
-  if (category !== "all") params.category = category;
-  if (sort !== "popular") params.sort = sort;
-  if (page > 1) params.page = String(page);
+  if (keyword && typeof keyword === "string" && keyword.trim()) {
+    params.keyword = keyword.trim();
+  }
+  if (category && category !== "all") params.category = category;
+  if (sort && sort !== "popular") params.sort = sort;
+  if (page && page > 1) params.page = String(page);
   return params;
 }
 
@@ -40,7 +42,7 @@ export function VoucherListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const { keyword, category, sort, page } = readFiltersFromParams(searchParams);
-  const { categories } = useCategories();
+  const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
 
   useEffect(() => {
     const q = searchParams.get("q");
@@ -72,15 +74,20 @@ export function VoucherListPage() {
     [keyword, category, sort, page, categories]
   );
 
+  const isCategoryFilterActive = category && category !== "all";
+  const shouldWaitCategories = isCategoryFilterActive && categoriesLoading;
+
   const {
     vouchers: rawVouchers,
     pagination,
-    isLoading,
+    isLoading: vouchersLoading,
     error,
-  } = useVouchers(voucherParams);
+  } = useVouchers(voucherParams, { enabled: !shouldWaitCategories });
+
+  const showSkeleton = vouchersLoading || shouldWaitCategories;
 
   const vouchers = useMemo(
-    () => rawVouchers.map((v) => mapVoucherForCard(v, categories)),
+    () => rawVouchers.map((v) => mapVoucherForCard(v, categories)).filter(Boolean),
     [rawVouchers, categories]
   );
 
@@ -126,7 +133,7 @@ export function VoucherListPage() {
   return (
     <div className="bg-background min-h-screen pb-24 md:pb-0">
       <ApiErrorToast
-        error={error}
+        error={error || categoriesError}
         message="Không thể tải danh sách voucher"
       />
 
@@ -168,7 +175,7 @@ export function VoucherListPage() {
       </header>
 
       <main className="max-w-[1200px] mx-auto px-container-margin py-section-gap">
-        {!isLoading && (
+        {!showSkeleton && (
           <div className="flex justify-between items-center mb-6">
             <h1
               className="font-headline-md text-headline-md text-on-surface"
@@ -183,7 +190,7 @@ export function VoucherListPage() {
           </div>
         )}
 
-        {isLoading ? (
+        {showSkeleton ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter md:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <VoucherCardSkeleton key={i} />
@@ -217,7 +224,7 @@ export function VoucherListPage() {
           </div>
         )}
 
-        {!isLoading && vouchers.length > 0 && (
+        {!showSkeleton && vouchers.length > 0 && (
           <Pagination
             currentPage={safePage}
             totalPages={totalPages}

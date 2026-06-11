@@ -189,7 +189,7 @@ export function HomePage() {
   } = useVouchers(voucherParams);
 
   const vouchers = useMemo(
-    () => rawVouchers.map((v) => mapVoucherForCard(v, categories)),
+    () => rawVouchers.map((v) => mapVoucherForCard(v, categories)).filter(Boolean),
     [rawVouchers, categories]
   );
 
