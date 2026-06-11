@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
+import { useCart } from "../../features/cart/hooks/useCart";
 
 /**
  * PublicNavbar
@@ -16,6 +17,9 @@ export function PublicNavbar() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+
+  const isCustomer = user?.role === "CUSTOMER";
+  const { cartCount } = useCart({ enabled: isAuthenticated && isCustomer });
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -107,8 +111,23 @@ export function PublicNavbar() {
           {/* ── Auth section ── */}
           {isAuthenticated && user ? (
             /* Đã đăng nhập */
-            <div className="flex items-center gap-2 shrink-0">
-              <div className="hidden sm:flex items-center gap-1.5 text-sm font-medium">
+            <div className="flex items-center gap-4 shrink-0">
+              {isCustomer && (
+                <Link to="/customer/cart" className="relative group p-1" aria-label="Giỏ hàng">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-base-content/70 group-hover:text-primary transition-colors">
+                    <circle cx="8" cy="21" r="1"/>
+                    <circle cx="19" cy="21" r="1"/>
+                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                  </svg>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-2 badge badge-primary badge-sm text-[10px] min-w-[18px] px-1 h-[18px]">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+              
+              <div className="hidden sm:flex items-center gap-1.5 text-sm font-medium border-l border-base-300 pl-4">
                 {/* Avatar chữ cái đầu */}
                 <div className="w-8 h-8 rounded-full bg-primary text-primary-content
                                 flex items-center justify-center text-xs font-bold shrink-0">
