@@ -33,6 +33,7 @@ import { VoucherApprovalsPage } from "../pages/admin/VoucherApprovalsPage"
 import { OrdersPage } from "../pages/admin/OrdersPage"
 import { AuditLogsPage } from "../pages/admin/AuditLogsPage"
 
+import { AdminComponentsTest } from "../pages/test/AdminComponentsTest";
 import { TestComponentsPage } from "../pages/test/TestComponentsPage";
 import VoucherHooksTest from "../pages/test/VoucherHooksTest";
 import { CartHooksTestWrapper } from "../pages/test/CartHookTest"
@@ -42,6 +43,7 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         {/* Test component */}
+        <Route path="/test/admin-kit" element={<AdminComponentsTest />} />
         <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} /> 
         <Route path="/test/fe/task2/week2" element={<VoucherHooksTest />} /> 
         <Route path="/test/fe/task3/week2" element={ <CartHooksTestWrapper />} /> 
