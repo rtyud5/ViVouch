@@ -9,10 +9,12 @@ import { useAuthStore } from '../../stores/authStore';
  *   cartCount  {number}  – số lượng sản phẩm trong giỏ (dùng để hiển thị badge)
  *   basePath   {string}  – prefix route, ví dụ: '' (public) hoặc '/customer'
  */
-export function BottomNav({ cartCount = 0, basePath: initialBasePath = '' }) {
+export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
   const { pathname } = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const basePath = initialBasePath || (isAuthenticated ? '/customer' : '');
+  const user = useAuthStore((state) => state.user);
+  const isCustomer = isAuthenticated && user?.role === 'customer';
+  const basePath = initialBasePath ?? (isCustomer ? '/customer' : '');
   // Xác định tab nào đang active
   const isHome    = pathname === basePath || pathname === `${basePath}/home` || pathname === '/';
   const isSearch  = pathname === `${basePath}/vouchers` || pathname === '/vouchers';
