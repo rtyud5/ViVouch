@@ -89,6 +89,7 @@ export function DashboardLayout({
           htmlFor={drawerId}
           aria-label="Đóng menu"
           className="drawer-overlay"
+          tabIndex={0}
           onClick={closeSidebar}
           onKeyDown={(e) => (e.key === 'Enter' || e.key === 'Escape') && closeSidebar()}
         />
