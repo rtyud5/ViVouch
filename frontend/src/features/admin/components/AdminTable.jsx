@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 const SkeletonRow = ({ columns }) => (
   <tr className="border-b border-[#dce9ff] animate-pulse">
-    {columns.map((_, index) => (
-      <td key={`skeleton-col-${index}`} className="py-3 px-4">
+    {columns.map((col, index) => (
+      <td key={`skeleton-${col.key || index}`} className="py-3 px-4">
         <div className="h-10 bg-[#e5eeff] rounded"></div>
       </td>
     ))}
@@ -32,6 +32,53 @@ export const AdminTable = ({
   loading = false, 
   emptyMessage = "Không có dữ liệu" 
 }) => {
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <>
+          <SkeletonRow columns={columns} />
+          <SkeletonRow columns={columns} />
+          <SkeletonRow columns={columns} />
+          <SkeletonRow columns={columns} />
+          <SkeletonRow columns={columns} />
+        </>
+      );
+    }
+
+    if (data.length === 0) {
+      return (
+        <tr>
+          <td 
+            colSpan={columns.length} 
+            className="py-12 text-center text-[#534434] font-medium"
+          >
+            {emptyMessage}
+          </td>
+        </tr>
+      );
+    }
+
+    return data.map((row, rowIndex) => (
+      <tr 
+        key={row.id || `row-${rowIndex}`} 
+        onClick={() => onRowClick?.(row)}
+        className={`border-b border-[#dce9ff] hover:bg-[#eff4ff] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+        tabIndex={onRowClick ? 0 : -1}
+        onKeyDown={(e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && onRowClick) {
+            onRowClick(row);
+          }
+        }}
+      >
+        {columns.map((col) => (
+          <td key={`${row.id || rowIndex}-${col.key}`} className="py-3 px-4 text-[14px] text-[#0b1c30]">
+            {col.render ? col.render(row) : row[col.key]}
+          </td>
+        ))}
+      </tr>
+    ));
+  };
+
   return (
     <div className="w-full overflow-x-auto rounded-lg border border-[#d8c3ad]">
       <table className="w-full text-left border-collapse min-w-[700px]">
@@ -49,45 +96,7 @@ export const AdminTable = ({
           </tr>
         </thead>
         <tbody className="bg-white">
-          {loading ? (
-            <>
-              <SkeletonRow columns={columns} />
-              <SkeletonRow columns={columns} />
-              <SkeletonRow columns={columns} />
-              <SkeletonRow columns={columns} />
-              <SkeletonRow columns={columns} />
-            </>
-          ) : data.length === 0 ? (
-            <tr>
-              <td 
-                colSpan={columns.length} 
-                className="py-12 text-center text-[#534434] font-medium"
-              >
-                {emptyMessage}
-              </td>
-            </tr>
-          ) : (
-            data.map((row, rowIndex) => (
-              <tr 
-                key={row.id || `row-${rowIndex}`} 
-                onClick={() => onRowClick?.(row)}
-                className={`border-b border-[#dce9ff] hover:bg-[#eff4ff] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if ((e.key === 'Enter' || e.key === ' ') && onRowClick) {
-                    onRowClick(row);
-                  }
-                }}
-              >
-                {columns.map((col) => (
-                  <td key={`${row.id || rowIndex}-${col.key}`} className="py-3 px-4 text-[14px] text-[#0b1c30]">
-                    {col.render ? col.render(row) : row[col.key]}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
+          {renderContent()}
         </tbody>
       </table>
     </div>

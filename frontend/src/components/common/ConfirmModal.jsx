@@ -26,12 +26,6 @@ export const ConfirmModal = ({
 }) => {
   if (!isOpen) return null;
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget && !loading) {
-      onCancel();
-    }
-  };
-
   const getVariantStyles = () => {
     switch (confirmVariant) {
       case 'danger':
@@ -45,19 +39,17 @@ export const ConfirmModal = ({
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 cursor-default"
-      onClick={handleOverlayClick}
-      onKeyDown={(e) => {
-        if ((e.key === 'Enter' || e.key === ' ') && !loading) {
-          onCancel();
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      aria-label="Close modal overlay"
-    >
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Overlay backdrop as a semantic button for accessibility */}
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/40 cursor-default border-none w-full h-full p-0"
+        onClick={() => !loading && onCancel()}
+        aria-label="Đóng modal"
+      />
+
+      {/* Modal Content Container */}
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative z-10 animate-in fade-in zoom-in duration-200">
         <h3 className="text-[18px] font-semibold text-[#0b1c30] mb-2">{title}</h3>
         <p className="text-[14px] text-[#534434] mb-6">{message}</p>
         
