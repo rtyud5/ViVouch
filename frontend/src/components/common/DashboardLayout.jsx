@@ -26,7 +26,6 @@ export function DashboardLayout({
         type="checkbox"
         className="drawer-toggle"
         checked={isSidebarOpen}
-        onChange={() => {}}
         readOnly
       />
 
