@@ -1,6 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { PublicNavbar } from "../components/common/PublicNavbar";
 import { BottomNav } from "../components/common/BottomNav";
+import { useAuthStore } from "../stores/authStore";
+import { useCart } from "../features/cart/hooks/useCart";
 
 /**
  * PublicLayout
@@ -15,6 +17,7 @@ import { BottomNav } from "../components/common/BottomNav";
 export function PublicLayout() {
   const { pathname } = useLocation();
   const isVoucherListPage = pathname === "/vouchers";
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
@@ -27,8 +30,16 @@ export function PublicLayout() {
       </div>
 
       {/* Bottom Navigation — chỉ hiển thị trên mobile */}
-      {/* basePath rỗng = public routes; giỏ hàng / voucher / profile sẽ redirect sang /login */}
-      <BottomNav cartCount={0} basePath="" />
+      {isAuthenticated ? (
+        <AuthenticatedBottomNav />
+      ) : (
+        <BottomNav cartCount={0} basePath="" />
+      )}
     </div>
   );
+}
+
+function AuthenticatedBottomNav() {
+  const { cartCount } = useCart();
+  return <BottomNav cartCount={cartCount} basePath="/customer" />;
 }
