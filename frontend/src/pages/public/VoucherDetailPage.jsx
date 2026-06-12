@@ -9,15 +9,18 @@ import { StickyBuyBar } from "../../components/voucher/StickyBuyBar";
 export function VoucherDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   const query = useVoucherDetail(id);
   const voucherResponse = query.data?.data || query.data;
-  
+
   // Calculate remainingQuantity if backend doesn't provide it
-  const voucher = voucherResponse ? {
-    ...voucherResponse,
-    remainingQuantity: voucherResponse.remainingQuantity ?? Math.max(0, (voucherResponse.totalQuantity || 0) - (voucherResponse.soldQuantity || 0))
-  } : null;
+  const voucher = React.useMemo(() => {
+    if (!voucherResponse) return null;
+    return {
+      ...voucherResponse,
+      remainingQuantity: voucherResponse.remainingQuantity ?? Math.max(0, (voucherResponse.totalQuantity || 0) - (voucherResponse.soldQuantity || 0))
+    };
+  }, [voucherResponse]);
 
   const isLoading = query.isLoading;
   const error = query.error?.message || null;
@@ -27,11 +30,12 @@ export function VoucherDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [toastMessage, setToastMessage] = useState("");
 
+  const voucherId = voucher?.id;
   useEffect(() => {
     if (voucher) {
       setQuantity(voucher.remainingQuantity > 0 ? 1 : 0);
     }
-  }, [voucher]);
+  }, [voucherId]);
 
   // Hiển thị thông báo tạm thời
   const showToast = (message) => {
@@ -208,9 +212,8 @@ export function VoucherDetailPage() {
             <div className="absolute top-4 right-4 flex gap-2">
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
-                className={`btn btn-circle btn-sm shadow-md bg-base-100 hover:bg-base-200 border-0 ${
-                  isFavorite ? "text-error" : "text-base-content/60"
-                }`}
+                className={`btn btn-circle btn-sm shadow-md bg-base-100 hover:bg-base-200 border-0 ${isFavorite ? "text-error" : "text-base-content/60"
+                  }`}
                 title={isFavorite ? "Bỏ yêu thích" : "Yêu thích"}
               >
                 <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
@@ -236,7 +239,7 @@ export function VoucherDetailPage() {
         {/* CỘT PHẢI (Thông tin giá, số lượng, mua hàng) */}
         <div className="lg:col-span-5">
           <div className="card bg-base-100 border border-base-200 p-6 rounded-2xl shadow-sm flex flex-col gap-6 md:sticky md:top-24">
-            
+
             {/* Partner info */}
             <div>
               <span className="text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-2.5 py-1 rounded-full">
@@ -266,7 +269,7 @@ export function VoucherDetailPage() {
                 <span className="text-3xl font-black text-primary tracking-tight">
                   {voucher.salePrice === 0 ? "Miễn phí" : `${voucher.salePrice.toLocaleString("vi-VN")}đ`}
                 </span>
-                
+
                 {voucher.originalPrice > voucher.salePrice && (
                   <>
                     <span className="text-sm sm:text-base text-base-content/40 line-through font-medium">
@@ -289,9 +292,8 @@ export function VoucherDetailPage() {
                 <span className="text-primary font-bold">{soldPercent}%</span>
               </div>
               <progress
-                className={`progress w-full h-2.5 rounded-full ${
-                  isOutOfStock ? "progress-error" : "progress-primary"
-                }`}
+                className={`progress w-full h-2.5 rounded-full ${isOutOfStock ? "progress-error" : "progress-primary"
+                  }`}
                 value={voucher.soldQuantity}
                 max={voucher.totalQuantity}
               ></progress>
