@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Star, ArrowLeft, Share2, Heart, ShieldCheck, AlertCircle, RefreshCw } from "lucide-react";
-import { useVoucherDetail } from "../../hooks/useVoucherDetail";
+import { useVoucherDetail } from "../../features/vouchers/hooks/useVoucherDetail";
 import { QtySelector } from "../../components/voucher/QtySelector";
 import { DetailTabs } from "../../components/voucher/DetailTabs";
 import { StickyBuyBar } from "../../components/voucher/StickyBuyBar";
@@ -10,41 +10,28 @@ export function VoucherDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   
-  // Gọi hook lấy chi tiết voucher
-  const { voucher: originalVoucher, loading: hookLoading, error, refetch } = useVoucherDetail(id);
-
-  // States hỗ trợ test/debug trạng thái giao diện trực quan
-  const [debugLoading, setDebugLoading] = useState(false);
-  const [debugOutOfStock, setDebugOutOfStock] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const query = useVoucherDetail(id);
+  const voucherResponse = query.data?.data || query.data;
   
-  // State quản lý số lượng mua
+  // Calculate remainingQuantity if backend doesn't provide it
+  const voucher = voucherResponse ? {
+    ...voucherResponse,
+    remainingQuantity: voucherResponse.remainingQuantity ?? Math.max(0, (voucherResponse.totalQuantity || 0) - (voucherResponse.soldQuantity || 0))
+  } : null;
+
+  const isLoading = query.isLoading;
+  const error = query.error?.message || null;
+  const refetch = query.refetch;
+
+  const [isFavorite, setIsFavorite] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  // Toast thông báo hành động
   const [toastMessage, setToastMessage] = useState("");
 
-  // Dữ liệu voucher sau khi áp dụng các thiết lập debug
-  const [voucher, setVoucher] = useState(null);
-
   useEffect(() => {
-    if (originalVoucher) {
-      if (debugOutOfStock) {
-        setVoucher({
-          ...originalVoucher,
-          soldQuantity: originalVoucher.totalQuantity,
-          remainingQuantity: 0
-        });
-        setQuantity(0);
-      } else {
-        setVoucher(originalVoucher);
-        setQuantity(originalVoucher.remainingQuantity > 0 ? 1 : 0);
-      }
-    } else {
-      setVoucher(null);
+    if (voucher) {
+      setQuantity(voucher.remainingQuantity > 0 ? 1 : 0);
     }
-  }, [originalVoucher, debugOutOfStock]);
-
-  const isLoading = hookLoading || debugLoading;
+  }, [voucher]);
 
   // Hiển thị thông báo tạm thời
   const showToast = (message) => {
@@ -175,31 +162,6 @@ export function VoucherDetailPage() {
           </div>
         </div>
       )}
-
-      {/* DEBUG TOOLBAR - Dành cho người kiểm thử trực quan */}
-      <div className="mb-6 p-4 rounded-xl bg-info/10 border border-info/20 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
-        <div className="flex items-center gap-2">
-          <span className="badge badge-info font-bold">Debug Panel</span>
-          <span className="text-base-content/70 font-medium">Giả lập các trạng thái để test UI:</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => {
-              setDebugLoading(true);
-              setTimeout(() => setDebugLoading(false), 2000);
-            }}
-            className="btn btn-xs btn-outline btn-info font-bold"
-          >
-            Tải lại Skeleton (2s)
-          </button>
-          <button
-            onClick={() => setDebugOutOfStock(!debugOutOfStock)}
-            className={`btn btn-xs font-bold ${debugOutOfStock ? "btn-error" : "btn-outline btn-error"}`}
-          >
-            {debugOutOfStock ? "Hủy giả lập Hết hàng" : "Giả lập Hết hàng (Qty = 0)"}
-          </button>
-        </div>
-      </div>
 
       {/* Nút quay lại trang trước */}
       <button

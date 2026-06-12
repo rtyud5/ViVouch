@@ -1,17 +1,9 @@
-﻿import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 
 /** Chip filter — giống mockup vivouch_search_results */
 const FILTER_CHIPS = [
   { key: "category", label: "Danh mục" },
-  { key: "area", label: "Khu vực" },
-  { key: "price", label: "Giá" },
-  { key: "discount", label: "Giảm giá" },
 ];
-
-const AREA_OPTIONS = ["Tất cả", "Quận 1", "Quận 3", "Quận 7", "Nhiều chi nhánh"];
-const PRICE_OPTIONS = ["Tất cả", "Dưới 200k", "200k – 500k", "Trên 500k"];
-const DISCOUNT_OPTIONS = ["Tất cả", "Trên 10%", "Trên 20%", "Trên 30%"];
-
 function ChevronDown() {
   return (
     <svg
@@ -115,26 +107,6 @@ export function VoucherFilter({ activeCategory, onCategoryChange, categories = [
                   ))}
                 </div>
               )}
-
-              {/* Dropdown placeholder — UI mockup (chưa lọc thật) */}
-              {chip.key === "area" && openChip === "area" && (
-                <DropdownPlaceholder
-                  options={AREA_OPTIONS}
-                  onSelect={() => setOpenChip(null)}
-                />
-              )}
-              {chip.key === "price" && openChip === "price" && (
-                <DropdownPlaceholder
-                  options={PRICE_OPTIONS}
-                  onSelect={() => setOpenChip(null)}
-                />
-              )}
-              {chip.key === "discount" && openChip === "discount" && (
-                <DropdownPlaceholder
-                  options={DISCOUNT_OPTIONS}
-                  onSelect={() => setOpenChip(null)}
-                />
-              )}
             </div>
           );
         })}
@@ -143,19 +115,3 @@ export function VoucherFilter({ activeCategory, onCategoryChange, categories = [
   );
 }
 
-function DropdownPlaceholder({ options, onSelect }) {
-  return (
-    <div className="absolute top-full left-0 mt-1 z-50 min-w-[160px] bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg py-1">
-      {options.map((opt) => (
-        <button
-          key={opt}
-          type="button"
-          onClick={onSelect}
-          className="w-full text-left px-4 py-2 font-body-md text-body-md text-on-surface hover:bg-surface-container-low transition-colors"
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  );
-}
