@@ -20,6 +20,13 @@ export function DetailTabs({ description = "", conditions = [], branches = [] })
     { id: "branches", label: "Chi nhánh áp dụng", icon: MapPin },
   ];
 
+  // Chuẩn hóa conditions thành mảng
+  const normalizedConditions = Array.isArray(conditions)
+    ? conditions
+    : typeof conditions === "string" && conditions.trim()
+    ? conditions.split("\n").map(c => c.trim()).filter(Boolean)
+    : [];
+
   return (
     <div className="w-full bg-base-100 rounded-2xl shadow-sm border border-base-200 overflow-hidden">
       {/* Tab Header */}
@@ -56,9 +63,9 @@ export function DetailTabs({ description = "", conditions = [], branches = [] })
         {/* Tab 2: Conditions */}
         {activeTab === "conditions" && (
           <div className="animate-fadeIn">
-            {conditions.length > 0 ? (
+            {normalizedConditions.length > 0 ? (
               <ul className="space-y-3">
-                {conditions.map((cond, idx) => (
+                {normalizedConditions.map((cond, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-sm sm:text-base text-base-content/80">
                     <span className="flex items-center justify-center w-5 h-5 rounded-full bg-warning/10 text-warning text-xs font-bold mt-0.5 shrink-0">
                       {idx + 1}
