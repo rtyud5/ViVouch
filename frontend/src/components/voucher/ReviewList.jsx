@@ -25,7 +25,9 @@ export function ReviewList({ reviews = [] }) {
                 {review.user?.fullName || "Người dùng ẩn danh"}
               </span>
               <span className="text-xs text-base-content/50">
-                {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+                {review.createdAt && !isNaN(Date.parse(review.createdAt))
+                  ? new Date(review.createdAt).toLocaleDateString("vi-VN")
+                  : "Không rõ ngày"}
               </span>
             </div>
             <div className="flex text-warning mb-2">
