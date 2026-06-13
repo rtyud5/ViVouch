@@ -85,7 +85,7 @@ export function VoucherDetailPage() {
     }
     if (!voucher || voucher.remainingQuantity === 0) return;
     
-    const finalQty = parseInt(String(quantity), 10) || 1;
+    const finalQty = Math.max(1, Math.min(parseInt(String(quantity), 10) || 1, voucher.remainingQuantity));
     setIsAddingToCart(true);
     try {
       await addToCart({ voucherId: voucher.id, qty: finalQty });
