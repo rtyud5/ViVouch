@@ -52,7 +52,7 @@ export function StickyBuyBar({
             </span>
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="text-primary font-bold text-base">
-                {voucher.salePrice === 0 ? "Miễn phí" : `${voucher.salePrice.toLocaleString("vi-VN")}đ`}
+                {voucher.salePrice === 0 ? "Miễn phí" : `${(voucher.salePrice * currentQty).toLocaleString("vi-VN")}đ`}
               </span>
               {voucher.originalPrice > voucher.salePrice && (
                 <span className="text-xs text-base-content/40 line-through">

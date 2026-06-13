@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Star, ArrowLeft, Share2, Heart, ShieldCheck, AlertCircle, RefreshCw } from "lucide-react";
 import { useVoucherDetail } from "../../features/vouchers/hooks/useVoucherDetail";
 import { QtySelector } from "../../components/voucher/QtySelector";
 import { DetailTabs } from "../../components/voucher/DetailTabs";
 import { StickyBuyBar } from "../../components/voucher/StickyBuyBar";
+import { ReviewList } from "../../components/voucher/ReviewList";
+import { useAuthStore } from "../../stores/authStore";
+import { useCart } from "../../features/cart/hooks/useCart";
 
 export function VoucherDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { addToCart } = useCart();
 
   const query = useVoucherDetail(id);
   const voucherResponse = query.data?.data || query.data;
@@ -18,7 +24,13 @@ export function VoucherDetailPage() {
     if (!voucherResponse) return null;
     return {
       ...voucherResponse,
-      remainingQuantity: voucherResponse.remainingQuantity ?? Math.max(0, (voucherResponse.totalQuantity || 0) - (voucherResponse.soldQuantity || 0))
+      name: voucherResponse.title || voucherResponse.name,
+      partnerName: voucherResponse.partner?.businessName || voucherResponse.partnerName,
+      remainingQuantity: voucherResponse.remainingQty ?? Math.max(0, (voucherResponse.totalQty || 0) - (voucherResponse.soldQty || 0)),
+      soldQuantity: voucherResponse.soldQty,
+      totalQuantity: voucherResponse.totalQty,
+      rating: voucherResponse.reviewSummary?.avgRating,
+      reviewCount: voucherResponse.reviewSummary?.totalCount,
     };
   }, [voucherResponse]);
 
@@ -29,6 +41,7 @@ export function VoucherDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [toastMessage, setToastMessage] = useState("");
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const voucherId = voucher?.id;
   useEffect(() => {
@@ -46,16 +59,43 @@ export function VoucherDetailPage() {
   };
 
   // Handlers mua hàng
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      navigate("/login", { state: { returnUrl: location.pathname } });
+      return;
+    }
     if (!voucher || voucher.remainingQuantity === 0) return;
+    
     const finalQty = parseInt(String(quantity), 10) || 1;
-    showToast(`Đã thêm thành công ${finalQty} voucher vào giỏ hàng!`);
+    setIsAddingToCart(true);
+    try {
+      await addToCart({ voucherId: voucher.id, qty: finalQty });
+      showToast(`Đã thêm thành công ${finalQty} voucher vào giỏ hàng!`);
+    } catch (err) {
+      showToast(err?.response?.data?.message || "Có lỗi xảy ra khi thêm vào giỏ hàng.");
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
+    if (!isAuthenticated) {
+      navigate("/login", { state: { returnUrl: location.pathname } });
+      return;
+    }
     if (!voucher || voucher.remainingQuantity === 0) return;
+    
     const finalQty = parseInt(String(quantity), 10) || 1;
-    showToast(`Đang chuyển hướng tới trang thanh toán cho ${finalQty} voucher...`);
+    setIsAddingToCart(true);
+    try {
+      await addToCart({ voucherId: voucher.id, qty: finalQty });
+      showToast(`Đang chuyển hướng tới giỏ hàng...`);
+      navigate("/customer/cart");
+    } catch (err) {
+      showToast(err?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const handleShare = () => {
@@ -234,6 +274,9 @@ export function VoucherDetailPage() {
             conditions={voucher.conditions}
             branches={voucher.branches}
           />
+
+          {/* Component Danh sách đánh giá */}
+          <ReviewList reviews={voucher.reviews} />
         </div>
 
         {/* CỘT PHẢI (Thông tin giá, số lượng, mua hàng) */}
@@ -292,7 +335,7 @@ export function VoucherDetailPage() {
                 <span className="text-primary font-bold">{soldPercent}%</span>
               </div>
               <progress
-                className={`progress w-full h-2.5 rounded-full ${isOutOfStock ? "progress-error" : "progress-primary"
+                className={`progress w-full h-2.5 rounded-full ${voucher.remainingQuantity < 10 ? "progress-error" : "progress-primary"
                   }`}
                 value={voucher.soldQuantity}
                 max={voucher.totalQuantity}
@@ -315,15 +358,15 @@ export function VoucherDetailPage() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  disabled={isOutOfStock}
+                  disabled={isOutOfStock || isAddingToCart}
                   className="btn btn-outline btn-primary flex-1 btn-md h-12 rounded-xl font-bold transition-all"
                 >
-                  Thêm vào giỏ hàng
+                  {isAddingToCart ? <span className="loading loading-spinner loading-sm"></span> : "Thêm vào giỏ hàng"}
                 </button>
                 <button
                   type="button"
                   onClick={handleBuyNow}
-                  disabled={isOutOfStock}
+                  disabled={isOutOfStock || isAddingToCart}
                   className="btn btn-primary flex-[1.5] btn-md h-12 rounded-xl font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
                 >
                   {isOutOfStock ? "Hết hàng" : "Mua ngay"}
@@ -345,7 +388,7 @@ export function VoucherDetailPage() {
         onQuantityChange={setQuantity}
         onAddToCart={handleAddToCart}
         onBuyNow={handleBuyNow}
-        disabled={isLoading}
+        disabled={isLoading || isAddingToCart}
       />
     </div>
   );
