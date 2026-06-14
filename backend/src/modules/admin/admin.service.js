@@ -9,7 +9,7 @@ const VOUCHER_TRANSITIONS = {
 
 function assertPartnerActionAllowed(partner, adminId) {
   if (!partner) {
-    throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+    throw new AppError('Partner not found', 404, 'PARTNER_NOT_FOUND');
   }
   if (partner.userId === adminId) {
     throw new AppError('Cannot approve or reject your own partner account', 400, 'SELF_ACTION');
@@ -23,9 +23,18 @@ export async function approvePartner(adminId, partnerId) {
   const partner = await prisma.partner.findUnique({ where: { id: partnerId } });
   assertPartnerActionAllowed(partner, adminId);
 
-  const updated = await prisma.partner.update({
-    where: { id: partnerId },
-    data: { status: 'APPROVED' },
+  const updated = await prisma.$transaction(async (tx) => {
+    const updatedPartner = await tx.partner.update({
+      where: { id: partnerId },
+      data: { status: 'APPROVED' },
+    });
+
+    await tx.user.update({
+      where: { id: partner.userId },
+      data: { role: 'PARTNER' },
+    });
+
+    return updatedPartner;
   });
 
   await auditLog.log(adminId, 'APPROVE_PARTNER', 'Partner', partnerId);

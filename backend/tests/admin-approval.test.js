@@ -153,12 +153,12 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
       expect(res.body.success).toBe(false);
     });
 
-    it("400 nếu partner không tồn tại", async () => {
+    it("404 nếu partner không tồn tại", async () => {
       const res = await request(app)
         .post("/api/admin/partners/non-existent-id/approve")
         .set("Authorization", `Bearer ${adminToken}`);
 
-      expect([400, 404]).toContain(res.status);
+      expect(res.status).toBe(404);
       expect(res.body.success).toBe(false);
     });
 
@@ -172,6 +172,9 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
 
       const partner = await prisma.partner.findUnique({ where: { id: partnerId } });
       expect(partner.status).toBe("APPROVED");
+
+      const user = await prisma.user.findUnique({ where: { id: partner.userId } });
+      expect(user.role).toBe("PARTNER");
 
       const log = await prisma.auditLog.findFirst({
         where: {
