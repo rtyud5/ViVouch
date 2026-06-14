@@ -1,11 +1,16 @@
 import { prisma } from '../../config/prisma.js';
 import { AppError } from '../../utils/appError.js';
 import { canTransition } from '../../utils/stateMachine.js';
+import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
 import * as auditLog from '../auditLogs/auditLog.service.js';
 
 const VOUCHER_TRANSITIONS = {
   PENDING_APPROVAL: ['APPROVED', 'REJECTED'],
 };
+
+function isRecordNotFound(error) {
+  return error?.code === 'P2025';
+}
 
 function assertPartnerActionAllowed(partner, adminId) {
   if (!partner) {
@@ -23,23 +28,35 @@ export async function approvePartner(adminId, partnerId) {
   const partner = await prisma.partner.findUnique({ where: { id: partnerId } });
   assertPartnerActionAllowed(partner, adminId);
 
-  const updated = await prisma.$transaction(async (tx) => {
-    const updatedPartner = await tx.partner.update({
-      where: { id: partnerId },
-      data: { status: 'APPROVED' },
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const updatedPartner = await tx.partner.update({
+        where: { id: partnerId, status: 'PENDING' },
+        data: { status: 'APPROVED' },
+      });
+
+      await tx.user.update({
+        where: { id: partner.userId },
+        data: { role: 'PARTNER' },
+      });
+
+      await auditLog.log(
+        adminId,
+        AUDIT_ACTIONS.ADMIN_APPROVE_PARTNER,
+        'Partner',
+        partnerId,
+        {},
+        tx,
+      );
+
+      return updatedPartner;
     });
-
-    await tx.user.update({
-      where: { id: partner.userId },
-      data: { role: 'PARTNER' },
-    });
-
-    return updatedPartner;
-  });
-
-  await auditLog.log(adminId, 'APPROVE_PARTNER', 'Partner', partnerId);
-
-  return updated;
+  } catch (error) {
+    if (isRecordNotFound(error)) {
+      throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+    }
+    throw error;
+  }
 }
 
 export async function rejectPartner(adminId, partnerId, reason) {
@@ -50,14 +67,32 @@ export async function rejectPartner(adminId, partnerId, reason) {
   const partner = await prisma.partner.findUnique({ where: { id: partnerId } });
   assertPartnerActionAllowed(partner, adminId);
 
-  const updated = await prisma.partner.update({
-    where: { id: partnerId },
-    data: { status: 'REJECTED', rejectReason: reason.trim() },
-  });
+  const trimmedReason = reason.trim();
 
-  await auditLog.log(adminId, 'REJECT_PARTNER', 'Partner', partnerId, { reason: reason.trim() });
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const updatedPartner = await tx.partner.update({
+        where: { id: partnerId, status: 'PENDING' },
+        data: { status: 'REJECTED', rejectReason: trimmedReason },
+      });
 
-  return updated;
+      await auditLog.log(
+        adminId,
+        AUDIT_ACTIONS.ADMIN_REJECT_PARTNER,
+        'Partner',
+        partnerId,
+        { reason: trimmedReason },
+        tx,
+      );
+
+      return updatedPartner;
+    });
+  } catch (error) {
+    if (isRecordNotFound(error)) {
+      throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+    }
+    throw error;
+  }
 }
 
 export async function approveVoucher(adminId, voucherId) {
@@ -71,18 +106,34 @@ export async function approveVoucher(adminId, voucherId) {
     throw new AppError('Invalid status transition', 400, 'INVALID_TRANSITION');
   }
 
-  const updated = await prisma.voucher.update({
-    where: { id: voucherId },
-    data: {
-      status: 'APPROVED',
-      approvedAt: new Date(),
-      approvedBy: adminId,
-    },
-  });
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const updatedVoucher = await tx.voucher.update({
+        where: { id: voucherId, status: 'PENDING_APPROVAL' },
+        data: {
+          status: 'APPROVED',
+          approvedAt: new Date(),
+          approvedBy: adminId,
+        },
+      });
 
-  await auditLog.log(adminId, 'APPROVE_VOUCHER', 'Voucher', voucherId);
+      await auditLog.log(
+        adminId,
+        AUDIT_ACTIONS.ADMIN_APPROVE_VOUCHER,
+        'Voucher',
+        voucherId,
+        {},
+        tx,
+      );
 
-  return updated;
+      return updatedVoucher;
+    });
+  } catch (error) {
+    if (isRecordNotFound(error)) {
+      throw new AppError('Invalid status transition', 400, 'INVALID_TRANSITION');
+    }
+    throw error;
+  }
 }
 
 export async function rejectVoucher(adminId, voucherId, reason) {
@@ -100,15 +151,33 @@ export async function rejectVoucher(adminId, voucherId, reason) {
     throw new AppError('Invalid status transition', 400, 'INVALID_TRANSITION');
   }
 
-  const updated = await prisma.voucher.update({
-    where: { id: voucherId },
-    data: {
-      status: 'REJECTED',
-      rejectReason: reason.trim(),
-    },
-  });
+  const trimmedReason = reason.trim();
 
-  await auditLog.log(adminId, 'REJECT_VOUCHER', 'Voucher', voucherId, { reason: reason.trim() });
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const updatedVoucher = await tx.voucher.update({
+        where: { id: voucherId, status: 'PENDING_APPROVAL' },
+        data: {
+          status: 'REJECTED',
+          rejectReason: trimmedReason,
+        },
+      });
 
-  return updated;
+      await auditLog.log(
+        adminId,
+        AUDIT_ACTIONS.ADMIN_REJECT_VOUCHER,
+        'Voucher',
+        voucherId,
+        { reason: trimmedReason },
+        tx,
+      );
+
+      return updatedVoucher;
+    });
+  } catch (error) {
+    if (isRecordNotFound(error)) {
+      throw new AppError('Invalid status transition', 400, 'INVALID_TRANSITION');
+    }
+    throw error;
+  }
 }

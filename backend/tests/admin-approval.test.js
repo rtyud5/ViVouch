@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import request from "supertest";
 import app from "../src/app.js";
 import { prisma } from "../src/config/prisma.js";
+import { AUDIT_ACTIONS } from "../src/constants/auditActions.js";
 
 describe("Admin Approve/Reject API (T3.5a)", () => {
   const adminEmail = "admin_approval_test@example.com";
@@ -178,7 +179,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
 
       const log = await prisma.auditLog.findFirst({
         where: {
-          action: "APPROVE_PARTNER",
+          action: AUDIT_ACTIONS.ADMIN_APPROVE_PARTNER,
           targetId: partnerId,
           actorId: adminId,
         },
@@ -252,7 +253,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
 
       const log = await prisma.auditLog.findFirst({
         where: {
-          action: "REJECT_PARTNER",
+          action: AUDIT_ACTIONS.ADMIN_REJECT_PARTNER,
           targetId: rejectPartnerId,
           actorId: adminId,
         },
@@ -317,7 +318,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
 
       const log = await prisma.auditLog.findFirst({
         where: {
-          action: "APPROVE_VOUCHER",
+          action: AUDIT_ACTIONS.ADMIN_APPROVE_VOUCHER,
           targetId: voucherId,
           actorId: adminId,
         },
@@ -356,7 +357,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
       expect(partner.status).toBe("PENDING");
 
       const log = await prisma.auditLog.findFirst({
-        where: { action: "APPROVE_PARTNER", targetId: selfPartnerId },
+        where: { action: AUDIT_ACTIONS.ADMIN_APPROVE_PARTNER, targetId: selfPartnerId },
       });
       expect(log).toBeNull();
     });
@@ -375,7 +376,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
       expect(partner.rejectReason).toBeNull();
 
       const log = await prisma.auditLog.findFirst({
-        where: { action: "REJECT_PARTNER", targetId: selfPartnerId },
+        where: { action: AUDIT_ACTIONS.ADMIN_REJECT_PARTNER, targetId: selfPartnerId },
       });
       expect(log).toBeNull();
     });
@@ -425,7 +426,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
 
       const log = await prisma.auditLog.findFirst({
         where: {
-          action: "REJECT_VOUCHER",
+          action: AUDIT_ACTIONS.ADMIN_REJECT_VOUCHER,
           targetId: rejectVoucherId,
           actorId: adminId,
         },
