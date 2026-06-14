@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { VoucherCodeCard } from '../../components/voucher/VoucherCodeCard';
 
 // Mock hook since useMyVouchers from T-hooks3 is not available yet
+/**
+ * A mock hook to simulate fetching user's voucher codes.
+ *
+ * @returns {Object} An object containing the voucher codes data and loading state
+ */
 const useMyVouchersMock = () => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -65,6 +70,12 @@ const useMyVouchersMock = () => {
     return { data, isLoading };
 };
 
+/**
+ * MyVouchersPage component renders the list of user's voucher codes grouped by tabs: ISSUED, USED, and EXPIRED.
+ * It also renders a modal to display a full-size QR code and option to copy the voucher code.
+ *
+ * @returns {React.ReactElement} The rendered MyVouchersPage component
+ */
 export function MyVouchersPage() {
     const { data: voucherCodes, isLoading } = useMyVouchersMock();
     const [activeTab, setActiveTab] = useState("ISSUED");

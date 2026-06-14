@@ -22,6 +22,22 @@ const STATUS_CONFIG = {
   }
 };
 
+/**
+ * VoucherCodeCard component displays an individual voucher code with its status, code, expiration date, and image.
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.voucherCode - The voucher code details
+ * @param {string} props.voucherCode.code - The unique code of the voucher
+ * @param {string} props.voucherCode.status - Status of the voucher code (e.g. 'ISSUED', 'USED', 'EXPIRED')
+ * @param {string} props.voucherCode.expirationDate - Expiration date of the voucher code
+ * @param {Object} props.voucherCode.voucher - The voucher metadata
+ * @param {string} props.voucherCode.voucher.name - Name of the voucher
+ * @param {string} props.voucherCode.voucher.image - Image URL of the voucher
+ * @param {Object} props.voucherCode.voucher.partner - Partner details
+ * @param {string} props.voucherCode.voucher.partner.name - Name of the partner
+ * @param {Function} props.onOpenQR - Callback when clicking on a usable voucher code card to open the QR modal
+ * @returns {React.ReactElement} The rendered VoucherCodeCard component
+ */
 export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
   const { code, status, expirationDate, voucher } = voucherCode || {};
   const currentStatus = STATUS_CONFIG[status] || STATUS_CONFIG.ISSUED;
