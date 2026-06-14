@@ -159,11 +159,22 @@ export function MyVouchersPage() {
             {/* QR Modal */}
             <div
                 className={`fixed inset-0 z-[100] bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 ${isModalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-                onClick={handleCloseQR}
+                onClick={(e) => {
+                    if (e.target === e.currentTarget) {
+                        handleCloseQR();
+                    }
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                        handleCloseQR();
+                    }
+                }}
+                role="button"
+                tabIndex={isModalOpen ? 0 : -1}
+                aria-label="Đóng QR Modal"
             >
                 <div
                     className={`bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-2xl flex flex-col items-center transform transition-transform duration-300 ${isModalOpen ? 'scale-100' : 'scale-95'}`}
-                    onClick={e => e.stopPropagation()}
                 >
                     <button className="self-end text-on-surface-variant hover:text-on-surface mb-2" onClick={handleCloseQR}>
                         <span className="material-symbols-outlined">close</span>
