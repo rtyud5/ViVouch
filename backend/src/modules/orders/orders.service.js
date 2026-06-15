@@ -164,9 +164,10 @@ export const checkoutFromCart = async (userId) => {
     // Thực thi xử lý Checkout lõi
     const order = await processCheckout(tx, userId, sortedItems);
 
-    // Xóa giỏ hàng
+    // Xóa các cart items đã được thanh toán
+    const cartItemIds = cart.items.map(item => item.id);
     await tx.cartItem.deleteMany({
-      where: { cartId }
+      where: { id: { in: cartItemIds } }
     });
 
     return order;
