@@ -21,21 +21,7 @@ const calculateCartTotal = (items) => {
   };
 };
 
-/**
- * Lấy hoặc tạo giỏ hàng cho user
- */
-const getOrCreateCartId = async (userId) => {
-  let cart = await prisma.cart.findUnique({
-    where: { userId }
-  });
 
-  if (!cart) {
-    cart = await prisma.cart.create({
-      data: { userId }
-    });
-  }
-  return cart.id;
-};
 
 /**
  * Lấy chi tiết giỏ hàng
@@ -43,10 +29,10 @@ const getOrCreateCartId = async (userId) => {
  * @returns {Promise<Object>} giỏ hàng kèm cartTotal
  */
 export const getCart = async (userId) => {
-  const cartId = await getOrCreateCartId(userId);
-
-  const cart = await prisma.cart.findUnique({
-    where: { id: cartId },
+  const cart = await prisma.cart.upsert({
+    where: { userId },
+    update: {},
+    create: { userId },
     include: {
       items: {
         include: {
@@ -91,7 +77,13 @@ export const getCart = async (userId) => {
  * @returns {Promise<Object>} giỏ hàng đã cập nhật
  */
 export const addItem = async (userId, { voucherId, qty = 1 }) => {
-  const cartId = await getOrCreateCartId(userId);
+  const cart = await prisma.cart.upsert({
+    where: { userId },
+    update: {},
+    create: { userId },
+    select: { id: true }
+  });
+  const cartId = cart.id;
 
   await prisma.$transaction(async (tx) => {
     const voucher = await tx.voucher.findUnique({
