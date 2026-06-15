@@ -1,4 +1,5 @@
 import { prisma } from '../../config/prisma.js';
+import crypto from 'crypto';
 
 /**
  * Helper xử lý lõi của luồng Checkout (gồm khóa dòng, kiểm tra tồn kho, tạo Order, tạo Payment)
@@ -46,18 +47,21 @@ const processCheckout = async (tx, userId, sortedItems) => {
     orderItemsData.push({
       voucherId,
       qty,
-      unitPrice: voucher.salePrice
+      unitPrice: voucher.salePrice,
+      useEnd: voucher.useEnd
     });
   }
 
-  // Tạo Order(PENDING_PAYMENT) và OrderItems
+  // Tạo Order(COMPLETED) và OrderItems
   const order = await tx.order.create({
     data: {
       userId,
-      status: 'PENDING_PAYMENT',
+      status: 'COMPLETED',
       totalAmount,
       items: {
-        create: orderItemsData
+        create: orderItemsData.map(({ voucherId, qty, unitPrice }) => ({
+          voucherId, qty, unitPrice
+        }))
       }
     },
     include: {
@@ -75,6 +79,28 @@ const processCheckout = async (tx, userId, sortedItems) => {
     }
   });
 
+  // Tạo các mã VoucherCode tương ứng với số lượng đã mua
+  const voucherCodesData = [];
+  for (const item of orderItemsData) {
+    for (let i = 0; i < item.qty; i++) {
+      const randomCode = `VC-${crypto.randomUUID().toUpperCase()}`;
+      voucherCodesData.push({
+        code: randomCode,
+        orderId: order.id,
+        voucherId: item.voucherId,
+        ownerId: userId,
+        status: 'ISSUED',
+        expiresAt: item.useEnd
+      });
+    }
+  }
+
+  if (voucherCodesData.length > 0) {
+    await tx.voucherCode.createMany({
+      data: voucherCodesData
+    });
+  }
+
   return order;
 };
 
@@ -89,8 +115,16 @@ export const buyNow = async (userId, items) => {
     throw new Error('EMPTY_ITEMS');
   }
 
+  // Gộp các item trùng ID và cộng dồn số lượng
+  const aggregatedMap = new Map();
+  for (const item of items) {
+    const currentQty = aggregatedMap.get(item.id) || 0;
+    aggregatedMap.set(item.id, currentQty + item.qty);
+  }
+  const aggregatedItems = Array.from(aggregatedMap.entries()).map(([id, qty]) => ({ id, qty }));
+
   // Sắp xếp items theo id để tránh deadlock khi lock nhiều row
-  const sortedItems = [...items].sort((a, b) => a.id.localeCompare(b.id));
+  const sortedItems = aggregatedItems.sort((a, b) => a.id.localeCompare(b.id));
 
   return await prisma.$transaction(async (tx) => {
     return await processCheckout(tx, userId, sortedItems);
