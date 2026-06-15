@@ -8,6 +8,7 @@ import categoriesRouter from './modules/categories/categories.routes.js';
 import vouchersRouter from './modules/vouchers/vouchers.routes.js';
 import cartRouter from './modules/cart/cart.routes.js';
 import adminRouter from './modules/admin/admin.routes.js';
+import ordersRouter from './modules/orders/orders.routes.js';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/vouchers', vouchersRouter);
 app.use('/api/customer/cart', cartRouter);
+app.use('/api/customer/orders', ordersRouter);
 app.use('/api/admin', adminRouter);
 
 app.use(errorMiddleware);
