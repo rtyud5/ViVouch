@@ -13,6 +13,7 @@ export const AdminStatusBadge = ({ status }) => {
     // Partner statuses
     ACTIVE:            { label: 'Hoạt động',      bg: '#dcfce7', text: '#166534' },
     APPROVED:          { label: 'Đã duyệt',       bg: '#dcfce7', text: '#166534' },
+    PENDING:           { label: 'Chờ duyệt',       bg: '#fef9c3', text: '#854d0e' },
     SUSPENDED:         { label: 'Tạm khóa',        bg: '#fee2e2', text: '#991b1b' },
     PENDING_APPROVAL:  { label: 'Chờ duyệt',       bg: '#fef9c3', text: '#854d0e' },
     
