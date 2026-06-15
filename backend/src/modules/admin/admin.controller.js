@@ -2,6 +2,11 @@ import * as adminService from './admin.service.js';
 import { rejectSchema, idParamSchema } from './admin.validator.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 
+export const getDashboardStats = asyncHandler(async (req, res) => {
+  const data = await adminService.getDashboardStats();
+  res.json({ success: true, data });
+});
+
 export const approvePartner = asyncHandler(async (req, res) => {
   const { id } = idParamSchema.parse(req.params);
   const data = await adminService.approvePartner(req.user.userId, id);
