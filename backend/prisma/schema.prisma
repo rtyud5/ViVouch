@@ -217,6 +217,9 @@ model OrderItem {
 
   order   Order   @relation(fields: [orderId], references: [id])
   voucher Voucher @relation(fields: [voucherId], references: [id])
+
+  @@index([orderId])
+  @@index([voucherId])
 }
 
 model Payment {
