@@ -212,25 +212,27 @@ export const updateQty = async (userId, cartItemId, qty) => {
  * @returns {Promise<Object>} giỏ hàng đã cập nhật
  */
 export const removeItem = async (userId, cartItemId) => {
-  const item = await prisma.cartItem.findUnique({
-    where: { id: cartItemId },
-    include: { cart: true }
-  });
+  await prisma.$transaction(async (tx) => {
+    const item = await tx.cartItem.findUnique({
+      where: { id: cartItemId },
+      include: { cart: true }
+    });
 
-  if (!item) {
-    const error = new Error("Không tìm thấy sản phẩm này trong giỏ hàng");
-    error.statusCode = 404;
-    throw error;
-  }
+    if (!item) {
+      const error = new Error("Không tìm thấy sản phẩm này trong giỏ hàng");
+      error.statusCode = 404;
+      throw error;
+    }
 
-  if (item.cart.userId !== userId) {
-    const error = new Error("Không có quyền truy cập sản phẩm này");
-    error.statusCode = 403;
-    throw error;
-  }
+    if (item.cart.userId !== userId) {
+      const error = new Error("Không có quyền truy cập sản phẩm này");
+      error.statusCode = 403;
+      throw error;
+    }
 
-  await prisma.cartItem.delete({
-    where: { id: cartItemId }
+    await tx.cartItem.delete({
+      where: { id: cartItemId }
+    });
   });
 
   return getCart(userId);
