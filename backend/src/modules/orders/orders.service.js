@@ -52,7 +52,21 @@ const processCheckout = async (tx, userId, sortedItems) => {
     });
   }
 
-  // Tạo Order(COMPLETED) và OrderItems
+  // Chuẩn bị dữ liệu VoucherCode trước
+  const voucherCodesData = [];
+  for (const item of orderItemsData) {
+    for (let i = 0; i < item.qty; i++) {
+      voucherCodesData.push({
+        code: `VC-${crypto.randomUUID().toUpperCase()}`,
+        voucherId: item.voucherId,
+        ownerId: userId,
+        status: 'ISSUED',
+        expiresAt: item.useEnd || null
+      });
+    }
+  }
+
+  // Tạo Order(COMPLETED), OrderItems và VoucherCodes bằng Nested Writes
   const order = await tx.order.create({
     data: {
       userId,
@@ -62,10 +76,14 @@ const processCheckout = async (tx, userId, sortedItems) => {
         create: orderItemsData.map(({ voucherId, qty, unitPrice }) => ({
           voucherId, qty, unitPrice
         }))
+      },
+      voucherCodes: {
+        create: voucherCodesData
       }
     },
     include: {
-      items: true
+      items: true,
+      voucherCodes: true // Trả về luôn mã voucher cho user
     }
   });
 
@@ -78,28 +96,6 @@ const processCheckout = async (tx, userId, sortedItems) => {
       amount: totalAmount
     }
   });
-
-  // Tạo các mã VoucherCode tương ứng với số lượng đã mua
-  const voucherCodesData = [];
-  for (const item of orderItemsData) {
-    for (let i = 0; i < item.qty; i++) {
-      const randomCode = `VC-${crypto.randomUUID().toUpperCase()}`;
-      voucherCodesData.push({
-        code: randomCode,
-        orderId: order.id,
-        voucherId: item.voucherId,
-        ownerId: userId,
-        status: 'ISSUED',
-        expiresAt: item.useEnd
-      });
-    }
-  }
-
-  if (voucherCodesData.length > 0) {
-    await tx.voucherCode.createMany({
-      data: voucherCodesData
-    });
-  }
 
   return order;
 };
