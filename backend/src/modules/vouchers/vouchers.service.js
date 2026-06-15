@@ -32,6 +32,7 @@ function mapVoucherSummary(v, avgRating) {
 // ── findMany ─────────────────────────────────────────────────────────────────
 
 export async function findMany(filters) {
+  try {
   const { page, limit, keyword, categoryId, city, minPrice, maxPrice, minDiscount, sort } = filters;
 
   const conditions = [Prisma.sql`v.status = 'ON_SALE'`];
@@ -109,6 +110,10 @@ export async function findMany(filters) {
     data,
     pagination: { page, limit, total, totalPages },
   };
+  } catch (err) {
+    if (err.statusCode) throw err;
+    throw new AppError('Lỗi truy vấn danh sách voucher', 500, 'QUERY_ERROR');
+  }
 }
 
 // ── findById ─────────────────────────────────────────────────────────────────
