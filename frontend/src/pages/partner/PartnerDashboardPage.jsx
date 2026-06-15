@@ -1,45 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Ticket, 
-  ShoppingCart, 
-  CheckCircle, 
-  DollarSign, 
+import {
+  Ticket,
+  ShoppingCart,
+  CheckCircle,
+  DollarSign,
   TrendingUp,
   Clock,
   ArrowRight
 } from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
 } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../services/apiClient';
-
-// --- Mock Data ---
-
-const mockChartData = Array.from({ length: 30 }, (_, i) => ({
-  date: `Ngày ${i + 1}`,
-  revenue: Math.floor(Math.random() * 5000) + 1000,
-}));
-
-const mockTopVouchers = [
-  { id: 1, name: 'Giảm 50K Đơn Tối Thiểu 200K', sold: 450, total: 500, conversion: 90 },
-  { id: 2, name: 'Freeship Mọi Đơn Hàng', sold: 320, total: 1000, conversion: 32 },
-  { id: 3, name: 'Giảm 20% Học Phí Khóa Tiếng Anh', sold: 150, total: 200, conversion: 75 },
-  { id: 4, name: 'Mua 1 Tặng 1 Trà Sữa', sold: 120, total: 300, conversion: 40 },
-];
-
-const mockTimeline = [
-  { id: 1, time: '10 phút trước', content: 'Khách hàng Nguyễn Văn A đã sử dụng voucher Giảm 50K.', type: 'used' },
-  { id: 2, time: '1 giờ trước', content: 'Voucher "Mua 1 Tặng 1 Trà Sữa" đã được Admin duyệt.', type: 'approved' },
-  { id: 3, time: '2 giờ trước', content: 'Có 5 đơn hàng mới sử dụng mã FREESHIP.', type: 'order' },
-  { id: 4, time: '1 ngày trước', content: 'Đã cập nhật thông tin cửa hàng.', type: 'update' },
-];
 
 // --- Components ---
 
@@ -65,6 +45,19 @@ const KpiCard = ({ title, value, icon: Icon, trend, trendLabel, iconBgClass, ico
 );
 
 export function PartnerDashboardPage() {
+  const navigate = useNavigate();
+
+  // State for dashboard data
+  const [chartData, setChartData] = useState([]);
+  const [topVouchers, setTopVouchers] = useState([]);
+  const [timeline, setTimeline] = useState([]);
+  const [kpiData, setKpiData] = useState({
+    activeVouchers: 0,
+    totalSold: 0,
+    totalUsed: 0,
+    revenue: '0'
+  });
+
   const { data: profileData, isLoading } = useQuery({
     queryKey: ['partnerProfile'],
     queryFn: async () => {
@@ -72,13 +65,63 @@ export function PartnerDashboardPage() {
         const response = await apiClient.get('/api/partner/profile');
         return response.data;
       } catch (error) {
-        // Fallback for UI if API is not ready
-        console.warn('Could not fetch partner profile, using fallback data');
-        return { name: 'Đối Tác Demo' };
+        // Fallback for UI only in development
+        if (import.meta.env.DEV || process.env.NODE_ENV === 'development') {
+          console.warn('Could not fetch partner profile, using fallback data');
+          return { name: 'Đối Tác Demo' };
+        }
+        throw error;
       }
     },
     retry: false
   });
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch chart data
+        const chartResponse = await apiClient.get('/api/partner/dashboard/revenue-chart');
+        setChartData(chartResponse.data || []);
+      } catch (error) {
+        console.error('Failed to fetch chart data:', error);
+        setChartData([]);
+      }
+
+      try {
+        // Fetch top vouchers
+        const vouchersResponse = await apiClient.get('/api/partner/dashboard/top-vouchers');
+        setTopVouchers(vouchersResponse.data || []);
+      } catch (error) {
+        console.error('Failed to fetch top vouchers:', error);
+        setTopVouchers([]);
+      }
+
+      try {
+        // Fetch timeline
+        const timelineResponse = await apiClient.get('/api/partner/dashboard/timeline');
+        setTimeline(timelineResponse.data || []);
+      } catch (error) {
+        console.error('Failed to fetch timeline:', error);
+        setTimeline([]);
+      }
+
+      try {
+        // Fetch KPI data
+        const kpiResponse = await apiClient.get('/api/partner/dashboard/kpi');
+        setKpiData(kpiResponse.data || {
+          activeVouchers: 0,
+          totalSold: 0,
+          totalUsed: 0,
+          revenue: '0'
+        });
+      } catch (error) {
+        console.error('Failed to fetch KPI data:', error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const partnerName = profileData?.name || 'Đối tác';
 
@@ -94,7 +137,10 @@ export function PartnerDashboardPage() {
           <p className="text-gray-500 mt-1">Dưới đây là tổng quan hiệu quả kinh doanh của bạn hôm nay.</p>
         </div>
         <div className="flex gap-3">
-          <button className="btn bg-purple-600 hover:bg-purple-700 border-none text-white shadow-sm">
+          <button
+            onClick={() => navigate('/partner/vouchers')}
+            className="btn bg-purple-600 hover:bg-purple-700 border-none text-white shadow-sm"
+          >
             Tạo Voucher Mới
           </button>
         </div>
@@ -102,40 +148,40 @@ export function PartnerDashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <KpiCard 
-          title="Voucher Đang Bán" 
-          value="12" 
-          icon={Ticket} 
-          trend="+2" 
+        <KpiCard
+          title="Voucher Đang Bán"
+          value={kpiData.activeVouchers.toString()}
+          icon={Ticket}
+          trend="+2"
           trendLabel="tuần trước"
-          iconBgClass="bg-purple-100" 
+          iconBgClass="bg-purple-100"
           iconTextClass="text-purple-600"
         />
-        <KpiCard 
-          title="Tổng Đã Bán" 
-          value="1,245" 
-          icon={ShoppingCart} 
-          trend="+15%" 
+        <KpiCard
+          title="Tổng Đã Bán"
+          value={kpiData.totalSold.toLocaleString()}
+          icon={ShoppingCart}
+          trend="+15%"
           trendLabel="tháng trước"
-          iconBgClass="bg-blue-100" 
+          iconBgClass="bg-blue-100"
           iconTextClass="text-blue-600"
         />
-        <KpiCard 
-          title="Đã Sử Dụng" 
-          value="890" 
-          icon={CheckCircle} 
-          trend="+5%" 
+        <KpiCard
+          title="Đã Sử Dụng"
+          value={kpiData.totalUsed.toLocaleString()}
+          icon={CheckCircle}
+          trend="+5%"
           trendLabel="tháng trước"
-          iconBgClass="bg-emerald-100" 
+          iconBgClass="bg-emerald-100"
           iconTextClass="text-emerald-600"
         />
-        <KpiCard 
-          title="Doanh Thu" 
-          value="45.2M" 
-          icon={DollarSign} 
-          trend="+22%" 
+        <KpiCard
+          title="Doanh Thu"
+          value={kpiData.revenue}
+          icon={DollarSign}
+          trend="+22%"
           trendLabel="tháng trước"
-          iconBgClass="bg-amber-100" 
+          iconBgClass="bg-amber-100"
           iconTextClass="text-amber-600"
         />
       </div>
@@ -147,7 +193,10 @@ export function PartnerDashboardPage() {
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-800">Doanh thu 30 ngày qua</h3>
-            <select className="select select-bordered select-sm bg-gray-50">
+            <select
+              className="select select-bordered select-sm bg-gray-50"
+              aria-label="Select revenue timeframe"
+            >
               <option>30 ngày qua</option>
               <option>Tuần này</option>
               <option>Tháng này</option>
@@ -155,30 +204,30 @@ export function PartnerDashboardPage() {
           </div>
           <div className="flex-1 min-h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={mockChartData} margin={{ top: 5, right: 20, bottom: 5, left: -20 }}>
+              <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: -20 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fill: '#888', fontSize: 12 }} 
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#888', fontSize: 12 }}
                   dy={10}
                   tickFormatter={(val) => val.replace('Ngày ', '')}
                 />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fill: '#888', fontSize: 12 }}
                   tickFormatter={(val) => `${val / 1000}k`}
                 />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   formatter={(value) => [`${value.toLocaleString()} ₫`, 'Doanh thu']}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="#9333ea" 
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#9333ea"
                   strokeWidth={3}
                   dot={false}
                   activeDot={{ r: 6, fill: '#9333ea', stroke: '#fff', strokeWidth: 2 }}
@@ -195,16 +244,16 @@ export function PartnerDashboardPage() {
             <button className="text-purple-600 text-sm font-medium hover:underline">Xem tất cả</button>
           </div>
           <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-100 before:to-transparent">
-            {mockTimeline.map((item) => (
+            {timeline.map((item) => (
               <div key={item.id} className="relative flex items-start gap-4 group">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 z-10 border-4 border-white
-                  ${item.type === 'used' ? 'bg-emerald-100 text-emerald-600' : 
-                    item.type === 'approved' ? 'bg-blue-100 text-blue-600' : 
-                    item.type === 'order' ? 'bg-purple-100 text-purple-600' : 
+                  ${item.type === 'used' ? 'bg-emerald-100 text-emerald-600' :
+                    item.type === 'approved' ? 'bg-blue-100 text-blue-600' :
+                    item.type === 'order' ? 'bg-purple-100 text-purple-600' :
                     'bg-gray-100 text-gray-600'}`}>
-                  {item.type === 'used' ? <CheckCircle size={16} /> : 
-                   item.type === 'approved' ? <Ticket size={16} /> : 
-                   item.type === 'order' ? <ShoppingCart size={16} /> : 
+                  {item.type === 'used' ? <CheckCircle size={16} /> :
+                   item.type === 'approved' ? <Ticket size={16} /> :
+                   item.type === 'order' ? <ShoppingCart size={16} /> :
                    <Clock size={16} />}
                 </div>
                 <div className="flex-1 pt-1 pb-4 border-b border-gray-50 last:border-0 last:pb-0">
@@ -239,7 +288,7 @@ export function PartnerDashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {mockTopVouchers.map((voucher) => (
+              {topVouchers.map((voucher) => (
                 <tr key={voucher.id} className="hover:bg-gray-50/50 transition-colors border-t border-gray-100">
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-800">{voucher.name}</div>
@@ -250,9 +299,9 @@ export function PartnerDashboardPage() {
                       <span className="font-semibold text-gray-700">{voucher.sold}</span>
                       <span className="text-gray-400">/ {voucher.total}</span>
                     </div>
-                    <progress 
-                      className="progress progress-primary w-24 h-1.5 mt-2 opacity-70" 
-                      value={voucher.sold} 
+                    <progress
+                      className="progress progress-primary w-24 h-1.5 mt-2 opacity-70"
+                      value={voucher.sold}
                       max={voucher.total}
                     ></progress>
                   </td>
