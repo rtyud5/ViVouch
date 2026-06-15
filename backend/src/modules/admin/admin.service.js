@@ -136,6 +136,35 @@ export async function approveVoucher(adminId, voucherId) {
   }
 }
 
+export async function getDashboardStats() {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
+
+  const [totalUsers, activePartners, revenueResult, ordersToday] = await prisma.$transaction([
+    prisma.user.count({ where: { role: 'CUSTOMER' } }),
+    prisma.partner.count({ where: { status: 'APPROVED' } }),
+    prisma.payment.aggregate({
+      _sum: { amount: true },
+      where: {
+        createdAt: { gte: startOfMonth, lt: endOfMonth },
+        status: 'PAID',
+      },
+    }),
+    prisma.order.count({
+      where: {
+        createdAt: { gte: startOfToday, lt: endOfToday },
+      },
+    }),
+  ]);
+
+  const revenueThisMonth = Number(revenueResult._sum.amount?.toString() ?? '0');
+
+  return { totalUsers, activePartners, revenueThisMonth, ordersToday };
+}
+
 export async function rejectVoucher(adminId, voucherId, reason) {
   if (!reason || !reason.trim()) {
     throw new AppError('Reason is required', 400, 'MISSING_REASON');

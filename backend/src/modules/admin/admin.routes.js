@@ -8,6 +8,8 @@ const router = Router();
 router.use(verifyToken);
 router.use(requireRole('ADMIN'));
 
+router.get('/dashboard', adminController.getDashboardStats);
+
 router.post('/partners/:id/approve', adminController.approvePartner);
 router.post('/partners/:id/reject', adminController.rejectPartner);
 router.post('/vouchers/:id/approve', adminController.approveVoucher);
