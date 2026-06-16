@@ -10,29 +10,46 @@ export function CartPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading, error, updateQty, removeItem } = useCart();
   const [mutationError, setMutationError] = React.useState(null);
-  const [pendingItemId, setPendingItemId] = React.useState(null);
+  const [pendingItemIds, setPendingItemIds] = React.useState(() => new Set());
 
   const handleUpdateQty = async (itemId, newQty) => {
     try {
       setMutationError(null);
-      setPendingItemId(itemId);
+      setPendingItemIds((prev) => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
+
       await updateQty({ itemId, qty: newQty });
     } catch (err) {
       setMutationError(err);
     } finally {
-      setPendingItemId(null);
+      setPendingItemIds((prev) => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
     }
   };
 
   const handleRemove = async (itemId) => {
     try {
       setMutationError(null);
-      setPendingItemId(itemId);
+      setPendingItemIds((prev) => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
       await removeItem(itemId);
     } catch (err) {
       setMutationError(err);
     } finally {
-      setPendingItemId(null);
+      setPendingItemIds((prev) => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
     }
   };
 
@@ -110,16 +127,15 @@ export function CartPage() {
 
             <div className="flex flex-col gap-4">
               {items.map((item) => (
-                <CartItem 
-                  key={item.id} 
-                  item={item} 
-                  onUpdateQty={handleUpdateQty} 
-                  onRemove={handleRemove} 
-                  isPending={pendingItemId === item.id}
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  onUpdateQty={handleUpdateQty}
+                  onRemove={handleRemove}
                 />
               ))}
             </div>
-            
+
             <div className="mt-4 pt-4 border-t border-base-200">
               <Link to="/vouchers" className="btn btn-ghost btn-sm text-base-content/70 hover:text-primary gap-2 px-0 font-medium">
                 <ArrowLeft size={16} /> Quay lại danh sách voucher
@@ -134,7 +150,7 @@ export function CartPage() {
                 <h3 className="font-bold text-lg text-base-content border-b border-base-200 pb-4">
                   Tổng kết đơn hàng
                 </h3>
-                
+
                 <div className="flex flex-col gap-3 text-sm">
                   <div className="flex justify-between items-center text-base-content/70">
                     <span>Tổng số lượng</span>
@@ -160,7 +176,7 @@ export function CartPage() {
                   </div>
                 </div>
 
-                <button 
+                <button
                   className="btn btn-primary w-full h-12 rounded-xl font-bold shadow-lg shadow-primary/20 text-base"
                   onClick={handleCheckout}
                   disabled={totalQty === 0}
