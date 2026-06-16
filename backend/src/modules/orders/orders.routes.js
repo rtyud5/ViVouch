@@ -27,7 +27,7 @@ router.get("/", ordersController.getUserOrders);
 
 /**
  * @swagger
- * /api/customer/voucher-codes:
+ * /api/customer/orders/voucher-codes:
  *   get:
  *     summary: Lấy danh sách mã voucher
  *     description: Lấy danh sách mã voucher đã mua của CUSTOMER hiện tại. Yêu cầu JWT Access Token.
