@@ -1,5 +1,7 @@
 import { prisma } from '../../config/prisma.js';
-import crypto from 'crypto';
+import { customAlphabet } from 'nanoid';
+
+const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
 /**
  * Helper xử lý lõi của luồng Checkout (gồm khóa dòng, kiểm tra tồn kho, tạo Order, tạo Payment)
@@ -8,11 +10,12 @@ import crypto from 'crypto';
  * @param {Object} tx - Prisma Transaction Client
  * @param {string} userId - ID của người dùng
  * @param {Array<{id: string, qty: number}>} sortedItems - Danh sách voucher đã được sắp xếp để tránh deadlock
- * @returns {Promise<Object>} Đơn hàng đã tạo
+ * @returns {Promise<Object>} Kết quả checkout
  */
 const processCheckout = async (tx, userId, sortedItems) => {
   let totalAmount = 0;
   const orderItemsData = [];
+  const returnVoucherCodes = [];
 
   for (const item of sortedItems) {
     const voucherId = item.id;
@@ -46,6 +49,7 @@ const processCheckout = async (tx, userId, sortedItems) => {
 
     orderItemsData.push({
       voucherId,
+      title: voucher.title,
       qty,
       unitPrice: voucher.salePrice,
       useEnd: voucher.useEnd
@@ -56,11 +60,18 @@ const processCheckout = async (tx, userId, sortedItems) => {
   const voucherCodesData = [];
   for (const item of orderItemsData) {
     for (let i = 0; i < item.qty; i++) {
+      const code = `VC-2026-${generateVoucherCode()}`;
       voucherCodesData.push({
-        code: `VC-${crypto.randomUUID().toUpperCase()}`,
+        code,
         voucherId: item.voucherId,
         ownerId: userId,
         status: 'ISSUED',
+        expiresAt: item.useEnd || null
+      });
+
+      returnVoucherCodes.push({
+        code,
+        voucherTitle: item.title,
         expiresAt: item.useEnd || null
       });
     }
@@ -80,10 +91,6 @@ const processCheckout = async (tx, userId, sortedItems) => {
       voucherCodes: {
         create: voucherCodesData
       }
-    },
-    include: {
-      items: true,
-      voucherCodes: true // Trả về luôn mã voucher cho user
     }
   });
 
@@ -97,7 +104,10 @@ const processCheckout = async (tx, userId, sortedItems) => {
     }
   });
 
-  return order;
+  return {
+    orderId: order.id,
+    voucherCodes: returnVoucherCodes
+  };
 };
 
 /**
@@ -135,7 +145,9 @@ export const buyNow = async (userId, items) => {
  * @returns {Promise<Object>} Order đã tạo
  */
 export const checkoutFromCart = async (userId) => {
-  return await prisma.$transaction(async (tx) => {
+  let cartItemIdsToDelete = [];
+
+  const result = await prisma.$transaction(async (tx) => {
     // Lấy giỏ hàng
     const cart = await tx.cart.findUnique({
       where: { userId },
@@ -148,7 +160,6 @@ export const checkoutFromCart = async (userId) => {
       throw new Error('EMPTY_CART');
     }
 
-    const cartId = cart.id;
     const checkoutItems = cart.items.map(item => ({
       id: item.voucherId,
       qty: item.qty
@@ -157,19 +168,66 @@ export const checkoutFromCart = async (userId) => {
     // Sắp xếp items theo id để tránh deadlock khi lock nhiều row
     const sortedItems = [...checkoutItems].sort((a, b) => a.id.localeCompare(b.id));
 
+    // Lấy ID để xóa sau transaction
+    cartItemIdsToDelete = cart.items.map(item => item.id);
+
     // Thực thi xử lý Checkout lõi
-    const order = await processCheckout(tx, userId, sortedItems);
-
-    // Xóa các cart items đã được thanh toán
-    const cartItemIds = cart.items.map(item => item.id);
-    await tx.cartItem.deleteMany({
-      where: { id: { in: cartItemIds } }
-    });
-
-    return order;
+    return await processCheckout(tx, userId, sortedItems);
   }, {
     timeout: 10000
   });
+
+  // Xóa các cart items đã mua sau khi transaction hoàn tất thành công (không critical)
+  if (cartItemIdsToDelete.length > 0) {
+    prisma.cartItem.deleteMany({
+      where: { id: { in: cartItemIdsToDelete } }
+    }).catch(err => {
+      console.error("Lỗi xóa CartItem ngoài transaction:", err);
+    });
+  }
+
+  return result;
 };
 
-export default { buyNow, checkoutFromCart };
+/**
+ * Lấy danh sách đơn hàng của user
+ */
+export const getUserOrders = async (userId) => {
+  return await prisma.order.findMany({
+    where: { userId },
+    include: {
+      items: {
+        include: {
+          voucher: {
+            select: {
+              title: true,
+              imageUrl: true
+            }
+          }
+        }
+      },
+      payment: true
+    },
+    orderBy: { createdAt: 'desc' }
+  });
+};
+
+/**
+ * Lấy danh sách mã voucher đã mua của user
+ */
+export const getUserVoucherCodes = async (userId) => {
+  return await prisma.voucherCode.findMany({
+    where: { ownerId: userId },
+    include: {
+      voucher: {
+        select: {
+          title: true,
+          imageUrl: true
+        }
+      }
+    },
+    orderBy: { issuedAt: 'desc' }
+  });
+};
+
+export default { buyNow, checkoutFromCart, getUserOrders, getUserVoucherCodes };

@@ -11,6 +11,38 @@ router.use(requireRole("CUSTOMER"));
 
 /**
  * @swagger
+ * /api/customer/orders:
+ *   get:
+ *     summary: Lấy danh sách đơn hàng
+ *     description: Lấy danh sách đơn hàng của CUSTOMER hiện tại. Yêu cầu JWT Access Token.
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.get("/", ordersController.getUserOrders);
+
+/**
+ * @swagger
+ * /api/customer/voucher-codes:
+ *   get:
+ *     summary: Lấy danh sách mã voucher
+ *     description: Lấy danh sách mã voucher đã mua của CUSTOMER hiện tại. Yêu cầu JWT Access Token.
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.get("/voucher-codes", ordersController.getUserVoucherCodes);
+
+/**
+ * @swagger
  * /api/customer/orders/checkout:
  *   post:
  *     summary: Mua ngay (Buy Now)
