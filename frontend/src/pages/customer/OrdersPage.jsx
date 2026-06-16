@@ -229,8 +229,8 @@ export function OrdersPage() {
                                 {/* Expanded Content: Voucher Items */}
                                 {isExpanded && (
                                     <div className="border-t border-surface-variant mt-4 pt-4 flex flex-col gap-4">
-                                        {order.items.map((item, index) => (
-                                            <div key={index} className="flex gap-4 items-center">
+                                        {order.items.map((item) => (
+                                            <div key={item.id} className="flex gap-4 items-center">
                                                 <img 
                                                     alt={item.voucher.name} 
                                                     className="w-20 h-20 rounded-lg object-cover bg-surface-container-high" 
