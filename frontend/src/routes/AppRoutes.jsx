@@ -44,10 +44,7 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Test routes for dev screenshoting */}
-        <Route path="/test-admin-layout" element={<AdminLayout />}>
-           <Route path="dashboard" element={<AdminDashboardPage />} />
-        </Route>
+
         {/* Test component */}
         <Route path="/test/admin-kit" element={<AdminComponentsTest />} />
         <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} /> 

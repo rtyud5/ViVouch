@@ -145,10 +145,7 @@ const orderColumns = [
     render: (row) => (
       <button
         type="button"
-        className="transition-colors hover:opacity-100 opacity-60"
-        style={{ color: T.onSurfaceVariant }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = T.primary; }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = T.onSurfaceVariant; }}
+        className="transition-colors hover:opacity-100 opacity-60 text-[#534434] hover:text-[#855300]"
         onClick={(e) => {
           e.stopPropagation();
           // TODO: wire up approve/reject API
@@ -250,11 +247,12 @@ const PartnerCard = ({ partner }) => (
 /* ═══════════════════ AdminDashboardPage ═══════════════════ */
 
 export function AdminDashboardPage() {
-  const { stats, isLoading, isError } = useDashboardStats();
+  const { stats, isLoading, isError, dataUpdatedAt } = useDashboardStats();
 
   /** Current timestamp for subtitle */
-  const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const timeStr = dataUpdatedAt
+    ? new Date(dataUpdatedAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+    : '—';
 
   return (
     <div className="p-4 md:p-8 space-y-6 max-w-[1600px] mx-auto w-full">
@@ -512,6 +510,7 @@ export function AdminDashboardPage() {
           <AdminTable
             columns={orderColumns}
             data={mockRecentOrders}
+            loading={isLoading}
             emptyMessage="Chưa có đơn hàng nào"
           />
 
