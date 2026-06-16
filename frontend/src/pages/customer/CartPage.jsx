@@ -10,22 +10,29 @@ export function CartPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading, error, updateQty, removeItem } = useCart();
   const [mutationError, setMutationError] = React.useState(null);
+  const [pendingItemId, setPendingItemId] = React.useState(null);
 
   const handleUpdateQty = async (itemId, newQty) => {
     try {
       setMutationError(null);
+      setPendingItemId(itemId);
       await updateQty({ itemId, qty: newQty });
     } catch (err) {
       setMutationError(err);
+    } finally {
+      setPendingItemId(null);
     }
   };
 
   const handleRemove = async (itemId) => {
     try {
       setMutationError(null);
+      setPendingItemId(itemId);
       await removeItem(itemId);
     } catch (err) {
       setMutationError(err);
+    } finally {
+      setPendingItemId(null);
     }
   };
 
@@ -108,6 +115,7 @@ export function CartPage() {
                   item={item} 
                   onUpdateQty={handleUpdateQty} 
                   onRemove={handleRemove} 
+                  isPending={pendingItemId === item.id}
                 />
               ))}
             </div>
