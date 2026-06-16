@@ -1,0 +1,130 @@
+{
+  "info": {
+    "_postman_id": "74a3f704-58a4-4f2b-8a8b-c68e1a129dff",
+    "name": "ViVouch Orders API",
+    "description": "Postman Collection cho Orders API của dự án ViVouch. Cấu hình xác thực Bearer Token thừa hưởng từ môi trường thông qua biến {{token}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Orders & Checkout",
+      "item": [
+        {
+          "name": "Buy Now (Checkout)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"id\": \"VOUCHER_ID_HERE\",\n      \"qty\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/customer/orders/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "customer",
+                "orders",
+                "checkout"
+              ]
+            },
+            "description": "Tạo đơn hàng trực tiếp từ danh sách voucher (Mua ngay)."
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout from Cart",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/customer/orders/cart/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "customer",
+                "orders",
+                "cart",
+                "checkout"
+              ]
+            },
+            "description": "Thanh toán toàn bộ giỏ hàng hiện tại."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/customer/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "customer",
+                "orders"
+              ]
+            },
+            "description": "Lấy danh sách đơn hàng của CUSTOMER hiện tại."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Voucher Codes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/customer/orders/voucher-codes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "customer",
+                "orders",
+                "voucher-codes"
+              ]
+            },
+            "description": "Lấy danh sách mã voucher đã mua của CUSTOMER hiện tại."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}

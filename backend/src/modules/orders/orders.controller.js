@@ -18,12 +18,12 @@ export const buyNow = asyncHandler(async (req, res) => {
   const parsedData = checkoutSchema.parse(req.body);
 
   try {
-    const order = await ordersService.buyNow(userId, parsedData.items);
+    const result = await ordersService.buyNow(userId, parsedData.items);
 
     return res.status(201).json({
       success: true,
       message: "Tạo đơn hàng thành công",
-      data: order
+      data: result
     });
   } catch (err) {
     // Bắt và xử lý lỗi business logic từ service
@@ -56,12 +56,12 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
   }
 
   try {
-    const order = await ordersService.checkoutFromCart(userId);
+    const result = await ordersService.checkoutFromCart(userId);
 
     return res.status(201).json({
       success: true,
       message: "Thanh toán từ giỏ hàng thành công",
-      data: order
+      data: result
     });
   } catch (err) {
     // Bắt và xử lý lỗi business logic từ service
@@ -79,4 +79,46 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
     // Ném các lỗi khác lên cho global error handler
     throw err;
   }
+});
+
+/**
+ * Lấy danh sách đơn hàng của user
+ */
+export const getUserOrders = asyncHandler(async (req, res) => {
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    const error = new Error("Chưa xác thực người dùng");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const orders = await ordersService.getUserOrders(userId);
+
+  return res.status(200).json({
+    success: true,
+    message: "Lấy danh sách đơn hàng thành công",
+    data: orders
+  });
+});
+
+/**
+ * Lấy danh sách mã voucher đã mua của user
+ */
+export const getUserVoucherCodes = asyncHandler(async (req, res) => {
+  const userId = req.user?.userId;
+
+  if (!userId) {
+    const error = new Error("Chưa xác thực người dùng");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  const codes = await ordersService.getUserVoucherCodes(userId);
+
+  return res.status(200).json({
+    success: true,
+    message: "Lấy danh sách mã voucher thành công",
+    data: codes
+  });
 });
