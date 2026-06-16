@@ -20,6 +20,7 @@ import { CartPage } from "../pages/customer/CartPage"
 
 // Partner
 import { PartnerDashboardPage } from "../pages/partner/PartnerDashboardPage"
+import { CreateVoucherPage } from "../pages/partner/CreateVoucherPage"
 import { PartnerVoucherListPage } from "../pages/partner/PartnerVoucherListPage"
 import { PartnerReportsPage } from "../pages/partner/PartnerReportsPage"
 import { PartnerProfilePage } from "../pages/partner/PartnerProfilePage"
@@ -81,6 +82,7 @@ export function AppRoutes() {
           </ProtectedRoute>
         }>
           <Route path="dashboard" element={<PartnerDashboardPage />} />
+          <Route path="vouchers/new" element={<CreateVoucherPage />} />
           <Route path="vouchers" element={<PartnerVoucherListPage />} />
           <Route path="validation" element={<RedeemVoucherPage />} />
           <Route path="reports" element={<PartnerReportsPage />} />

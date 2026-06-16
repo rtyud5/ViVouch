@@ -61,7 +61,7 @@ const CATEGORY_LABELS = {
  *  voucher {object}
  *  variant {string} — "home" (mặc định) | "search" (trang kết quả tìm kiếm)
  */
-export function VoucherCard({ voucher, variant = "home" }) {
+export function VoucherCard({ voucher, variant = "home", disableClick = false }) {
   const navigate = useNavigate();
 
   const {
@@ -110,11 +110,11 @@ export function VoucherCard({ voucher, variant = "home" }) {
   if (variant === "search") {
     return (
       <article
-        className="bg-surface rounded-xl shadow-lg overflow-hidden flex flex-col group relative border border-surface-variant/50 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow duration-300 cursor-pointer"
-        onClick={handleClick}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && handleClick()}
+        className={`bg-surface rounded-xl shadow-lg overflow-hidden flex flex-col group relative border border-surface-variant/50 transition-shadow duration-300 ${disableClick ? "cursor-default" : "hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] cursor-pointer"}`}
+        onClick={disableClick ? undefined : handleClick}
+        role={disableClick ? undefined : "button"}
+        tabIndex={disableClick ? undefined : 0}
+        onKeyDown={disableClick ? undefined : (e) => e.key === "Enter" && handleClick()}
         aria-label={`Xem voucher: ${name}`}
       >
         <div className="relative h-48 w-full overflow-hidden">
@@ -171,8 +171,9 @@ export function VoucherCard({ voucher, variant = "home" }) {
             </div>
             <button
               type="button"
-              onClick={handleBuyClick}
-              className="bg-primary text-on-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm"
+              onClick={disableClick ? undefined : handleBuyClick}
+              disabled={disableClick}
+              className={`px-4 py-2 rounded-lg font-label-md text-label-md transition-colors shadow-sm ${disableClick ? "bg-surface-variant text-on-surface-variant cursor-not-allowed" : "bg-primary text-on-primary hover:bg-primary-fixed-dim"}`}
             >
               Mua ngay
             </button>
@@ -185,12 +186,12 @@ export function VoucherCard({ voucher, variant = "home" }) {
   // ── Variant home — trang chủ ───────────────────────────────────────────
   return (
     <div
-      className="card bg-base-100 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden cursor-pointer group"
-      onClick={handleClick}
+      className={`card bg-base-100 shadow-sm transition-shadow duration-200 overflow-hidden ${disableClick ? "cursor-default" : "hover:shadow-md cursor-pointer group"}`}
+      onClick={disableClick ? undefined : handleClick}
       // Keyboard accessibility
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && handleClick()}
+      role={disableClick ? undefined : "button"}
+      tabIndex={disableClick ? undefined : 0}
+      onKeyDown={disableClick ? undefined : (e) => e.key === "Enter" && handleClick()}
       aria-label={`Xem voucher: ${name}`}
     >
       {/* ── Image + discount badge ── */}

@@ -138,7 +138,7 @@ export function PartnerDashboardPage() {
         </div>
         <div className="flex gap-3">
           <button
-            onClick={() => navigate('/partner/vouchers')}
+            onClick={() => navigate('/partner/vouchers/new')}
             className="btn bg-purple-600 hover:bg-purple-700 border-none text-white shadow-sm"
           >
             Tạo Voucher Mới
