@@ -146,6 +146,8 @@ const orderColumns = [
       <button
         type="button"
         className="transition-colors hover:opacity-100 opacity-60 text-[#534434] hover:text-[#855300]"
+        aria-label="Xem chi tiết đơn hàng"
+        title="Xem chi tiết đơn hàng"
         onClick={(e) => {
           e.stopPropagation();
           // TODO: wire up approve/reject API
@@ -399,6 +401,8 @@ export function AdminDashboardPage() {
                 type="button"
                 className="transition-colors"
                 style={{ color: T.onSurfaceVariant }}
+                aria-label="Tùy chọn biểu đồ"
+                title="Tùy chọn biểu đồ"
               >
                 <span className="material-symbols-outlined">more_vert</span>
               </button>
@@ -500,6 +504,8 @@ export function AdminDashboardPage() {
                 type="button"
                 className="p-1.5 rounded transition-colors"
                 style={{ border: `1px solid ${T.outlineVariant}`, color: T.onSurfaceVariant }}
+                aria-label="Lọc đơn hàng"
+                title="Lọc đơn hàng"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>filter_list</span>
               </button>
