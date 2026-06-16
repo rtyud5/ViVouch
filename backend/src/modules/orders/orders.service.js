@@ -177,13 +177,15 @@ export const checkoutFromCart = async (userId) => {
     timeout: 10000
   });
 
-  // Xóa các cart items đã mua sau khi transaction hoàn tất thành công (không critical)
+  // Xóa các cart items đã mua sau khi transaction hoàn tất thành công
   if (cartItemIdsToDelete.length > 0) {
-    prisma.cartItem.deleteMany({
-      where: { id: { in: cartItemIdsToDelete } }
-    }).catch(err => {
+    try {
+      await prisma.cartItem.deleteMany({
+        where: { id: { in: cartItemIdsToDelete } }
+      });
+    } catch (err) {
       console.error("Lỗi xóa CartItem ngoài transaction:", err);
-    });
+    }
   }
 
   return result;
