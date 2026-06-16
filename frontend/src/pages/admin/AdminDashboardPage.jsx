@@ -56,9 +56,21 @@ const formatCompact = (n) => {
 /* ─────────────────── Mock data ─────────────────── */
 
 // TODO: replace mock data with API /api/admin/stats/revenue?days=30
+/** Simple seeded PRNG (mulberry32) — deterministic, NOT for crypto use */
+const seededRandom = (seed) => {
+  let s = seed | 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4_294_967_296;
+  };
+};
+
 const generateRevenueData = () => {
   const data = [];
   const now = new Date();
+  const rand = seededRandom(42);
   for (let i = 29; i >= 0; i--) {
     const d = new Date(now);
     d.setDate(d.getDate() - i);
@@ -66,7 +78,7 @@ const generateRevenueData = () => {
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     data.push({
       date: `${dd}/${mm}`,
-      revenue: Math.floor(Math.random() * 3_000_000) + 500_000,
+      revenue: Math.floor(rand() * 3_000_000) + 500_000,
     });
   }
   return data;
