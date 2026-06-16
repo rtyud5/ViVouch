@@ -22,7 +22,7 @@ export function AdminLayout() {
     { label: 'Voucher', path: '/admin/vouchers', icon: 'confirmation_number' },
     { label: 'Đơn hàng', path: '/admin/orders', icon: 'shopping_cart' },
     // { label: 'Nội dung', path: '/admin/content', icon: 'article' },
-    // { label: 'Nhật ký', path: '/admin/audit', icon: 'history' },
+    { label: 'Nhật ký', path: '/admin/audit', icon: 'history' },
     // { label: 'Cài đặt', path: '/admin/settings', icon: 'settings' },
   ];
 
