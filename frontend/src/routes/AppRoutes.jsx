@@ -17,6 +17,7 @@ import { VoucherDetailPage } from "../pages/public/VoucherDetailPage";
 import { MyVouchersPage } from "../pages/customer/MyVouchersPage"
 import { ProfilePage } from "../pages/customer/ProfilePage"
 import { CartPage } from "../pages/customer/CartPage"
+import { OrdersPage as CustomerOrdersPage } from "../pages/customer/OrdersPage"
 
 // Partner
 import { PartnerDashboardPage } from "../pages/partner/PartnerDashboardPage"
@@ -70,6 +71,7 @@ export function AppRoutes() {
           <Route path="home" element={<HomePage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="my-vouchers" element={<MyVouchersPage />} />
+          <Route path="orders" element={<CustomerOrdersPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
 
