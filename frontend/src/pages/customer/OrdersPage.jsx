@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { formatDate } from '../../utils/formatDate';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 // Mock hook since useOrders is not available yet
 const useOrdersMock = () => {
