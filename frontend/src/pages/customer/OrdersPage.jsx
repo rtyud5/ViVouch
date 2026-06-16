@@ -80,19 +80,6 @@ const useOrdersMock = () => {
     return { data, isLoading };
 };
 
-const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-};
-
-const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-};
-
 const getStatusStyle = (status) => {
     switch (status) {
         case 'COMPLETED':

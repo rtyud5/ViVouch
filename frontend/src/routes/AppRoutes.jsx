@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { RoleRoute } from "./RoleRoute";
 import { PublicLayout } from "../layouts/PublicLayout";
@@ -44,6 +44,7 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+
         {/* Test component */}
         <Route path="/test/admin-kit" element={<AdminComponentsTest />} />
         <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} /> 
@@ -99,6 +100,7 @@ export function AppRoutes() {
             </RoleRoute>
           </ProtectedRoute>
         }>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="partners" element={<PartnersPage />} />
           <Route path="users" element={<UsersPage />} />
