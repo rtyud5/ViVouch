@@ -16,12 +16,14 @@ export function AdminLayout() {
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/admin/dashboard', icon: 'dashboard' },
+    { label: 'Tổng quan', path: '/admin/dashboard', icon: 'dashboard' },
     { label: 'Người dùng', path: '/admin/users', icon: 'group' },
     { label: 'Đối tác', path: '/admin/partners', icon: 'handshake' },
     { label: 'Voucher', path: '/admin/vouchers', icon: 'confirmation_number' },
     { label: 'Đơn hàng', path: '/admin/orders', icon: 'shopping_cart' },
+    { label: 'Nội dung', path: '/admin/content', icon: 'article' },
     { label: 'Nhật ký', path: '/admin/audit', icon: 'history' },
+    { label: 'Cài đặt', path: '/admin/settings', icon: 'settings' },
   ];
 
   const adminTheme = {
