@@ -1,16 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCart, addCartItem, updateCartItem, removeCartItem } from "../api/Cart.api";
+import { useAuthStore } from "../../../stores/authStore";
 
 const CART_KEY = ["cart"];
 
 export function useCart(options = {}) {
   const queryClient = useQueryClient();
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   // Query 
   const { data: cart, isLoading, error} = useQuery({
     ...options,
     queryKey: CART_KEY,
     queryFn: getCart,
+    enabled: !!accessToken,
+    retry: 1,
   });
 
   // cartTotal từ backend
