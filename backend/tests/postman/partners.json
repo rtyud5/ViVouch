@@ -1,0 +1,260 @@
+{
+  "info": {
+    "name": "ViVouch - Partner API",
+    "description": "API cho module quản lý Partner và Vouchers",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/partner/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"businessName\": \"Cửa Hàng ABC Mới\",\n  \"representativeName\": \"Nguyễn Văn A\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/partner/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Branches",
+      "item": [
+        {
+          "name": "Get Branches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/partner/branches",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "branches"]
+            }
+          }
+        },
+        {
+          "name": "Create Branch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chi nhánh 1\",\n  \"address\": \"123 Đường 3/2\",\n  \"city\": \"Hồ Chí Minh\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/partner/branches",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "branches"]
+            }
+          }
+        },
+        {
+          "name": "Update Branch",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chi nhánh 1 (Đã sửa)\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/partner/branches",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "branches", "{{branch_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Branch",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/partner/branches",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "branches", "{{branch_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vouchers",
+      "item": [
+        {
+          "name": "Get Vouchers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/partner/vouchers?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "vouchers"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Voucher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": \"{{category_id}}\",\n  \"title\": \"Voucher Giảm 50%\",\n  \"description\": \"Giảm 50% cho tất cả món ăn\",\n  \"originalPrice\": 100000,\n  \"salePrice\": 50000,\n  \"totalQty\": 100\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/partner/vouchers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "vouchers"]
+            }
+          }
+        },
+        {
+          "name": "Update Voucher",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"salePrice\": 45000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/partner/vouchers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "vouchers", "{{voucher_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Submit Voucher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/partner/vouchers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "vouchers", "{{voucher_id}}", "submit"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "partner_token",
+      "value": "your-jwt-token-here"
+    },
+    {
+      "key": "category_id",
+      "value": "uuid-here"
+    },
+    {
+      "key": "branch_id",
+      "value": "uuid-here"
+    },
+    {
+      "key": "voucher_id",
+      "value": "uuid-here"
+    }
+  ]
+}
