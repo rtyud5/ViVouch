@@ -29,12 +29,12 @@ import { PartnerProfilePage } from "../pages/partner/PartnerProfilePage"
 import { RedeemVoucherPage } from "../pages/partner/RedeemVoucherPage"
 
 // Admin
-import { AdminDashboardPage } from "../pages/admin/AdminDashboardPage";
-import { UsersPage } from "../pages/admin/UsersPage"
-import { PartnersPage } from "../pages/admin/PartnersPage"
-import { VoucherApprovalsPage } from "../pages/admin/VoucherApprovalsPage"
-import { OrdersPage } from "../pages/admin/OrdersPage"
-import { AuditLogsPage } from "../pages/admin/AuditLogsPage"
+import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
+import UsersPage from "../pages/admin/UsersPage";
+import PartnersPage from "../pages/admin/PartnersPage";
+import VoucherApprovalsPage from "../pages/admin/VoucherApprovalsPage";
+import OrdersPage from "../pages/admin/OrdersPage";
+import AuditLogsPage from "../pages/admin/AuditLogsPage";
 
 import { AdminComponentsTest } from "../pages/test/AdminComponentsTest";
 import { TestComponentsPage } from "../pages/test/TestComponentsPage";
