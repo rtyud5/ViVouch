@@ -19,5 +19,12 @@ export function errorMiddleware(err, req, res, next) {
     });
   }
 
+  if (err.code === 'P2003') {
+    return res.status(409).json({
+      success: false,
+      message: 'Không thể xóa dữ liệu vì đang được tham chiếu bởi dữ liệu khác',
+    });
+  }
+
   res.status(err.statusCode || 500).json({ success: false, message: err.message || "Internal Server Error" });
 }

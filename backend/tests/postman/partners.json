@@ -49,6 +49,31 @@
               "path": ["api", "partner", "profile"]
             }
           }
+        },
+        {
+          "name": "Update Profile (Lỗi rỗng)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/partner/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "profile"]
+            }
+          }
         }
       ]
     },
@@ -123,7 +148,7 @@
           }
         },
         {
-          "name": "Delete Branch",
+          "name": "Delete Branch (Thành công / Lỗi FK)",
           "request": {
             "method": "DELETE",
             "header": [
@@ -207,6 +232,31 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"salePrice\": 45000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/partner/vouchers",
+              "host": ["{{base_url}}"],
+              "path": ["api", "partner", "vouchers", "{{voucher_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Voucher (Lỗi rỗng)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{partner_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
             },
             "url": {
               "raw": "{{base_url}}/api/partner/vouchers",
