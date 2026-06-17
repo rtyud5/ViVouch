@@ -210,3 +210,167 @@ export async function rejectVoucher(adminId, voucherId, reason) {
     throw error;
   }
 }
+
+export async function findManyPartners(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { status, search } = filters;
+  const skip = (pagination.page - 1) * pagination.limit;
+
+  const where = {};
+  if (status) where.status = status;
+  if (search) {
+    where.OR = [
+      { businessName: { contains: search, mode: 'insensitive' } },
+      { representativeName: { contains: search, mode: 'insensitive' } },
+      { taxCode: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
+  const [partners, total] = await Promise.all([
+    prisma.partner.findMany({
+      where,
+      skip,
+      take: pagination.limit,
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { id: true, email: true, role: true, status: true } } },
+    }),
+    prisma.partner.count({ where }),
+  ]);
+
+  return {
+    partners,
+    pagination: {
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+      totalPages: Math.ceil(total / pagination.limit),
+    },
+  };
+}
+
+export async function findManyVouchers(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { status, search } = filters;
+  const skip = (pagination.page - 1) * pagination.limit;
+
+  const where = {};
+  if (status) where.status = status;
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { code: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
+  const [vouchers, total] = await Promise.all([
+    prisma.voucher.findMany({
+      where,
+      skip,
+      take: pagination.limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        partner: { select: { id: true, businessName: true } },
+        category: { select: { id: true, name: true } },
+      },
+    }),
+    prisma.voucher.count({ where }),
+  ]);
+
+  return {
+    vouchers,
+    pagination: {
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+      totalPages: Math.ceil(total / pagination.limit),
+    },
+  };
+}
+
+export async function findManyUsers(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { role, isLocked, search } = filters;
+  const skip = (pagination.page - 1) * pagination.limit;
+
+  const where = {};
+  if (role) where.role = role;
+  if (isLocked !== undefined) {
+    const lockedBool = isLocked === 'true' || isLocked === true;
+    where.status = lockedBool ? 'LOCKED' : 'ACTIVE';
+  }
+  if (search) {
+    where.OR = [
+      { email: { contains: search, mode: 'insensitive' } },
+      { fullName: { contains: search, mode: 'insensitive' } },
+    ];
+  }
+
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      skip,
+      take: pagination.limit,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        fullName: true,
+        phone: true,
+        status: true,
+        createdAt: true,
+        _count: {
+          select: { orders: true },
+        },
+      },
+    }),
+    prisma.user.count({ where }),
+  ]);
+
+  // Map users to include isLocked for frontend compatibility
+  const mappedUsers = users.map(u => ({
+    ...u,
+    isLocked: u.status === 'LOCKED'
+  }));
+
+  return {
+    users: mappedUsers,
+    pagination: {
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+      totalPages: Math.ceil(total / pagination.limit),
+    },
+  };
+}
+
+export async function toggleUserLock(adminId, userId) {
+  return await prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+    }
+
+    if (user.id === adminId) {
+      throw new AppError('Cannot toggle your own lock status', 400, 'SELF_ACTION');
+    }
+
+    const isCurrentLocked = user.status === 'LOCKED';
+    const newStatus = isCurrentLocked ? 'ACTIVE' : 'LOCKED';
+    const newLockedState = !isCurrentLocked;
+
+    const updatedUser = await tx.user.update({
+      where: { id: userId },
+      data: { status: newStatus },
+    });
+
+    await auditLog.log(
+      adminId,
+      newLockedState ? AUDIT_ACTIONS.ADMIN_LOCK_USER : AUDIT_ACTIONS.ADMIN_UNLOCK_USER,
+      'User',
+      userId,
+      { previousState: user.status, newState: newStatus },
+      tx,
+    );
+
+    return { id: updatedUser.id, email: updatedUser.email, isLocked: newLockedState };
+  });
+}

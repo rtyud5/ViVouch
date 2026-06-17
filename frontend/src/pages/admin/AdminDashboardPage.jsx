@@ -248,7 +248,7 @@ const PartnerCard = ({ partner }) => (
 
 /* ═══════════════════ AdminDashboardPage ═══════════════════ */
 
-export function AdminDashboardPage() {
+export default function AdminDashboardPage() {
   const { stats, isLoading, isError, dataUpdatedAt } = useDashboardStats();
 
   /** Current timestamp for subtitle */

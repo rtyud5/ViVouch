@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 const profileSchema = z.object({
-  companyName: z.string().min(2, "Tên doanh nghiệp là bắt buộc"),
+  businessName: z.string().min(2, "Tên doanh nghiệp là bắt buộc"),
   taxCode: z.string().min(8, "Mã số thuế không hợp lệ"),
   email: z.string().email("Email không hợp lệ"),
   phone: z.string().min(8, "Số điện thoại không hợp lệ"),
@@ -31,7 +31,7 @@ const branchSchema = z.object({
 });
 
 const initialProfile = {
-  companyName: "ViVouch Partner Co., Ltd.",
+  businessName: "ViVouch Partner Co., Ltd.",
   taxCode: "0312345678",
   email: "partner@vivouch.vn",
   phone: "0909123456",
@@ -174,7 +174,7 @@ export function PartnerProfilePage() {
           <div className="rounded-2xl bg-base-200 px-4 py-3 text-sm text-base-content/70">
             <div className="flex items-center gap-2">
               <UserRound className="h-4 w-4" />
-              {profile.companyName}
+              {profile.businessName}
             </div>
             <div className="mt-1 flex items-center gap-2">
               <Store className="h-4 w-4" />
@@ -194,9 +194,9 @@ export function PartnerProfilePage() {
           <form className="space-y-4" onSubmit={handleProfileSubmit}>
             <label className="form-control">
               <div className="label"><span className="label-text">Tên doanh nghiệp</span></div>
-              <input className="input input-bordered" {...profileForm.register("companyName")} />
-              {profileForm.formState.errors.companyName && (
-                <div className="mt-1 text-sm text-error">{profileForm.formState.errors.companyName.message}</div>
+              <input className="input input-bordered" {...profileForm.register("businessName")} />
+              {profileForm.formState.errors.businessName && (
+                <div className="mt-1 text-sm text-error">{profileForm.formState.errors.businessName.message}</div>
               )}
             </label>
 

@@ -1,1 +1,1 @@
-export function AuditLogsPage() { return <div>AuditLogsPage</div>; }
+export default function AuditLogsPage() { return <div>AuditLogsPage</div>; }
