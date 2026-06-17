@@ -42,9 +42,9 @@ export const partnerVoucherFiltersSchema = z.object({
 // ── Create voucher body ──────────────────────────────────────────────────────
 export const createVoucherSchema = z.object({
   categoryId: z.string().min(1),
-  title: z.string().trim().min(1),
-  description: z.string().optional(),
-  imageUrl: z.string().url().optional(),
+  title: z.string().trim().min(1).max(255),
+  description: z.string().max(2000).optional(),
+  imageUrl: z.string().url().max(1000).optional(),
   originalPrice: z.number().int().positive(),
   salePrice: z.number().int().positive(),
   totalQty: z.number().int().positive(),
@@ -52,8 +52,8 @@ export const createVoucherSchema = z.object({
   saleEnd: z.coerce.date().optional(),
   useStart: z.coerce.date().optional(),
   useEnd: z.coerce.date().optional(),
-  conditions: z.string().optional(),
-  cancelPolicy: z.string().optional(),
+  conditions: z.string().max(2000).optional(),
+  cancelPolicy: z.string().max(2000).optional(),
 }).refine(data => data.salePrice < data.originalPrice, {
   message: 'salePrice phải nhỏ hơn originalPrice',
   path: ['salePrice'],
@@ -62,9 +62,9 @@ export const createVoucherSchema = z.object({
 // ── Update voucher body ──────────────────────────────────────────────────────
 export const updateVoucherSchema = z.object({
   categoryId: z.string().min(1).optional(),
-  title: z.string().trim().min(1).optional(),
-  description: z.string().optional(),
-  imageUrl: z.string().url().optional(),
+  title: z.string().trim().min(1).max(255).optional(),
+  description: z.string().max(2000).optional(),
+  imageUrl: z.string().url().max(1000).optional(),
   originalPrice: z.number().int().positive().optional(),
   salePrice: z.number().int().positive().optional(),
   totalQty: z.number().int().positive().optional(),
@@ -72,8 +72,8 @@ export const updateVoucherSchema = z.object({
   saleEnd: z.coerce.date().optional(),
   useStart: z.coerce.date().optional(),
   useEnd: z.coerce.date().optional(),
-  conditions: z.string().optional(),
-  cancelPolicy: z.string().optional(),
+  conditions: z.string().max(2000).optional(),
+  cancelPolicy: z.string().max(2000).optional(),
 }).refine(data => {
   if (data.originalPrice !== undefined && data.salePrice !== undefined) {
     return data.salePrice < data.originalPrice;
@@ -82,4 +82,4 @@ export const updateVoucherSchema = z.object({
 }, {
   message: 'salePrice phải nhỏ hơn originalPrice',
   path: ['salePrice'],
-});
+}).refine(data => Object.keys(data).length > 0, { message: 'Không có dữ liệu cần cập nhật' });
