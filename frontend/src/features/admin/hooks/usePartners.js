@@ -1,11 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import * as adminApi from '../api/adminApi';
 
 export const usePartners = (params) => {
   return useQuery({
     queryKey: ['adminPartners', params],
     queryFn: () => adminApi.getPartners(params),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 };
 

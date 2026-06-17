@@ -6,12 +6,23 @@ import { usePartners, useApprovePartner, useRejectPartner } from '../../features
 export default function PartnersPage() {
   const [params, setParams] = useState({ page: 1, limit: 10, status: '', search: '' });
   const [selectedPartner, setSelectedPartner] = useState(null);
-  
+  const [rejectReason, setRejectReason] = useState('');
+
   const { data, isLoading } = usePartners(params);
   const { mutate: approvePartner } = useApprovePartner();
   const { mutate: rejectPartner } = useRejectPartner();
 
   const partners = data?.data?.partners || [];
+
+  const handleReject = (partnerId) => {
+    if (!rejectReason.trim()) {
+      alert("Vui lòng nhập lý do từ chối");
+      return;
+    }
+    rejectPartner({ partnerId, reason: rejectReason });
+    setSelectedPartner(null);
+    setRejectReason('');
+  };
 
   const columns = [
     {
@@ -76,9 +87,9 @@ export default function PartnersPage() {
             >
               <span className="material-symbols-outlined text-[20px]">check_circle</span>
             </button>
-            <button 
-              onClick={(e) => { e.stopPropagation(); rejectPartner({ partnerId: row.id, reason: 'Chưa đủ điều kiện' }); }}
-              className="p-1 text-red-600 hover:bg-red-50 rounded" 
+            <button
+              onClick={(e) => { e.stopPropagation(); setSelectedPartner(row); }}
+              className="p-1 text-red-600 hover:bg-red-50 rounded"
               title="Từ chối"
             >
               <span className="material-symbols-outlined text-[20px]">cancel</span>
@@ -142,20 +153,34 @@ export default function PartnersPage() {
                <div className="flex justify-between"><span className="text-gray-500">MST</span><span className="font-mono">{selectedPartner.taxCode}</span></div>
                <div className="flex justify-between"><span className="text-gray-500">Người liên hệ</span><span>{selectedPartner.representativeName}</span></div>
              </div>
-          </div>
-          <div className="px-6 py-4 border-t border-gray-200 bg-white flex justify-end gap-3">
-            {selectedPartner.status === 'PENDING' && (
-              <>
-                <button 
-                  onClick={() => { rejectPartner({ partnerId: selectedPartner.id, reason: 'Chưa đủ điều kiện' }); setSelectedPartner(null); }}
-                  className="px-4 py-2 border border-red-500 text-red-500 rounded-lg text-sm"
-                >Từ chối</button>
-                <button 
-                  onClick={() => { approvePartner(selectedPartner.id); setSelectedPartner(null); }}
-                  className="px-6 py-2 bg-[#855300] text-white rounded-lg text-sm flex items-center gap-1"
-                ><span className="material-symbols-outlined text-[18px]">check_circle</span> Duyệt đối tác</button>
-              </>
-            )}
+
+             {selectedPartner.status === 'PENDING' && (
+               <div className="mt-8 bg-blue-50 p-6 rounded-lg border border-blue-100">
+                  <h4 className="font-bold mb-4">Quyết định phê duyệt</h4>
+                  <div className="space-y-4">
+                     <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Lý do từ chối (bắt buộc nếu chọn Từ chối)</label>
+                        <textarea
+                           value={rejectReason}
+                           onChange={(e) => setRejectReason(e.target.value)}
+                           className="w-full bg-white border border-gray-300 rounded-lg p-3 text-sm focus:border-amber-500 focus:ring-1 focus:ring-amber-500 resize-none h-24"
+                           placeholder="Nhập lý do chi tiết..."
+                        />
+                     </div>
+                     <div className="flex justify-end gap-3 pt-2">
+                        <button onClick={() => setSelectedPartner(null)} className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100">Hủy bỏ</button>
+                        <button
+                          onClick={() => handleReject(selectedPartner.id)}
+                          className="px-6 py-2 rounded-lg border border-red-500 text-red-500 font-semibold hover:bg-red-50"
+                        >Từ chối</button>
+                        <button
+                          onClick={() => { approvePartner(selectedPartner.id); setSelectedPartner(null); }}
+                          className="px-6 py-2 rounded-lg bg-amber-500 text-white font-semibold flex items-center gap-2 hover:bg-amber-600"
+                        ><span className="material-symbols-outlined text-[18px]">check_circle</span> Duyệt đối tác</button>
+                     </div>
+                  </div>
+               </div>
+             )}
           </div>
         </aside>
       )}
