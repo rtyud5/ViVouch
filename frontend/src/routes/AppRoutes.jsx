@@ -18,6 +18,7 @@ import { MyVouchersPage } from "../pages/customer/MyVouchersPage"
 import { ProfilePage } from "../pages/customer/ProfilePage"
 import { CartPage } from "../pages/customer/CartPage"
 import { OrdersPage as CustomerOrdersPage } from "../pages/customer/OrdersPage"
+import { CheckoutPage } from "../pages/customer/CheckoutPage"
 
 // Partner
 import { PartnerDashboardPage } from "../pages/partner/PartnerDashboardPage"
@@ -59,6 +60,16 @@ export function AppRoutes() {
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["CUSTOMER"]}>
+                <CheckoutPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
 
         {/* Customer Portal */}
         <Route path="/customer" element={
