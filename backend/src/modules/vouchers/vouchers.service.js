@@ -12,6 +12,36 @@ const toNum = (decimal) => Number(decimal);
 const calcDiscount = (original, sale) =>
   original > 0 ? Math.round((1 - sale / original) * 100) : 0;
 
+function mapPartnerVoucher(v, usedCount) {
+  const originalPrice = toNum(v.originalPrice);
+  const salePrice = toNum(v.salePrice);
+
+  return {
+    id: v.id,
+    categoryId: v.categoryId,
+    title: v.title,
+    description: v.description,
+    imageUrl: v.imageUrl,
+    originalPrice,
+    salePrice,
+    discountPct: calcDiscount(originalPrice, salePrice),
+    totalQty: v.totalQty,
+    soldQty: v.soldQty,
+    remainingQty: Math.max(0, v.totalQty - v.soldQty),
+    usedCount,
+    status: v.status,
+    saleStart: v.saleStart,
+    saleEnd: v.saleEnd,
+    useStart: v.useStart,
+    useEnd: v.useEnd,
+    conditions: v.conditions,
+    cancelPolicy: v.cancelPolicy,
+    rejectReason: v.rejectReason,
+    createdAt: v.createdAt,
+    updatedAt: v.updatedAt,
+  };
+}
+
 function mapVoucherSummary(v, avgRating) {
   const originalPrice = toNum(v.originalPrice);
   const salePrice = toNum(v.salePrice);
@@ -288,10 +318,7 @@ export async function findByPartner(userId, filters) {
     usedCountMap[agg.voucherId] = agg._count._all;
   }
 
-  const data = vouchers.map(v => ({
-    ...v,
-    usedCount: usedCountMap[v.id] || 0
-  }));
+  const data = vouchers.map(v => mapPartnerVoucher(v, usedCountMap[v.id] || 0));
 
   return {
     data,
