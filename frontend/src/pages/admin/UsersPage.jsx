@@ -118,6 +118,9 @@ export default function UsersPage() {
         <div className="flex justify-center">
           <button 
             type="button"
+            role="switch"
+            aria-checked={!row.isLocked}
+            aria-label={row.isLocked ? "Mở khóa người dùng" : "Khóa người dùng"}
             onClick={(e) => handleToggleLock(e, row.id)}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${row.isLocked ? 'bg-gray-300' : 'bg-green-500'}`}
           >

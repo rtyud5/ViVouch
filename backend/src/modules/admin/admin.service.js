@@ -225,7 +225,7 @@ export async function findManyPartners(filters = {}, pagination = { page: 1, lim
     ];
   }
 
-  const [partners, total] = await prisma.$transaction([
+  const [partners, total] = await Promise.all([
     prisma.partner.findMany({
       where,
       skip,
@@ -260,7 +260,7 @@ export async function findManyVouchers(filters = {}, pagination = { page: 1, lim
     ];
   }
 
-  const [vouchers, total] = await prisma.$transaction([
+  const [vouchers, total] = await Promise.all([
     prisma.voucher.findMany({
       where,
       skip,
@@ -302,7 +302,7 @@ export async function findManyUsers(filters = {}, pagination = { page: 1, limit:
     ];
   }
 
-  const [users, total] = await prisma.$transaction([
+  const [users, total] = await Promise.all([
     prisma.user.findMany({
       where,
       skip,
@@ -342,21 +342,21 @@ export async function findManyUsers(filters = {}, pagination = { page: 1, limit:
 }
 
 export async function toggleUserLock(adminId, userId) {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  
-  if (!user) {
-    throw new AppError('User not found', 404, 'USER_NOT_FOUND');
-  }
-
-  if (user.id === adminId) {
-    throw new AppError('Cannot toggle your own lock status', 400, 'SELF_ACTION');
-  }
-
-  const isCurrentLocked = user.status === 'LOCKED';
-  const newStatus = isCurrentLocked ? 'ACTIVE' : 'LOCKED';
-  const newLockedState = !isCurrentLocked;
-
   return await prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+    }
+
+    if (user.id === adminId) {
+      throw new AppError('Cannot toggle your own lock status', 400, 'SELF_ACTION');
+    }
+
+    const isCurrentLocked = user.status === 'LOCKED';
+    const newStatus = isCurrentLocked ? 'ACTIVE' : 'LOCKED';
+    const newLockedState = !isCurrentLocked;
+
     const updatedUser = await tx.user.update({
       where: { id: userId },
       data: { status: newStatus },
