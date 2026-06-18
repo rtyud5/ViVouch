@@ -19,6 +19,7 @@ import { ProfilePage } from "../pages/customer/ProfilePage"
 import { CartPage } from "../pages/customer/CartPage"
 import { OrdersPage as CustomerOrdersPage } from "../pages/customer/OrdersPage"
 import { CheckoutPage } from "../pages/customer/CheckoutPage"
+import { OrderSuccessPage } from "../pages/customer/OrderSuccessPage"
 
 // Partner
 import { PartnerDashboardPage } from "../pages/partner/PartnerDashboardPage"
@@ -84,6 +85,7 @@ export function AppRoutes() {
           <Route path="cart" element={<CartPage />} />
           <Route path="my-vouchers" element={<MyVouchersPage />} />
           <Route path="orders" element={<CustomerOrdersPage />} />
+          <Route path="order-success" element={<OrderSuccessPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
 
