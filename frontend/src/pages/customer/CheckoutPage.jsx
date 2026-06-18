@@ -25,15 +25,18 @@ export function CheckoutPage() {
     try {
       setLocalError(null);
       const result = await checkoutMutation.mutateAsync({ items, paymentMethod: "MOCK_GATEWAY" });
+      if (!result?.orderId) {
+        setLocalError(new Error("Thiếu mã đơn hàng trong phản hồi thanh toán."));
+        return;
+      }
       navigate("/customer/order-success", {
         state: {
           orderId: result?.orderId,
-          voucherCodes: result?.voucherCodes
+          voucherCodes: result?.voucherCodes ?? []
         }
       });
     } catch (error) {
       setLocalError(error);
-      throw error;
     }
   };
 

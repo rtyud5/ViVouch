@@ -42,11 +42,10 @@ export function OrdersPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`font-label-md text-label-md py-4 px-2 whitespace-nowrap transition-colors ${
-              activeTab === tab.id
-                ? "text-primary font-bold border-b-2 border-primary"
-                : "text-on-surface-variant hover:text-primary"
-            }`}
+            className={`font-label-md text-label-md py-4 px-2 whitespace-nowrap transition-colors ${activeTab === tab.id
+              ? "text-primary font-bold border-b-2 border-primary"
+              : "text-on-surface-variant hover:text-primary"
+              }`}
           >
             {tab.label}
           </button>
@@ -65,21 +64,21 @@ export function OrdersPage() {
               activeTab === "ALL"
                 ? "Bạn chưa thực hiện bất kỳ giao dịch nào."
                 : activeTab === "COMPLETED"
-                ? "Không có đơn hàng thành công nào."
-                : "Không có đơn hàng đã hủy nào."
+                  ? "Không có đơn hàng thành công nào."
+                  : "Không có đơn hàng đã hủy nào."
             }
           />
         ) : (
           filteredOrders.map((order) => {
+            const normalizedStatus = String(order.status || "").toUpperCase();
             const isExpanded = expandedOrders.has(order.code);
-            const totalVouchers = order.items.reduce((sum, item) => sum + (item.quantity ?? item.qty ?? 0), 0);
+            const totalVouchers = (order.items || []).reduce((sum, item) => sum + (item.quantity ?? item.qty ?? 0), 0);
 
             return (
               <div
                 key={order.code}
-                className={`bg-surface-container-lowest rounded-xl shadow-sm p-6 border border-surface-variant transition-all hover:shadow-md ${
-                  order.status === "CANCELLED" ? "opacity-75" : ""
-                }`}
+                className={`bg-surface-container-lowest rounded-xl shadow-sm p-6 border border-surface-variant transition-all hover:shadow-md ${normalizedStatus === "CANCELLED" ? "opacity-75" : ""
+                  }`}
               >
                 <button
                   className="flex justify-between items-start cursor-pointer group w-full text-left focus:outline-none"
@@ -102,7 +101,7 @@ export function OrdersPage() {
                     <div className="font-price-display text-price-display text-on-surface">
                       {formatCurrency(Number(order.totalAmount))}
                     </div>
-                    <OrderStatusBadge status={order.status} />
+                    <OrderStatusBadge status={normalizedStatus} />
                     <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 ${isExpanded ? "rotate-180 text-primary" : "group-hover:text-primary"}`}>
                       expand_more
                     </span>

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { CopyButton } from './CopyButton';
 import { formatDate } from '../../utils/formatDate';
 
 /**
- * QRCodeModal component shows a popup with a scannable QR code and voucher code string.
+ * QRCodeModal component shows a popup with a scannable QR code generated client-side and voucher code string.
  *
  * @param {Object} props
  * @param {boolean} props.isOpen - Whether the modal is visible
@@ -31,18 +32,24 @@ export function QRCodeModal({ isOpen, onClose, voucherCode }) {
   const voucherTitle = voucher?.title || voucher?.name || 'Voucher';
   const displayExpiry = expiresAt || expirationDate;
 
-  // Generate an actual scannable QR Code using open API
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(code || '')}`;
-
   return (
     <div
-      className="fixed inset-0 z-[100] bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 animate-fade-in"
+      className="fixed inset-0 z-[100] bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 animate-fade-in focus:outline-none"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+          if (e.target === e.currentTarget) {
+            e.preventDefault();
+            onClose();
+          }
+        }
       }}
       role="dialog"
       aria-modal="true"
       aria-label="Chi tiết mã QR Voucher"
+      tabIndex={0}
     >
       <div
         className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-2xl flex flex-col items-center transform transition-transform duration-300 scale-100 relative"
@@ -62,10 +69,12 @@ export function QRCodeModal({ isOpen, onClose, voucherCode }) {
 
         {/* QR Code Container */}
         <div className="bg-surface-container p-4 rounded-xl mb-6 shadow-inner w-48 h-48 flex items-center justify-center border border-outline-variant">
-          <img
-            src={qrUrl}
-            alt="Mã QR Voucher"
-            className="w-full h-full object-cover rounded-lg shadow-sm"
+          <QRCodeSVG
+            value={code || ''}
+            size={160}
+            level="H"
+            includeMargin={false}
+            className="w-full h-full object-contain rounded-lg shadow-sm"
           />
         </div>
 

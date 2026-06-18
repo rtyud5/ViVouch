@@ -3,49 +3,42 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { VoucherCodeCard } from '../../components/voucher/VoucherCodeCard';
 import { QRCodeModal } from '../../components/common/QRCodeModal';
 
-function Confetti() {
+const Confetti = React.memo(function Confetti() {
   const colors = ['#00694c', '#68dbae', '#ffba38', '#b7131a'];
-  const style = `
-    @keyframes fall {
-      0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }
-      100% { opacity: 0; transform: translateY(80vh) rotate(360deg); }
-    }
-    .animate-fall {
-      animation-name: fall;
-      animation-timing-function: linear;
-      animation-iteration-count: 1;
-    }
-  `;
+  const style = "\n    @keyframes fall {\n      0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }\n      100% { opacity: 0; transform: translateY(80vh) rotate(360deg); }\n    }\n    .animate-fall {\n      animation-name: fall;\n      animation-timing-function: linear;\n      animation-iteration-count: 1;\n    }\n  ";
+
+  const particles = React.useMemo(() => {
+    return [...Array(60)].map((_, i) => ({
+      left: Math.random() * 100,
+      delay: Math.random() * 2,
+      duration: Math.random() * 2.5 + 1.5,
+      size: Math.random() * 8 + 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      shapeClass: Math.random() > 0.5 ? 'rounded-full' : 'rounded-sm'
+    }));
+  }, []);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
       <style>{style}</style>
-      {[...Array(60)].map((_, i) => {
-        const left = Math.random() * 100;
-        const delay = Math.random() * 2;
-        const duration = Math.random() * 2.5 + 1.5;
-        const size = Math.random() * 8 + 6;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const shapeClass = Math.random() > 0.5 ? 'rounded-full' : 'rounded-sm';
-        return (
-          <div
-            key={i}
-            className={`absolute top-0 animate-fall pointer-events-none ${shapeClass}`}
-            style={{
-              width: `${size}px`,
-              height: `${size}px`,
-              left: `${left}%`,
-              backgroundColor: color,
-              animationDelay: `${delay}s`,
-              animationDuration: `${duration}s`,
-              animationFillMode: 'forwards',
-            }}
-          />
-        );
-      })}
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className={"absolute top-0 animate-fall pointer-events-none " + p.shapeClass}
+          style={{
+            width: p.size + "px",
+            height: p.size + "px",
+            left: p.left + "%",
+            backgroundColor: p.color,
+            animationDelay: p.delay + "s",
+            animationDuration: p.duration + "s",
+            animationFillMode: 'forwards',
+          }}
+        />
+      ))}
     </div>
   );
-}
+});
 
 export function OrderSuccessPage() {
   const location = useLocation();
@@ -82,7 +75,7 @@ export function OrderSuccessPage() {
   const mappedCodes = (voucherCodes || []).map((vc, index) => ({
     id: `vc-${index}`,
     code: vc.code,
-    status: 'ISSUED',
+    status: String(vc.status || 'ISSUED').toUpperCase(),
     expiresAt: vc.expiresAt,
     voucher: {
       title: vc.voucherTitle,
