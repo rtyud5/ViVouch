@@ -1,5 +1,7 @@
 import React from 'react';
 import { formatDate } from '../../utils/formatDate';
+import { QRCodeSVG } from 'qrcode.react';
+import { CopyButton } from '../common';
 
 const STATUS_CONFIG = {
   ISSUED: {
@@ -24,6 +26,7 @@ const STATUS_CONFIG = {
 
 /**
  * VoucherCodeCard component displays an individual voucher code with its status, code, expiration date, and image.
+ * Supports a "horizontal" variant for list screens and a "detailed" variant for order success screen.
  *
  * @param {Object} props - Component props
  * @param {Object} props.voucherCode - The voucher code details
@@ -35,13 +38,57 @@ const STATUS_CONFIG = {
  * @param {string} props.voucherCode.voucher.image - Image URL of the voucher
  * @param {Object} props.voucherCode.voucher.partner - Partner details
  * @param {string} props.voucherCode.voucher.partner.name - Name of the partner
- * @param {Function} props.onOpenQR - Callback when clicking on a usable voucher code card to open the QR modal
+ * @param {Function} props.onOpenQR - Callback when clicking on a usable voucher code card to open the QR modal (horizontal variant only)
+ * @param {string} [props.variant='horizontal'] - Layout variant: 'horizontal' or 'detailed'
  * @returns {React.ReactElement} The rendered VoucherCodeCard component
  */
-export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
-  const { code, status, expirationDate, voucher } = voucherCode || {};
+export function VoucherCodeCard({ voucherCode = {}, onOpenQR, variant = 'horizontal' }) {
+  const { code, status, expirationDate, voucher = {} } = voucherCode || {};
   const currentStatus = STATUS_CONFIG[status] || STATUS_CONFIG.ISSUED;
   const isUsable = status === 'ISSUED';
+
+  if (variant === 'detailed') {
+    return (
+      <article className="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] w-full p-6 md:p-8 border border-outline-variant/30 flex flex-col items-center relative overflow-hidden">
+        {/* Decorative top border */}
+        <div className="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+        
+        <h2 className="font-headline-md text-headline-md text-on-surface text-center mb-6 line-clamp-2">
+          {voucher.name || 'Tên Voucher'}
+        </h2>
+        
+        {/* QR Code Container */}
+        <div className="w-48 h-48 bg-surface-container flex items-center justify-center rounded-lg mb-6 border border-outline-variant/30 relative p-3 select-none">
+          {code ? (
+            <QRCodeSVG
+              value={code}
+              size={160}
+              level="M"
+              className="w-full h-full rounded bg-white"
+            />
+          ) : (
+            <span className="material-symbols-outlined text-[80px] text-outline-variant opacity-50">qr_code_2</span>
+          )}
+        </div>
+        
+        {/* Voucher Code & Copy Button */}
+        <div className="flex items-center space-x-4 mb-6 w-full justify-center">
+          <div className="bg-surface-container-low px-4 md:px-6 py-3 rounded-lg border border-outline-variant flex items-center justify-between w-full max-w-sm">
+            <span className="font-mono text-base md:text-lg font-bold tracking-wider text-on-surface truncate mr-4 select-all">
+              {code || 'MÃ VOUCHER'}
+            </span>
+            <CopyButton value={code} showLabel={false} className="shrink-0" />
+          </div>
+        </div>
+        
+        {/* Expiry */}
+        <p className="text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 select-none">
+          <span className="material-symbols-outlined text-primary text-sm">event</span>
+          Hạn dùng: {formatDate(expirationDate)}
+        </p>
+      </article>
+    );
+  }
 
   return (
     <article
@@ -49,9 +96,9 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
       role={isUsable ? 'button' : undefined}
       tabIndex={isUsable ? 0 : -1}
       aria-disabled={!isUsable}
-      onClick={() => isUsable && onOpenQR(voucherCode)}
+      onClick={() => isUsable && onOpenQR && onOpenQR(voucherCode)}
       onKeyDown={(e) => {
-        if (!isUsable) return;
+        if (!isUsable || !onOpenQR) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           onOpenQR(voucherCode);

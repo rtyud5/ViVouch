@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { VoucherCodeCard } from '../../components/voucher/VoucherCodeCard';
+import { QRCodeModal } from '../../components/voucher/QRCodeModal';
+import { CustomerEmptyState } from '../../components/common';
 
 // Mock hook since useMyVouchers from T-hooks3 is not available yet
 /**
@@ -105,17 +107,6 @@ export function MyVouchersPage() {
         setTimeout(() => setSelectedVoucherCode(null), 300); // Wait for transition
     };
 
-    const handleCopyCode = async () => {
-        if (selectedVoucherCode) {
-            try {
-                if (!navigator.clipboard?.writeText) return;
-                await navigator.clipboard.writeText(selectedVoucherCode.code);
-            } catch (err) {
-                console.error("Failed to copy:", err);
-            }
-        }
-    };
-
     return (
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 w-full">
             <div className="mb-6 md:mb-8">
@@ -144,10 +135,11 @@ export function MyVouchersPage() {
                     <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
                 </div>
             ) : filteredVouchers.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-on-surface-variant">
-                    <span className="material-symbols-outlined text-6xl mb-4 opacity-50">local_activity</span>
-                    <p className="font-body-lg text-body-lg text-center">Chưa có voucher nào trong mục này</p>
-                </div>
+                <CustomerEmptyState
+                    title="Chưa có voucher"
+                    description="Bạn chưa có voucher nào trong mục này."
+                    icon="local_activity"
+                />
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                     {filteredVouchers.map(vc => (
@@ -157,53 +149,11 @@ export function MyVouchersPage() {
             )}
 
             {/* QR Modal */}
-            <div
-                className={`fixed inset-0 z-[100] bg-on-surface/40 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300 ${isModalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
-                onClick={(e) => {
-                    if (e.target === e.currentTarget) {
-                        handleCloseQR();
-                    }
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === 'Escape') {
-                        handleCloseQR();
-                    }
-                }}
-                role="button"
-                tabIndex={isModalOpen ? 0 : -1}
-                aria-label="Đóng QR Modal"
-            >
-                <div
-                    className={`bg-surface-container-lowest rounded-2xl p-6 w-full max-w-sm shadow-2xl flex flex-col items-center transform transition-transform duration-300 ${isModalOpen ? 'scale-100' : 'scale-95'}`}
-                >
-                    <button className="self-end text-on-surface-variant hover:text-on-surface mb-2" onClick={handleCloseQR}>
-                        <span className="material-symbols-outlined">close</span>
-                    </button>
-
-                    <h2 className="font-headline-md text-headline-md text-on-surface text-center mb-6 line-clamp-2">
-                        {selectedVoucherCode?.voucher?.name}
-                    </h2>
-
-                    <div className="bg-surface-container p-4 rounded-xl mb-6 shadow-inner w-48 h-48 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-[150px] text-on-surface font-light">qr_code_2</span>
-                    </div>
-
-                    <p className="font-body-md text-body-md text-on-surface-variant mb-2">Mã của bạn</p>
-                    <div className="bg-primary-container/20 px-4 py-3 rounded-lg border border-primary/30 w-full flex items-center justify-center gap-3">
-                        <p className="font-mono text-[24px] font-bold text-primary tracking-[0.2em]">{selectedVoucherCode?.code}</p>
-                        <button onClick={handleCopyCode} className="text-primary hover:text-primary-fixed-dim transition-colors" title="Copy code">
-                            <span className="material-symbols-outlined text-[20px]">content_copy</span>
-                        </button>
-                    </div>
-
-                    <button
-                        className="w-full mt-8 py-3 rounded-full bg-primary text-on-primary font-label-md text-label-md hover:bg-surface-tint active:scale-95 transition-all shadow-md"
-                        onClick={handleCloseQR}
-                    >
-                        Đóng
-                    </button>
-                </div>
-            </div>
+            <QRCodeModal
+                isOpen={isModalOpen}
+                onClose={handleCloseQR}
+                voucherCode={selectedVoucherCode}
+            />
         </div>
     );
 }

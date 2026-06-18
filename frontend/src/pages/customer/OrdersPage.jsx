@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { formatDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { OrderStatusBadge } from '../../components/order/OrderStatusBadge';
+import { OrderItemCard } from '../../components/order/OrderItemCard';
+import { CustomerEmptyState } from '../../components/common';
 
 // Mock hook since useOrders is not available yet
 const useOrdersMock = () => {
@@ -80,43 +83,7 @@ const useOrdersMock = () => {
     return { data, isLoading };
 };
 
-const formatDate = (isoString) => {
-    const date = new Date(isoString);
-    return date.toLocaleDateString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-};
 
-const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-};
-
-const getStatusStyle = (status) => {
-    switch (status) {
-        case 'COMPLETED':
-            return {
-                label: 'Thành công',
-                classes: 'badge badge-success'
-            };
-        case 'CANCELLED':
-            return {
-                label: 'Đã huỷ',
-                classes: 'badge badge-error'
-            };
-        case 'PENDING':
-            return {
-                label: 'Chờ xử lý',
-                classes: 'badge badge-warning'
-            };
-        default:
-            return {
-                label: status,
-                classes: 'badge badge-neutral'
-            };
-    }
-};
 
 export function OrdersPage() {
     const { data: orders, isLoading } = useOrdersMock();
@@ -144,30 +111,7 @@ export function OrdersPage() {
         setExpandedOrders(newExpanded);
     };
 
-    const getStatusStyle = (status) => {
-        switch (status) {
-            case 'COMPLETED':
-                return {
-                    label: 'Thành công',
-                    classes: 'bg-primary-container text-on-primary-container'
-                };
-            case 'CANCELLED':
-                return {
-                    label: 'Đã huỷ',
-                    classes: 'bg-error-container text-on-error-container'
-                };
-            case 'PENDING':
-                return {
-                    label: 'Chờ xử lý',
-                    classes: 'bg-warning/20 text-warning-content' // Using standard DaisyUI warning color
-                };
-            default:
-                return {
-                    label: status,
-                    classes: 'bg-surface-variant text-on-surface-variant'
-                };
-        }
-    };
+
 
     return (
         <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8">
@@ -200,14 +144,14 @@ export function OrdersPage() {
                         <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
                     </div>
                 ) : filteredOrders.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-on-surface-variant">
-                        <span className="material-symbols-outlined text-6xl mb-4 opacity-50">receipt_long</span>
-                        <p className="font-body-lg text-body-lg text-center">Chưa có đơn hàng nào</p>
-                    </div>
+                    <CustomerEmptyState
+                        title="Chưa có đơn hàng"
+                        description="Bạn chưa thực hiện đơn hàng nào."
+                        icon="receipt_long"
+                    />
                 ) : (
                     filteredOrders.map(order => {
                         const isExpanded = expandedOrders.has(order.code);
-                        const statusStyle = getStatusStyle(order.status);
                         const totalVouchers = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
                         return (
@@ -236,9 +180,7 @@ export function OrdersPage() {
                                         <div className="font-price-display text-price-display text-on-surface mb-2">
                                             {formatCurrency(order.totalAmount)}
                                         </div>
-                                        <div className={`font-label-md text-label-md px-3 py-1 rounded-full text-xs mb-2 ${statusStyle.classes}`}>
-                                            {statusStyle.label}
-                                        </div>
+                                        <OrderStatusBadge status={order.status} className="mb-2" />
                                         <span
                                             className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 ${isExpanded ? 'rotate-180 text-primary' : 'group-hover:text-primary'
                                                 }`}
@@ -252,21 +194,12 @@ export function OrdersPage() {
                                 {isExpanded && (
                                     <div className="border-t border-surface-variant mt-4 pt-4 flex flex-col gap-4">
                                         {order.items.map((item, index) => (
-                                            <div key={index} className="flex gap-4 items-center">
-                                                <img
-                                                    alt={item.voucher.name}
-                                                    className="w-20 h-20 rounded-lg object-cover bg-surface-container-high"
-                                                    src={item.voucher.image}
-                                                />
-                                                <div>
-                                                    <div className="font-label-md text-label-md text-on-surface mb-1">
-                                                        {item.voucher.name}
-                                                    </div>
-                                                    <div className="font-body-md text-body-md text-on-surface-variant text-sm">
-                                                        Số lượng: {item.quantity}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <OrderItemCard
+                                                key={item.id || index}
+                                                name={item.voucher.name}
+                                                image={item.voucher.image}
+                                                quantity={item.quantity}
+                                            />
                                         ))}
                                     </div>
                                 )}
