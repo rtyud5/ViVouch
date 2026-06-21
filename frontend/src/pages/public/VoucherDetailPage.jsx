@@ -19,14 +19,14 @@ export function VoucherDetailPage() {
   const query = useVoucherDetail(id);
   const voucherResponse = query.data?.data || query.data;
 
-  // Calculate remainingQuantity if backend doesn't provide it
   const voucher = React.useMemo(() => {
     if (!voucherResponse) return null;
     return {
       ...voucherResponse,
       name: voucherResponse.title || voucherResponse.name,
       partnerName: voucherResponse.partner?.businessName || voucherResponse.partnerName,
-      remainingQuantity: voucherResponse.remainingQty ?? Math.max(0, (voucherResponse.totalQty || 0) - (voucherResponse.soldQty || 0)),
+      remainingQuantity:
+        voucherResponse.remainingQty ?? Math.max(0, (voucherResponse.totalQty || 0) - (voucherResponse.soldQty || 0)),
       soldQuantity: voucherResponse.soldQty,
       totalQuantity: voucherResponse.totalQty,
       rating: voucherResponse.reviewSummary?.avgRating,
@@ -50,7 +50,6 @@ export function VoucherDetailPage() {
     }
   }, [voucherId]);
 
-  // Hiển thị thông báo tạm thời
   const showToast = (message) => {
     setToastMessage(message);
     setTimeout(() => {
@@ -58,14 +57,13 @@ export function VoucherDetailPage() {
     }, 3000);
   };
 
-  // Handlers mua hàng
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
       navigate("/login", { state: { returnUrl: location.pathname } });
       return;
     }
     if (!voucher || voucher.remainingQuantity === 0) return;
-    
+
     const finalQty = Math.max(1, Math.min(parseInt(String(quantity), 10) || 1, voucher.remainingQuantity));
     setIsAddingToCart(true);
     try {
@@ -84,12 +82,12 @@ export function VoucherDetailPage() {
       return;
     }
     if (!voucher || voucher.remainingQuantity === 0) return;
-    
+
     const finalQty = Math.max(1, Math.min(parseInt(String(quantity), 10) || 1, voucher.remainingQuantity));
     setIsAddingToCart(true);
     try {
       await addToCart({ voucherId: voucher.id, qty: finalQty });
-      showToast(`Đang chuyển hướng tới giỏ hàng...`);
+      showToast("Đang chuyển hướng tới giỏ hàng...");
       navigate("/customer/cart");
     } catch (err) {
       showToast(err?.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.");
@@ -98,68 +96,64 @@ export function VoucherDetailPage() {
     }
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: voucher?.name || "Voucher ưu đãi",
-        text: `Nhận ngay ưu đãi từ ${voucher?.partnerName}`,
-        url: window.location.href,
-      }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    const currentUrl = globalThis.location?.href ?? "";
+    const clipboard = globalThis.navigator?.clipboard;
+    const share = globalThis.navigator?.share;
+
+    if (share) {
+      try {
+        await share({
+          title: voucher?.name || "Voucher ưu đãi",
+          text: `Nhận ngay ưu đãi từ ${voucher?.partnerName}`,
+          url: currentUrl,
+        });
+      } catch {
+        // User may cancel the share sheet or the browser may block sharing.
+      }
+      return;
+    }
+
+    try {
+      await clipboard?.writeText(currentUrl);
       showToast("Đã sao chép liên kết voucher vào bộ nhớ tạm!");
+    } catch {
+      // Silent fail: avoid console noise in demo mode.
     }
   };
 
-  // Tính tỷ lệ giảm giá (%)
   const getDiscountPercent = (orig, sale) => {
     if (!orig || orig <= sale) return 0;
     return Math.round(((orig - sale) / orig) * 100);
   };
 
-  // --- 1. RENDER LOADING SKELETON ---
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8 pb-32 md:pb-8 flex-1 animate-pulse">
-        {/* Nút quay lại Skeleton */}
         <div className="h-6 w-32 bg-base-300 rounded mb-6"></div>
-
-        {/* Layout 2 cột */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Cột trái (7 cột trên lg) */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            {/* Ảnh voucher skeleton */}
             <div className="w-full aspect-video md:aspect-[4/3] bg-base-300 rounded-2xl"></div>
-            {/* Tabs skeleton */}
             <div className="w-full h-12 bg-base-300 rounded-xl"></div>
             <div className="w-full h-48 bg-base-300 rounded-2xl"></div>
           </div>
-
-          {/* Cột phải (5 cột trên lg) */}
           <div className="lg:col-span-5">
             <div className="card bg-base-100 border border-base-200 p-6 rounded-2xl flex flex-col gap-6">
-              {/* Partner name */}
               <div className="h-4 w-24 bg-base-300 rounded"></div>
-              {/* Voucher name */}
               <div className="space-y-2">
                 <div className="h-8 w-full bg-base-300 rounded"></div>
                 <div className="h-8 w-3/4 bg-base-300 rounded"></div>
               </div>
-              {/* Rating */}
               <div className="h-5 w-32 bg-base-300 rounded"></div>
-              {/* Price */}
               <div className="h-10 w-48 bg-base-300 rounded"></div>
-              {/* Progress bar */}
               <div className="space-y-2">
                 <div className="h-4 w-full bg-base-300 rounded"></div>
                 <div className="h-3 w-full bg-base-300 rounded-full"></div>
               </div>
-              {/* Qty Selector */}
               <div className="space-y-2">
                 <div className="h-4 w-16 bg-base-300 rounded"></div>
                 <div className="h-10 w-32 bg-base-300 rounded-lg"></div>
               </div>
-              {/* Nút mua */}
               <div className="flex gap-4 pt-4">
                 <div className="h-12 flex-1 bg-base-300 rounded-xl"></div>
                 <div className="h-12 flex-1 bg-base-300 rounded-xl"></div>
@@ -171,7 +165,6 @@ export function VoucherDetailPage() {
     );
   }
 
-  // --- 2. RENDER ERROR STATE ---
   if (error || !voucher) {
     return (
       <div className="max-w-md mx-auto my-16 p-8 bg-base-100 rounded-2xl shadow-sm border border-base-200 text-center flex flex-col items-center gap-4">
@@ -191,13 +184,11 @@ export function VoucherDetailPage() {
     );
   }
 
-  // Tỷ lệ phần trăm số lượng đã bán
   const soldPercent = Math.min(100, Math.round((voucher.soldQuantity / voucher.totalQuantity) * 100));
   const isOutOfStock = voucher.remainingQuantity === 0;
 
   return (
     <div className="relative max-w-7xl mx-auto px-4 py-8 pb-32 md:pb-8 flex-1">
-      {/* Toast Notification */}
       {toastMessage && (
         <div className="toast toast-top toast-center z-50">
           <div className="alert alert-success shadow-lg text-sm rounded-xl font-semibold flex items-center gap-2">
@@ -207,7 +198,6 @@ export function VoucherDetailPage() {
         </div>
       )}
 
-      {/* Nút quay lại trang trước */}
       <button
         onClick={() => navigate("/vouchers")}
         className="btn btn-link btn-xs p-0 text-base-content/60 hover:text-primary mb-6 flex items-center gap-2 text-sm no-underline hover:no-underline font-semibold"
@@ -216,11 +206,8 @@ export function VoucherDetailPage() {
         <span>Quay lại danh sách</span>
       </button>
 
-      {/* Grid Layout chính */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* CỘT TRÁI (Ảnh + Tabs) */}
         <div className="lg:col-span-7 flex flex-col gap-6">
-          {/* Vùng ảnh voucher */}
           <div className="relative w-full aspect-video md:aspect-[4/3] rounded-2xl overflow-hidden shadow-md bg-base-300 border border-base-200">
             {voucher.imageUrl ? (
               <img
@@ -229,7 +216,6 @@ export function VoucherDetailPage() {
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
               />
             ) : (
-              // Trạng thái ảnh placeholder khi imageUrl null
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-base-300 to-base-200 text-base-content/40 gap-3">
                 <div className="w-16 h-16 rounded-full bg-base-100 flex items-center justify-center shadow-sm">
                   <Star size={32} className="text-base-content/30" />
@@ -238,7 +224,6 @@ export function VoucherDetailPage() {
               </div>
             )}
 
-            {/* Badge danh mục */}
             <span className="absolute top-4 left-4 badge badge-primary font-bold shadow-md px-3 py-1.5 uppercase text-xs tracking-wider">
               {voucher.category === "am-thuc" && "🍜 Ẩm thực"}
               {voucher.category === "lam-dep" && "💆 Làm đẹp"}
@@ -248,12 +233,12 @@ export function VoucherDetailPage() {
               {!["am-thuc", "lam-dep", "du-lich", "mua-sam", "giai-tri"].includes(voucher.category) && "🎟️ Voucher"}
             </span>
 
-            {/* Khung tương tác góc ảnh */}
             <div className="absolute top-4 right-4 flex gap-2">
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
-                className={`btn btn-circle btn-sm shadow-md bg-base-100 hover:bg-base-200 border-0 ${isFavorite ? "text-error" : "text-base-content/60"
-                  }`}
+                className={`btn btn-circle btn-sm shadow-md bg-base-100 hover:bg-base-200 border-0 ${
+                  isFavorite ? "text-error" : "text-base-content/60"
+                }`}
                 title={isFavorite ? "Bỏ yêu thích" : "Yêu thích"}
               >
                 <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
@@ -268,22 +253,17 @@ export function VoucherDetailPage() {
             </div>
           </div>
 
-          {/* Component Tabs hiển thị Mô tả, Điều kiện, Chi nhánh */}
           <DetailTabs
             description={voucher.description}
             conditions={voucher.conditions}
             branches={voucher.branches}
           />
 
-          {/* Component Danh sách đánh giá */}
           <ReviewList reviews={voucher.reviews} />
         </div>
 
-        {/* CỘT PHẢI (Thông tin giá, số lượng, mua hàng) */}
         <div className="lg:col-span-5">
           <div className="card bg-base-100 border border-base-200 p-6 rounded-2xl shadow-sm flex flex-col gap-6 md:sticky md:top-24">
-
-            {/* Partner info */}
             <div>
               <span className="text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-2.5 py-1 rounded-full">
                 {voucher.partnerName}
@@ -293,7 +273,6 @@ export function VoucherDetailPage() {
               </h1>
             </div>
 
-            {/* Đánh giá */}
             <div className="flex items-center gap-1.5 text-sm">
               <div className="flex text-warning">
                 <Star size={16} fill="currentColor" />
@@ -305,7 +284,6 @@ export function VoucherDetailPage() {
 
             <div className="divider my-0"></div>
 
-            {/* Phần hiển thị giá tiền */}
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Giá ưu đãi</span>
               <div className="flex items-baseline gap-3">
@@ -326,7 +304,6 @@ export function VoucherDetailPage() {
               </div>
             </div>
 
-            {/* Thanh tiến trình bán hàng */}
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between items-center text-xs font-semibold">
                 <span className="text-base-content/60">
@@ -335,14 +312,14 @@ export function VoucherDetailPage() {
                 <span className="text-primary font-bold">{soldPercent}%</span>
               </div>
               <progress
-                className={`progress w-full h-2.5 rounded-full ${voucher.remainingQuantity < 10 ? "progress-error" : "progress-primary"
-                  }`}
+                className={`progress w-full h-2.5 rounded-full ${
+                  voucher.remainingQuantity < 10 ? "progress-error" : "progress-primary"
+                }`}
                 value={voucher.soldQuantity}
                 max={voucher.totalQuantity}
               ></progress>
             </div>
 
-            {/* Bộ chọn số lượng (chỉ hiển thị khi còn hàng) */}
             {!isOutOfStock && (
               <QtySelector
                 value={quantity}
@@ -352,7 +329,6 @@ export function VoucherDetailPage() {
               />
             )}
 
-            {/* Các nút bấm hành động mua hàng (Desktop) */}
             <div className="hidden md:flex flex-col gap-3 pt-2">
               <div className="flex gap-3">
                 <button
@@ -381,7 +357,6 @@ export function VoucherDetailPage() {
         </div>
       </div>
 
-      {/* Component StickyBuyBar cố định đáy màn hình (Mobile) */}
       <StickyBuyBar
         voucher={voucher}
         quantity={quantity}

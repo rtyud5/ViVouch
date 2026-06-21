@@ -18,8 +18,8 @@ export function CopyButton({ text, className = '' }) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
+    } catch {
+      // Silent fail: avoid noisy console errors on browsers that block clipboard access.
     }
   };
 
