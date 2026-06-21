@@ -11,12 +11,11 @@ export function CheckoutPage() {
   const { cart, cartTotal, isLoading: isCartLoading } = useCart();
   const checkoutMutation = useCheckout();
   const [localError, setLocalError] = React.useState(null);
-
-  const cartItems = cart?.items ?? [];
+  const cartItems = cart?.items;
   const items = React.useMemo(
     () =>
-      cartItems.map((item) => ({
-        id: item.voucherId,
+      (cartItems ?? []).map((item) => ({
+        id: item.voucherId ?? item.id,
         qty: item.qty,
       })),
     [cartItems]
@@ -25,7 +24,7 @@ export function CheckoutPage() {
   const totalQty = cartTotal?.totalQty ?? items.reduce((sum, item) => sum + item.qty, 0);
   const totalAmount =
     cartTotal?.totalAmount ??
-    cartItems.reduce((sum, item) => {
+    (cartItems ?? []).reduce((sum, item) => {
       const price = Number(item.voucher?.salePrice) || 0;
       return sum + price * item.qty;
     }, 0);
