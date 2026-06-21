@@ -75,6 +75,12 @@ export function OrderSuccessPage() {
   const successState = locationState.orderId ? locationState : persistedState;
   const { orderId, voucherCodes } = successState || {};
 
+  React.useEffect(() => {
+    return () => {
+      sessionStorage.removeItem("vivouch:last-order-success");
+    };
+  }, []);
+
   const handleOpenQR = (vc) => {
     setSelectedVoucherCode(vc);
     setIsModalOpen(true);
