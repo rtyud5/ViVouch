@@ -98,16 +98,25 @@ export function VoucherDetailPage() {
     }
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (navigator.share) {
-      navigator.share({
-        title: voucher?.name || "Voucher ưu đãi",
-        text: `Nhận ngay ưu đãi từ ${voucher?.partnerName}`,
-        url: window.location.href,
-      }).catch(console.error);
-    } else {
-      navigator.clipboard.writeText(window.location.href);
+      try {
+        await navigator.share({
+          title: voucher?.name || "Voucher ưu đãi",
+          text: `Nhận ngay ưu đãi từ ${voucher?.partnerName}`,
+          url: window.location.href,
+        });
+      } catch {
+        // User may cancel the share sheet or the browser may block sharing.
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(window.location.href);
       showToast("Đã sao chép liên kết voucher vào bộ nhớ tạm!");
+    } catch {
+      // Silent fail: avoid console noise in demo mode.
     }
   };
 

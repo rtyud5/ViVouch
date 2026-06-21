@@ -13,7 +13,7 @@ export class GlobalErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("GlobalErrorBoundary caught an error:", error, errorInfo);
+    this.setState({ error, errorInfo });
   }
 
   handleReload = () => {

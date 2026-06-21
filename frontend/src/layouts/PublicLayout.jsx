@@ -18,6 +18,8 @@ export function PublicLayout() {
   const { pathname } = useLocation();
   const isVoucherListPage = pathname === "/vouchers";
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const isCustomer = isAuthenticated && user?.role === "customer";
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
@@ -30,7 +32,7 @@ export function PublicLayout() {
       </div>
 
       {/* Bottom Navigation — chỉ hiển thị trên mobile */}
-      {isAuthenticated ? (
+      {isCustomer ? (
         <AuthenticatedBottomNav />
       ) : (
         <BottomNav cartCount={0} basePath="" />

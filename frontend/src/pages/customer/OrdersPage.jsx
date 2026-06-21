@@ -6,7 +6,7 @@ import { OrderItemCard } from "../../components/voucher/OrderItemCard";
 import { OrderStatusBadge, CustomerEmptyState, LoadingSpinner } from "../../components/common";
 
 export function OrdersPage() {
-  const { orders, isLoading } = useOrders();
+  const { orders, isLoading, error, refetch } = useOrders();
   const [activeTab, setActiveTab] = useState("ALL");
   const [expandedOrders, setExpandedOrders] = useState(new Set());
 
@@ -56,6 +56,16 @@ export function OrdersPage() {
         {isLoading ? (
           <div className="flex justify-center py-16">
             <LoadingSpinner size="lg" />
+          </div>
+        ) : error ? (
+          <div className="max-w-2xl mx-auto rounded-2xl border border-error/20 bg-error/5 p-6 text-center">
+            <p className="text-lg font-bold text-error mb-2">Không thể tải lịch sử đơn hàng</p>
+            <p className="text-sm text-on-surface-variant mb-6">
+              Dữ liệu đơn hàng tạm thời không truy cập được. Vui lòng thử lại để tiếp tục demo.
+            </p>
+            <button type="button" onClick={() => refetch()} className="btn btn-primary rounded-full">
+              Thử lại
+            </button>
           </div>
         ) : filteredOrders.length === 0 ? (
           <CustomerEmptyState

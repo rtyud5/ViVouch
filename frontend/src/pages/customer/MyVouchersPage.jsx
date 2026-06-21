@@ -4,7 +4,7 @@ import { useMyVouchers } from "../../features/orders/hooks";
 import { QRCodeModal, CustomerEmptyState, LoadingSpinner } from "../../components/common";
 
 export function MyVouchersPage() {
-  const { voucherCodes, isLoading } = useMyVouchers();
+  const { voucherCodes, isLoading, error, refetch } = useMyVouchers();
   const [activeTab, setActiveTab] = useState("ISSUED");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVoucherCode, setSelectedVoucherCode] = useState(null);
@@ -56,6 +56,16 @@ export function MyVouchersPage() {
       {isLoading ? (
         <div className="flex justify-center py-16">
           <LoadingSpinner size="lg" />
+        </div>
+      ) : error ? (
+        <div className="max-w-2xl mx-auto rounded-2xl border border-error/20 bg-error/5 p-6 text-center">
+          <p className="text-lg font-bold text-error mb-2">Không thể tải voucher của tôi</p>
+          <p className="text-sm text-on-surface-variant mb-6">
+            Dữ liệu voucher tạm thời không truy cập được. Vui lòng thử lại để tiếp tục demo.
+          </p>
+          <button type="button" onClick={() => refetch()} className="btn btn-primary rounded-full">
+            Thử lại
+          </button>
         </div>
       ) : filteredVouchers.length === 0 ? (
         <CustomerEmptyState
