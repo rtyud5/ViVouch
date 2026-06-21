@@ -3,7 +3,7 @@ import { formatDate } from "../../utils/formatDate";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { useOrders } from "../../features/orders/hooks";
 import { OrderItemCard } from "../../components/voucher/OrderItemCard";
-import { OrderStatusBadge, CustomerEmptyState, LoadingSpinner } from "../../components/common";
+import { OrderStatusBadge, CustomerEmptyState, LoadingSpinner, ErrorRetryPanel } from "../../components/common";
 
 export function OrdersPage() {
   const { orders, isLoading, error, refetch } = useOrders();
@@ -16,11 +16,11 @@ export function OrdersPage() {
     { id: "CANCELLED", label: "Đã huỷ" },
   ];
 
-  const filteredOrders = orders?.filter((order) => {
-    if (activeTab === "ALL") return true;
-    const orderStatus = String(order.status || '').toUpperCase();
-    return orderStatus === activeTab;
-  }) || [];
+  const filteredOrders =
+    orders?.filter((order) => {
+      if (activeTab === "ALL") return true;
+      return String(order.status || "").toUpperCase() === activeTab;
+    }) || [];
 
   const toggleExpand = (orderCode) => {
     const next = new Set(expandedOrders);
@@ -28,6 +28,17 @@ export function OrdersPage() {
     else next.add(orderCode);
     setExpandedOrders(next);
   };
+
+  const errorTitle = "Không thể tải lịch sử đơn hàng";
+  const errorDescription =
+    "Dữ liệu đơn hàng tạm thời không truy cập được. Vui lòng thử lại để tiếp tục demo.";
+
+  let emptyDescription = "Không có đơn hàng đã huỷ nào.";
+  if (activeTab === "ALL") {
+    emptyDescription = "Bạn chưa thực hiện bất kỳ giao dịch nào.";
+  } else if (activeTab === "COMPLETED") {
+    emptyDescription = "Không có đơn hàng thành công nào.";
+  }
 
   return (
     <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-8 animate-fade-in">
@@ -42,10 +53,11 @@ export function OrdersPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`font-label-md text-label-md py-4 px-2 whitespace-nowrap transition-colors ${activeTab === tab.id
-              ? "text-primary font-bold border-b-2 border-primary"
-              : "text-on-surface-variant hover:text-primary"
-              }`}
+            className={`font-label-md text-label-md py-4 px-2 whitespace-nowrap transition-colors ${
+              activeTab === tab.id
+                ? "text-primary font-bold border-b-2 border-primary"
+                : "text-on-surface-variant hover:text-primary"
+            }`}
           >
             {tab.label}
           </button>
@@ -58,37 +70,24 @@ export function OrdersPage() {
             <LoadingSpinner size="lg" />
           </div>
         ) : error ? (
-          <div className="max-w-2xl mx-auto rounded-2xl border border-error/20 bg-error/5 p-6 text-center">
-            <p className="text-lg font-bold text-error mb-2">Không thể tải lịch sử đơn hàng</p>
-            <p className="text-sm text-on-surface-variant mb-6">
-              Dữ liệu đơn hàng tạm thời không truy cập được. Vui lòng thử lại để tiếp tục demo.
-            </p>
-            <button type="button" onClick={() => refetch()} className="btn btn-primary rounded-full">
-              Thử lại
-            </button>
-          </div>
+          <ErrorRetryPanel title={errorTitle} description={errorDescription} onRetry={refetch} />
         ) : filteredOrders.length === 0 ? (
-          <CustomerEmptyState
-            type="orders"
-            description={
-              activeTab === "ALL"
-                ? "Bạn chưa thực hiện bất kỳ giao dịch nào."
-                : activeTab === "COMPLETED"
-                  ? "Không có đơn hàng thành công nào."
-                  : "Không có đơn hàng đã hủy nào."
-            }
-          />
+          <CustomerEmptyState type="orders" description={emptyDescription} />
         ) : (
           filteredOrders.map((order) => {
             const normalizedStatus = String(order.status || "").toUpperCase();
             const isExpanded = expandedOrders.has(order.code);
-            const totalVouchers = (order.items || []).reduce((sum, item) => sum + (item.quantity ?? item.qty ?? 0), 0);
+            const totalVouchers = (order.items || []).reduce(
+              (sum, item) => sum + (item.quantity ?? item.qty ?? 0),
+              0
+            );
 
             return (
               <div
                 key={order.code}
-                className={`bg-surface-container-lowest rounded-xl shadow-sm p-6 border border-surface-variant transition-all hover:shadow-md ${normalizedStatus === "CANCELLED" ? "opacity-75" : ""
-                  }`}
+                className={`bg-surface-container-lowest rounded-xl shadow-sm p-6 border border-surface-variant transition-all hover:shadow-md ${
+                  normalizedStatus === "CANCELLED" ? "opacity-75" : ""
+                }`}
               >
                 <button
                   className="flex justify-between items-start cursor-pointer group w-full text-left focus:outline-none"
@@ -112,7 +111,11 @@ export function OrdersPage() {
                       {formatCurrency(Number(order.totalAmount))}
                     </div>
                     <OrderStatusBadge status={normalizedStatus} />
-                    <span className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 ${isExpanded ? "rotate-180 text-primary" : "group-hover:text-primary"}`}>
+                    <span
+                      className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 ${
+                        isExpanded ? "rotate-180 text-primary" : "group-hover:text-primary"
+                      }`}
+                    >
                       expand_more
                     </span>
                   </div>

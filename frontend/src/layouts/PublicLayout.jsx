@@ -11,7 +11,7 @@ import { useCart } from "../features/cart/hooks/useCart";
  * - Desktop: hiển thị PublicNavbar trên cùng, ẩn BottomNav.
  * - Mobile : hiển thị BottomNav phía dưới với 5 icon.
  *
- * Trang /vouchers dùng header riêng (back + search) theo mockup —
+ * Trang /vouchers dùng header riêng (back + search) theo mockup -
  * không hiển thị PublicNavbar để tránh 2 search bar.
  */
 export function PublicLayout() {
@@ -19,19 +19,16 @@ export function PublicLayout() {
   const isVoucherListPage = pathname === "/vouchers";
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
-  const isCustomer = isAuthenticated && user?.role === "customer";
+  const isCustomer = isAuthenticated && user?.role === "CUSTOMER";
 
   return (
     <div className="min-h-screen bg-base-100 flex flex-col">
-      {/* Desktop Navbar — ẩn trên trang danh sách voucher */}
       {!isVoucherListPage && <PublicNavbar />}
 
-      {/* Nội dung trang */}
       <div className="flex-1 pb-16 md:pb-0">
         <Outlet />
       </div>
 
-      {/* Bottom Navigation — chỉ hiển thị trên mobile */}
       {isCustomer ? (
         <AuthenticatedBottomNav />
       ) : (

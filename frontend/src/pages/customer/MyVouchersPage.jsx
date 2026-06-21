@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { VoucherCodeCard } from "../../components/voucher/VoucherCodeCard";
 import { useMyVouchers } from "../../features/orders/hooks";
-import { QRCodeModal, CustomerEmptyState, LoadingSpinner } from "../../components/common";
+import { QRCodeModal, CustomerEmptyState, LoadingSpinner, ErrorRetryPanel } from "../../components/common";
 
 export function MyVouchersPage() {
   const { voucherCodes, isLoading, error, refetch } = useMyVouchers();
@@ -15,12 +15,10 @@ export function MyVouchersPage() {
     { id: "EXPIRED", label: "Hết hạn" },
   ];
 
-  const filteredVouchers = voucherCodes?.filter((vc) => {
-    const vcStatus = String(vc.status || '').toUpperCase();
-    return vcStatus === activeTab;
-  }) || [];
-
-  const issuedCount = voucherCodes?.filter((vc) => String(vc.status || '').toUpperCase() === "ISSUED").length || 0;
+  const filteredVouchers =
+    voucherCodes?.filter((vc) => String(vc.status || "").toUpperCase() === activeTab) || [];
+  const issuedCount =
+    voucherCodes?.filter((vc) => String(vc.status || "").toUpperCase() === "ISSUED").length || 0;
 
   const handleOpenQR = (voucherCode) => {
     setSelectedVoucherCode(voucherCode);
@@ -31,6 +29,17 @@ export function MyVouchersPage() {
     setIsModalOpen(false);
     setTimeout(() => setSelectedVoucherCode(null), 300);
   };
+
+  const errorTitle = "Không thể tải voucher của tôi";
+  const errorDescription =
+    "Dữ liệu voucher tạm thời không truy cập được. Vui lòng thử lại để tiếp tục demo.";
+
+  let emptyDescription = "Không có voucher nào hết hạn.";
+  if (activeTab === "ISSUED") {
+    emptyDescription = "Bạn chưa có voucher nào chưa dùng.";
+  } else if (activeTab === "USED") {
+    emptyDescription = "Bạn chưa dùng voucher nào.";
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 w-full animate-fade-in">
@@ -58,26 +67,9 @@ export function MyVouchersPage() {
           <LoadingSpinner size="lg" />
         </div>
       ) : error ? (
-        <div className="max-w-2xl mx-auto rounded-2xl border border-error/20 bg-error/5 p-6 text-center">
-          <p className="text-lg font-bold text-error mb-2">Không thể tải voucher của tôi</p>
-          <p className="text-sm text-on-surface-variant mb-6">
-            Dữ liệu voucher tạm thời không truy cập được. Vui lòng thử lại để tiếp tục demo.
-          </p>
-          <button type="button" onClick={() => refetch()} className="btn btn-primary rounded-full">
-            Thử lại
-          </button>
-        </div>
+        <ErrorRetryPanel title={errorTitle} description={errorDescription} onRetry={refetch} />
       ) : filteredVouchers.length === 0 ? (
-        <CustomerEmptyState
-          type="vouchers"
-          description={
-            activeTab === "ISSUED"
-              ? "Bạn chưa có voucher nào chưa dùng."
-              : activeTab === "USED"
-              ? "Bạn chưa dùng voucher nào."
-              : "Không có voucher nào hết hạn."
-          }
-        />
+        <CustomerEmptyState type="vouchers" description={emptyDescription} />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           {filteredVouchers.map((vc) => (
@@ -86,7 +78,6 @@ export function MyVouchersPage() {
         </div>
       )}
 
-      {/* Shared QRCodeModal */}
       <QRCodeModal
         isOpen={isModalOpen}
         onClose={handleCloseQR}

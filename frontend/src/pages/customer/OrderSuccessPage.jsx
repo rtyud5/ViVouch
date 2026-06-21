@@ -20,13 +20,13 @@ const Confetti = React.memo(function Confetti() {
 
   const particles = React.useMemo(
     () =>
-      [...Array(60)].map((_, i) => ({
-        left: Math.random() * 100,
-        delay: Math.random() * 2,
-        duration: Math.random() * 2.5 + 1.5,
-        size: Math.random() * 8 + 6,
+      new Array(60).fill(null).map((_, i) => ({
+        left: (i * 17) % 100,
+        delay: ((i * 7) % 20) / 10,
+        duration: 1.5 + ((i * 11) % 10) / 10,
+        size: 6 + ((i * 13) % 8),
         color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-        shapeClass: Math.random() > 0.5 ? "rounded-full" : "rounded-sm",
+        shapeClass: i % 2 === 0 ? "rounded-full" : "rounded-sm",
       })),
     []
   );

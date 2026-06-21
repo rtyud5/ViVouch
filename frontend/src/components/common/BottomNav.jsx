@@ -2,27 +2,26 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 
 /**
- * BottomNav — 5-tab mobile navigation bar.
+ * BottomNav â€” 5-tab mobile navigation bar.
  *
  * Dùng cho cả PublicLayout và CustomerLayout (chỉ hiển thị trên mobile).
  * Props:
- *   cartCount  {number}  – số lượng sản phẩm trong giỏ (dùng để hiển thị badge)
- *   basePath   {string}  – prefix route, ví dụ: '' (public) hoặc '/customer'
+ *   cartCount  {number}  â€“ số lượng sản phẩm trong giỏ (dùng để hiển thị badge)
+ *   basePath   {string}  â€“ prefix route, ví dụ: '' (public) hoặc '/customer'
  */
 export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
   const { pathname } = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
-  const isCustomer = isAuthenticated && user?.role === 'customer';
+  const isCustomer = isAuthenticated && user?.role === 'CUSTOMER';
   const basePath = initialBasePath ?? (isCustomer ? '/customer' : '');
-  // Xác định tab nào đang active
-  const isHome    = pathname === basePath || pathname === `${basePath}/home` || pathname === '/';
-  const isSearch  = pathname === `${basePath}/vouchers` || pathname === '/vouchers';
-  const isCart    = pathname === `${basePath}/cart`;
+
+  const isHome = pathname === basePath || pathname === `${basePath}/home` || pathname === '/';
+  const isSearch = pathname === `${basePath}/vouchers` || pathname === '/vouchers';
+  const isCart = pathname === `${basePath}/cart`;
   const isVoucher = pathname === `${basePath}/my-vouchers`;
   const isProfile = pathname === `${basePath}/profile`;
 
-  // Helper tạo class cho mỗi tab
   function tabClass(active) {
     return [
       'flex flex-col items-center justify-center p-2 w-16 rounded-xl transition-colors duration-150',
@@ -39,7 +38,6 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
                  md:hidden"
       aria-label="Điều hướng chính"
     >
-      {/* Tab 1: Home */}
       <Link
         to={basePath ? `${basePath}/home` : '/'}
         id="bottom-nav-home"
@@ -63,7 +61,6 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
         <span className="text-[10px] mt-0.5 leading-none font-semibold">Home</span>
       </Link>
 
-      {/* Tab 2: Tìm kiếm */}
       <Link
         to="/vouchers"
         id="bottom-nav-search"
@@ -87,7 +84,6 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
         <span className="text-[10px] mt-0.5 leading-none font-semibold">Tìm kiếm</span>
       </Link>
 
-      {/* Tab 3: Giỏ hàng (với badge) */}
       <Link
         to={basePath ? `${basePath}/cart` : '/login'}
         id="bottom-nav-cart"
@@ -108,7 +104,6 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
           />
         </svg>
-        {/* Badge số lượng */}
         {cartCount > 0 && (
           <span
             className="absolute top-1 right-2 bg-red-500 text-white text-[10px] font-bold
@@ -122,7 +117,6 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
         <span className="text-[10px] mt-0.5 leading-none font-semibold">Giỏ hàng</span>
       </Link>
 
-      {/* Tab 4: Voucher của tôi */}
       <Link
         to={basePath ? `${basePath}/my-vouchers` : '/login'}
         id="bottom-nav-vouchers"
@@ -146,7 +140,6 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
         <span className="text-[10px] mt-0.5 leading-none font-semibold">Voucher</span>
       </Link>
 
-      {/* Tab 5: Cá nhân */}
       <Link
         to={basePath ? `${basePath}/profile` : '/login'}
         id="bottom-nav-profile"

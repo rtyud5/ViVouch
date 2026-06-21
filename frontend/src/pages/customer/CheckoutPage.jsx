@@ -16,7 +16,7 @@ export function CheckoutPage() {
   const items = React.useMemo(
     () =>
       cartItems.map((item) => ({
-        id: item.voucherId ?? item.id,
+        id: item.voucherId,
         qty: item.qty,
       })),
     [cartItems]

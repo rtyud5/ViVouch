@@ -10,4 +10,5 @@ export * from './CopyButton';
 export * from './QRCodeModal';
 export * from './OrderStatusBadge';
 export * from './CustomerEmptyState';
+export * from './ErrorRetryPanel';
 
