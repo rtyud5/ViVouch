@@ -212,8 +212,9 @@ export async function rejectVoucher(adminId, voucherId, reason) {
 }
 
 export async function findManyPartners(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { page = 1, limit = 10 } = pagination;
   const { status, search } = filters;
-  const skip = (pagination.page - 1) * pagination.limit;
+  const skip = (page - 1) * limit;
 
   const where = {};
   if (status) where.status = status;
@@ -229,7 +230,7 @@ export async function findManyPartners(filters = {}, pagination = { page: 1, lim
     prisma.partner.findMany({
       where,
       skip,
-      take: pagination.limit,
+      take: limit,
       orderBy: { createdAt: 'desc' },
       include: { user: { select: { id: true, email: true, role: true, status: true } } },
     }),
@@ -240,16 +241,17 @@ export async function findManyPartners(filters = {}, pagination = { page: 1, lim
     partners,
     pagination: {
       total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     },
   };
 }
 
 export async function findManyVouchers(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { page = 1, limit = 10 } = pagination;
   const { status, search } = filters;
-  const skip = (pagination.page - 1) * pagination.limit;
+  const skip = (page - 1) * limit;
 
   const where = {};
   if (status) where.status = status;
@@ -264,7 +266,7 @@ export async function findManyVouchers(filters = {}, pagination = { page: 1, lim
     prisma.voucher.findMany({
       where,
       skip,
-      take: pagination.limit,
+      take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
         partner: { select: { id: true, businessName: true } },
@@ -278,16 +280,17 @@ export async function findManyVouchers(filters = {}, pagination = { page: 1, lim
     vouchers,
     pagination: {
       total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     },
   };
 }
 
 export async function findManyUsers(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { page = 1, limit = 10 } = pagination;
   const { role, isLocked, search } = filters;
-  const skip = (pagination.page - 1) * pagination.limit;
+  const skip = (page - 1) * limit;
 
   const where = {};
   if (role) where.role = role;
@@ -306,7 +309,7 @@ export async function findManyUsers(filters = {}, pagination = { page: 1, limit:
     prisma.user.findMany({
       where,
       skip,
-      take: pagination.limit,
+      take: limit,
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
@@ -334,9 +337,9 @@ export async function findManyUsers(filters = {}, pagination = { page: 1, limit:
     users: mappedUsers,
     pagination: {
       total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     },
   };
 }
@@ -376,8 +379,9 @@ export async function toggleUserLock(adminId, userId) {
 }
 
 export async function findManyOrders(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { page = 1, limit = 10 } = pagination;
   const { status, search } = filters;
-  const skip = (pagination.page - 1) * pagination.limit;
+  const skip = (page - 1) * limit;
 
   const where = {};
   if (status) where.status = status;
@@ -392,7 +396,7 @@ export async function findManyOrders(filters = {}, pagination = { page: 1, limit
     prisma.order.findMany({
       where,
       skip,
-      take: pagination.limit,
+      take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
         items: {
@@ -411,9 +415,9 @@ export async function findManyOrders(filters = {}, pagination = { page: 1, limit
     orders,
     pagination: {
       total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     },
   };
 }
@@ -441,8 +445,9 @@ export async function findOrderById(orderId) {
 }
 
 export async function findManyAuditLogs(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { page = 1, limit = 10 } = pagination;
   const { action, targetType } = filters;
-  const skip = (pagination.page - 1) * pagination.limit;
+  const skip = (page - 1) * limit;
 
   const where = {};
   if (action) where.action = action;
@@ -452,7 +457,7 @@ export async function findManyAuditLogs(filters = {}, pagination = { page: 1, li
     prisma.auditLog.findMany({
       where,
       skip,
-      take: pagination.limit,
+      take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
         actor: { select: { id: true, email: true, role: true } },
@@ -465,9 +470,9 @@ export async function findManyAuditLogs(filters = {}, pagination = { page: 1, li
     logs,
     pagination: {
       total,
-      page: pagination.page,
-      limit: pagination.limit,
-      totalPages: Math.ceil(total / pagination.limit),
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
     },
   };
 }

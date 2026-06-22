@@ -3,24 +3,7 @@ import request from "supertest";
 import app from "../src/app.js";
 import { prisma } from "../src/config/prisma.js";
 
-// ───────── Helper: reusable auth-guard tests ─────────
-function testAuthGuard(method, urlFn) {
-  it("401 nếu không có token", async () => {
-    const url = typeof urlFn === "function" ? urlFn() : urlFn;
-    const res = await request(app)[method](url);
-    expect(res.status).toBe(401);
-  });
-
-  it("403 nếu không phải ADMIN", async () => {
-    const url = typeof urlFn === "function" ? urlFn() : urlFn;
-    const res = await request(app)
-      [method](url)
-      .set("Authorization", `Bearer ${sharedState.customerToken}`);
-    expect(res.status).toBe(403);
-  });
-}
-
-// ───────── Shared state across all describes ─────────
+// ───────── Shared state & Constants ─────────
 const sharedState = {
   adminToken: "",
   customerToken: "",
@@ -40,7 +23,25 @@ const PENDING_COMPANY = "PENDING_COMPANY_TEST_123";
 const APPROVED_COMPANY = "APPROVED_COMPANY_TEST_123";
 const TEST_EMAILS = [ADMIN_EMAIL, CUSTOMER1_EMAIL, CUSTOMER2_EMAIL];
 
-// ───────── Helper: data creation ─────────
+// ───────── Helpers ─────────
+async function cleanupAll() {
+  if (process.env.NODE_ENV !== "test") {
+    throw new Error("Not in test env");
+  }
+
+  await prisma.auditLog.deleteMany();
+  await prisma.voucher.deleteMany({
+    where: { OR: [{ title: "Test Voucher Pending" }, { title: "Test Voucher Approved" }] },
+  });
+  await prisma.partner.deleteMany({
+    where: { OR: [{ businessName: PENDING_COMPANY }, { businessName: APPROVED_COMPANY }] },
+  });
+  if (sharedState.myCategoryId) {
+    await prisma.category.deleteMany({ where: { id: sharedState.myCategoryId } });
+  }
+  await prisma.user.deleteMany({ where: { email: { in: TEST_EMAILS } } });
+}
+
 async function createTestUsers() {
   const resAdminReg = await request(app)
     .post("/api/auth/register")
@@ -129,18 +130,20 @@ async function createTestVouchers(categoryId) {
   });
 }
 
-async function cleanupAll() {
-  await prisma.auditLog.deleteMany();
-  await prisma.voucher.deleteMany({
-    where: { OR: [{ title: "Test Voucher Pending" }, { title: "Test Voucher Approved" }] },
+function testAuthGuard(method, urlFn) {
+  it("401 nếu không có token", async () => {
+    const url = typeof urlFn === "function" ? urlFn() : urlFn;
+    const res = await request(app)[method](url);
+    expect(res.status).toBe(401);
   });
-  await prisma.partner.deleteMany({
-    where: { OR: [{ businessName: PENDING_COMPANY }, { businessName: APPROVED_COMPANY }] },
+
+  it("403 nếu không phải ADMIN", async () => {
+    const url = typeof urlFn === "function" ? urlFn() : urlFn;
+    const res = await request(app)
+      [method](url)
+      .set("Authorization", `Bearer ${sharedState.customerToken}`);
+    expect(res.status).toBe(403);
   });
-  if (sharedState.myCategoryId) {
-    await prisma.category.deleteMany({ where: { id: sharedState.myCategoryId } });
-  }
-  await prisma.user.deleteMany({ where: { email: { in: TEST_EMAILS } } });
 }
 
 // ═════════ TEST SUITE ═════════

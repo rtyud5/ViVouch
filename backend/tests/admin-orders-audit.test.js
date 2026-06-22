@@ -3,68 +3,134 @@ import request from "supertest";
 import app from "../src/app.js";
 import { prisma } from "../src/config/prisma.js";
 
-describe("Admin Orders & Audit Logs API Tests", () => {
-  const customerEmail = "test_customer_orders@example.com";
-  const adminEmail = "test_admin_orders@example.com";
-  const partnerEmail = "test_partner_orders@example.com";
-  const password = "Password123!";
+const CUSTOMER_EMAIL = "test_customer_orders@example.com";
+const ADMIN_EMAIL = "test_admin_orders@example.com";
+const PARTNER_EMAIL = "test_partner_orders@example.com";
+const PASSWORD = "Password123!";
+const TEST_EMAILS = [CUSTOMER_EMAIL, ADMIN_EMAIL, PARTNER_EMAIL];
 
-  let customerToken = "";
-  let adminToken = "";
-  let adminId = "";
+async function cleanupAll() {
+  if (process.env.NODE_ENV !== "test") {
+    throw new Error("Not in test env");
+  }
+
+  await prisma.auditLog.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.orderItem.deleteMany();
+  await prisma.voucherUsageLog.deleteMany();
+  await prisma.voucherCode.deleteMany();
+  await prisma.order.deleteMany();
+  await prisma.voucherBranch.deleteMany();
+  await prisma.cartItem.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.voucher.deleteMany();
+  await prisma.branch.deleteMany();
+  await prisma.partner.deleteMany();
+  await prisma.category.deleteMany({ where: { slug: "test-category" } });
+  await prisma.user.deleteMany({
+    where: { email: { in: TEST_EMAILS } }
+  });
+}
+
+async function createTestCustomer() {
+  const resReg = await request(app)
+    .post("/api/auth/register")
+    .send({ email: CUSTOMER_EMAIL, password: PASSWORD, fullName: "Customer", phone: "0900000101" });
+
+  const resLogin = await request(app)
+    .post("/api/auth/login")
+    .send({ email: CUSTOMER_EMAIL, password: PASSWORD });
+  
+  return {
+    id: resReg.body.data.id,
+    token: resLogin.body.data.accessToken
+  };
+}
+
+async function createTestAdmin() {
+  const resReg = await request(app)
+    .post("/api/auth/register")
+    .send({ email: ADMIN_EMAIL, password: PASSWORD, fullName: "Admin", phone: "0900000102" });
+  
+  const adminId = resReg.body.data.id;
+
+  await prisma.user.update({
+    where: { id: adminId },
+    data: { role: "ADMIN" }
+  });
+
+  const resLogin = await request(app)
+    .post("/api/auth/login")
+    .send({ email: ADMIN_EMAIL, password: PASSWORD });
+
+  return {
+    id: adminId,
+    token: resLogin.body.data.accessToken
+  };
+}
+
+async function createTestOrder(customerId, voucherId) {
+  const order = await prisma.order.create({
+    data: {
+      userId: customerId,
+      status: "COMPLETED",
+      totalAmount: 90
+    }
+  });
+
+  await prisma.orderItem.create({
+    data: {
+      orderId: order.id,
+      voucherId: voucherId,
+      qty: 1,
+      unitPrice: 90
+    }
+  });
+
+  await prisma.payment.create({
+    data: {
+      orderId: order.id,
+      method: "MOMO",
+      status: "PAID",
+      amount: 90
+    }
+  });
+
+  return order;
+}
+
+async function createTestAuditLog(actorId, targetId) {
+  return await prisma.auditLog.create({
+    data: {
+      actorId: actorId,
+      action: "ADMIN_APPROVE_VOUCHER",
+      targetType: "Voucher",
+      targetId: targetId
+    }
+  });
+}
+
+describe("Admin Orders & Audit Logs API Tests", () => {
   let customerId = "";
+  let customerToken = "";
+  let adminId = "";
+  let adminToken = "";
   let createdOrderId = "";
 
   beforeAll(async () => {
-    // Clean up potentially conflicting ancient data
-    await prisma.auditLog.deleteMany();
-    await prisma.payment.deleteMany();
-    await prisma.orderItem.deleteMany();
-    await prisma.voucherUsageLog.deleteMany();
-    await prisma.voucherCode.deleteMany();
-    await prisma.order.deleteMany();
-    await prisma.voucherBranch.deleteMany();
-    await prisma.cartItem.deleteMany();
-    await prisma.review.deleteMany();
-    await prisma.voucher.deleteMany();
-    await prisma.branch.deleteMany();
-    await prisma.partner.deleteMany();
-    await prisma.category.deleteMany({ where: { slug: "test-category" } });
-    await prisma.user.deleteMany({
-      where: { email: { in: [customerEmail, adminEmail, partnerEmail] } }
-    });
+    await cleanupAll();
 
-    // 1. Tạo Customer
-    const resCustomerReg = await request(app)
-      .post("/api/auth/register")
-      .send({ email: customerEmail, password, fullName: "Customer", phone: "0900000101" });
-    customerId = resCustomerReg.body.data.id;
+    const customer = await createTestCustomer();
+    customerId = customer.id;
+    customerToken = customer.token;
 
-    const resCustomerLogin = await request(app)
-      .post("/api/auth/login")
-      .send({ email: customerEmail, password });
-    customerToken = resCustomerLogin.body.data.accessToken;
+    const admin = await createTestAdmin();
+    adminId = admin.id;
+    adminToken = admin.token;
 
-    // 2. Tạo Admin
-    const resAdminReg = await request(app)
-      .post("/api/auth/register")
-      .send({ email: adminEmail, password, fullName: "Admin", phone: "0900000102" });
-    adminId = resAdminReg.body.data.id;
-
-    await prisma.user.update({
-      where: { id: adminId },
-      data: { role: "ADMIN" }
-    });
-
-    const resAdminLogin = await request(app)
-      .post("/api/auth/login")
-      .send({ email: adminEmail, password });
-    adminToken = resAdminLogin.body.data.accessToken;
-
-    // Tạo Partner User
     const partnerUser = await prisma.user.create({
       data: {
-        email: partnerEmail,
+        email: PARTNER_EMAIL,
         passwordHash: "dummyhash",
         fullName: "Partner",
         role: "PARTNER",
@@ -72,7 +138,6 @@ describe("Admin Orders & Audit Logs API Tests", () => {
       }
     });
 
-    // 3. Tạo dữ liệu qua Prisma
     const category = await prisma.category.create({
       data: { name: "Test Category", slug: "test-category" }
     });
@@ -99,62 +164,14 @@ describe("Admin Orders & Audit Logs API Tests", () => {
       }
     });
 
-    const order = await prisma.order.create({
-      data: {
-        userId: customerId,
-        status: "COMPLETED", // Using COMPLETED instead of PAID for Order
-        totalAmount: 90
-      }
-    });
+    const order = await createTestOrder(customerId, voucher.id);
     createdOrderId = order.id;
 
-    await prisma.orderItem.create({
-      data: {
-        orderId: order.id,
-        voucherId: voucher.id,
-        qty: 1,
-        unitPrice: 90
-      }
-    });
-
-    await prisma.payment.create({
-      data: {
-        orderId: order.id,
-        method: "MOMO",
-        status: "PAID",
-        amount: 90
-      }
-    });
-
-    await prisma.auditLog.create({
-      data: {
-        actorId: adminId,
-        action: "ADMIN_APPROVE_VOUCHER",
-        targetType: "Voucher",
-        targetId: voucher.id
-      }
-    });
+    await createTestAuditLog(adminId, voucher.id);
   });
 
   afterAll(async () => {
-    // 4. Clean up in order
-    await prisma.auditLog.deleteMany();
-    await prisma.payment.deleteMany();
-    await prisma.orderItem.deleteMany();
-    await prisma.voucherUsageLog.deleteMany();
-    await prisma.voucherCode.deleteMany();
-    await prisma.order.deleteMany();
-    await prisma.voucherBranch.deleteMany();
-    await prisma.cartItem.deleteMany();
-    await prisma.review.deleteMany();
-    await prisma.voucher.deleteMany();
-    await prisma.branch.deleteMany();
-    await prisma.partner.deleteMany();
-    await prisma.category.deleteMany({ where: { slug: "test-category" } });
-    await prisma.user.deleteMany({
-      where: { email: { in: [customerEmail, adminEmail, partnerEmail] } }
-    });
-    
+    await cleanupAll();
     await prisma.$disconnect();
   });
 
