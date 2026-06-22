@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useOrders } from '../../features/admin/hooks/useOrders';
+import { useOrders, useOrderById } from '../../features/admin/hooks/useOrders';
 import { AdminTable } from '../../features/admin/components/AdminTable';
 import { AdminStatusBadge } from '../../features/admin/components/AdminStatusBadge';
 
 export default function OrdersPage() {
   const [params, setParams] = useState({ page: 1, limit: 10, status: '', search: '' });
   const [searchInput, setSearchInput] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
 
   const { data, isLoading } = useOrders(params);
+  const { data: orderDetailData } = useOrderById(selectedOrderId);
   const orders = data?.data?.orders || [];
   const total = data?.data?.pagination?.total || 0;
   const totalPages = data?.data?.pagination?.totalPages || 1;
+  const selectedOrder = orderDetailData?.data;
 
   // Debounce search
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function OrdersPage() {
       render: (row) => (
         <div className="flex justify-end pr-4">
           <button
-            onClick={(e) => { e.stopPropagation(); setSelectedOrder(row); }}
+            onClick={(e) => { e.stopPropagation(); setSelectedOrderId(row.id); }}
             className="p-1 text-amber-600 hover:bg-amber-50 rounded"
             title="Xem chi tiết"
           >
@@ -117,7 +119,7 @@ export default function OrdersPage() {
             columns={columns}
             data={orders}
             loading={isLoading}
-            onRowClick={(row) => setSelectedOrder(row)}
+            onRowClick={(row) => setSelectedOrderId(row.id)}
             emptyMessage="Không tìm thấy đơn hàng nào"
           />
         </div>
@@ -150,7 +152,7 @@ export default function OrdersPage() {
               <h3 className="text-lg font-bold">Chi tiết đơn hàng</h3>
               <p className="font-mono text-sm text-amber-600 mt-0.5">#{selectedOrder.id}</p>
             </div>
-            <button onClick={() => setSelectedOrder(null)} className="p-2 text-gray-500 hover:bg-gray-200 rounded-full">
+            <button onClick={() => setSelectedOrderId(null)} className="p-2 text-gray-500 hover:bg-gray-200 rounded-full">
               <span className="material-symbols-outlined">close</span>
             </button>
           </div>
@@ -199,7 +201,7 @@ export default function OrdersPage() {
                   <span className="text-gray-600">Trạng thái:</span>
                   <AdminStatusBadge status={selectedOrder.payment?.status} />
                 </div>
-                {selectedOrder.payment?.amount && (
+                {selectedOrder.payment?.amount != null && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Số tiền:</span>
                     <span className="font-semibold">{Number(selectedOrder.payment.amount).toLocaleString('vi-VN')}₫</span>
