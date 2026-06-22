@@ -21,4 +21,9 @@ router.post('/vouchers/:id/reject', adminController.rejectVoucher);
 router.get('/users', adminController.getUsers);
 router.post('/users/:id/toggle-lock', adminController.toggleUserLock);
 
+router.get('/orders', adminController.getOrders);
+router.get('/orders/:id', adminController.getOrderById);
+
+router.get('/audit-logs', adminController.getAuditLogs);
+
 export default router;
