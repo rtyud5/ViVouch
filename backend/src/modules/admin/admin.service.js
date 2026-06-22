@@ -374,3 +374,100 @@ export async function toggleUserLock(adminId, userId) {
     return { id: updatedUser.id, email: updatedUser.email, isLocked: newLockedState };
   });
 }
+
+export async function findManyOrders(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { status, search } = filters;
+  const skip = (pagination.page - 1) * pagination.limit;
+
+  const where = {};
+  if (status) where.status = status;
+  if (search) {
+    where.OR = [
+      { id: { contains: search, mode: 'insensitive' } },
+      { user: { email: { contains: search, mode: 'insensitive' } } },
+    ];
+  }
+
+  const [orders, total] = await Promise.all([
+    prisma.order.findMany({
+      where,
+      skip,
+      take: pagination.limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        items: {
+          include: {
+            voucher: { select: { id: true, title: true } },
+          },
+        },
+        user: { select: { id: true, email: true, fullName: true, phone: true } },
+        payment: { select: { status: true, amount: true } },
+      },
+    }),
+    prisma.order.count({ where }),
+  ]);
+
+  return {
+    orders,
+    pagination: {
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+      totalPages: Math.ceil(total / pagination.limit),
+    },
+  };
+}
+
+export async function findOrderById(orderId) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      items: {
+        include: {
+          voucher: { select: { id: true, title: true } },
+        },
+      },
+      voucherCodes: true,
+      user: { select: { id: true, email: true, fullName: true, phone: true } },
+      payment: true,
+    },
+  });
+
+  if (!order) {
+    throw new AppError('Order not found', 404, 'ORDER_NOT_FOUND');
+  }
+
+  return order;
+}
+
+export async function findManyAuditLogs(filters = {}, pagination = { page: 1, limit: 10 }) {
+  const { action, targetType } = filters;
+  const skip = (pagination.page - 1) * pagination.limit;
+
+  const where = {};
+  if (action) where.action = action;
+  if (targetType) where.targetType = targetType;
+
+  const [logs, total] = await Promise.all([
+    prisma.auditLog.findMany({
+      where,
+      skip,
+      take: pagination.limit,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        actor: { select: { id: true, email: true, role: true } },
+      },
+    }),
+    prisma.auditLog.count({ where }),
+  ]);
+
+  return {
+    logs,
+    pagination: {
+      total,
+      page: pagination.page,
+      limit: pagination.limit,
+      totalPages: Math.ceil(total / pagination.limit),
+    },
+  };
+}

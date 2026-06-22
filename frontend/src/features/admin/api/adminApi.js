@@ -69,3 +69,18 @@ export const toggleUserLock = async (userId) => {
   const response = await apiClient.post(`/admin/users/${userId}/toggle-lock`);
   return response.data;
 };
+
+export const getOrders = async (params) => {
+  const response = await apiClient.get('/admin/orders', { params });
+  return response.data;
+};
+
+export const getOrderById = async (id) => {
+  const response = await apiClient.get(`/admin/orders/${id}`);
+  return response.data;
+};
+
+export const getAuditLogs = async (params) => {
+  const response = await apiClient.get('/admin/audit-logs', { params });
+  return response.data;
+};
