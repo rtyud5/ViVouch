@@ -1,15 +1,17 @@
-import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { Save, Send } from "lucide-react";
 import { VoucherCard } from "../../components/voucher/VoucherCard";
-import { createVoucherDraft, mapVoucherFormToPayload, submitVoucherForApproval } from "../../features/vouchers/api/vouchers.api";
+import { createVoucherDraft, submitVoucherForApproval } from "../../features/partner/api/vouchers.api";
+import { getCategories } from "../../features/vouchers/api/vouchers.api";
 import { voucherFormSchema } from "./schemas/voucherFormSchema";
 
 const defaultValues = {
   name: "",
-  category: "am-thuc",
+  category: "",
   location: "",
   imageUrl: "",
   originalPrice: 0,
@@ -25,11 +27,13 @@ function getErrorMessage(error) {
 
 export function CreateVoucherPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
     trigger,
   } = useForm({
@@ -40,11 +44,27 @@ export function CreateVoucherPage() {
 
   const formValues = useWatch({ control, defaultValue: defaultValues });
 
+  // Fetch danh sách danh mục từ API để lấy id (UUID)
+  const { data: categoriesData, isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+    staleTime: 5 * 60 * 1000, // Cache 5 phút vì categories ít thay đổi
+  });
+
+  const categories = categoriesData?.data ?? categoriesData ?? [];
+
+  // Khi categories load xong lần đầu, tự động chọn category đầu tiên
+  useEffect(() => {
+    if (categories.length > 0 && !formValues.category) {
+      setValue("category", categories[0].id, { shouldValidate: false });
+    }
+  }, [categories, formValues.category, setValue]);
+
   const previewVoucher = {
     id: "preview-id",
     name: formValues.name || "Tên Voucher",
     partnerName: "Cửa hàng của bạn",
-    category: formValues.category,
+    category: categories.find((c) => c.id === formValues.category)?.slug || formValues.category,
     location: formValues.location,
     imageUrl: formValues.imageUrl,
     originalPrice: formValues.originalPrice || 0,
@@ -58,6 +78,8 @@ export function CreateVoucherPage() {
   const draftMutation = useMutation({
     mutationFn: createVoucherDraft,
     onSuccess: () => {
+      // Xóa cache để PartnerVoucherListPage tự tải lại danh sách mới nhất
+      queryClient.invalidateQueries({ queryKey: ["partnerVouchers"] });
       alert("Lưu nháp thành công!");
       navigate("/partner/vouchers");
     },
@@ -69,6 +91,7 @@ export function CreateVoucherPage() {
   const submitMutation = useMutation({
     mutationFn: async (formData) => {
       const created = await createVoucherDraft(formData);
+      // Backend trả về { data: { id, ... } } sau khi tạo
       const voucherId = created?.data?.id || created?.id;
 
       if (!voucherId) {
@@ -78,6 +101,8 @@ export function CreateVoucherPage() {
       return submitVoucherForApproval(voucherId);
     },
     onSuccess: () => {
+      // Xóa cache để PartnerVoucherListPage tự tải lại danh sách mới nhất
+      queryClient.invalidateQueries({ queryKey: ["partnerVouchers"] });
       alert("Gửi kiểm duyệt thành công!");
       navigate("/partner/vouchers");
     },
@@ -87,11 +112,11 @@ export function CreateVoucherPage() {
   });
 
   const onSubmitDraft = (data) => {
-    draftMutation.mutate(mapVoucherFormToPayload(data));
+    draftMutation.mutate(data);
   };
 
   const onSubmitApproval = (data) => {
-    submitMutation.mutate(mapVoucherFormToPayload(data));
+    submitMutation.mutate(data);
   };
 
   const nameField = register("name");
@@ -121,7 +146,7 @@ export function CreateVoucherPage() {
             type="button"
             className="btn btn-outline"
             onClick={handleSubmit(onSubmitDraft)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isCategoriesLoading}
           >
             {draftMutation.isPending ? (
               <span className="loading loading-spinner loading-sm" />
@@ -134,7 +159,7 @@ export function CreateVoucherPage() {
             type="button"
             className="btn btn-primary"
             onClick={handleSubmit(onSubmitApproval)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isCategoriesLoading}
           >
             {submitMutation.isPending ? (
               <span className="loading loading-spinner loading-sm" />
@@ -177,16 +202,24 @@ export function CreateVoucherPage() {
                       Danh mục <span className="text-error">*</span>
                     </span>
                   </label>
-                  <select
-                    className={`select select-bordered w-full ${errors.category ? "select-error" : ""}`}
-                    {...categoryField}
-                  >
-                    <option value="am-thuc">Ẩm thực</option>
-                    <option value="lam-dep">Làm đẹp</option>
-                    <option value="du-lich">Du lịch</option>
-                    <option value="mua-sam">Mua sắm</option>
-                    <option value="giai-tri">Giải trí</option>
-                  </select>
+                  {isCategoriesLoading ? (
+                    <div className="select select-bordered w-full flex items-center text-base-content/40">
+                      <span className="loading loading-spinner loading-xs mr-2" />
+                      Đang tải danh mục...
+                    </div>
+                  ) : (
+                    <select
+                      className={`select select-bordered w-full ${errors.category ? "select-error" : ""}`}
+                      {...categoryField}
+                    >
+                      {categories.map((cat) => (
+                        // value = cat.id (UUID) — đúng với foreign key của DB
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                   {errors.category && (
                     <label className="label">
                       <span className="label-text-alt text-error">{errors.category.message}</span>
