@@ -88,16 +88,17 @@ export function PartnerVoucherListPage() {
   const [page, setPage]           = useState(1);
 
   // Debounce: đợi 400ms sau khi người dùng ngừng gõ mới gọi API
-  const handleSearchChange = useCallback((e) => {
-    const value = e.target.value;
-    setKeyword(value);
-    setPage(1); // reset về trang 1 khi search
+  const handleSearchChange = (e) => {
+    setKeyword(e.target.value);
+    setPage(1);
+  };
 
-    clearTimeout(handleSearchChange._timer);
-    handleSearchChange._timer = setTimeout(() => {
-      setDebouncedKw(value.trim());
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedKw(keyword.trim());
     }, 400);
-  }, []);
+    return () => clearTimeout(timer);
+  }, [keyword]);
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
