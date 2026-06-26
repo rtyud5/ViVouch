@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import {
   Ticket,
   ShoppingCart,
@@ -20,15 +20,18 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../../services/apiClient';
+import { getPartnerVouchers } from '../../features/partner/api/vouchers.api';
 
-// --- Components ---
-
-const KpiCard = ({ title, value, icon: Icon, trend, trendLabel, iconBgClass, iconTextClass }) => (
+// Sub-components
+const KpiCard = ({ title, value, icon: Icon, trend, trendLabel, iconBgClass, iconTextClass, isLoading }) => (
   <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col justify-between group hover:shadow-md transition-shadow">
     <div className="flex justify-between items-start mb-4">
       <div>
         <p className="text-gray-500 text-sm font-medium mb-1">{title}</p>
-        <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
+        {isLoading
+          ? <div className="h-8 w-20 bg-gray-100 animate-pulse rounded mt-1" />
+          : <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
+        }
       </div>
       <div className={`p-3 rounded-xl ${iconBgClass} transition-transform group-hover:scale-110`}>
         <Icon className={`w-6 h-6 ${iconTextClass}`} />
@@ -44,95 +47,101 @@ const KpiCard = ({ title, value, icon: Icon, trend, trendLabel, iconBgClass, ico
   </div>
 );
 
+/** Badge hiển thị rõ ràng rằng dữ liệu là mẫu minh họa */
+function MockDataBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">
+      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
+      Dữ liệu mẫu
+    </span>
+  );
+}
+
+// Mock data chỉ dùng cho chart và timeline (chưa có API thật)
+
+const MOCK_CHART_DATA = [
+  { date: 'Ngày 1', revenue: 450000 },
+  { date: 'Ngày 5', revenue: 680000 },
+  { date: 'Ngày 10', revenue: 520000 },
+  { date: 'Ngày 15', revenue: 890000 },
+  { date: 'Ngày 20', revenue: 720000 },
+  { date: 'Ngày 25', revenue: 950000 },
+  { date: 'Ngày 30', revenue: 1100000 },
+];
+
+const MOCK_TIMELINE = [
+  { id: 1, type: 'order',    content: 'Voucher "Buffet Haidilao" nhận được đơn hàng mới',  time: '2 phút trước' },
+  { id: 2, type: 'used',     content: 'Khách hàng đã sử dụng voucher "Sushi Hokkaido"',     time: '15 phút trước' },
+  { id: 3, type: 'approved', content: 'Voucher "Combo BBQ" vừa được duyệt',                 time: '1 giờ trước' },
+  { id: 4, type: 'order',    content: 'Voucher "GongCha" nhận được đơn hàng mới',           time: '3 giờ trước' },
+];
+
+// Main Component
+
 export function PartnerDashboardPage() {
   const navigate = useNavigate();
 
-  // State for dashboard data
-  const [chartData, setChartData] = useState([]);
-  const [topVouchers, setTopVouchers] = useState([]);
-  const [timeline, setTimeline] = useState([]);
-  const [kpiData, setKpiData] = useState({
-    activeVouchers: 0,
-    totalSold: 0,
-    totalUsed: 0,
-    revenue: '0'
-  });
-
-  const { data: profileData, isLoading } = useQuery({
+  // Fetch profile partner
+  const { data: profileData, isLoading: isProfileLoading } = useQuery({
     queryKey: ['partnerProfile'],
     queryFn: async () => {
-      try {
-        const response = await apiClient.get('/api/partner/profile');
-        return response.data;
-      } catch (error) {
-        // Fallback for UI only in development
-        if (import.meta.env.DEV || process.env.NODE_ENV === 'development') {
-          console.warn('Could not fetch partner profile, using fallback data');
-          return { name: 'Đối Tác Demo' };
-        }
-        throw error;
-      }
+      const response = await apiClient.get('/partner/profile');
+      return response.data?.data ?? response.data;
     },
-    retry: false
+    retry: false,
   });
 
-  // Fetch dashboard data
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        // Fetch chart data
-        const chartResponse = await apiClient.get('/api/partner/dashboard/revenue-chart');
-        setChartData(chartResponse.data || []);
-      } catch (error) {
-        console.error('Failed to fetch chart data:', error);
-        setChartData([]);
-      }
+  // Fetch toàn bộ vouchers để tính KPI ở FE
+  // Dùng limit=48 (giới hạn tối đa của API) để lấy đủ dữ liệu KPI
+  const { data: vouchersData, isLoading: isVouchersLoading } = useQuery({
+    queryKey: ['partnerVouchers', { page: 1, limit: 48 }],
+    queryFn: () => getPartnerVouchers({ page: 1, limit: 48 }),
+  });
 
-      try {
-        // Fetch top vouchers
-        const vouchersResponse = await apiClient.get('/api/partner/dashboard/top-vouchers');
-        setTopVouchers(vouchersResponse.data || []);
-      } catch (error) {
-        console.error('Failed to fetch top vouchers:', error);
-        setTopVouchers([]);
-      }
+  const isLoading = isProfileLoading || isVouchersLoading;
+  const partnerName = profileData?.businessName || profileData?.name || 'Đối tác';
 
-      try {
-        // Fetch timeline
-        const timelineResponse = await apiClient.get('/api/partner/dashboard/timeline');
-        setTimeline(timelineResponse.data || []);
-      } catch (error) {
-        console.error('Failed to fetch timeline:', error);
-        setTimeline([]);
-      }
+  // Tính KPI từ dữ liệu voucher trả về bởi API
+  const kpi = useMemo(() => {
+    const vouchers = vouchersData?.data ?? [];
 
-      try {
-        // Fetch KPI data
-        const kpiResponse = await apiClient.get('/api/partner/dashboard/kpi');
-        setKpiData(kpiResponse.data || {
-          activeVouchers: 0,
-          totalSold: 0,
-          totalUsed: 0,
-          revenue: '0'
-        });
-      } catch (error) {
-        console.error('Failed to fetch KPI data:', error);
-      }
-    };
+    const onSaleCount    = vouchers.filter(v => v.status === 'ON_SALE').length;
+    const totalSoldQty   = vouchers.reduce((sum, v) => sum + (v.soldQty   || 0), 0);
+    const totalUsedCount = vouchers.reduce((sum, v) => sum + (v.usedCount || 0), 0);
+    // Doanh thu ước tính = tổng (số đã bán × giá bán)
+    const estimatedRevenue = vouchers.reduce(
+      (sum, v) => sum + (v.soldQty || 0) * (v.salePrice || 0),
+      0
+    );
 
-    fetchDashboardData();
-  }, []);
+    return { onSaleCount, totalSoldQty, totalUsedCount, estimatedRevenue };
+  }, [vouchersData]);
 
-  const partnerName = profileData?.name || 'Đối tác';
+  // Top vouchers: lấy 5 voucher có soldQty cao nhất từ dữ liệu đã fetch
+  const topVouchers = useMemo(() => {
+    const vouchers = vouchersData?.data ?? [];
+    return [...vouchers]
+      .sort((a, b) => (b.soldQty || 0) - (a.soldQty || 0))
+      .slice(0, 5);
+  }, [vouchersData]);
+
+  const formatCurrency = (amount) =>
+    amount >= 1_000_000
+      ? `${(amount / 1_000_000).toFixed(1)}M ₫`
+      : `${amount.toLocaleString('vi-VN')} ₫`;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">
-            Xin chào, <span className="text-purple-600">{isLoading ? '...' : partnerName}</span> 👋
+            Xin chào,{' '}
+            <span className="text-purple-600">
+              {isProfileLoading ? '...' : partnerName}
+            </span>{' '}
+            👋
           </h1>
           <p className="text-gray-500 mt-1">Dưới đây là tổng quan hiệu quả kinh doanh của bạn hôm nay.</p>
         </div>
@@ -146,56 +155,55 @@ export function PartnerDashboardPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards — tính từ dữ liệu API thật */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <KpiCard
           title="Voucher Đang Bán"
-          value={kpiData.activeVouchers.toString()}
+          value={kpi.onSaleCount.toString()}
           icon={Ticket}
-          trend="+2"
-          trendLabel="tuần trước"
           iconBgClass="bg-purple-100"
           iconTextClass="text-purple-600"
+          isLoading={isLoading}
         />
         <KpiCard
           title="Tổng Đã Bán"
-          value={kpiData.totalSold.toLocaleString()}
+          value={kpi.totalSoldQty.toLocaleString('vi-VN')}
           icon={ShoppingCart}
-          trend="+15%"
-          trendLabel="tháng trước"
           iconBgClass="bg-blue-100"
           iconTextClass="text-blue-600"
+          isLoading={isLoading}
         />
         <KpiCard
           title="Đã Sử Dụng"
-          value={kpiData.totalUsed.toLocaleString()}
+          value={kpi.totalUsedCount.toLocaleString('vi-VN')}
           icon={CheckCircle}
-          trend="+5%"
-          trendLabel="tháng trước"
           iconBgClass="bg-emerald-100"
           iconTextClass="text-emerald-600"
+          isLoading={isLoading}
         />
         <KpiCard
-          title="Doanh Thu"
-          value={kpiData.revenue}
+          title="Doanh Thu Ước Tính"
+          value={isLoading ? '...' : formatCurrency(kpi.estimatedRevenue)}
           icon={DollarSign}
-          trend="+22%"
-          trendLabel="tháng trước"
           iconBgClass="bg-amber-100"
           iconTextClass="text-amber-600"
+          isLoading={isLoading}
         />
       </div>
 
       {/* Charts & Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Revenue Chart */}
+
+        {/* Revenue Chart — dữ liệu mẫu (chưa có API) */}
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-800">Doanh thu 30 ngày qua</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-bold text-gray-800">Doanh thu 30 ngày qua</h3>
+              <MockDataBadge />
+            </div>
             <select
               className="select select-bordered select-sm bg-gray-50"
-              aria-label="Select revenue timeframe"
+              aria-label="Chọn khoảng thời gian"
             >
               <option>30 ngày qua</option>
               <option>Tuần này</option>
@@ -204,7 +212,7 @@ export function PartnerDashboardPage() {
           </div>
           <div className="flex-1 min-h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: -20 }}>
+              <LineChart data={MOCK_CHART_DATA} margin={{ top: 5, right: 20, bottom: 5, left: -20 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                 <XAxis
                   dataKey="date"
@@ -237,24 +245,28 @@ export function PartnerDashboardPage() {
           </div>
         </div>
 
-        {/* Timeline */}
+        {/* Timeline — dữ liệu mẫu (chưa có API) */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-800">Hoạt động gần đây</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-bold text-gray-800">Hoạt động gần đây</h3>
+              <MockDataBadge />
+            </div>
             <button className="text-purple-600 text-sm font-medium hover:underline">Xem tất cả</button>
           </div>
           <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-100 before:to-transparent">
-            {timeline.map((item) => (
+            {MOCK_TIMELINE.map((item) => (
               <div key={item.id} className="relative flex items-start gap-4 group">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 z-10 border-4 border-white
-                  ${item.type === 'used' ? 'bg-emerald-100 text-emerald-600' :
-                    item.type === 'approved' ? 'bg-blue-100 text-blue-600' :
-                    item.type === 'order' ? 'bg-purple-100 text-purple-600' :
-                    'bg-gray-100 text-gray-600'}`}>
-                  {item.type === 'used' ? <CheckCircle size={16} /> :
-                   item.type === 'approved' ? <Ticket size={16} /> :
-                   item.type === 'order' ? <ShoppingCart size={16} /> :
-                   <Clock size={16} />}
+                  ${item.type === 'used'     ? 'bg-emerald-100 text-emerald-600' :
+                    item.type === 'approved' ? 'bg-blue-100 text-blue-600'       :
+                    item.type === 'order'    ? 'bg-purple-100 text-purple-600'   :
+                                              'bg-gray-100 text-gray-600'}`}
+                >
+                  {item.type === 'used'     ? <CheckCircle size={16} /> :
+                   item.type === 'approved' ? <Ticket size={16} />      :
+                   item.type === 'order'    ? <ShoppingCart size={16} /> :
+                                             <Clock size={16} />}
                 </div>
                 <div className="flex-1 pt-1 pb-4 border-b border-gray-50 last:border-0 last:pb-0">
                   <p className="text-sm text-gray-800 font-medium leading-relaxed">{item.content}</p>
@@ -269,11 +281,14 @@ export function PartnerDashboardPage() {
 
       </div>
 
-      {/* Top Vouchers Table */}
+      {/* Top Vouchers — dữ liệu thật từ API */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">
           <h3 className="text-lg font-bold text-gray-800">Voucher hiệu quả nhất</h3>
-          <button className="btn btn-sm btn-ghost text-purple-600 hover:bg-purple-50 font-medium normal-case">
+          <button
+            className="btn btn-sm btn-ghost text-purple-600 hover:bg-purple-50 font-medium normal-case"
+            onClick={() => navigate('/partner/vouchers')}
+          >
             Xem chi tiết <ArrowRight size={16} className="ml-1" />
           </button>
         </div>
@@ -283,41 +298,75 @@ export function PartnerDashboardPage() {
               <tr>
                 <th className="rounded-none font-medium py-4 px-6 bg-transparent">Tên Voucher</th>
                 <th className="font-medium py-4 bg-transparent">Đã Bán / Tổng Số</th>
-                <th className="font-medium py-4 text-center bg-transparent">Tỷ Lệ Chuyển Đổi</th>
+                <th className="font-medium py-4 text-center bg-transparent">Tỷ Lệ Bán</th>
                 <th className="font-medium py-4 text-right px-6 bg-transparent">Trạng Thái</th>
               </tr>
             </thead>
             <tbody>
-              {topVouchers.map((voucher) => (
-                <tr key={voucher.id} className="hover:bg-gray-50/50 transition-colors border-t border-gray-100">
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-gray-800">{voucher.name}</div>
-                    <div className="text-xs text-gray-400 mt-1">ID: VOU-{voucher.id.toString().padStart(4, '0')}</div>
-                  </td>
-                  <td className="py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-700">{voucher.sold}</span>
-                      <span className="text-gray-400">/ {voucher.total}</span>
-                    </div>
-                    <progress
-                      className="progress progress-primary w-24 h-1.5 mt-2 opacity-70"
-                      value={voucher.sold}
-                      max={voucher.total}
-                    ></progress>
-                  </td>
-                  <td className="py-4 text-center">
-                    <div className="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold">
-                      {voucher.conversion}%
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="badge badge-success badge-sm gap-1 bg-emerald-100 border-none text-emerald-700 p-2.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      Đang chạy
-                    </div>
+              {isVouchersLoading && (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse border-t border-gray-100">
+                    <td className="px-6 py-4"><div className="h-4 w-40 bg-gray-100 rounded" /></td>
+                    <td className="py-4"><div className="h-4 w-20 bg-gray-100 rounded" /></td>
+                    <td className="py-4 text-center"><div className="h-4 w-12 bg-gray-100 rounded mx-auto" /></td>
+                    <td className="py-4 px-6"><div className="h-4 w-16 bg-gray-100 rounded ml-auto" /></td>
+                  </tr>
+                ))
+              )}
+              {!isVouchersLoading && topVouchers.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="px-6 py-8 text-center text-gray-400">
+                    Chưa có voucher nào.
                   </td>
                 </tr>
-              ))}
+              )}
+              {!isVouchersLoading && topVouchers.map((v) => {
+                const soldPct = v.totalQty > 0
+                  ? Math.round((v.soldQty / v.totalQty) * 100)
+                  : 0;
+
+                const statusBadge = {
+                  ON_SALE:          { cls: 'bg-emerald-100 border-none text-emerald-700', dot: 'bg-emerald-500', label: 'Đang chạy' },
+                  DRAFT:            { cls: 'bg-gray-100 border-none text-gray-600',     dot: 'bg-gray-400',    label: 'Nháp' },
+                  PENDING_APPROVAL: { cls: 'bg-blue-100 border-none text-blue-700',     dot: 'bg-blue-500',    label: 'Chờ duyệt' },
+                  PAUSED:           { cls: 'bg-yellow-100 border-none text-yellow-700', dot: 'bg-yellow-500',  label: 'Tạm dừng' },
+                  EXPIRED:          { cls: 'bg-gray-100 border-none text-gray-500',     dot: 'bg-gray-400',    label: 'Hết hạn' },
+                  REJECTED:         { cls: 'bg-red-100 border-none text-red-700',       dot: 'bg-red-500',     label: 'Từ chối' },
+                }[v.status] || { cls: 'bg-gray-100 text-gray-600', dot: 'bg-gray-400', label: v.status };
+
+                return (
+                  <tr key={v.id} className="hover:bg-gray-50/50 transition-colors border-t border-gray-100">
+                    <td className="px-6 py-4">
+                      <div className="font-medium text-gray-800">{v.title}</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        ID: {v.id.slice(0, 8).toUpperCase()}
+                      </div>
+                    </td>
+                    <td className="py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-700">{v.soldQty}</span>
+                        <span className="text-gray-400">/ {v.totalQty}</span>
+                      </div>
+                      <progress
+                        className="progress progress-primary w-24 h-1.5 mt-2 opacity-70"
+                        value={v.soldQty}
+                        max={v.totalQty}
+                      />
+                    </td>
+                    <td className="py-4 text-center">
+                      <div className="inline-flex items-center justify-center px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold">
+                        {soldPct}%
+                      </div>
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <div className={`badge badge-sm gap-1 p-2.5 ${statusBadge.cls}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${statusBadge.dot}`} />
+                        {statusBadge.label}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

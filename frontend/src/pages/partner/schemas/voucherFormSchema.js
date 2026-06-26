@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-const voucherCategories = ["am-thuc", "lam-dep", "du-lich", "mua-sam", "giai-tri"];
-
 const normalizeOptionalText = (value) => {
   if (typeof value !== "string") return value;
   const trimmed = value.trim();
@@ -18,9 +16,10 @@ export const voucherFormSchema = z
       .trim()
       .min(5, "Tên voucher phải có ít nhất 5 ký tự"),
 
-    category: z.enum(voucherCategories, {
-      errorMap: () => ({ message: "Vui lòng chọn danh mục hợp lệ" }),
-    }),
+    category: z.string({
+      required_error: "Vui lòng chọn danh mục",
+      invalid_type_error: "Vui lòng chọn danh mục",
+    }).min(1, "Vui lòng chọn danh mục"),
 
     // Empty string is treated as "Nhiều chi nhánh" in the service layer.
     location: z.preprocess(normalizeOptionalText, z.string().optional()),
