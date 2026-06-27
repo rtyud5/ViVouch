@@ -2,6 +2,7 @@ import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 import { KpiCard, AdminTable, AdminStatusBadge } from '../../features/admin/components';
 import { useDashboardStats } from '../../features/admin/hooks/useDashboardStats';
 import { usePartners } from '../../features/admin/hooks/usePartners';
@@ -161,19 +162,24 @@ const orderColumns = [
     key: 'actions',
     label: '',
     width: '50px',
-    render: (row) => (
-      <button
-        type="button"
-        className="transition-colors hover:opacity-100 opacity-60 text-[#534434] hover:text-[#855300]"
-        aria-label="Xem chi tiết đơn hàng"
-        title="Xem chi tiết đơn hàng"
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>visibility</span>
-      </button>
-    ),
+    render: (row) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const navigate = useNavigate();
+      return (
+        <button
+          type="button"
+          className="transition-colors hover:opacity-100 opacity-60 text-[#534434] hover:text-[#855300]"
+          aria-label="Xem chi tiết đơn hàng"
+          title="Xem chi tiết đơn hàng"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate('/admin/orders');
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>visibility</span>
+        </button>
+      );
+    },
   },
 ];
 
@@ -206,67 +212,53 @@ const RevenueTooltip = ({ active, payload, label }) => {
 
 /* ─────────────────── Partner Card (inline, not a table) ────────── */
 
-const PartnerCard = ({ partner }) => (
-  <div
-    className="rounded p-3 flex flex-col gap-3"
-    style={{
-      border: `1px solid ${T.outlineVariant}`,
-      background: T.surfaceBright,
-    }}
-  >
-    <div className="flex justify-between items-start">
-      <div>
-        <h4
-          className="font-semibold"
-          style={{ fontSize: 14, lineHeight: '20px', color: T.onSurface }}
+const PartnerCard = ({ partner }) => {
+  const navigate = useNavigate();
+  return (
+    <div
+      className="rounded p-3 flex flex-col gap-3"
+      style={{
+        border: `1px solid ${T.outlineVariant}`,
+        background: T.surfaceBright,
+      }}
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <h4
+            className="font-semibold"
+            style={{ fontSize: 14, lineHeight: '20px', color: T.onSurface }}
+          >
+            {partner.businessName || partner.representativeName || '—'}
+          </h4>
+          <p
+            className="mt-0.5"
+            style={{ fontSize: 13, lineHeight: '18px', color: T.onSurfaceVariant }}
+          >
+            {partner.user?.email || '—'} • Đăng ký: {formatTimeAgo(partner.createdAt)}
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-2 w-full mt-1">
+        <button
+          type="button"
+          className="flex-1 py-1.5 rounded text-center text-xs font-medium shadow-sm transition-colors"
+          style={{
+            background: T.primaryContainer,
+            color: T.onPrimaryContainer,
+          }}
+          onClick={() => navigate('/admin/partners')}
         >
-          {partner.businessName || partner.representativeName || '—'}
-        </h4>
-        <p
-          className="mt-0.5"
-          style={{ fontSize: 13, lineHeight: '18px', color: T.onSurfaceVariant }}
-        >
-          {partner.user?.email || '—'} • Đăng ký: {formatTimeAgo(partner.createdAt)}
-        </p>
+          Xử lý
+        </button>
       </div>
     </div>
-    <div className="flex gap-2 w-full mt-1">
-      {/* TODO: connect to POST /api/admin/partners/:id/approve */}
-      <button
-        type="button"
-        className="flex-1 py-1.5 rounded text-center text-xs font-medium shadow-sm transition-colors"
-        style={{
-          background: T.primaryContainer,
-          color: T.onPrimaryContainer,
-        }}
-        onClick={() => {
-          // TODO: wire up approve/reject API
-        }}
-      >
-        Duyệt
-      </button>
-      {/* TODO: connect to POST /api/admin/partners/:id/reject */}
-      <button
-        type="button"
-        className="flex-1 py-1.5 rounded text-center text-xs font-medium transition-colors"
-        style={{
-          background: 'transparent',
-          border: `1px solid ${T.outlineVariant}`,
-          color: T.onSurfaceVariant,
-        }}
-        onClick={() => {
-          // TODO: wire up approve/reject API
-        }}
-      >
-        Từ chối
-      </button>
-    </div>
-  </div>
-);
+  );
+};
 
 /* ═══════════════════ AdminDashboardPage ═══════════════════ */
 
 export default function AdminDashboardPage() {
+  const navigate = useNavigate();
   const { stats, isLoading, isError, dataUpdatedAt } = useDashboardStats();
 
   // Fetch pending partners (real API data)
@@ -418,10 +410,13 @@ export default function AdminDashboardPage() {
           >
             <div className="flex justify-between items-center mb-4">
               <h2
-                className="font-semibold"
+                className="font-semibold flex items-center gap-2"
                 style={{ fontSize: 18, lineHeight: '28px', color: T.onSurface }}
               >
                 Doanh thu (30 ngày qua)
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ background: T.surfaceContainerHigh, color: T.onSurfaceVariant }}>
+                  Dữ liệu mẫu
+                </span>
               </h2>
               <button
                 type="button"
@@ -504,7 +499,8 @@ export default function AdminDashboardPage() {
 
             <button
               type="button"
-              className="w-full mt-4 py-2 text-center rounded transition-colors"
+              onClick={() => navigate('/admin/partners')}
+              className="w-full mt-4 py-2 text-center rounded transition-colors hover:opacity-80"
               style={{ fontSize: 12, lineHeight: '16px', letterSpacing: '0.02em', fontWeight: 500, color: T.primary }}
             >
               Xem tất cả
@@ -557,7 +553,8 @@ export default function AdminDashboardPage() {
           >
             <button
               type="button"
-              className="transition-colors"
+              onClick={() => navigate('/admin/orders')}
+              className="transition-colors hover:opacity-80"
               style={{ fontSize: 12, lineHeight: '16px', letterSpacing: '0.02em', fontWeight: 500, color: T.onSurfaceVariant }}
             >
               Xem tất cả đơn hàng

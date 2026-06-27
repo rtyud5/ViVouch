@@ -5,6 +5,13 @@ import { apiClient } from '../../../services/apiClient';
  * All endpoints require ADMIN role (handled by apiClient auth interceptor).
  */
 
+const cleanParams = (params) => {
+  if (!params) return undefined;
+  return Object.fromEntries(
+    Object.entries(params).filter(([_, v]) => v !== '' && v !== undefined && v !== null)
+  );
+};
+
 /**
  * GET /api/admin/dashboard
  * Returns: { totalUsers, activePartners, revenueThisMonth, ordersToday }
@@ -16,7 +23,7 @@ export const getDashboardStats = async () => {
 
 
 export const getPartners = async (params) => {
-  const response = await apiClient.get('/admin/partners', { params });
+  const response = await apiClient.get('/admin/partners', { params: cleanParams(params) });
   return response.data;
 };
 
@@ -31,7 +38,7 @@ export const rejectPartner = async (partnerId, reason) => {
 };
 
 export const getVouchers = async (params) => {
-  const response = await apiClient.get('/admin/vouchers', { params });
+  const response = await apiClient.get('/admin/vouchers', { params: cleanParams(params) });
   return response.data;
 };
 
@@ -46,7 +53,7 @@ export const rejectVoucher = async (voucherId, reason) => {
 };
 
 export const getUsers = async (params) => {
-  const response = await apiClient.get('/admin/users', { params });
+  const response = await apiClient.get('/admin/users', { params: cleanParams(params) });
   return response.data;
 };
 
@@ -56,7 +63,7 @@ export const toggleUserLock = async (userId) => {
 };
 
 export const getOrders = async (params) => {
-  const response = await apiClient.get('/admin/orders', { params });
+  const response = await apiClient.get('/admin/orders', { params: cleanParams(params) });
   return response.data;
 };
 
@@ -66,6 +73,6 @@ export const getOrderById = async (id) => {
 };
 
 export const getAuditLogs = async (params) => {
-  const response = await apiClient.get('/admin/audit-logs', { params });
+  const response = await apiClient.get('/admin/audit-logs', { params: cleanParams(params) });
   return response.data;
 };

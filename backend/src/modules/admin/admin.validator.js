@@ -24,7 +24,7 @@ export const partnersQuerySchema = z.object({
 export const vouchersQuerySchema = z.object({
   page: z.string().optional(),
   limit: z.string().optional(),
-  status: z.enum(['DRAFT', 'PENDING', 'APPROVED', 'REJECTED']).optional(),
+  status: z.enum(['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'ON_SALE', 'PAUSED', 'EXPIRED', 'REJECTED', 'SUSPENDED']).optional(),
   search: z.string().optional(),
 });
 
