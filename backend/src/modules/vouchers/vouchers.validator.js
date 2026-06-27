@@ -37,6 +37,8 @@ export const getVoucherByIdSchema = z.object({
 export const partnerVoucherFiltersSchema = z.object({
   page: coercePositiveInt(1),
   limit: coercePositiveInt(12).refine((v) => v <= 48, { message: 'limit must be <= 48' }),
+  status: z.enum(['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'ON_SALE', 'PAUSED', 'EXPIRED', 'REJECTED']).optional(),
+  keyword: z.string().trim().optional(),
 });
 
 // ── Create voucher body ──────────────────────────────────────────────────────

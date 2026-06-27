@@ -284,10 +284,21 @@ export async function submitVoucher(userId, voucherId) {
 
 export async function findByPartner(userId, filters) {
   const partner = await getPartnerByUserId(userId);
-  const { page = 1, limit = 12 } = filters;
+  const { page = 1, limit = 12, status, keyword } = filters;
   const skip = (Number(page) - 1) * Number(limit);
 
   const where = { partnerId: partner.id };
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (keyword) {
+    where.OR = [
+      { title: { contains: keyword, mode: 'insensitive' } },
+      { description: { contains: keyword, mode: 'insensitive' } },
+    ];
+  }
 
   const total = await prisma.voucher.count({ where });
 

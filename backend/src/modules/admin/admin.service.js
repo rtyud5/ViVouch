@@ -271,8 +271,9 @@ export async function findManyVouchers(filters = {}, pagination = { page: 1, lim
   if (status) where.status = status;
   if (search) {
     where.OR = [
+      { id: { contains: search, mode: 'insensitive' } },
       { title: { contains: search, mode: 'insensitive' } },
-      { code: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } },
     ];
   }
 
