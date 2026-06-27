@@ -2,7 +2,7 @@ import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { KpiCard, AdminTable, AdminStatusBadge } from '../../features/admin/components';
 import { useDashboardStats } from '../../features/admin/hooks/useDashboardStats';
 import { usePartners } from '../../features/admin/hooks/usePartners';
@@ -91,8 +91,9 @@ const revenueData = generateRevenueData();
 /** Format relative time from a Date for display */
 const formatTimeAgo = (dateStr) => {
   if (!dateStr) return '';
-  const now = new Date();
   const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  const now = new Date();
   const diffMs = now - date;
   const diffMin = Math.floor(diffMs / 60000);
   if (diffMin < 1) return 'Vừa xong';
@@ -162,24 +163,17 @@ const orderColumns = [
     key: 'actions',
     label: '',
     width: '50px',
-    render: (row) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const navigate = useNavigate();
-      return (
-        <button
-          type="button"
-          className="transition-colors hover:opacity-100 opacity-60 text-[#534434] hover:text-[#855300]"
-          aria-label="Xem chi tiết đơn hàng"
-          title="Xem chi tiết đơn hàng"
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate('/admin/orders');
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>visibility</span>
-        </button>
-      );
-    },
+    render: () => (
+      <Link
+        to="/admin/orders"
+        className="transition-colors hover:opacity-100 opacity-60 text-[#534434] hover:text-[#855300]"
+        aria-label="Xem chi tiết đơn hàng"
+        title="Xem chi tiết đơn hàng"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>visibility</span>
+      </Link>
+    ),
   },
 ];
 
@@ -264,6 +258,8 @@ export default function AdminDashboardPage() {
   // Fetch pending partners (real API data)
   const { data: partnersData, isLoading: partnersLoading } = usePartners({ status: 'PENDING', limit: 3 });
   const pendingPartners = partnersData?.data?.partners ?? [];
+  // Use API total count (not just the 3 fetched) for KPI and badge display
+  const pendingTotal = partnersData?.data?.pagination?.total ?? pendingPartners.length;
 
   // Fetch recent orders (real API data)
   const { data: ordersData, isLoading: ordersLoading } = useOrders({ limit: 5 });
@@ -351,7 +347,7 @@ export default function AdminDashboardPage() {
               />
               <KpiCard
                 label="Cần duyệt"
-                value={pendingPartners.length.toLocaleString('vi-VN')}
+                value={pendingTotal.toLocaleString('vi-VN')}
                 trend="Cần xử lý ngay"
                 trendType="down"
               />
@@ -480,7 +476,7 @@ export default function AdminDashboardPage() {
                 className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                 style={{ background: T.errorContainer, color: T.error }}
               >
-                {pendingPartners.length} Mới
+                {pendingTotal} Mới
               </span>
             </div>
 

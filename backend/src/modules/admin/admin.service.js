@@ -59,7 +59,11 @@ export async function approvePartner(adminId, partnerId) {
     });
   } catch (error) {
     if (isRecordNotFound(error)) {
-      throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+      throw new AppError(
+        'Partner status has changed — only PENDING partners can be approved or rejected',
+        400,
+        'INVALID_STATUS',
+      );
     }
     throw error;
   }
@@ -95,7 +99,11 @@ export async function rejectPartner(adminId, partnerId, reason) {
     });
   } catch (error) {
     if (isRecordNotFound(error)) {
-      throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+      throw new AppError(
+        'Partner status has changed — only PENDING partners can be approved or rejected',
+        400,
+        'INVALID_STATUS',
+      );
     }
     throw error;
   }
