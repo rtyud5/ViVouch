@@ -17,7 +17,7 @@ export function CartPage() {
       setMutationError(null);
       setPendingItemIds((prev) => {
         const next = new Set(prev);
-        next.delete(itemId);
+        next.add(itemId);
         return next;
       });
 
@@ -38,7 +38,7 @@ export function CartPage() {
       setMutationError(null);
       setPendingItemIds((prev) => {
         const next = new Set(prev);
-        next.delete(itemId);
+        next.add(itemId);
         return next;
       });
       await removeItem(itemId);
@@ -132,6 +132,7 @@ export function CartPage() {
                   item={item}
                   onUpdateQty={handleUpdateQty}
                   onRemove={handleRemove}
+                  isPending={pendingItemIds.has(item.id)}
                 />
               ))}
             </div>

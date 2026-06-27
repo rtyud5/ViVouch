@@ -4,7 +4,7 @@ import { Trash2, AlertCircle } from "lucide-react";
 import { QtySelector } from "../../../components/voucher/QtySelector";
 import { formatCurrency } from "../../../utils/formatCurrency";
 
-export function CartItem({ item, onUpdateQty, onRemove }) {
+export function CartItem({ item, onUpdateQty, onRemove, isPending }) {
   const [isUpdating, setIsUpdating] = useState(false);
   
   const { id: itemId, qty, voucher } = item;
@@ -40,7 +40,7 @@ export function CartItem({ item, onUpdateQty, onRemove }) {
   };
 
   return (
-    <div className={`flex flex-col sm:flex-row gap-4 p-4 bg-base-100 border border-base-200 rounded-2xl shadow-sm transition-opacity ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}>
+    <div className={`flex flex-col sm:flex-row gap-4 p-4 bg-base-100 border border-base-200 rounded-2xl shadow-sm transition-opacity ${(isUpdating || isPending) ? 'opacity-50 pointer-events-none' : ''}`}>
       {/* Hình ảnh */}
       <Link to={`/vouchers/${voucher.id}`} className="shrink-0">
         <div className="w-full sm:w-28 h-24 rounded-xl overflow-hidden bg-base-200 relative">
@@ -79,6 +79,7 @@ export function CartItem({ item, onUpdateQty, onRemove }) {
 
           <button 
             onClick={handleRemove}
+            disabled={isUpdating || isPending}
             className="btn btn-ghost btn-sm btn-circle text-base-content/40 hover:text-error hover:bg-error/10 shrink-0"
             title="Xoá khỏi giỏ hàng"
           >
@@ -106,7 +107,7 @@ export function CartItem({ item, onUpdateQty, onRemove }) {
                 value={qty} 
                 onChange={handleQtyChange} 
                 max={remaining} 
-                disabled={isUpdating || isOutOfStock} 
+                disabled={isUpdating || isOutOfStock || isPending} 
               />
             </div>
             
