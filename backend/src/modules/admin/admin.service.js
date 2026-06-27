@@ -16,11 +16,17 @@ function assertPartnerActionAllowed(partner, adminId) {
   if (!partner) {
     throw new AppError('Partner not found', 404, 'PARTNER_NOT_FOUND');
   }
+  // Check if the Partner owner (partner.userId) is the same as the admin performing the action.
+  // This prevents an admin who also registered as a partner from approving/rejecting their own application.
   if (partner.userId === adminId) {
     throw new AppError('Cannot approve or reject your own partner account', 400, 'SELF_ACTION');
   }
   if (partner.status !== 'PENDING') {
-    throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+    throw new AppError(
+      `Partner is currently in ${partner.status} status — only PENDING partners can be approved or rejected`,
+      400,
+      'INVALID_STATUS',
+    );
   }
 }
 
@@ -53,7 +59,11 @@ export async function approvePartner(adminId, partnerId) {
     });
   } catch (error) {
     if (isRecordNotFound(error)) {
-      throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+      throw new AppError(
+        'Partner status has changed — only PENDING partners can be approved or rejected',
+        400,
+        'INVALID_STATUS',
+      );
     }
     throw error;
   }
@@ -89,7 +99,11 @@ export async function rejectPartner(adminId, partnerId, reason) {
     });
   } catch (error) {
     if (isRecordNotFound(error)) {
-      throw new AppError('Partner must be in PENDING status', 400, 'INVALID_STATUS');
+      throw new AppError(
+        'Partner status has changed — only PENDING partners can be approved or rejected',
+        400,
+        'INVALID_STATUS',
+      );
     }
     throw error;
   }

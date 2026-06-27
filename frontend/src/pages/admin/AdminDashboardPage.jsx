@@ -2,8 +2,11 @@ import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
+import { useNavigate, Link } from 'react-router-dom';
 import { KpiCard, AdminTable, AdminStatusBadge } from '../../features/admin/components';
 import { useDashboardStats } from '../../features/admin/hooks/useDashboardStats';
+import { usePartners } from '../../features/admin/hooks/usePartners';
+import { useOrders } from '../../features/admin/hooks/useOrders';
 
 /* ─────────────────── Design tokens (from UI reference) ──────────── */
 // Material Design 3 palette — Navy/Amber admin theme
@@ -53,7 +56,7 @@ const formatCompact = (n) => {
   return num.toLocaleString('vi-VN');
 };
 
-/* ─────────────────── Mock data ─────────────────── */
+/* ─────────────────── Chart mock data (revenue chart — no API yet) ── */
 
 // TODO: replace mock data with API /api/admin/stats/revenue?days=30
 /** Simple seeded PRNG (mulberry32) — deterministic, NOT for crypto use */
@@ -85,20 +88,21 @@ const generateRevenueData = () => {
 };
 const revenueData = generateRevenueData();
 
-// TODO: replace with API GET /api/admin/partners?status=PENDING&limit=3
-const mockPendingPartners = [
-  { id: 'p1', name: 'Nhà hàng Biển Đông', location: 'Hà Nội', timeAgo: '2h trước' },
-  { id: 'p2', name: 'Spa Thanh Vân', location: 'Đà Nẵng', timeAgo: '5h trước' },
-  { id: 'p3', name: 'Gym FitLife', location: 'TP.HCM', timeAgo: '1 ngày trước' },
-];
-
-// TODO: replace with API GET /api/admin/orders?limit=5
-const mockRecentOrders = [
-  { id: '#ORD-9021', customer: 'Nguyễn Văn A', voucher: 'Voucher Giảm 50% Buffet BBQ', total: 450000, status: 'USED', time: '10 phút trước' },
-  { id: '#ORD-9020', customer: 'Trần Thị B', voucher: 'Combo Cắt Tóc + Gội Đầu VIP', total: 200000, status: 'PENDING', time: '25 phút trước' },
-  { id: '#ORD-9019', customer: 'Lê Hoàng C', voucher: 'Vé xem phim 2D CGV', total: 120000, status: 'CANCELLED', time: '1 giờ trước' },
-  { id: '#ORD-9018', customer: 'Phạm Thị D', voucher: 'Voucher Highlands Coffee 50k', total: 50000, status: 'USED', time: '2 giờ trước' },
-];
+/** Format relative time from a Date for display */
+const formatTimeAgo = (dateStr) => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'Vừa xong';
+  if (diffMin < 60) return `${diffMin} phút trước`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `${diffH} giờ trước`;
+  const diffD = Math.floor(diffH / 24);
+  return `${diffD} ngày trước`;
+};
 
 /* ─────────────────── Order table columns (desktop reference) ────── */
 
@@ -109,26 +113,35 @@ const orderColumns = [
     width: '110px',
     render: (row) => (
       <span style={{ fontFamily: 'Courier Prime, monospace', color: T.onSurfaceVariant, fontSize: 13 }}>
-        {row.id}
+        {row.id?.slice(0, 8) ?? '—'}
       </span>
     ),
   },
   {
     key: 'customer',
     label: 'Khách hàng',
-    render: (row) => <span className="font-medium" style={{ color: T.onSurface }}>{row.customer}</span>,
+    render: (row) => (
+      <span className="font-medium" style={{ color: T.onSurface }}>
+        {row.user?.fullName || row.user?.email || '—'}
+      </span>
+    ),
   },
   {
     key: 'voucher',
     label: 'Dịch vụ / Voucher',
-    render: (row) => <span style={{ color: T.onSurfaceVariant }}>{row.voucher}</span>,
+    render: (row) => (
+      <span style={{ color: T.onSurfaceVariant }}>
+        {row.items?.[0]?.voucher?.title || '—'}
+        {row.items?.length > 1 && ` (+${row.items.length - 1})`}
+      </span>
+    ),
   },
   {
-    key: 'total',
+    key: 'totalAmount',
     label: 'Tổng tiền',
     render: (row) => (
       <span className="font-medium" style={{ color: T.onSurface }}>
-        {Number(row.total).toLocaleString('vi-VN')}đ
+        {Number(row.totalAmount).toLocaleString('vi-VN')}đ
       </span>
     ),
   },
@@ -137,24 +150,29 @@ const orderColumns = [
     label: 'Trạng thái',
     render: (row) => <AdminStatusBadge status={row.status} />,
   },
-  { key: 'time', label: 'Thời gian' },
+  {
+    key: 'createdAt',
+    label: 'Thời gian',
+    render: (row) => (
+      <span style={{ color: T.onSurfaceVariant, fontSize: 13 }}>
+        {formatTimeAgo(row.createdAt)}
+      </span>
+    ),
+  },
   {
     key: 'actions',
     label: '',
     width: '50px',
-    render: (row) => (
-      <button
-        type="button"
+    render: () => (
+      <Link
+        to="/admin/orders"
         className="transition-colors hover:opacity-100 opacity-60 text-[#534434] hover:text-[#855300]"
         aria-label="Xem chi tiết đơn hàng"
         title="Xem chi tiết đơn hàng"
-        onClick={(e) => {
-          e.stopPropagation();
-          // TODO: wire up approve/reject API
-        }}
+        onClick={(e) => e.stopPropagation()}
       >
         <span className="material-symbols-outlined" style={{ fontSize: 18 }}>visibility</span>
-      </button>
+      </Link>
     ),
   },
 ];
@@ -188,68 +206,64 @@ const RevenueTooltip = ({ active, payload, label }) => {
 
 /* ─────────────────── Partner Card (inline, not a table) ────────── */
 
-const PartnerCard = ({ partner }) => (
-  <div
-    className="rounded p-3 flex flex-col gap-3"
-    style={{
-      border: `1px solid ${T.outlineVariant}`,
-      background: T.surfaceBright,
-    }}
-  >
-    <div className="flex justify-between items-start">
-      <div>
-        <h4
-          className="font-semibold"
-          style={{ fontSize: 14, lineHeight: '20px', color: T.onSurface }}
+const PartnerCard = ({ partner }) => {
+  const navigate = useNavigate();
+  return (
+    <div
+      className="rounded p-3 flex flex-col gap-3"
+      style={{
+        border: `1px solid ${T.outlineVariant}`,
+        background: T.surfaceBright,
+      }}
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <h4
+            className="font-semibold"
+            style={{ fontSize: 14, lineHeight: '20px', color: T.onSurface }}
+          >
+            {partner.businessName || partner.representativeName || '—'}
+          </h4>
+          <p
+            className="mt-0.5"
+            style={{ fontSize: 13, lineHeight: '18px', color: T.onSurfaceVariant }}
+          >
+            {partner.user?.email || '—'} • Đăng ký: {formatTimeAgo(partner.createdAt)}
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-2 w-full mt-1">
+        <button
+          type="button"
+          className="flex-1 py-1.5 rounded text-center text-xs font-medium shadow-sm transition-colors"
+          style={{
+            background: T.primaryContainer,
+            color: T.onPrimaryContainer,
+          }}
+          onClick={() => navigate('/admin/partners')}
         >
-          {partner.name}
-        </h4>
-        <p
-          className="mt-0.5"
-          style={{ fontSize: 13, lineHeight: '18px', color: T.onSurfaceVariant }}
-        >
-          {partner.location} • Đăng ký: {partner.timeAgo}
-        </p>
+          Xử lý
+        </button>
       </div>
     </div>
-    <div className="flex gap-2 w-full mt-1">
-      {/* TODO: connect to POST /api/admin/partners/:id/approve */}
-      <button
-        type="button"
-        className="flex-1 py-1.5 rounded text-center text-xs font-medium shadow-sm transition-colors"
-        style={{
-          background: T.primaryContainer,
-          color: T.onPrimaryContainer,
-        }}
-        onClick={() => {
-          // TODO: wire up approve/reject API
-        }}
-      >
-        Duyệt
-      </button>
-      {/* TODO: connect to POST /api/admin/partners/:id/reject */}
-      <button
-        type="button"
-        className="flex-1 py-1.5 rounded text-center text-xs font-medium transition-colors"
-        style={{
-          background: 'transparent',
-          border: `1px solid ${T.outlineVariant}`,
-          color: T.onSurfaceVariant,
-        }}
-        onClick={() => {
-          // TODO: wire up approve/reject API
-        }}
-      >
-        Từ chối
-      </button>
-    </div>
-  </div>
-);
+  );
+};
 
 /* ═══════════════════ AdminDashboardPage ═══════════════════ */
 
 export default function AdminDashboardPage() {
+  const navigate = useNavigate();
   const { stats, isLoading, isError, dataUpdatedAt } = useDashboardStats();
+
+  // Fetch pending partners (real API data)
+  const { data: partnersData, isLoading: partnersLoading } = usePartners({ status: 'PENDING', limit: 3 });
+  const pendingPartners = partnersData?.data?.partners ?? [];
+  // Use API total count (not just the 3 fetched) for KPI and badge display
+  const pendingTotal = partnersData?.data?.pagination?.total ?? pendingPartners.length;
+
+  // Fetch recent orders (real API data)
+  const { data: ordersData, isLoading: ordersLoading } = useOrders({ limit: 5 });
+  const recentOrders = ordersData?.data?.orders ?? [];
 
   /** Current timestamp for subtitle */
   const timeStr = dataUpdatedAt
@@ -333,7 +347,7 @@ export default function AdminDashboardPage() {
               />
               <KpiCard
                 label="Cần duyệt"
-                value={mockPendingPartners.length.toLocaleString('vi-VN')}
+                value={pendingTotal.toLocaleString('vi-VN')}
                 trend="Cần xử lý ngay"
                 trendType="down"
               />
@@ -392,10 +406,13 @@ export default function AdminDashboardPage() {
           >
             <div className="flex justify-between items-center mb-4">
               <h2
-                className="font-semibold"
+                className="font-semibold flex items-center gap-2"
                 style={{ fontSize: 18, lineHeight: '28px', color: T.onSurface }}
               >
                 Doanh thu (30 ngày qua)
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ background: T.surfaceContainerHigh, color: T.onSurfaceVariant }}>
+                  Dữ liệu mẫu
+                </span>
               </h2>
               <button
                 type="button"
@@ -459,21 +476,27 @@ export default function AdminDashboardPage() {
                 className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                 style={{ background: T.errorContainer, color: T.error }}
               >
-                {mockPendingPartners.length} Mới
+                {pendingTotal} Mới
               </span>
             </div>
 
             {/* Partner cards */}
             <div className="flex-1 flex flex-col gap-3 overflow-y-auto pr-1">
-              {/* TODO: replace with API data */}
-              {mockPendingPartners.map((p) => (
-                <PartnerCard key={p.id} partner={p} />
-              ))}
+              {partnersLoading ? (
+                <div className="text-center py-4" style={{ color: T.onSurfaceVariant, fontSize: 13 }}>Đang tải...</div>
+              ) : pendingPartners.length === 0 ? (
+                <div className="text-center py-4" style={{ color: T.onSurfaceVariant, fontSize: 13 }}>Không có đối tác chờ duyệt</div>
+              ) : (
+                pendingPartners.map((p) => (
+                  <PartnerCard key={p.id} partner={p} />
+                ))
+              )}
             </div>
 
             <button
               type="button"
-              className="w-full mt-4 py-2 text-center rounded transition-colors"
+              onClick={() => navigate('/admin/partners')}
+              className="w-full mt-4 py-2 text-center rounded transition-colors hover:opacity-80"
               style={{ fontSize: 12, lineHeight: '16px', letterSpacing: '0.02em', fontWeight: 500, color: T.primary }}
             >
               Xem tất cả
@@ -512,11 +535,10 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* TODO: replace with API data */}
           <AdminTable
             columns={orderColumns}
-            data={mockRecentOrders}
-            loading={isLoading}
+            data={recentOrders}
+            loading={isLoading || ordersLoading}
             emptyMessage="Chưa có đơn hàng nào"
           />
 
@@ -527,7 +549,8 @@ export default function AdminDashboardPage() {
           >
             <button
               type="button"
-              className="transition-colors"
+              onClick={() => navigate('/admin/orders')}
+              className="transition-colors hover:opacity-80"
               style={{ fontSize: 12, lineHeight: '16px', letterSpacing: '0.02em', fontWeight: 500, color: T.onSurfaceVariant }}
             >
               Xem tất cả đơn hàng
