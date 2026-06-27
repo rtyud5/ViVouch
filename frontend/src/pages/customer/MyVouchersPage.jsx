@@ -14,11 +14,11 @@ export function MyVouchersPage() {
     { id: "USED", label: "Đã dùng" },
     { id: "EXPIRED", label: "Hết hạn" },
   ];
-
+  const normalizeStatus = (status) => String(status ?? "ISSUED").toUpperCase();
   const filteredVouchers =
-    voucherCodes?.filter((vc) => (vc.status ?? "").toUpperCase() === activeTab) || [];
+    voucherCodes?.filter((vc) => normalizeStatus(vc.status) === activeTab) || [];
   const issuedCount =
-    voucherCodes?.filter((vc) => (vc.status ?? "").toUpperCase() === "ISSUED").length || 0;
+    voucherCodes?.filter((vc) => normalizeStatus(vc.status) === "ISSUED").length || 0;
 
   const handleOpenQR = (voucherCode) => {
     setSelectedVoucherCode(voucherCode);
@@ -51,8 +51,8 @@ export function MyVouchersPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`pb-3 whitespace-nowrap border-b-2 font-label-md text-label-md transition-colors ${activeTab === tab.id
-                  ? "border-primary text-primary"
-                  : "border-transparent text-on-surface-variant hover:text-on-surface"
+                ? "border-primary text-primary"
+                : "border-transparent text-on-surface-variant hover:text-on-surface"
                 }`}
             >
               {tab.label} {tab.id === "ISSUED" && `(${issuedCount})`}

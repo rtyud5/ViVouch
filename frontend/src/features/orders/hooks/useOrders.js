@@ -7,8 +7,8 @@ export function useOrders(options = {}) {
   const query = useQuery({
     queryKey: ["orders"],
     queryFn: getOrders,
-    enabled: !!accessToken,
     ...options,
+    enabled: !!accessToken && (options.enabled ?? true),
   });
 
   return {

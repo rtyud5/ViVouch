@@ -7,8 +7,8 @@ export function useMyVouchers(options = {}) {
   const query = useQuery({
     queryKey: ["voucher-codes"],
     queryFn: getVoucherCodes,
-    enabled: !!accessToken,
     ...options,
+    enabled: !!accessToken && (options.enabled ?? true),
   });
 
   return {
