@@ -14,21 +14,6 @@ export const getDashboardStats = async () => {
   return response.data.data;
 };
 
-// TODO: replace with API GET /api/admin/partners?status=PENDING&limit=3
-// export const getRecentPartners = async () => {
-//   const response = await apiClient.get('/admin/partners', {
-//     params: { status: 'PENDING', limit: 3 },
-//   });
-//   return response.data.data;
-// };
-
-// TODO: replace with API GET /api/admin/orders?limit=5
-// export const getRecentOrders = async () => {
-//   const response = await apiClient.get('/admin/orders', {
-//     params: { limit: 5 },
-//   });
-//   return response.data.data;
-// };
 
 export const getPartners = async (params) => {
   const response = await apiClient.get('/admin/partners', { params });
