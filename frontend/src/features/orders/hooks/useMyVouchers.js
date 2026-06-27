@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getVoucherCodes } from "../api/orders.api";
+import { useAuthStore } from "../../../stores/authStore";
 
 export function useMyVouchers(options = {}) {
+  const accessToken = useAuthStore((state) => state.accessToken);
   const query = useQuery({
     queryKey: ["voucher-codes"],
     queryFn: getVoucherCodes,
+    enabled: !!accessToken,
     ...options,
   });
 
