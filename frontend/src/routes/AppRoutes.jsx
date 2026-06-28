@@ -48,10 +48,14 @@ export function AppRoutes() {
       <Routes>
 
         {/* Test component */}
-        <Route path="/test/admin-kit" element={<AdminComponentsTest />} />
-        <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} /> 
-        <Route path="/test/fe/task2/week2" element={<VoucherHooksTest />} /> 
-        <Route path="/test/fe/task3/week2" element={ <CartHooksTestWrapper />} /> 
+        {import.meta.env.DEV && (
+          <>
+            <Route path="/test/admin-kit" element={<AdminComponentsTest />} />
+            <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} /> 
+            <Route path="/test/fe/task2/week2" element={<VoucherHooksTest />} /> 
+            <Route path="/test/fe/task3/week2" element={ <CartHooksTestWrapper />} /> 
+          </>
+        )}
 
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />
