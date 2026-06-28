@@ -6,6 +6,7 @@ import { QtySelector } from "../../components/voucher/QtySelector";
 import { DetailTabs } from "../../components/voucher/DetailTabs";
 import { StickyBuyBar } from "../../components/voucher/StickyBuyBar";
 import { ReviewList } from "../../components/voucher/ReviewList";
+import { WriteReviewForm } from "../../components/voucher/WriteReviewForm";
 import { useAuthStore } from "../../stores/authStore";
 import { useCart } from "../../features/cart/hooks/useCart";
 
@@ -259,6 +260,10 @@ export function VoucherDetailPage() {
             branches={voucher.branches}
           />
 
+          <WriteReviewForm 
+            eligibility={isAuthenticated ? "NOT_ELIGIBLE" : "NOT_ELIGIBLE"} 
+            message={isAuthenticated ? "Bạn cần sử dụng voucher này để có thể đánh giá." : "Vui lòng đăng nhập để đánh giá."} 
+          />
           <ReviewList reviews={voucher.reviews} />
         </div>
 
