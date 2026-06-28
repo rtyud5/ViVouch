@@ -261,7 +261,7 @@ export function VoucherDetailPage() {
           />
 
           <WriteReviewForm 
-            eligibility={isAuthenticated ? "NOT_ELIGIBLE" : "NOT_ELIGIBLE"} 
+            eligibility="NOT_ELIGIBLE" 
             message={isAuthenticated ? "Bạn cần sử dụng voucher này để có thể đánh giá." : "Vui lòng đăng nhập để đánh giá."} 
           />
           <ReviewList reviews={voucher.reviews} />

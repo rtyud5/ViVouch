@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { Star, Send } from "lucide-react";
 
 export function WriteReviewForm({ 
@@ -43,7 +44,7 @@ export function WriteReviewForm({
       <h3 className="font-bold text-lg mb-4 text-base-content">Đánh giá của bạn</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Đánh giá chất lượng</label>
+          <span className="block text-sm font-medium mb-2">Đánh giá chất lượng</span>
           <div className="flex gap-1" onMouseLeave={() => setHoverRating(0)}>
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -65,8 +66,9 @@ export function WriteReviewForm({
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Nhận xét chi tiết (tùy chọn)</label>
+          <label htmlFor="review-comment" className="block text-sm font-medium mb-2">Nhận xét chi tiết (tùy chọn)</label>
           <textarea
+            id="review-comment"
             className="textarea textarea-bordered w-full"
             placeholder="Chia sẻ trải nghiệm của bạn về voucher này..."
             rows={3}
@@ -87,3 +89,10 @@ export function WriteReviewForm({
     </div>
   );
 }
+
+WriteReviewForm.propTypes = {
+  onSubmit: PropTypes.func,
+  isSubmitting: PropTypes.bool,
+  eligibility: PropTypes.oneOf(["NOT_ELIGIBLE", "ELIGIBLE", "ALREADY_REVIEWED"]),
+  message: PropTypes.string,
+};

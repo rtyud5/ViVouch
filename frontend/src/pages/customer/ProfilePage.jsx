@@ -73,13 +73,14 @@ export function ProfilePage() {
           
           <form onSubmit={handleUpdateProfile} className="space-y-4">
             <div className="form-control">
-              <label className="label"><span className="label-text">Email</span></label>
-              <input type="text" className="input input-bordered" value={user?.email || ""} disabled />
+              <label htmlFor="profile-email" className="label"><span className="label-text">Email</span></label>
+              <input id="profile-email" type="text" className="input input-bordered" value={user?.email || ""} disabled />
             </div>
             
             <div className="form-control">
-              <label className="label"><span className="label-text">Họ và tên</span></label>
+              <label htmlFor="profile-fullname" className="label"><span className="label-text">Họ và tên</span></label>
               <input 
+                id="profile-fullname"
                 type="text" 
                 className="input input-bordered" 
                 value={fullName} 
@@ -89,8 +90,9 @@ export function ProfilePage() {
             </div>
             
             <div className="form-control">
-              <label className="label"><span className="label-text">Số điện thoại</span></label>
+              <label htmlFor="profile-phone" className="label"><span className="label-text">Số điện thoại</span></label>
               <input 
+                id="profile-phone"
                 type="text" 
                 className="input input-bordered" 
                 value={phone} 
@@ -117,8 +119,9 @@ export function ProfilePage() {
           
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div className="form-control">
-              <label className="label"><span className="label-text">Mật khẩu hiện tại</span></label>
+              <label htmlFor="current-password" className="label"><span className="label-text">Mật khẩu hiện tại</span></label>
               <input 
+                id="current-password"
                 type="password" 
                 className="input input-bordered" 
                 value={currentPassword} 
@@ -128,8 +131,9 @@ export function ProfilePage() {
             </div>
             
             <div className="form-control">
-              <label className="label"><span className="label-text">Mật khẩu mới</span></label>
+              <label htmlFor="new-password" className="label"><span className="label-text">Mật khẩu mới</span></label>
               <input 
+                id="new-password"
                 type="password" 
                 className="input input-bordered" 
                 value={newPassword} 
