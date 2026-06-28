@@ -113,7 +113,7 @@ export function CheckoutPage() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-base-content/70">Họ và tên</span>
-                <span className="font-medium text-right">{user?.name || "Khách hàng"}</span>
+                <span className="font-medium text-right">{user?.fullName || user?.name || "Khách hàng"}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-base-content/70">Số điện thoại</span>
