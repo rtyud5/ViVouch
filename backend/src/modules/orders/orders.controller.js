@@ -18,7 +18,7 @@ export const buyNow = asyncHandler(async (req, res) => {
   const parsedData = checkoutSchema.parse(req.body);
 
   try {
-    const result = await ordersService.buyNow(userId, parsedData.items);
+    const result = await ordersService.buyNow(userId, parsedData.items, parsedData.paymentMethod);
 
     return res.status(201).json({
       success: true,
@@ -56,7 +56,8 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
   }
 
   try {
-    const result = await ordersService.checkoutFromCart(userId);
+    const { paymentMethod } = req.body;
+    const result = await ordersService.checkoutFromCart(userId, paymentMethod || 'MOCK_GATEWAY');
 
     return res.status(201).json({
       success: true,

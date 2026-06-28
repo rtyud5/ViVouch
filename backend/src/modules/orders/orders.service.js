@@ -12,7 +12,7 @@ const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
  * @param {Array<{id: string, qty: number}>} sortedItems - Danh sách voucher đã được sắp xếp để tránh deadlock
  * @returns {Promise<Object>} Kết quả checkout
  */
-const processCheckout = async (tx, userId, sortedItems) => {
+const processCheckout = async (tx, userId, sortedItems, paymentMethod = 'MOCK_GATEWAY') => {
   let totalAmount = 0;
   const orderItemsData = [];
   const returnVoucherCodes = [];
@@ -101,7 +101,7 @@ const processCheckout = async (tx, userId, sortedItems) => {
   await tx.payment.create({
     data: {
       orderId: order.id,
-      method: 'MOCK_GATEWAY',
+      method: paymentMethod,
       status: 'PAID',
       amount: totalAmount
     }
@@ -119,7 +119,7 @@ const processCheckout = async (tx, userId, sortedItems) => {
  * @param {Array<{id: string, qty: number}>} items - Danh sách voucher cần mua
  * @returns {Promise<Object>} Order đã tạo
  */
-export const buyNow = async (userId, items) => {
+export const buyNow = async (userId, items, paymentMethod = 'MOCK_GATEWAY') => {
   if (!items || items.length === 0) {
     throw new Error('EMPTY_ITEMS');
   }
@@ -136,7 +136,7 @@ export const buyNow = async (userId, items) => {
   const sortedItems = aggregatedItems.sort((a, b) => a.id.localeCompare(b.id));
 
   return await prisma.$transaction(async (tx) => {
-    return await processCheckout(tx, userId, sortedItems);
+    return await processCheckout(tx, userId, sortedItems, paymentMethod);
   }, {
     timeout: 10000
   });
@@ -147,7 +147,7 @@ export const buyNow = async (userId, items) => {
  * @param {string} userId - ID của người dùng
  * @returns {Promise<Object>} Order đã tạo
  */
-export const checkoutFromCart = async (userId) => {
+export const checkoutFromCart = async (userId, paymentMethod = 'MOCK_GATEWAY') => {
   let cartItemIdsToDelete = [];
 
   const result = await prisma.$transaction(async (tx) => {
@@ -175,7 +175,7 @@ export const checkoutFromCart = async (userId) => {
     cartItemIdsToDelete = cart.items.map(item => item.id);
 
     // Thực thi xử lý Checkout lõi
-    return await processCheckout(tx, userId, sortedItems);
+    return await processCheckout(tx, userId, sortedItems, paymentMethod);
   }, {
     timeout: 10000
   });
