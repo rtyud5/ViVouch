@@ -59,8 +59,6 @@ export function CheckoutPage() {
         voucherCodes: mappedVoucherCodes,
       };
 
-      sessionStorage.setItem("vivouch:last-order-success", JSON.stringify(successPayload));
-
       navigate("/customer/order-success", {
         state: successPayload,
         replace: true,
@@ -169,7 +167,7 @@ export function CheckoutPage() {
                 />
                 <span className="font-medium">Ví ViVouch (Mô phỏng)</span>
               </label>
-              
+
               <label className="flex items-center gap-3 p-4 border border-base-200 rounded-xl cursor-pointer hover:bg-base-200/50 transition-colors">
                 <input
                   type="radio"
@@ -201,7 +199,7 @@ export function CheckoutPage() {
         <div className="lg:w-96">
           <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 sticky top-24">
             <h2 className="text-xl font-semibold mb-6">Tóm tắt đơn hàng</h2>
-            
+
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-base-content/80">
                 <span>Tổng tiền hàng ({totalQty} sản phẩm)</span>
