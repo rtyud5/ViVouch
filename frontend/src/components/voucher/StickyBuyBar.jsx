@@ -42,7 +42,7 @@ export function StickyBuyBar({
   };
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-base-100 border-t border-base-200 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] p-4 pb-safe transition-transform duration-300">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-base-100 border-t border-base-200 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] p-4 pb-safe transition-transform duration-300">
       <div className="flex flex-col gap-3">
         {/* Hàng 1: Tên voucher rút gọn & bộ tăng giảm số lượng mini */}
         <div className="flex items-center justify-between gap-4">
