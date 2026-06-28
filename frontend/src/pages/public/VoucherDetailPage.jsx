@@ -9,6 +9,7 @@ import { ReviewList } from "../../components/voucher/ReviewList";
 import { WriteReviewForm } from "../../components/voucher/WriteReviewForm";
 import { useAuthStore } from "../../stores/authStore";
 import { useCart } from "../../features/cart/hooks/useCart";
+import { apiClient } from "../../services/apiClient";
 
 export function VoucherDetailPage() {
   const { id } = useParams();
@@ -43,6 +44,7 @@ export function VoucherDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [toastMessage, setToastMessage] = useState("");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   const voucherId = voucher?.id;
   useEffect(() => {
@@ -120,6 +122,20 @@ export function VoucherDetailPage() {
       showToast("Đã sao chép liên kết voucher vào bộ nhớ tạm!");
     } catch {
       // Silent fail: avoid console noise in demo mode.
+    }
+  };
+
+  const handleReviewSubmit = async ({ rating, comment }) => {
+    if (!isAuthenticated || !voucher) return;
+    setIsSubmittingReview(true);
+    try {
+      await apiClient.post(`/vouchers/${voucher.id}/reviews`, { rating, comment });
+      showToast("Cảm ơn bạn đã đánh giá!");
+      refetch();
+    } catch (err) {
+      showToast(err?.response?.data?.message || "Có lỗi xảy ra khi gửi đánh giá.");
+    } finally {
+      setIsSubmittingReview(false);
     }
   };
 
@@ -237,9 +253,8 @@ export function VoucherDetailPage() {
             <div className="absolute top-4 right-4 flex gap-2">
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
-                className={`btn btn-circle btn-sm shadow-md bg-base-100 hover:bg-base-200 border-0 ${
-                  isFavorite ? "text-error" : "text-base-content/60"
-                }`}
+                className={`btn btn-circle btn-sm shadow-md bg-base-100 hover:bg-base-200 border-0 ${isFavorite ? "text-error" : "text-base-content/60"
+                  }`}
                 title={isFavorite ? "Bỏ yêu thích" : "Yêu thích"}
               >
                 <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
@@ -260,10 +275,13 @@ export function VoucherDetailPage() {
             branches={voucher.branches}
           />
 
-          <WriteReviewForm 
-            eligibility="NOT_ELIGIBLE" 
-            message={isAuthenticated ? "Bạn cần sử dụng voucher này để có thể đánh giá." : "Vui lòng đăng nhập để đánh giá."} 
+          <WriteReviewForm
+            eligibility={isAuthenticated ? (voucher?.userEligibility || "NOT_ELIGIBLE") : "NOT_ELIGIBLE"}
+            message={isAuthenticated ? "Bạn cần sử dụng voucher này để có thể đánh giá." : "Vui lòng đăng nhập để đánh giá."}
+            onSubmit={handleReviewSubmit}
+            isSubmitting={isSubmittingReview}
           />
+
           <ReviewList reviews={voucher.reviews} />
         </div>
 
@@ -317,9 +335,8 @@ export function VoucherDetailPage() {
                 <span className="text-primary font-bold">{soldPercent}%</span>
               </div>
               <progress
-                className={`progress w-full h-2.5 rounded-full ${
-                  voucher.remainingQuantity < 10 ? "progress-error" : "progress-primary"
-                }`}
+                className={`progress w-full h-2.5 rounded-full ${voucher.remainingQuantity < 10 ? "progress-error" : "progress-primary"
+                  }`}
                 value={voucher.soldQuantity}
                 max={voucher.totalQuantity}
               ></progress>

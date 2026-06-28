@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Star, Send } from "lucide-react";
 
-export function WriteReviewForm({ 
-  onSubmit, 
-  isSubmitting = false, 
+export function WriteReviewForm({
+  onSubmit,
+  isSubmitting = false,
   eligibility = "NOT_ELIGIBLE", // "NOT_ELIGIBLE", "ELIGIBLE", "ALREADY_REVIEWED"
   message = "Bạn cần sử dụng voucher này để có thể đánh giá."
 }) {
@@ -14,7 +14,7 @@ export function WriteReviewForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (rating === 0) return;
+    if (rating === 0 || isSubmitting) return;
     if (onSubmit) {
       onSubmit({ rating, comment });
     }
@@ -50,6 +50,8 @@ export function WriteReviewForm({
               <button
                 key={star}
                 type="button"
+                aria-label={`Chọn ${star} sao`}
+                aria-pressed={rating === star}
                 className="focus:outline-none transition-transform hover:scale-110"
                 onMouseEnter={() => setHoverRating(star)}
                 onClick={() => setRating(star)}
