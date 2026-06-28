@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { VoucherCodeCard } from "../../components/voucher/VoucherCodeCard";
 import { QRCodeModal } from "../../components/common/QRCodeModal";
 
 const CONFETTI_COLORS = ["#00694c", "#68dbae", "#ffba38", "#b7131a"];
@@ -65,6 +64,55 @@ function readLastSuccessFromSession() {
   }
 }
 
+function VoucherGroupCard({ group, onOpenQR }) {
+  const { title, imageUrl, codes } = group;
+
+  return (
+    <div className="flex flex-col md:flex-row bg-base-100 rounded-2xl border border-base-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+      {/* Thông tin chung voucher */}
+      <div className="flex p-5 md:p-6 md:w-5/12 border-b md:border-b-0 md:border-r border-base-200 gap-5 items-center bg-base-100/50">
+        <div className="w-24 h-24 md:w-28 md:h-28 rounded-xl bg-base-200 overflow-hidden flex-shrink-0 shadow-sm">
+          <img
+            src={imageUrl || "/placeholder.jpg"}
+            alt={title}
+            className="w-full h-full object-cover"
+            onError={(e) => { e.target.src = "https://placehold.co/100x100?text=Voucher"; }}
+          />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-bold text-lg leading-snug mb-2 line-clamp-3 text-base-content">{title}</h3>
+          <div className="inline-flex items-center gap-2 text-sm font-medium text-base-content/80 bg-base-200/50 px-3 py-1 rounded-lg">
+            <span>Số lượng:</span>
+            <span className="text-primary font-bold">{codes.length}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Danh sách mã */}
+      <div className="p-5 md:p-6 md:w-7/12 bg-base-50/50 flex flex-col gap-3 max-h-[320px] overflow-y-auto">
+        {codes.map(vc => (
+          <div key={vc.id} className="flex justify-between items-center p-4 bg-base-100 rounded-xl border border-base-200 shadow-sm hover:border-primary/30 transition-colors">
+            <div>
+              <div className="font-mono font-bold text-lg text-primary tracking-widest">{vc.code}</div>
+              <div className="text-xs font-medium text-base-content/60 mt-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">timer</span>
+                HSD: {vc.expiresAt ? new Date(vc.expiresAt).toLocaleDateString("vi-VN") : "Không thời hạn"}
+              </div>
+            </div>
+            <button 
+              className="btn btn-primary btn-sm btn-circle btn-outline shadow-sm"
+              onClick={() => onOpenQR(vc)}
+              title="Hiện QR Code"
+            >
+              <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function OrderSuccessPage() {
   const location = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,6 +130,7 @@ export function OrderSuccessPage() {
   }, []);
 
   const handleOpenQR = (vc) => {
+    // Map to structure expected by QRCodeModal if needed, but QRCodeModal usually just needs .code
     setSelectedVoucherCode(vc);
     setIsModalOpen(true);
   };
@@ -93,10 +142,10 @@ export function OrderSuccessPage() {
 
   if (!orderId) {
     return (
-      <div className="max-w-md mx-auto my-16 p-6 text-center bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-sm">
+      <div className="max-w-md mx-auto my-16 p-6 text-center bg-base-100 border border-base-200 rounded-2xl shadow-sm">
         <span className="material-symbols-outlined text-[64px] text-error mb-4">warning</span>
         <h2 className="text-xl font-bold mb-2">Không tìm thấy thông tin đơn hàng</h2>
-        <p className="text-on-surface-variant text-sm mb-6">
+        <p className="text-base-content/70 text-sm mb-6">
           Bạn có thể đã tải lại trang hoặc chưa đặt hàng thành công.
         </p>
         <Link to="/customer/home" className="btn btn-primary w-full rounded-full">
@@ -106,6 +155,7 @@ export function OrderSuccessPage() {
     );
   }
 
+  // 1. Map data
   const mappedCodes = (voucherCodes || []).map((vc, index) => ({
     id: `vc-${index}`,
     code: vc.code,
@@ -113,16 +163,32 @@ export function OrderSuccessPage() {
     expiresAt: vc.expiresAt,
     voucher: {
       title: vc.voucherTitle,
-      imageUrl: null,
+      imageUrl: vc.imageUrl, // Lấy từ payload backend vừa update
     },
   }));
 
+  // 2. Group by title
+  const groupedCodesObj = mappedCodes.reduce((acc, curr) => {
+    const title = curr.voucher.title || "Voucher";
+    if (!acc[title]) {
+      acc[title] = {
+        title,
+        imageUrl: curr.voucher.imageUrl,
+        codes: []
+      };
+    }
+    acc[title].codes.push(curr);
+    return acc;
+  }, {});
+
+  const groupedCodes = Object.values(groupedCodesObj);
+
   return (
-    <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 relative overflow-hidden bg-background min-h-[80vh]">
+    <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 relative overflow-hidden bg-base-50 min-h-[80vh]">
       <Confetti />
 
-      <div className="max-w-3xl w-full flex flex-col items-center relative z-10 animate-fade-in">
-        <div className="w-20 h-20 md:w-24 md:h-24 bg-primary-container rounded-full flex items-center justify-center mb-6 shadow-md border border-primary/10">
+      <div className="max-w-4xl w-full flex flex-col items-center relative z-10 animate-fade-in">
+        <div className="w-20 h-20 md:w-24 md:h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 shadow-sm border border-primary/20">
           <span
             className="material-symbols-outlined text-primary text-[40px] md:text-[50px] font-bold"
             style={{ fontVariationSettings: "'FILL' 1" }}
@@ -131,23 +197,24 @@ export function OrderSuccessPage() {
           </span>
         </div>
 
-        <h1 className="font-display-lg text-[28px] md:text-[36px] text-center mb-2 font-bold text-on-surface tracking-tight">
+        <h1 className="text-[28px] md:text-[36px] text-center mb-2 font-bold text-base-content tracking-tight">
           Đặt hàng thành công!
         </h1>
-        <p className="text-on-surface-variant font-body-lg text-[15px] md:text-[18px] mb-8">
+        <p className="text-base-content/70 text-[15px] md:text-[18px] mb-10">
           Mã đơn: <span className="font-mono font-bold text-primary select-all">#{orderId}</span>
         </p>
 
-        <div className="w-full flex flex-col gap-6 mb-8">
-          <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm p-6">
-            <h2 className="font-headline-md text-[18px] font-bold text-on-surface mb-4 border-b border-outline-variant/20 pb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">local_activity</span>
-              Mã voucher đã phát hành ({mappedCodes.length})
+        <div className="w-full flex flex-col gap-6 mb-10">
+          <div className="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-6 md:p-8">
+            <h2 className="text-[20px] font-bold text-base-content mb-6 border-b border-base-200 pb-4 flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary text-[28px]">local_activity</span>
+              Danh sách voucher đã mua
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mappedCodes.map((vc) => (
-                <VoucherCodeCard key={vc.id} voucherCode={vc} onOpenQR={handleOpenQR} />
+            {/* Hiển thị dạng Group */}
+            <div className="flex flex-col gap-6">
+              {groupedCodes.map((group, idx) => (
+                <VoucherGroupCard key={idx} group={group} onOpenQR={handleOpenQR} />
               ))}
             </div>
           </div>
@@ -156,13 +223,13 @@ export function OrderSuccessPage() {
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md">
           <Link
             to="/customer/home"
-            className="btn btn-outline border-2 border-primary text-primary hover:bg-primary-container hover:text-on-primary-container hover:border-primary px-8 py-3 rounded-full flex-1 font-label-md text-label-md"
+            className="btn btn-outline border-2 border-primary text-primary hover:bg-primary/10 hover:border-primary px-8 py-3 rounded-full flex-1 font-bold shadow-sm"
           >
             Về trang chủ
           </Link>
           <Link
             to="/customer/my-vouchers"
-            className="btn btn-primary px-8 py-3 rounded-full flex-1 font-label-md text-label-md shadow-sm"
+            className="btn btn-primary px-8 py-3 rounded-full flex-1 font-bold shadow-sm"
           >
             Xem voucher của tôi
           </Link>

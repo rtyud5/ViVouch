@@ -50,6 +50,7 @@ const processCheckout = async (tx, userId, sortedItems) => {
     orderItemsData.push({
       voucherId,
       title: voucher.title,
+      imageUrl: voucher.imageUrl,
       qty,
       unitPrice: voucher.salePrice,
       useEnd: voucher.useEnd
@@ -71,7 +72,9 @@ const processCheckout = async (tx, userId, sortedItems) => {
 
       returnVoucherCodes.push({
         code,
+        voucherId: item.voucherId,
         voucherTitle: item.title,
+        imageUrl: item.imageUrl,
         expiresAt: item.useEnd || null
       });
     }
