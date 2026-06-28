@@ -47,7 +47,7 @@ export function CheckoutPage() {
       }
 
       const mappedVoucherCodes = (result.voucherCodes ?? []).map((code) => {
-        const cartItem = cartItems.find((item) => item.voucherId === code.voucherId || item.voucher?.title === code.voucherTitle);
+        const cartItem = cartItems.find((item) => (item.voucherId ?? item.id) === code.voucherId || item.voucher?.title === code.voucherTitle);
         return {
           ...code,
           imageUrl: code.imageUrl || cartItem?.voucher?.imageUrl || null,
