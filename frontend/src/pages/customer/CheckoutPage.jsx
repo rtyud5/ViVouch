@@ -1,20 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../features/cart/hooks/useCart";
 import { useCheckout } from "../../features/orders/hooks";
+import { useAuthStore } from "../../stores/authStore";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CustomerEmptyState } from "../../components/common/CustomerEmptyState";
-import { OrderSummaryCard } from "../../components/voucher/OrderSummaryCard";
 
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading: isCartLoading } = useCart();
   const checkoutMutation = useCheckout();
-  const [localError, setLocalError] = React.useState(null);
-  const cartItems = cart?.items;
+  const { user } = useAuthStore();
+
+  const [paymentMethod, setPaymentMethod] = useState("VIVOUCH_WALLET");
+  const [localError, setLocalError] = useState(null);
+
+  const cartItems = cart?.items || [];
   const items = React.useMemo(
     () =>
-      (cartItems ?? []).map((item) => ({
+      cartItems.map((item) => ({
         id: item.voucherId ?? item.id,
         qty: item.qty,
       })),
@@ -24,7 +28,7 @@ export function CheckoutPage() {
   const totalQty = cartTotal?.totalQty ?? items.reduce((sum, item) => sum + item.qty, 0);
   const totalAmount =
     cartTotal?.totalAmount ??
-    (cartItems ?? []).reduce((sum, item) => {
+    cartItems.reduce((sum, item) => {
       const price = Number(item.voucher?.salePrice) || 0;
       return sum + price * item.qty;
     }, 0);
@@ -34,7 +38,7 @@ export function CheckoutPage() {
       setLocalError(null);
       const result = await checkoutMutation.mutateAsync({
         items,
-        paymentMethod: "MOCK_GATEWAY",
+        paymentMethod,
       });
 
       if (!result?.orderId) {
@@ -42,15 +46,22 @@ export function CheckoutPage() {
         return;
       }
 
+      const mappedVoucherCodes = (result.voucherCodes ?? []).map((code) => {
+        const cartItem = cartItems.find((item) => (item.voucherId ?? item.id) === code.voucherId || item.voucher?.title === code.voucherTitle);
+        return {
+          ...code,
+          imageUrl: code.imageUrl || cartItem?.voucher?.imageUrl || null,
+        };
+      });
+
       const successPayload = {
         orderId: result.orderId,
-        voucherCodes: result.voucherCodes ?? [],
+        voucherCodes: mappedVoucherCodes,
       };
-
-      sessionStorage.setItem("vivouch:last-order-success", JSON.stringify(successPayload));
 
       navigate("/customer/order-success", {
         state: successPayload,
+        replace: true,
       });
     } catch (error) {
       setLocalError(error);
@@ -83,29 +94,150 @@ export function CheckoutPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto px-4 py-8">
       <ApiErrorToast
         error={checkoutMutation.error || localError}
-        message="Thanh toán thất bại. Vui lòng thử lại."
+        message={localError?.message || "Thanh toán thất bại. Vui lòng thử lại."}
       />
 
-      <h1 className="text-3xl font-bold mb-6">Thanh toán</h1>
+      <h1 className="text-3xl font-bold mb-8">Thanh toán</h1>
 
-      <div className="max-w-md">
-        <OrderSummaryCard
-          totalQty={totalQty}
-          totalAmount={totalAmount}
-          paymentMethod="MOCK_GATEWAY"
-          action={
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Main Content (Left) */}
+        <div className="flex-1 space-y-6">
+          {/* Buyer Info */}
+          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200">
+            <h2 className="text-xl font-semibold mb-4">Thông tin người mua</h2>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-base-content/70">Họ và tên</span>
+                <span className="font-medium text-right">{user?.fullName || user?.name || "Khách hàng"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-base-content/70">Số điện thoại</span>
+                <span className="font-medium text-right">{user?.phone || "Chưa cập nhật"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-base-content/70">Email</span>
+                <span className="font-medium text-right">{user?.email || "Chưa cập nhật"}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Cart Items */}
+          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200">
+            <h2 className="text-xl font-semibold mb-4">Sản phẩm ({totalQty})</h2>
+            <div className="space-y-4">
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex gap-4 items-start">
+                  <div className="w-20 h-20 rounded-xl bg-base-200 overflow-hidden flex-shrink-0">
+                    <img
+                      src={item.voucher?.imageUrl || "/placeholder.jpg"}
+                      alt={item.voucher?.title || item.voucher?.name || "Voucher"}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.src = "https://placehold.co/100x100?text=Voucher"; }}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium line-clamp-2">{item.voucher?.title || item.voucher?.name}</h3>
+                    <div className="text-sm text-base-content/70 mt-1">Số lượng: {item.qty}</div>
+                  </div>
+                  <div className="font-semibold text-right whitespace-nowrap">
+                    {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                      (item.voucher?.salePrice || 0) * item.qty
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Payment Methods */}
+          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200">
+            <h2 className="text-xl font-semibold mb-4">Phương thức thanh toán</h2>
+            <div className="space-y-3">
+              <label className="flex items-center gap-3 p-4 border border-base-200 rounded-xl cursor-pointer hover:bg-base-200/50 transition-colors">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  className="radio radio-primary"
+                  value="VIVOUCH_WALLET"
+                  checked={paymentMethod === "VIVOUCH_WALLET"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span className="font-medium">Ví ViVouch (Mô phỏng)</span>
+              </label>
+
+              <label className="flex items-center gap-3 p-4 border border-base-200 rounded-xl cursor-pointer hover:bg-base-200/50 transition-colors">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  className="radio radio-primary"
+                  value="COD"
+                  checked={paymentMethod === "COD"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span className="font-medium">Thanh toán khi nhận hàng (COD)</span>
+              </label>
+
+              <label className="flex items-center gap-3 p-4 border border-base-200 rounded-xl cursor-pointer hover:bg-base-200/50 transition-colors">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  className="radio radio-primary"
+                  value="BANK_TRANSFER"
+                  checked={paymentMethod === "BANK_TRANSFER"}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
+                <span className="font-medium">Chuyển khoản (Mô phỏng)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Sticky Summary (Right) */}
+        <div className="lg:w-96">
+          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 sticky top-24">
+            <h2 className="text-xl font-semibold mb-6">Tóm tắt đơn hàng</h2>
+
+            <div className="space-y-4 mb-6">
+              <div className="flex justify-between text-base-content/80">
+                <span>Tổng tiền hàng ({totalQty} sản phẩm)</span>
+                <span>
+                  {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalAmount)}
+                </span>
+              </div>
+              <div className="flex justify-between text-base-content/80">
+                <span>Phí giao dịch</span>
+                <span>Miễn phí</span>
+              </div>
+            </div>
+
+            <div className="border-t border-base-200 pt-4 mb-6">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold">Tổng thanh toán</span>
+                <span className="text-2xl font-bold text-primary">
+                  {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalAmount)}
+                </span>
+              </div>
+            </div>
+
             <button
-              className="btn btn-primary w-full rounded-full mt-2 hover:bg-surface-tint active:scale-[0.98] transition-all shadow-sm"
+              className="btn btn-primary w-full rounded-full h-14 text-lg"
               onClick={handleCheckout}
               disabled={checkoutMutation.isPending || totalQty === 0}
             >
-              {checkoutMutation.isPending ? "Đang xử lý..." : "Xác nhận thanh toán"}
+              {checkoutMutation.isPending ? (
+                <>
+                  <span className="loading loading-spinner"></span>
+                  Đang xử lý...
+                </>
+              ) : (
+                "Xác nhận & Thanh toán"
+              )}
             </button>
-          }
-        />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { VoucherCodeCard } from "../../components/voucher/VoucherCodeCard";
-import { QRCodeModal } from "../../components/common/QRCodeModal";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 
 const CONFETTI_COLORS = ["#00694c", "#68dbae", "#ffba38", "#b7131a"];
 
@@ -53,127 +52,141 @@ const Confetti = React.memo(function Confetti() {
   );
 });
 
-function readLastSuccessFromSession() {
-  try {
-    const raw = sessionStorage.getItem("vivouch:last-order-success");
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed?.orderId) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
+function VoucherCodeItem({ code }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code.code);
+    setCopied(true);
+  };
+
+  useEffect(() => {
+    if (copied) {
+      const timer = setTimeout(() => setCopied(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [copied]);
+
+  return (
+    <div className="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-6 flex flex-col sm:flex-row gap-6 items-center hover:shadow-md transition-shadow">
+      {/* QR Code Container */}
+      <div className="bg-white p-3 rounded-2xl border border-base-200 shadow-sm flex-shrink-0">
+        <QRCodeSVG value={code.code} size={110} level="M" includeMargin={false} />
+      </div>
+      
+      {/* Thông tin */}
+      <div className="flex-1 flex flex-col w-full text-center sm:text-left gap-3 h-full">
+        <h3 className="font-bold text-lg leading-snug line-clamp-2 text-base-content">
+          {code.voucherTitle}
+        </h3>
+        
+        <div className="flex flex-col gap-3 mt-auto">
+          <div className="text-sm font-medium text-base-content/60 flex items-center justify-center sm:justify-start gap-1">
+            <span className="material-symbols-outlined text-[16px]">timer</span>
+            HSD: {code.expiresAt ? new Date(code.expiresAt).toLocaleDateString("vi-VN") : "Không thời hạn"}
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
+            <div className="bg-base-200/50 px-3 py-1.5 rounded-lg border border-base-200/50">
+              <span className="font-mono font-bold text-primary tracking-widest text-[15px]">{code.code}</span>
+            </div>
+            <button 
+              className={`btn btn-sm rounded-lg ${copied ? 'btn-success text-white border-success' : 'btn-outline btn-primary'}`}
+              onClick={handleCopy}
+            >
+              {copied ? (
+                <>
+                  <span className="material-symbols-outlined text-[16px]">check</span>
+                  Đã sao chép!
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[16px]">content_copy</span>
+                  Sao chép
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function OrderSuccessPage() {
   const location = useLocation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedVoucherCode, setSelectedVoucherCode] = useState(null);
+  const navigate = useNavigate();
+  
+  // Lấy dữ liệu 1 lần duy nhất từ location.state
+  const [successData] = useState(() => location.state);
 
-  const locationState = location.state || {};
-  const persistedState = readLastSuccessFromSession();
-  const successState = locationState.orderId ? locationState : persistedState;
-  const { orderId, voucherCodes } = successState || {};
+  // Xoá state khỏi history ngay lập tức. F5 sẽ thấy state = null.
+  useEffect(() => {
+    if (location.state) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state, navigate, location.pathname]);
 
-  React.useEffect(() => {
-    return () => {
-      sessionStorage.removeItem("vivouch:last-order-success");
-    };
-  }, []);
-
-  const handleOpenQR = (vc) => {
-    setSelectedVoucherCode(vc);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseQR = () => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedVoucherCode(null), 300);
-  };
-
-  if (!orderId) {
-    return (
-      <div className="max-w-md mx-auto my-16 p-6 text-center bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-sm">
-        <span className="material-symbols-outlined text-[64px] text-error mb-4">warning</span>
-        <h2 className="text-xl font-bold mb-2">Không tìm thấy thông tin đơn hàng</h2>
-        <p className="text-on-surface-variant text-sm mb-6">
-          Bạn có thể đã tải lại trang hoặc chưa đặt hàng thành công.
-        </p>
-        <Link to="/customer/home" className="btn btn-primary w-full rounded-full">
-          Về trang chủ
-        </Link>
-      </div>
-    );
+  if (!successData || !successData.orderId) {
+    return <Navigate to="/customer/home" replace />;
   }
 
-  const mappedCodes = (voucherCodes || []).map((vc, index) => ({
-    id: `vc-${index}`,
+  const { orderId, voucherCodes } = successData;
+
+  // Map data
+  const mappedCodes = (voucherCodes || []).map((vc) => ({
     code: vc.code,
-    status: String(vc.status || "ISSUED").toUpperCase(),
+    voucherTitle: vc.voucherTitle || vc.voucher?.title || "Voucher",
     expiresAt: vc.expiresAt,
-    voucher: {
-      title: vc.voucherTitle,
-      imageUrl: null,
-    },
   }));
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center py-12 px-4 relative overflow-hidden bg-background min-h-[80vh]">
+    <div className="flex-1 flex flex-col items-center py-12 px-4 relative overflow-hidden bg-base-50 min-h-[80vh]">
       <Confetti />
 
-      <div className="max-w-3xl w-full flex flex-col items-center relative z-10 animate-fade-in">
-        <div className="w-20 h-20 md:w-24 md:h-24 bg-primary-container rounded-full flex items-center justify-center mb-6 shadow-md border border-primary/10">
+      <div className="max-w-5xl w-full flex flex-col items-center relative z-10 animate-fade-in">
+        {/* Success Icon */}
+        <div className="w-20 h-20 md:w-24 md:h-24 bg-success/10 rounded-full flex items-center justify-center mb-6 shadow-sm border border-success/20 text-success">
           <span
-            className="material-symbols-outlined text-primary text-[40px] md:text-[50px] font-bold"
+            className="material-symbols-outlined text-[40px] md:text-[50px] font-bold"
             style={{ fontVariationSettings: "'FILL' 1" }}
           >
             check_circle
           </span>
         </div>
 
-        <h1 className="font-display-lg text-[28px] md:text-[36px] text-center mb-2 font-bold text-on-surface tracking-tight">
+        <h1 className="text-[28px] md:text-[36px] text-center mb-2 font-bold text-base-content tracking-tight">
           Đặt hàng thành công!
         </h1>
-        <p className="text-on-surface-variant font-body-lg text-[15px] md:text-[18px] mb-8">
+        <p className="text-base-content/70 text-[15px] md:text-[18px] mb-10">
           Mã đơn: <span className="font-mono font-bold text-primary select-all">#{orderId}</span>
         </p>
 
-        <div className="w-full flex flex-col gap-6 mb-8">
-          <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm p-6">
-            <h2 className="font-headline-md text-[18px] font-bold text-on-surface mb-4 border-b border-outline-variant/20 pb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">local_activity</span>
-              Mã voucher đã phát hành ({mappedCodes.length})
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mappedCodes.map((vc) => (
-                <VoucherCodeCard key={vc.id} voucherCode={vc} onOpenQR={handleOpenQR} />
-              ))}
-            </div>
+        {/* Danh sách QR Codes */}
+        <div className="w-full mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {mappedCodes.map((code) => (
+              <VoucherCodeItem key={code.code} code={code} />
+            ))}
           </div>
         </div>
 
+        {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center max-w-md">
           <Link
             to="/customer/home"
-            className="btn btn-outline border-2 border-primary text-primary hover:bg-primary-container hover:text-on-primary-container hover:border-primary px-8 py-3 rounded-full flex-1 font-label-md text-label-md"
+            className="btn btn-outline border-2 border-primary text-primary hover:bg-primary/10 hover:border-primary px-8 py-3 rounded-full flex-1 font-bold shadow-sm"
           >
             Về trang chủ
           </Link>
           <Link
             to="/customer/my-vouchers"
-            className="btn btn-primary px-8 py-3 rounded-full flex-1 font-label-md text-label-md shadow-sm"
+            className="btn btn-primary px-8 py-3 rounded-full flex-1 font-bold shadow-sm"
           >
             Xem voucher của tôi
           </Link>
         </div>
       </div>
-
-      <QRCodeModal
-        isOpen={isModalOpen}
-        onClose={handleCloseQR}
-        voucherCode={selectedVoucherCode}
-      />
     </div>
   );
 }
