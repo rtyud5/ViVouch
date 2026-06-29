@@ -50,10 +50,12 @@ export async function redeemCode(partnerUserId, code) {
 
   assertRedeemable(voucherCode);
 
-  const redeemedAt = new Date();
+  let redeemedAt;
 
   await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE id = ${voucherCode.id}::uuid FOR UPDATE`;
+
+    redeemedAt = new Date();
 
     const lockedVoucherCode = await tx.voucherCode.findUnique({
       where: { id: voucherCode.id },
