@@ -103,10 +103,8 @@ export async function submitVoucher(req, res, next) {
 
 export async function redeemVoucherCode(req, res, next) {
   try {
-    const parsed = redeemVoucherCodeSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ success: false, message: 'Thiếu mã voucher' });
-
-    const result = await redeemCode(req.user.userId, parsed.data.code);
+    const { code } = redeemVoucherCodeSchema.parse(req.body);
+    const result = await redeemCode(req.user.userId, code);
     res.json({ success: true, message: 'Xác nhận thành công', data: result });
   } catch (err) {
     next(err);

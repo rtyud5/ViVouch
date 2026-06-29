@@ -27,8 +27,8 @@ function assertRedeemable(voucherCode, now = new Date()) {
 export async function redeemCode(partnerUserId, code) {
   const partner = await prisma.partner.findUnique({ where: { userId: partnerUserId } });
 
-  if (!partner) {
-    throw new AppError('Không có quyền đổi mã voucher', 403, 'FORBIDDEN');
+  if (!partner || partner.status !== 'APPROVED') {
+    throw new AppError('Tài khoản đối tác chưa được kích hoạt hoặc đã bị khoá', 403, 'FORBIDDEN');
   }
 
   const voucherCode = await prisma.voucherCode.findUnique({
@@ -52,7 +52,7 @@ export async function redeemCode(partnerUserId, code) {
   const redeemedAt = new Date();
 
   await prisma.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE id = ${voucherCode.id} FOR UPDATE`;
+    await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE id = ${voucherCode.id}::uuid FOR UPDATE`;
 
     const lockedVoucherCode = await tx.voucherCode.findUnique({
       where: { id: voucherCode.id },
