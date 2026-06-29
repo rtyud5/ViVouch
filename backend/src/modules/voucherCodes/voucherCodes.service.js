@@ -1,6 +1,7 @@
 import { prisma } from '../../config/prisma.js';
 import { VOUCHER_CODE_STATUS } from '../../constants/statuses.js';
 import { AppError } from '../../utils/appError.js';
+import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
 
 function assertRedeemable(voucherCode, now = new Date()) {
   if (voucherCode.status === VOUCHER_CODE_STATUS.USED) {
@@ -84,11 +85,22 @@ export async function redeemCode(partnerUserId, code) {
       throw new AppError('Mã không hợp lệ', 400, 'INVALID_VOUCHER_CODE');
     }
 
-    const branch = await tx.branch.findFirst({
-      where: { partnerId: partner.id, isActive: true },
-      orderBy: { createdAt: 'asc' },
+    let branch = await tx.branch.findFirst({
+      where: {
+        partnerId: partner.id,
+        isActive: true,
+        voucherBranches: { some: { voucherId: voucherCode.voucherId } },
+      },
       select: { id: true },
     });
+
+    if (!branch) {
+      branch = await tx.branch.findFirst({
+        where: { partnerId: partner.id, isActive: true },
+        orderBy: { createdAt: 'asc' },
+        select: { id: true },
+      });
+    }
 
     if (!branch) {
       throw new AppError('Partner chưa có chi nhánh hoạt động để ghi nhận đổi mã', 400, 'BRANCH_REQUIRED');
@@ -100,6 +112,20 @@ export async function redeemCode(partnerUserId, code) {
         redeemedBy: partner.userId,
         branchId: branch.id,
         redeemedAt,
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        actorId: partner.userId,
+        action: AUDIT_ACTIONS.PARTNER_REDEEM_VOUCHER,
+        targetType: 'VoucherCode',
+        targetId: voucherCode.id,
+        metadata: {
+          code: voucherCode.code,
+          branchId: branch.id,
+          redeemedAt,
+        },
       },
     });
   });
