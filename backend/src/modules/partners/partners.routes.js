@@ -20,4 +20,6 @@ router.post('/vouchers', partnersController.createVoucher);
 router.put('/vouchers/:id', partnersController.updateVoucher);
 router.post('/vouchers/:id/submit', partnersController.submitVoucher);
 
+router.post('/redeem', partnersController.redeemVoucherCode);
+
 export default router;

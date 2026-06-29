@@ -1,7 +1,9 @@
 import * as partnersService from './partners.service.js';
 import * as vouchersService from '../vouchers/vouchers.service.js';
+import { redeemCode } from '../voucherCodes/voucherCodes.service.js';
 import { updateProfileSchema, createBranchSchema, updateBranchSchema } from './partners.validator.js';
 import { createVoucherSchema, updateVoucherSchema, partnerVoucherFiltersSchema } from '../vouchers/vouchers.validator.js';
+import { redeemVoucherCodeSchema } from '../voucherCodes/voucherCodes.validator.js';
 
 export async function getProfile(req, res, next) {
   try {
@@ -94,6 +96,16 @@ export async function submitVoucher(req, res, next) {
   try {
     const voucher = await vouchersService.submitVoucher(req.user.userId, req.params.id);
     res.json({ data: voucher });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function redeemVoucherCode(req, res, next) {
+  try {
+    const { code } = redeemVoucherCodeSchema.parse(req.body);
+    const result = await redeemCode(req.user.userId, code);
+    res.json({ success: true, message: 'Xác nhận thành công', data: result });
   } catch (err) {
     next(err);
   }
