@@ -313,7 +313,7 @@ export async function findByPartner(userId, filters) {
   if (vouchers.length === 0) {
     return {
       data: [],
-      pagination: { page: Number(page), limit: Number(limit), total, totalPages: 0 }
+      pagination: { page: Number(page), limit: Number(limit), total, totalPages: Math.ceil(total / Number(limit)) }
     };
   }
 
