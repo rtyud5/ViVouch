@@ -300,19 +300,20 @@ export async function findByPartner(userId, filters) {
     ];
   }
 
-  const total = await prisma.voucher.count({ where });
-
-  const vouchers = await prisma.voucher.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    skip,
-    take: Number(limit),
-  });
+  const [total, vouchers] = await Promise.all([
+    prisma.voucher.count({ where }),
+    prisma.voucher.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: Number(limit),
+    }),
+  ]);
 
   if (vouchers.length === 0) {
     return {
       data: [],
-      pagination: { page: Number(page), limit: Number(limit), total, totalPages: 0 }
+      pagination: { page: Number(page), limit: Number(limit), total, totalPages: Math.ceil(total / Number(limit)) }
     };
   }
 
@@ -337,7 +338,7 @@ export async function findByPartner(userId, filters) {
       page: Number(page),
       limit: Number(limit),
       total,
-      totalPages: Math.ceil(total / limit)
+      totalPages: Math.ceil(total / Number(limit))
     }
   };
 }
