@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,14 +14,12 @@ import {
   ToggleRight,
   UserRound
 } from "lucide-react";
+import { usePartnerProfile, useUpdatePartnerProfile } from "../../features/partner/hooks/usePartnerProfile";
 
 const profileSchema = z.object({
   businessName: z.string().min(2, "Tên doanh nghiệp là bắt buộc"),
   taxCode: z.string().min(8, "Mã số thuế không hợp lệ"),
-  email: z.string().email("Email không hợp lệ"),
-  phone: z.string().min(8, "Số điện thoại không hợp lệ"),
-  website: z.string().optional(),
-  address: z.string().min(5, "Địa chỉ không hợp lệ")
+  description: z.string().optional()
 });
 
 const branchSchema = z.object({
@@ -29,15 +27,6 @@ const branchSchema = z.object({
   address: z.string().min(5, "Địa chỉ chi nhánh là bắt buộc"),
   phone: z.string().min(8, "Số điện thoại chi nhánh không hợp lệ")
 });
-
-const initialProfile = {
-  businessName: "ViVouch Partner Co., Ltd.",
-  taxCode: "0312345678",
-  email: "partner@vivouch.vn",
-  phone: "0909123456",
-  website: "https://vivouch.vn",
-  address: "12 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh"
-};
 
 const initialBranches = [
   { id: 1, name: "Chi nhánh Quận 1", address: "12 Nguyễn Huệ, Quận 1, TP.HCM", phone: "0281234567", active: true },
@@ -93,15 +82,22 @@ function BranchCard({ branch, onToggle }) {
 }
 
 export function PartnerProfilePage() {
-  const [profile, setProfile] = useState(initialProfile);
+  const { data: partnerProfile, isLoading: isProfileLoading } = usePartnerProfile();
+  const updateProfileMutation = useUpdatePartnerProfile();
+
   const [branches, setBranches] = useState(initialBranches);
   const [toast, setToast] = useState({ message: "", tone: "success" });
   const [showBranchForm, setShowBranchForm] = useState(false);
 
   const profileForm = useForm({
     resolver: zodResolver(profileSchema),
-    defaultValues: profile
+    defaultValues: {
+      businessName: "",
+      taxCode: "",
+      description: ""
+    }
   });
+  const { reset: resetProfile, formState: { isDirty: isProfileDirty } } = profileForm;
 
   const branchForm = useForm({
     resolver: zodResolver(branchSchema),
@@ -120,9 +116,26 @@ export function PartnerProfilePage() {
 
   useEffect(() => () => window.clearTimeout(showToast.timer), []);
 
+  useEffect(() => {
+    if (partnerProfile?.data && !isProfileDirty) {
+      resetProfile({
+        businessName: partnerProfile.data.businessName || "",
+        taxCode: partnerProfile.data.taxCode || "",
+        description: partnerProfile.data.description || ""
+      });
+    }
+  }, [partnerProfile, resetProfile, isProfileDirty]);
+
   const handleProfileSubmit = profileForm.handleSubmit((values) => {
-    setProfile(values);
-    showToast("Đã lưu thông tin doanh nghiệp thành công.");
+    updateProfileMutation.mutate(values, {
+      onSuccess: () => {
+        showToast("Đã lưu thông tin doanh nghiệp thành công.");
+        resetProfile(values);
+      },
+      onError: (error) => {
+        showToast(error?.response?.data?.message || "Có lỗi xảy ra khi lưu thông tin.", "error");
+      }
+    });
   });
 
   const handleBranchSubmit = branchForm.handleSubmit((values) => {
@@ -153,6 +166,10 @@ export function PartnerProfilePage() {
     );
   };
 
+  if (isProfileLoading) {
+    return <div className="flex justify-center p-10"><span className="loading loading-spinner loading-lg text-primary"></span></div>;
+  }
+
   return (
     <div className="space-y-6">
       <Toast message={toast.message} tone={toast.tone} />
@@ -174,7 +191,7 @@ export function PartnerProfilePage() {
           <div className="rounded-2xl bg-base-200 px-4 py-3 text-sm text-base-content/70">
             <div className="flex items-center gap-2">
               <UserRound className="h-4 w-4" />
-              {profile.businessName}
+              {partnerProfile?.data?.businessName || profileForm.watch("businessName") || "Doanh nghiệp"}
             </div>
             <div className="mt-1 flex items-center gap-2">
               <Store className="h-4 w-4" />
@@ -202,46 +219,23 @@ export function PartnerProfilePage() {
 
             <label className="form-control">
               <div className="label"><span className="label-text">Mã số thuế</span></div>
-              <input className="input input-bordered" {...profileForm.register("taxCode")} />
+              <input className="input input-bordered" readOnly {...profileForm.register("taxCode")} />
               {profileForm.formState.errors.taxCode && (
                 <div className="mt-1 text-sm text-error">{profileForm.formState.errors.taxCode.message}</div>
               )}
             </label>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <label className="form-control">
-                <div className="label"><span className="label-text">Email</span></div>
-                <input className="input input-bordered" {...profileForm.register("email")} />
-                {profileForm.formState.errors.email && (
-                  <div className="mt-1 text-sm text-error">{profileForm.formState.errors.email.message}</div>
-                )}
-              </label>
-
-              <label className="form-control">
-                <div className="label"><span className="label-text">Số điện thoại</span></div>
-                <input className="input input-bordered" {...profileForm.register("phone")} />
-                {profileForm.formState.errors.phone && (
-                  <div className="mt-1 text-sm text-error">{profileForm.formState.errors.phone.message}</div>
-                )}
-              </label>
-            </div>
-
             <label className="form-control">
-              <div className="label"><span className="label-text">Website</span></div>
-              <input className="input input-bordered" {...profileForm.register("website")} />
-            </label>
-
-            <label className="form-control">
-              <div className="label"><span className="label-text">Địa chỉ trụ sở</span></div>
-              <textarea className="textarea textarea-bordered min-h-28" {...profileForm.register("address")} />
-              {profileForm.formState.errors.address && (
-                <div className="mt-1 text-sm text-error">{profileForm.formState.errors.address.message}</div>
+              <div className="label"><span className="label-text">Mô tả doanh nghiệp</span></div>
+              <textarea className="textarea textarea-bordered min-h-28" {...profileForm.register("description")} />
+              {profileForm.formState.errors.description && (
+                <div className="mt-1 text-sm text-error">{profileForm.formState.errors.description.message}</div>
               )}
             </label>
 
-            <button type="submit" className="btn btn-primary w-full">
-              <Check className="h-4 w-4" />
-              Lưu thông tin doanh nghiệp
+            <button type="submit" className="btn btn-primary w-full" disabled={updateProfileMutation.isPending}>
+              {updateProfileMutation.isPending ? <span className="loading loading-spinner loading-sm"></span> : <Check className="h-4 w-4" />}
+              {updateProfileMutation.isPending ? "Đang lưu..." : "Lưu thông tin doanh nghiệp"}
             </button>
           </form>
         </div>
@@ -270,9 +264,8 @@ export function PartnerProfilePage() {
           </div>
 
           <div
-            className={`mt-4 overflow-hidden rounded-2xl border border-dashed border-base-300 bg-base-200/50 transition-all duration-300 ${
-              showBranchForm ? "max-h-[420px] p-4 opacity-100" : "max-h-0 p-0 opacity-0"
-            }`}
+            className={`mt-4 overflow-hidden rounded-2xl border border-dashed border-base-300 bg-base-200/50 transition-all duration-300 ${showBranchForm ? "max-h-[420px] p-4 opacity-100" : "max-h-0 p-0 opacity-0"
+              }`}
           >
             <form className="grid grid-cols-1 gap-4 md:grid-cols-3" onSubmit={handleBranchSubmit}>
               <label className="form-control">
