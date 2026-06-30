@@ -97,6 +97,7 @@ export function PartnerProfilePage() {
       description: ""
     }
   });
+  const { reset: resetProfile, formState: { isDirty: isProfileDirty } } = profileForm;
 
   const branchForm = useForm({
     resolver: zodResolver(branchSchema),
@@ -116,19 +117,20 @@ export function PartnerProfilePage() {
   useEffect(() => () => window.clearTimeout(showToast.timer), []);
 
   useEffect(() => {
-    if (partnerProfile?.data) {
-      profileForm.reset({
+    if (partnerProfile?.data && !isProfileDirty) {
+      resetProfile({
         businessName: partnerProfile.data.businessName || "",
         taxCode: partnerProfile.data.taxCode || "",
         description: partnerProfile.data.description || ""
       });
     }
-  }, [partnerProfile, profileForm]);
+  }, [partnerProfile, resetProfile, isProfileDirty]);
 
   const handleProfileSubmit = profileForm.handleSubmit((values) => {
     updateProfileMutation.mutate(values, {
       onSuccess: () => {
         showToast("Đã lưu thông tin doanh nghiệp thành công.");
+        resetProfile(values);
       },
       onError: (error) => {
         showToast(error?.response?.data?.message || "Có lỗi xảy ra khi lưu thông tin.", "error");
@@ -217,7 +219,7 @@ export function PartnerProfilePage() {
 
             <label className="form-control">
               <div className="label"><span className="label-text">Mã số thuế</span></div>
-              <input className="input input-bordered" disabled {...profileForm.register("taxCode")} />
+              <input className="input input-bordered" readOnly {...profileForm.register("taxCode")} />
               {profileForm.formState.errors.taxCode && (
                 <div className="mt-1 text-sm text-error">{profileForm.formState.errors.taxCode.message}</div>
               )}
@@ -262,9 +264,8 @@ export function PartnerProfilePage() {
           </div>
 
           <div
-            className={`mt-4 overflow-hidden rounded-2xl border border-dashed border-base-300 bg-base-200/50 transition-all duration-300 ${
-              showBranchForm ? "max-h-[420px] p-4 opacity-100" : "max-h-0 p-0 opacity-0"
-            }`}
+            className={`mt-4 overflow-hidden rounded-2xl border border-dashed border-base-300 bg-base-200/50 transition-all duration-300 ${showBranchForm ? "max-h-[420px] p-4 opacity-100" : "max-h-0 p-0 opacity-0"
+              }`}
           >
             <form className="grid grid-cols-1 gap-4 md:grid-cols-3" onSubmit={handleBranchSubmit}>
               <label className="form-control">
