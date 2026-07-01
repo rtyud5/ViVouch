@@ -230,7 +230,7 @@ describe('Reviews Service Tests', () => {
         targetId: result.review.id,
       },
     });
-    expect(auditLog).toBeDefined();
+    expect(auditLog).not.toBeNull();
   });
 
   it('rejects duplicate review for the same voucher', async () => {

@@ -24,7 +24,14 @@ async function assertVoucherCanShowReviews(voucherId, db = prisma) {
     select: { id: true, status: true },
   });
 
-  if (!voucher || voucher.status !== VOUCHER_STATUS.ON_SALE) {
+  const allowedStatuses = [
+    VOUCHER_STATUS.ON_SALE,
+    VOUCHER_STATUS.PAUSED,
+    VOUCHER_STATUS.EXPIRED,
+    VOUCHER_STATUS.SUSPENDED,
+  ];
+
+  if (!voucher || !allowedStatuses.includes(voucher.status)) {
     throw new AppError('Voucher not found', 404, 'VOUCHER_NOT_FOUND');
   }
 
@@ -36,23 +43,24 @@ export async function getByVoucher(voucherId, { page = 1, limit = 10 } = {}) {
 
   const skip = (page - 1) * limit;
 
-  const [reviews, totalCount, ratingSummary] = await Promise.all([
+  const [reviews, ratingSummary] = await Promise.all([
     prisma.review.findMany({
       where: { voucherId },
       include: {
         user: { select: { id: true, fullName: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
       skip,
       take: limit,
     }),
-    prisma.review.count({ where: { voucherId } }),
     prisma.review.aggregate({
       where: { voucherId },
       _avg: { rating: true },
+      _count: { _all: true },
     }),
   ]);
 
+  const totalCount = ratingSummary._count._all;
   const avgRating = ratingSummary._avg.rating
     ? Number(ratingSummary._avg.rating.toFixed(1))
     : 0;
