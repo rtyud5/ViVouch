@@ -8,6 +8,6 @@ router.use(verifyToken);
 
 router.get("/me", usersController.getMe);
 router.put("/me", usersController.updateProfile);
-router.put("/me/password", usersController.changePassword);
+router.post("/me/change-password", usersController.changePassword);
 
 export default router;

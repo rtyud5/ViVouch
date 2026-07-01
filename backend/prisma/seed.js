@@ -187,6 +187,27 @@ async function main() {
   }
   console.log('✅ VoucherBranches:', vbData.length)
 
+  // ── Carts ────────────────────────────────────────────────────────────────
+  const cart1 = await prisma.cart.upsert({
+    where: { userId: customer1.id }, update: {}, create: { userId: customer1.id }
+  })
+  const cart2 = await prisma.cart.upsert({
+    where: { userId: customer2.id }, update: {}, create: { userId: customer2.id }
+  })
+
+  const cartItemsData = [
+    { cartId: cart1.id, voucherId: v.hdl_1.id, qty: 2 },
+    { cartId: cart1.id, voucherId: v.zen_1.id, qty: 1 },
+    { cartId: cart2.id, voucherId: v.gt_1.id, qty: 1 },
+  ]
+  for (const item of cartItemsData) {
+    await prisma.cartItem.upsert({
+      where: { cartId_voucherId: { cartId: item.cartId, voucherId: item.voucherId } },
+      update: { qty: item.qty }, create: item
+    })
+  }
+  console.log('✅ Carts seeded')
+
   // ── Orders + VoucherCodes + Reviews ───────────────────────────────────────
   const { nanoid } = await import('nanoid')
   const customers = [customer1, customer2, customer3]
