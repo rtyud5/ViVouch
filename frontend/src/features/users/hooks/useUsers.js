@@ -29,7 +29,12 @@ export function useUpdateProfile() {
 }
 
 export function useChangePassword() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: changePassword,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users", "me"] });
+    },
   });
 }

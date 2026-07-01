@@ -10,6 +10,7 @@ import cartRouter from './modules/cart/cart.routes.js';
 import adminRouter from './modules/admin/admin.routes.js';
 import ordersRouter from './modules/orders/orders.routes.js';
 import partnersRouter from './modules/partners/partners.routes.js';
+import usersRouter from './modules/users/users.routes.js';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/api/customer/cart', cartRouter);
 app.use('/api/customer/orders', ordersRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/partner', partnersRouter);
+app.use('/api/users', usersRouter);
 
 app.use(errorMiddleware);
 
