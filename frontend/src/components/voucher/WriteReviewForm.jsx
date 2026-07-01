@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Star, Send } from "lucide-react";
+import { StarRating } from "../common/StarRating";
 
 export function WriteReviewForm({
   onSubmit,
@@ -9,12 +10,20 @@ export function WriteReviewForm({
   message = "Bạn cần sử dụng voucher này để có thể đánh giá."
 }) {
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (rating === 0 || isSubmitting) return;
+    setError("");
+    
+    if (rating < 1 || rating > 5) {
+      setError("Vui lòng chọn số sao từ 1 đến 5.");
+      return;
+    }
+    
+    if (isSubmitting) return;
+    
     if (onSubmit) {
       onSubmit({ rating, comment });
     }
@@ -45,26 +54,15 @@ export function WriteReviewForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <span className="block text-sm font-medium mb-2">Đánh giá chất lượng</span>
-          <div className="flex gap-1" onMouseLeave={() => setHoverRating(0)}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                aria-label={`Chọn ${star} sao`}
-                aria-pressed={rating === star}
-                className="focus:outline-none transition-transform hover:scale-110"
-                onMouseEnter={() => setHoverRating(star)}
-                onClick={() => setRating(star)}
-              >
-                <Star
-                  size={28}
-                  className={(hoverRating || rating) >= star ? "text-warning" : "text-base-300"}
-                  fill={(hoverRating || rating) >= star ? "currentColor" : "none"}
-                />
-              </button>
-            ))}
-          </div>
-          {rating === 0 && <span className="text-xs text-error mt-1">Vui lòng chọn số sao</span>}
+          <StarRating 
+            rating={rating} 
+            onRatingChange={(val) => {
+              setRating(val);
+              if (error) setError("");
+            }} 
+            size={28}
+          />
+          {error && <span className="text-xs text-error mt-1 block">{error}</span>}
         </div>
 
         <div>
