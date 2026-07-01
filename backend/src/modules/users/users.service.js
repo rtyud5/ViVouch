@@ -23,28 +23,34 @@ export async function getMe(userId) {
 }
 
 export async function updateProfile(userId, data) {
-  const fullName = data.fullName.trim();
-  const normalizedPhone = data.phone?.trim() || null;
+  const updateData = {};
 
-  if (normalizedPhone) {
-    const existingPhone = await prisma.user.findFirst({
-      where: {
-        phone: normalizedPhone,
-        id: { not: userId }
+  if (data.fullName !== undefined) {
+    updateData.fullName = data.fullName.trim();
+  }
+
+  if (data.phone !== undefined) {
+    const normalizedPhone = data.phone?.trim() || null;
+
+    if (normalizedPhone) {
+      const existingPhone = await prisma.user.findFirst({
+        where: {
+          phone: normalizedPhone,
+          id: { not: userId }
+        }
+      });
+
+      if (existingPhone) {
+        throw new AppError("Số điện thoại đã tồn tại trong hệ thống", 409, "PHONE_EXISTS");
       }
-    });
-
-    if (existingPhone) {
-      throw new AppError("Số điện thoại đã tồn tại trong hệ thống", 409, "PHONE_EXISTS");
     }
+    
+    updateData.phone = normalizedPhone;
   }
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },
-    data: {
-      fullName,
-      phone: normalizedPhone
-    }
+    data: updateData
   });
 
   await auditLogService.log(
@@ -52,7 +58,7 @@ export async function updateProfile(userId, data) {
     AUDIT_ACTIONS.CUSTOMER_UPDATE_PROFILE,
     "User",
     userId,
-    { fullName, phone: normalizedPhone }
+    updateData
   );
 
   return stripPasswordHash(updatedUser);

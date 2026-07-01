@@ -28,7 +28,7 @@ app.use('/api/customer/cart', cartRouter);
 app.use('/api/customer/orders', ordersRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/partner', partnersRouter);
-app.use('/api/users', usersRouter);
+app.use('/api/user', usersRouter);
 
 app.use(errorMiddleware);
 
