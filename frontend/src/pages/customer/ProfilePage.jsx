@@ -37,6 +37,8 @@ export function ProfilePage() {
   }, [user, hydratedUserId]);
 
   const avatarInitial = user?.fullName?.[0]?.toUpperCase() ?? "U";
+  const wrongCurrentPassword =
+    pwdError && getApiErrorMessage(pwdError, "").includes("Mật khẩu hiện tại không đúng");
 
   const handleUpdateProfile = (e) => {
     e.preventDefault();
@@ -219,13 +221,14 @@ export function ProfilePage() {
                   <input
                     id="current-password"
                     type="password"
-                    className="input input-bordered w-full"
+                    className={`input input-bordered w-full ${wrongCurrentPassword ? "input-error" : ""}`}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     required
                     autoComplete="current-password"
+                    aria-invalid={wrongCurrentPassword ? "true" : undefined}
                   />
-                  {pwdError && getApiErrorMessage(pwdError, "").includes("Mật khẩu hiện tại không đúng") && (
+                  {wrongCurrentPassword && (
                     <p className="mt-1 text-sm text-error" role="alert">
                       Mật khẩu hiện tại không đúng. Vui lòng kiểm tra lại.
                     </p>
