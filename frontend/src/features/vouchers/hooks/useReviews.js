@@ -7,10 +7,10 @@ export function useReviews(voucherId) {
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [eligibility, setEligibility] = useState("NOT_ELIGIBLE"); // Mock status
-  
+
   const fetchReviews = useCallback(async () => {
     if (!voucherId) return;
-    
+
     setIsLoading(true);
     setError(null);
     try {
@@ -18,7 +18,7 @@ export function useReviews(voucherId) {
       // const data = await api.get(`/vouchers/${voucherId}/reviews`);
       // setReviews(data);
       console.log(`[Placeholder] Fetching reviews for voucher ${voucherId}...`);
-      
+
       // Do not hardcode mock into production path
       setReviews([]);
     } catch (err) {
@@ -28,13 +28,13 @@ export function useReviews(voucherId) {
     }
   }, [voucherId]);
 
-  const submitReview = async (reviewData) => {
+  const submitReview = useCallback(async (reviewData) => {
     setIsSubmitting(true);
     try {
       // TODO: Replace with actual API call when Reviews API is ready
       // await api.post(`/vouchers/${voucherId}/reviews`, reviewData);
       console.log("[Placeholder] Submitting review:", reviewData);
-      
+
       // Re-fetch reviews after successful submission
       await fetchReviews();
       setEligibility("ALREADY_REVIEWED");
@@ -44,7 +44,7 @@ export function useReviews(voucherId) {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [voucherId, fetchReviews]);
 
   return {
     reviews,
