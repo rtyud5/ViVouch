@@ -1,7 +1,42 @@
 import React from "react";
-import { Star } from "lucide-react";
+import PropTypes from "prop-types";
+import { ReviewCard } from "./ReviewCard";
+import { AlertCircle } from "lucide-react";
 
-export function ReviewList({ reviews = [] }) {
+export function ReviewList({ reviews = [], isLoading = false, error = null }) {
+  if (isLoading) {
+    return (
+      <div className="w-full bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 mt-6">
+        <h3 className="font-bold text-lg mb-4 text-base-content">Đánh giá mới nhất</h3>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse flex flex-col gap-2 border-b border-base-200 last:border-0 pb-4 last:pb-0">
+              <div className="flex justify-between">
+                <div className="h-4 bg-base-300 rounded w-1/4"></div>
+                <div className="h-3 bg-base-300 rounded w-1/6"></div>
+              </div>
+              <div className="h-4 bg-base-300 rounded w-20"></div>
+              <div className="h-4 bg-base-300 rounded w-full"></div>
+              <div className="h-4 bg-base-300 rounded w-2/3"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full bg-base-100 rounded-2xl shadow-sm border border-error/20 p-6 mt-6 text-center">
+        <div className="flex flex-col items-center gap-2 text-error">
+          <AlertCircle size={24} />
+          <p className="font-medium text-sm">Không thể tải đánh giá</p>
+          <p className="text-xs opacity-80">{typeof error === 'string' ? error : 'Đã có lỗi xảy ra, vui lòng thử lại sau.'}</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!reviews || reviews.length === 0) {
     return (
       <div className="w-full bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 mt-6 text-center">
@@ -19,33 +54,15 @@ export function ReviewList({ reviews = [] }) {
       </h3>
       <div className="space-y-4">
         {displayReviews.map((review) => (
-          <div key={review.id} className="border-b border-base-200 last:border-0 pb-4 last:pb-0">
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-semibold text-sm text-base-content">
-                {review.user?.fullName || "Người dùng ẩn danh"}
-              </span>
-              <span className="text-xs text-base-content/50">
-                {review.createdAt && !isNaN(Date.parse(review.createdAt))
-                  ? new Date(review.createdAt).toLocaleDateString("vi-VN")
-                  : "Không rõ ngày"}
-              </span>
-            </div>
-            <div className="flex text-warning mb-2">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={14}
-                  fill={i < review.rating ? "currentColor" : "none"}
-                  className={i < review.rating ? "text-warning" : "text-base-300"}
-                />
-              ))}
-            </div>
-            <p className="text-sm text-base-content/80 whitespace-pre-line">
-              {review.comment || "Không có nội dung bình luận."}
-            </p>
-          </div>
+          <ReviewCard key={review.id} review={review} />
         ))}
       </div>
     </div>
   );
 }
+
+ReviewList.propTypes = {
+  reviews: PropTypes.array,
+  isLoading: PropTypes.bool,
+  error: PropTypes.any
+};
