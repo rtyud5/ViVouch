@@ -11,6 +11,6 @@ export async function updateProfile(data) {
 }
 
 export async function changePassword(data) {
-  const response = await apiClient.put("/users/me/password", data);
+  const response = await apiClient.post("/users/me/change-password", data);
   return response.data.data;
 }
