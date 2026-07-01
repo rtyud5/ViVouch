@@ -48,8 +48,12 @@ export function ProfilePage() {
     updateProfileMutation.mutate(
       { fullName: fullName.trim(), phone: phone.trim() || null },
       {
-        onSuccess: () => {
+        onSuccess: (updatedUser) => {
           setProfileSuccess("Cập nhật thông tin thành công!");
+          if (updatedUser) {
+            setFullName(updatedUser.fullName || "");
+            setPhone(updatedUser.phone || "");
+          }
         },
         onError: (err) => {
           setProfileError(err);
@@ -199,7 +203,7 @@ export function ProfilePage() {
                   {updateProfileMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm" />
-                      Đang lưu...
+                      {" "}Đang lưu...
                     </>
                   ) : (
                     "Lưu thay đổi"
@@ -260,7 +264,7 @@ export function ProfilePage() {
                   {changePasswordMutation.isPending ? (
                     <>
                       <span className="loading loading-spinner loading-sm" />
-                      Đang đổi...
+                      {" "}Đang đổi...
                     </>
                   ) : (
                     "Đổi mật khẩu"

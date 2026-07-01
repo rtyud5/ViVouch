@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 /**
  * Hiển thị toast thành công sau thao tác API.
@@ -25,3 +26,8 @@ export function ApiSuccessToast({ message, duration = 4000 }) {
     </div>
   );
 }
+
+ApiSuccessToast.propTypes = {
+  message: PropTypes.string,
+  duration: PropTypes.number,
+};

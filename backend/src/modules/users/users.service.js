@@ -6,7 +6,7 @@ import * as auditLogService from "../auditLogs/auditLog.service.js";
 import { AUDIT_ACTIONS } from "../../constants/auditActions.js";
 
 function stripPasswordHash(user) {
-  const { passwordHash: _, ...userWithoutPassword } = user;
+  const { passwordHash, ...userWithoutPassword } = user;
   return userWithoutPassword;
 }
 
@@ -72,7 +72,8 @@ export async function changePassword(userId, { currentPassword, newPassword }) {
     throw new AppError("Mật khẩu hiện tại không đúng", 400, "INVALID_CURRENT_PASSWORD");
   }
 
-  const passwordHash = await bcrypt.hash(newPassword, Number(env.BCRYPT_SALT_ROUNDS));
+  const saltRounds = Number(env.BCRYPT_SALT_ROUNDS) || 10;
+  const passwordHash = await bcrypt.hash(newPassword, saltRounds);
 
   await prisma.user.update({
     where: { id: userId },

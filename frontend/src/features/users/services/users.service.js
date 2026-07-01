@@ -15,10 +15,15 @@ function sanitizeUser(user) {
 
 function shouldUseMock(error) {
   if (FORCE_MOCK) return true;
-  if (!error?.response) return true;
 
-  const status = error.response.status;
-  return status === 404 || status === 405 || status === 501 || status >= 500;
+  // Only allow fallback in development environment when API is not implemented
+  if (import.meta.env.DEV) {
+    if (!error?.response) return true;
+    const status = error.response.status;
+    return status === 404 || status === 405 || status === 501;
+  }
+
+  return false;
 }
 
 async function withMockFallback(apiCall, mockCall) {
