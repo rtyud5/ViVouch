@@ -18,8 +18,8 @@ export const getByVoucher = asyncHandler(async (req, res) => {
       reviews: result.reviews,
       avgRating: result.avgRating,
       totalCount: result.totalCount,
+      pagination: result.pagination,
     },
-    pagination: result.pagination,
   });
 });
 
@@ -30,7 +30,7 @@ export const create = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     success: true,
-    message: 'Danh gia voucher thanh cong',
-    data: result,
+    message: 'Đánh giá thành công',
+    data: result.review,
   });
 });

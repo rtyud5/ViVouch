@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as partnersController from './partners.controller.js';
+import * as redeemController from '../redeem/redeem.controller.js';
 import { verifyToken } from '../../middlewares/auth.middleware.js';
 import { requireRole } from '../../middlewares/role.middleware.js';
 
@@ -20,6 +21,6 @@ router.post('/vouchers', partnersController.createVoucher);
 router.put('/vouchers/:id', partnersController.updateVoucher);
 router.post('/vouchers/:id/submit', partnersController.submitVoucher);
 
-router.post('/redeem', partnersController.redeemVoucherCode);
+router.post('/redeem', redeemController.redeemVoucherCode);
 
 export default router;
