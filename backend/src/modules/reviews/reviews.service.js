@@ -56,11 +56,11 @@ export async function getByVoucher(voucherId, { page = 1, limit = 10 } = {}) {
     prisma.review.aggregate({
       where: { voucherId },
       _avg: { rating: true },
-      _count: { _all: true },
+      _count: { id: true },
     }),
   ]);
 
-  const totalCount = ratingSummary._count._all;
+  const totalCount = ratingSummary._count.id;
   const avgRating = ratingSummary._avg.rating
     ? Number(ratingSummary._avg.rating.toFixed(1))
     : 0;
@@ -83,13 +83,13 @@ export async function createReview(userId, voucherId, data) {
     return await prisma.$transaction(async (tx) => {
       await assertVoucherCanShowReviews(voucherId, tx);
 
-      const existingReview = await tx.review.findUnique({
-        where: { userId_voucherId: { userId, voucherId } },
+      const existingReview = await tx.review.findFirst({
+        where: { userId, voucherId },
         select: { id: true },
       });
 
       if (existingReview) {
-        throw new AppError('Ban da danh gia voucher nay', 409, 'REVIEW_ALREADY_EXISTS');
+        throw new AppError('Bạn đã đánh giá voucher này rồi', 409, 'REVIEW_ALREADY_EXISTS');
       }
 
       const usedCode = await tx.voucherCode.findFirst({
@@ -102,7 +102,7 @@ export async function createReview(userId, voucherId, data) {
       });
 
       if (!usedCode) {
-        throw new AppError('Chi co the danh gia sau khi da su dung voucher', 403, 'VOUCHER_NOT_USED');
+        throw new AppError('Bạn cần sử dụng voucher trước khi đánh giá', 403, 'VOUCHER_NOT_USED');
       }
 
       const review = await tx.review.create({
@@ -134,7 +134,7 @@ export async function createReview(userId, voucherId, data) {
       const ratingSummary = await tx.review.aggregate({
         where: { voucherId },
         _avg: { rating: true },
-        _count: { _all: true },
+        _count: { id: true },
       });
 
       return {
@@ -142,12 +142,12 @@ export async function createReview(userId, voucherId, data) {
         avgRating: ratingSummary._avg.rating
           ? Number(ratingSummary._avg.rating.toFixed(1))
           : 0,
-        totalCount: ratingSummary._count._all,
+        totalCount: ratingSummary._count.id,
       };
     });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-      throw new AppError('Ban da danh gia voucher nay', 409, 'REVIEW_ALREADY_EXISTS');
+      throw new AppError('Bạn đã đánh giá voucher này rồi', 409, 'REVIEW_ALREADY_EXISTS');
     }
     throw err;
   }
