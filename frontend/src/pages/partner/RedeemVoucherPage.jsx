@@ -154,7 +154,7 @@ export function RedeemVoucherPage() {
                 <button
                   type="submit"
                   className="btn btn-primary w-full btn-lg"
-                  disabled={!code || isPending}
+                  disabled={!code.trim() || isPending}
                 >
                   {isPending ? (
                     <span className="loading loading-spinner"></span>
