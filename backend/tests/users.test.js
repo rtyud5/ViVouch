@@ -11,10 +11,16 @@ describe("Users /me API Tests", () => {
   let customerToken = "";
   let customerId = "";
 
+  const cleanup = async () => {
+    const user = await prisma.user.findUnique({ where: { email: customerEmail } });
+    if (user) {
+      await prisma.auditLog.deleteMany({ where: { actorId: user.id } });
+      await prisma.user.delete({ where: { id: user.id } });
+    }
+  };
+
   beforeAll(async () => {
-    await prisma.user.deleteMany({
-      where: { email: customerEmail }
-    });
+    await cleanup();
 
     const registerRes = await request(app)
       .post("/api/auth/register")
@@ -35,9 +41,7 @@ describe("Users /me API Tests", () => {
   });
 
   afterAll(async () => {
-    await prisma.user.deleteMany({
-      where: { email: customerEmail }
-    });
+    await cleanup();
   });
 
   describe("GET /api/users/me", () => {
@@ -88,10 +92,10 @@ describe("Users /me API Tests", () => {
     });
   });
 
-  describe("PUT /api/users/me/password", () => {
+  describe("POST /api/users/me/change-password", () => {
     it("rejects wrong current password with clear message", async () => {
       const res = await request(app)
-        .put("/api/users/me/password")
+        .post("/api/users/me/change-password")
         .set("Authorization", `Bearer ${customerToken}`)
         .send({
           currentPassword: "WrongPassword!",
@@ -104,7 +108,7 @@ describe("Users /me API Tests", () => {
 
     it("changes password with correct current password", async () => {
       const res = await request(app)
-        .put("/api/users/me/password")
+        .post("/api/users/me/change-password")
         .set("Authorization", `Bearer ${customerToken}`)
         .send({
           currentPassword: password,
