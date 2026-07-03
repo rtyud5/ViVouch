@@ -35,7 +35,7 @@ async function cleanupAll() {
 async function createTestCustomer() {
   const resReg = await request(app)
     .post("/api/auth/register")
-    .send({ email: CUSTOMER_EMAIL, password: PASSWORD, fullName: "Customer", phone: "0900000101" });
+    .send({ email: CUSTOMER_EMAIL, password: PASSWORD, fullName: "Customer", phone: "0900000301" });
 
   const resLogin = await request(app)
     .post("/api/auth/login")
@@ -50,7 +50,7 @@ async function createTestCustomer() {
 async function createTestAdmin() {
   const resReg = await request(app)
     .post("/api/auth/register")
-    .send({ email: ADMIN_EMAIL, password: PASSWORD, fullName: "Admin", phone: "0900000102" });
+    .send({ email: ADMIN_EMAIL, password: PASSWORD, fullName: "Admin", phone: "0900000302" });
   
   const adminId = resReg.body.data.id;
 
@@ -134,7 +134,7 @@ describe("Admin Orders & Audit Logs API Tests", () => {
         passwordHash: "dummyhash",
         fullName: "Partner",
         role: "PARTNER",
-        phone: "0900000103"
+        phone: "0900000303"
       }
     });
 
