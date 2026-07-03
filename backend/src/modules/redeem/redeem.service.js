@@ -53,7 +53,7 @@ export async function redeemCode(partnerUserId, code) {
   let redeemedAt;
 
   await prisma.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE id = ${voucherCode.id}::uuid FOR UPDATE`;
+    await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE id = ${voucherCode.id} FOR UPDATE`;
 
     redeemedAt = new Date();
 
@@ -130,6 +130,8 @@ export async function redeemCode(partnerUserId, code) {
         },
       },
     });
+  }, {
+    timeout: 10000,
   });
 
   return {

@@ -80,11 +80,11 @@ export async function getByVoucher(voucherId, { page = 1, limit = 10 } = {}) {
 
 export async function createReview(userId, voucherId, data) {
   try {
-    return await prisma.$transaction(async (tx) => {
+    const created = await prisma.$transaction(async (tx) => {
       await assertVoucherCanShowReviews(voucherId, tx);
 
-      const existingReview = await tx.review.findFirst({
-        where: { userId, voucherId },
+      const existingReview = await tx.review.findUnique({
+        where: { userId_voucherId: { userId, voucherId } },
         select: { id: true },
       });
 
@@ -131,20 +131,24 @@ export async function createReview(userId, voucherId, data) {
         },
       });
 
-      const ratingSummary = await tx.review.aggregate({
-        where: { voucherId },
-        _avg: { rating: true },
-        _count: { id: true },
-      });
-
       return {
         review: mapReview(review),
-        avgRating: ratingSummary._avg.rating
-          ? Number(ratingSummary._avg.rating.toFixed(1))
-          : 0,
-        totalCount: ratingSummary._count.id,
       };
     });
+
+    const ratingSummary = await prisma.review.aggregate({
+      where: { voucherId },
+      _avg: { rating: true },
+      _count: { id: true },
+    });
+
+    return {
+      ...created,
+      avgRating: ratingSummary._avg.rating
+        ? Number(ratingSummary._avg.rating.toFixed(1))
+        : 0,
+      totalCount: ratingSummary._count.id,
+    };
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
       throw new AppError('Bạn đã đánh giá voucher này rồi', 409, 'REVIEW_ALREADY_EXISTS');

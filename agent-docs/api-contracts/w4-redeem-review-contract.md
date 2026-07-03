@@ -22,6 +22,9 @@ Public.
 Auth: CUSTOMER. Body: { "rating": 1-5, "comment": "..." (optional) }
 Guard: user phải có VoucherCode status=USED của voucher đó.
 
+Success 201:
+{ "success": true, "message": "Đánh giá thành công", "data": { /* review object */ } }
+
 Errors:
 - 403: chưa dùng voucher
 - 409: đã review rồi
