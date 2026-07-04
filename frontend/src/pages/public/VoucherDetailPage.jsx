@@ -153,6 +153,9 @@ export function VoucherDetailPage() {
             <div className="w-full aspect-video md:aspect-[4/3] bg-base-300 rounded-2xl"></div>
             <div className="w-full h-12 bg-base-300 rounded-xl"></div>
             <div className="w-full h-48 bg-base-300 rounded-2xl"></div>
+            {/* Review section skeletons to prevent layout shift */}
+            <div className="w-full h-40 bg-base-300 rounded-2xl mt-2"></div>
+            <div className="w-full h-64 bg-base-300 rounded-2xl mt-2"></div>
           </div>
           <div className="lg:col-span-5">
             <div className="card bg-base-100 border border-base-200 p-6 rounded-2xl flex flex-col gap-6">
@@ -275,14 +278,16 @@ export function VoucherDetailPage() {
             branches={voucher.branches}
           />
 
-          <WriteReviewForm
-            eligibility={isAuthenticated ? (voucher?.userEligibility || "NOT_ELIGIBLE") : "NOT_ELIGIBLE"}
-            message={isAuthenticated ? "Bạn cần sử dụng voucher này để có thể đánh giá." : "Vui lòng đăng nhập để đánh giá."}
-            onSubmit={handleReviewSubmit}
-            isSubmitting={isSubmittingReview}
-          />
+          <div id="reviews-section" className="flex flex-col gap-2 mt-4 scroll-mt-24">
+            <WriteReviewForm
+              eligibility={isAuthenticated ? (voucher?.userEligibility || "NOT_ELIGIBLE") : "NOT_ELIGIBLE"}
+              message={isAuthenticated ? "Bạn cần sử dụng voucher này để có thể đánh giá." : "Vui lòng đăng nhập để đánh giá."}
+              onSubmit={handleReviewSubmit}
+              isSubmitting={isSubmittingReview}
+            />
 
-          <ReviewList reviews={voucher.reviews} />
+            <ReviewList reviews={voucher.reviews} />
+          </div>
         </div>
 
         <div className="lg:col-span-5">
