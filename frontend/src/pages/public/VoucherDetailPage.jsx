@@ -9,6 +9,7 @@ import { ReviewList } from "../../components/voucher/ReviewList";
 import { WriteReviewForm } from "../../components/voucher/WriteReviewForm";
 import { useAuthStore } from "../../stores/authStore";
 import { useCart } from "../../features/cart/hooks/useCart";
+import { useReviews, useCreateReview } from "../../features/vouchers/hooks/useReviews";
 import { apiClient } from "../../services/apiClient";
 
 export function VoucherDetailPage() {
@@ -19,6 +20,8 @@ export function VoucherDetailPage() {
   const { addToCart } = useCart();
 
   const query = useVoucherDetail(id);
+  const reviewsQuery = useReviews(id);
+  const { mutateAsync: createReview, isPending: isSubmittingReview } = useCreateReview();
   const voucherResponse = query.data?.data || query.data;
 
   const voucher = React.useMemo(() => {
@@ -44,7 +47,6 @@ export function VoucherDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [toastMessage, setToastMessage] = useState("");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   const voucherId = voucher?.id;
   useEffect(() => {
@@ -127,15 +129,11 @@ export function VoucherDetailPage() {
 
   const handleReviewSubmit = async ({ rating, comment }) => {
     if (!isAuthenticated || !voucher) return;
-    setIsSubmittingReview(true);
     try {
-      await apiClient.post(`/vouchers/${voucher.id}/reviews`, { rating, comment });
+      await createReview({ voucherId: voucher.id, data: { rating, comment } });
       showToast("Cảm ơn bạn đã đánh giá!");
-      refetch();
     } catch (err) {
       showToast(err?.response?.data?.message || "Có lỗi xảy ra khi gửi đánh giá.");
-    } finally {
-      setIsSubmittingReview(false);
     }
   };
 
@@ -288,7 +286,11 @@ export function VoucherDetailPage() {
               isSubmitting={isSubmittingReview}
             />
 
-            <ReviewList reviews={voucher.reviews} />
+            <ReviewList
+              reviews={reviewsQuery.data?.data?.reviews || reviewsQuery.data?.reviews || (Array.isArray(reviewsQuery.data) ? reviewsQuery.data : [])}
+              isLoading={reviewsQuery.isLoading}
+              error={reviewsQuery.error}
+            />
           </div>
         </div>
 
