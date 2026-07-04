@@ -154,8 +154,10 @@ export function VoucherDetailPage() {
             <div className="w-full h-12 bg-base-300 rounded-xl"></div>
             <div className="w-full h-48 bg-base-300 rounded-2xl"></div>
             {/* Review section skeletons to prevent layout shift */}
-            <div className="w-full h-40 bg-base-300 rounded-2xl mt-2"></div>
-            <div className="w-full h-64 bg-base-300 rounded-2xl mt-2"></div>
+            <div className="flex flex-col gap-2 mt-4">
+              <div className="w-full h-40 bg-base-300 rounded-2xl mt-6"></div>
+              <div className="w-full h-64 bg-base-300 rounded-2xl mt-6"></div>
+            </div>
           </div>
           <div className="lg:col-span-5">
             <div className="card bg-base-100 border border-base-200 p-6 rounded-2xl flex flex-col gap-6">
