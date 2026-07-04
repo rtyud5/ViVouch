@@ -1,58 +1,26 @@
-import { useState, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getVoucherReviews, createVoucherReview } from "../api/vouchers.api";
 
-// Placeholder hook for reviews feature
-export function useReviews(voucherId) {
-  const [reviews, setReviews] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [eligibility, setEligibility] = useState("NOT_ELIGIBLE"); // Mock status
+// Lấy danh sách đánh giá
+export function useReviews(voucherId, options = {}) {
+  return useQuery({
+    queryKey: ["reviews", voucherId],
+    queryFn: () => getVoucherReviews(voucherId),
+    enabled: !!voucherId,
+    ...options,
+  });
+}
 
-  const fetchReviews = useCallback(async () => {
-    if (!voucherId) return;
+// Tạo đánh giá mới
+export function useCreateReview() {
+  const queryClient = useQueryClient();
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      // TODO: Replace with actual API call when Reviews API is ready
-      // const data = await api.get(`/vouchers/${voucherId}/reviews`);
-      // setReviews(data);
-      console.log(`[Placeholder] Fetching reviews for voucher ${voucherId}...`);
-
-      // Do not hardcode mock into production path
-      setReviews([]);
-    } catch (err) {
-      setError(err.message || "Failed to fetch reviews");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [voucherId]);
-
-  const submitReview = useCallback(async (reviewData) => {
-    setIsSubmitting(true);
-    try {
-      // TODO: Replace with actual API call when Reviews API is ready
-      // await api.post(`/vouchers/${voucherId}/reviews`, reviewData);
-      console.log("[Placeholder] Submitting review:", reviewData);
-
-      // Re-fetch reviews after successful submission
-      await fetchReviews();
-      setEligibility("ALREADY_REVIEWED");
-    } catch (err) {
-      console.error("Failed to submit review", err);
-      throw err;
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [voucherId, fetchReviews]);
-
-  return {
-    reviews,
-    isLoading,
-    error,
-    isSubmitting,
-    eligibility,
-    fetchReviews,
-    submitReview
-  };
+  return useMutation({
+    mutationFn: ({ voucherId, data }) => createVoucherReview(voucherId, data),
+    onSuccess: (data, variables) => {
+      // Invalidate both reviews list and voucher detail to update average rating
+      queryClient.invalidateQueries({ queryKey: ["reviews", variables.voucherId] });
+      queryClient.invalidateQueries({ queryKey: ["voucher", variables.voucherId] });
+    },
+  });
 }
