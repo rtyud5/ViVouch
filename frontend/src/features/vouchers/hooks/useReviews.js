@@ -19,8 +19,9 @@ export function useCreateReview() {
     mutationFn: ({ voucherId, data }) => createVoucherReview(voucherId, data),
     onSuccess: (data, variables) => {
       // Invalidate both reviews list and voucher detail to update average rating
-      queryClient.invalidateQueries({ queryKey: ["reviews", variables.voucherId] });
-      queryClient.invalidateQueries({ queryKey: ["voucher", variables.voucherId] });
+      const voucherIdStr = String(variables.voucherId);
+      queryClient.invalidateQueries({ queryKey: ["reviews", voucherIdStr] });
+      queryClient.invalidateQueries({ queryKey: ["voucher", voucherIdStr] });
     },
   });
 }

@@ -286,8 +286,8 @@ export function VoucherDetailPage() {
               isSubmitting={isSubmittingReview}
             />
 
-            <ReviewList 
-              reviews={reviewsQuery.data?.data || reviewsQuery.data?.reviews || reviewsQuery.data || []} 
+            <ReviewList
+              reviews={reviewsQuery.data?.data?.reviews || reviewsQuery.data?.reviews || (Array.isArray(reviewsQuery.data) ? reviewsQuery.data : [])}
               isLoading={reviewsQuery.isLoading}
               error={reviewsQuery.error}
             />
