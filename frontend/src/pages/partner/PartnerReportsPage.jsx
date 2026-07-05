@@ -1,17 +1,15 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { BarChart3, CalendarRange, ChevronDown, Clock3, CreditCard, LineChart as LineChartIcon, ShoppingBag, TrendingUp, Users } from "lucide-react";
 import {
   CartesianGrid,
-  Cell,
   Line,
   LineChart,
-  Pie,
-  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis
 } from "recharts";
+import { usePartnerReports } from "../../features/partner/hooks/usePartnerReports";
 
 const RANGE_OPTIONS = [
   { value: 7, label: "7 ngày" },
@@ -26,67 +24,9 @@ const METRICS = [
   { key: "conversion", label: "Tỷ lệ chuyển đổi", icon: TrendingUp, tone: "from-amber-500 to-orange-500" }
 ];
 
-const PIE_COLORS = ["#7c3aed", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444"];
-
-const formatCurrency = (value) => `${Number(value).toLocaleString("vi-VN")} ₫`;
-
-const createSeededRandom = (seed) => {
-  let state = seed;
-  return () => {
-    state = (state * 1664525 + 1013904223) % 4294967296;
-    return state / 4294967296;
-  };
-};
+const formatCurrency = (value) => `${Number(value || 0).toLocaleString("vi-VN")} ₫`;
 
 const getRangeLabel = (days) => RANGE_OPTIONS.find((option) => option.value === days)?.label ?? `${days} ngày`;
-
-const generateAnalytics = (days) => {
-  const now = new Date();
-  const rand = createSeededRandom(days * 97);
-  const chartData = [];
-  let revenueTotal = 0;
-  let ordersTotal = 0;
-  let customersTotal = 0;
-
-  for (let i = days - 1; i >= 0; i -= 1) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
-    const revenue = Math.round(1400000 + rand() * 2500000 + (days === 7 ? 180000 : 0));
-    const orders = Math.round(18 + rand() * 42);
-    const customers = Math.max(8, Math.round(orders * (0.65 + rand() * 0.3)));
-
-    revenueTotal += revenue;
-    ordersTotal += orders;
-    customersTotal += customers;
-
-    chartData.push({
-      label: date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" }),
-      revenue,
-      orders,
-      customers
-    });
-  }
-
-  const channelData = [
-    { name: "Online", value: Math.round(ordersTotal * (0.45 + rand() * 0.08)) },
-    { name: "Chi nhánh", value: Math.round(ordersTotal * (0.28 + rand() * 0.06)) },
-    { name: "Đối tác", value: Math.round(ordersTotal * (0.16 + rand() * 0.05)) },
-    { name: "Khác", value: Math.max(4, ordersTotal - Math.round(ordersTotal * 0.45) - Math.round(ordersTotal * 0.28) - Math.round(ordersTotal * 0.16)) }
-  ];
-
-  const conversion = ordersTotal > 0 ? ((customersTotal / ordersTotal) * 100).toFixed(1) : "0.0";
-
-  return {
-    chartData,
-    channelData,
-    summary: {
-      revenue: revenueTotal,
-      orders: ordersTotal,
-      customers: customersTotal,
-      conversion: Number(conversion)
-    }
-  };
-};
 
 function StatCard({ label, value, icon: Icon, tone }) {
   return (
@@ -104,15 +44,34 @@ function StatCard({ label, value, icon: Icon, tone }) {
   );
 }
 
+function StatCardSkeleton() {
+  return (
+    <div className="rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-3 w-full">
+          <div className="h-4 w-24 bg-base-200 rounded animate-pulse"></div>
+          <div className="h-8 w-32 bg-base-200 rounded animate-pulse"></div>
+        </div>
+        <div className="h-11 w-11 rounded-2xl bg-base-200 animate-pulse flex-shrink-0"></div>
+      </div>
+    </div>
+  );
+}
+
 export function PartnerReportsPage() {
   const [rangeDays, setRangeDays] = useState(30);
 
-  const analytics = useMemo(() => generateAnalytics(rangeDays), [rangeDays]);
+  const { data: reportData, isLoading, isError } = usePartnerReports(rangeDays);
+
+  const summary = reportData?.summary || { revenue: 0, orders: 0, customers: 0, conversion: 0 };
+  const chartData = reportData?.revenueByDay || [];
+  const topVouchers = reportData?.topVouchers || [];
+
   const summaryCards = [
-    { ...METRICS[0], value: formatCurrency(analytics.summary.revenue) },
-    { ...METRICS[1], value: analytics.summary.orders.toLocaleString("vi-VN") },
-    { ...METRICS[2], value: analytics.summary.customers.toLocaleString("vi-VN") },
-    { ...METRICS[3], value: `${analytics.summary.conversion}%` }
+    { ...METRICS[0], value: formatCurrency(summary.revenue) },
+    { ...METRICS[1], value: (summary.orders || 0).toLocaleString("vi-VN") },
+    { ...METRICS[2], value: (summary.customers || 0).toLocaleString("vi-VN") },
+    { ...METRICS[3], value: `${Number(summary.conversion || 0).toFixed(1)}%` }
   ];
 
   return (
@@ -128,8 +87,7 @@ export function PartnerReportsPage() {
               Báo cáo hiệu quả theo thời gian
             </h1>
             <p className="mt-2 text-sm leading-6 text-base-content/60">
-              Dữ liệu dưới đây đang dùng mock data, nhưng đã được lọc theo 7 ngày, 30 ngày hoặc 3 tháng để
-              mô phỏng flow thật của partner portal.
+              Dữ liệu được cập nhật theo thời gian thực.
             </p>
           </div>
 
@@ -140,6 +98,7 @@ export function PartnerReportsPage() {
                 type="button"
                 className={`join-item btn btn-sm border-0 px-4 ${rangeDays === option.value ? "btn-primary text-white" : "btn-ghost"}`}
                 onClick={() => setRangeDays(option.value)}
+                disabled={isLoading}
               >
                 {option.label}
               </button>
@@ -149,9 +108,9 @@ export function PartnerReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {summaryCards.map((card) => (
-          <StatCard key={card.label} {...card} />
-        ))}
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, idx) => <StatCardSkeleton key={idx} />)
+          : summaryCards.map((card) => <StatCard key={card.label} {...card} />)}
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -174,68 +133,83 @@ export function PartnerReportsPage() {
           </div>
 
           <div className="h-[320px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={analytics.chartData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148,163,184,0.18)" />
-                <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fontSize: 12 }} />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(value) => `${Math.round(value / 1000000)}M`}
-                />
-                <Tooltip
-                  formatter={(value) => [formatCurrency(value), "Doanh thu"]}
-                  contentStyle={{ borderRadius: 16, border: "none", boxShadow: "0 12px 40px rgba(15,23,42,0.12)" }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#7c3aed"
-                  strokeWidth={3}
-                  dot={false}
-                  activeDot={{ r: 6, fill: "#7c3aed", stroke: "#fff", strokeWidth: 2 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {isLoading ? (
+              <div className="w-full h-full bg-base-200 rounded-xl animate-pulse"></div>
+            ) : chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 8, right: 8, left: -16, bottom: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(148,163,184,0.18)" />
+                  <XAxis 
+                    dataKey={(row) => row.label || row.date} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tick={{ fontSize: 12 }} 
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => value >= 1000000 ? `${Math.round(value / 1000000)}M` : value}
+                  />
+                  <Tooltip
+                    formatter={(value) => [formatCurrency(value), "Doanh thu"]}
+                    contentStyle={{ borderRadius: 16, border: "none", boxShadow: "0 12px 40px rgba(15,23,42,0.12)" }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#7c3aed"
+                    strokeWidth={3}
+                    dot={false}
+                    activeDot={{ r: 6, fill: "#7c3aed", stroke: "#fff", strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center text-base-content/60 gap-2">
+                <LineChartIcon className="h-10 w-10 opacity-20" />
+                <p>Chưa có dữ liệu giao dịch</p>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="rounded-3xl border border-base-300 bg-base-100 p-5 shadow-sm">
           <div className="mb-4">
             <div className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold">Cơ cấu đơn hàng</h2>
+              <ShoppingBag className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-bold">Top Vouchers</h2>
             </div>
-            <p className="mt-1 text-sm text-base-content/60">Tỷ trọng theo kênh bán hàng</p>
+            <p className="mt-1 text-sm text-base-content/60">Voucher hiệu quả nhất</p>
           </div>
 
-          <div className="h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Tooltip
-                  formatter={(value, name) => [value, name]}
-                  contentStyle={{ borderRadius: 16, border: "none", boxShadow: "0 12px 40px rgba(15,23,42,0.12)" }}
-                />
-                <Pie data={analytics.channelData} dataKey="value" nameKey="name" innerRadius={62} outerRadius={92} paddingAngle={4}>
-                  {analytics.channelData.map((_, index) => (
-                    <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            {analytics.channelData.map((item, index) => (
-              <div key={item.name} className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="h-3 w-3 rounded-full" style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }} />
-                  <span className="text-sm text-base-content/70">{item.name}</span>
-                </div>
-                <span className="text-sm font-semibold">{item.value}</span>
+          <div className="h-[280px] overflow-y-auto pr-2">
+            {isLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={idx} className="h-12 w-full bg-base-200 rounded animate-pulse"></div>
+                ))}
               </div>
-            ))}
+            ) : topVouchers.length > 0 ? (
+              <div className="space-y-4">
+                {topVouchers.map((item, index) => (
+                  <div key={item.id || index} className="flex flex-col gap-1 border-b border-base-200 pb-3 last:border-0 last:pb-0">
+                    <div className="flex justify-between items-start gap-2">
+                      <span className="font-semibold text-sm line-clamp-2">{item.name || item.code}</span>
+                      <span className="text-sm font-bold text-primary whitespace-nowrap">{formatCurrency(item.revenue || 0)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs text-base-content/60">
+                      <span>{item.orders || item.count || 0} lượt dùng</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center text-base-content/60 gap-2">
+                <ShoppingBag className="h-10 w-10 opacity-20" />
+                <p>Chưa có voucher nào</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -247,26 +221,38 @@ export function PartnerReportsPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Ngày</th>
-                <th>Doanh thu</th>
-                <th>Đơn hàng</th>
-                <th>Khách mua</th>
-              </tr>
-            </thead>
-            <tbody>
-              {analytics.chartData.slice(-8).map((row) => (
-                <tr key={row.label}>
-                  <td className="font-medium">{row.label}</td>
-                  <td>{formatCurrency(row.revenue)}</td>
-                  <td>{row.orders.toLocaleString("vi-VN")}</td>
-                  <td>{row.customers.toLocaleString("vi-VN")}</td>
+          {isLoading ? (
+            <div className="space-y-2 mt-4">
+               {Array.from({ length: 5 }).map((_, idx) => (
+                  <div key={idx} className="h-10 w-full bg-base-200 rounded animate-pulse"></div>
+                ))}
+            </div>
+          ) : chartData.length > 0 ? (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Ngày</th>
+                  <th>Doanh thu</th>
+                  <th>Đơn hàng</th>
+                  <th>Khách mua</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {chartData.slice(-8).map((row, index) => (
+                  <tr key={row.label || row.date || index}>
+                    <td className="font-medium">{row.label || row.date}</td>
+                    <td>{formatCurrency(row.revenue)}</td>
+                    <td>{(row.orders || 0).toLocaleString("vi-VN")}</td>
+                    <td>{(row.customers || 0).toLocaleString("vi-VN")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="text-center py-6 text-base-content/60">
+              Không có dữ liệu
+            </div>
+          )}
         </div>
       </div>
     </div>
