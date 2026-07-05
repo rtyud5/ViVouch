@@ -74,7 +74,6 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
   const totalCustomersSet = new Set();
 
   const dailyDataMap = new Map();
-  const dailyDataMap = new Map();
   for (let i = 0; i < rangeDays; i++) {
     const d = new Date(startDate);
     d.setUTCDate(startDate.getUTCDate() + i);
