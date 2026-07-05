@@ -63,9 +63,9 @@ export function PartnerReportsPage() {
 
   const { data: reportData, isLoading, isError } = usePartnerReports(rangeDays);
 
-  const summary = reportData?.summary || { revenue: 0, orders: 0, customers: 0, conversion: 0 };
-  const chartData = reportData?.revenueByDay || [];
-  const topVouchers = reportData?.topVouchers || [];
+  const summary = reportData?.data?.summary || { revenue: 0, orders: 0, customers: 0, conversion: 0 };
+  const chartData = reportData?.data?.revenueByDay || [];
+  const topVouchers = reportData?.data?.topVouchers || [];
 
   const summaryCards = [
     { ...METRICS[0], value: formatCurrency(summary.revenue) },

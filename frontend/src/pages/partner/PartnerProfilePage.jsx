@@ -167,7 +167,21 @@ export function PartnerProfilePage() {
   };
 
   if (isProfileLoading) {
-    return <div className="flex justify-center p-10"><span className="loading loading-spinner loading-lg text-primary"></span></div>;
+    return (
+      <div className="space-y-6">
+        <div className="rounded-[2rem] border border-base-300 bg-base-100 p-6 shadow-sm">
+          <div className="h-20 w-full animate-pulse bg-base-200 rounded-xl"></div>
+        </div>
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-5">
+          <div className="xl:col-span-2 rounded-3xl border border-base-300 bg-base-100 p-5 shadow-sm">
+            <div className="h-64 w-full animate-pulse bg-base-200 rounded-2xl"></div>
+          </div>
+          <div className="xl:col-span-3 rounded-3xl border border-base-300 bg-base-100 p-5 shadow-sm">
+            <div className="h-64 w-full animate-pulse bg-base-200 rounded-2xl"></div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
