@@ -26,5 +26,15 @@ export function errorMiddleware(err, req, res, next) {
     });
   }
 
-  res.status(err.statusCode || 500).json({ success: false, message: err.message || "Internal Server Error" });
+  const statusCode = err.statusCode || 500;
+  const payload = {
+    success: false,
+    message: err.message || 'Internal Server Error',
+  };
+
+  if (err.code && statusCode < 500) {
+    payload.code = err.code;
+  }
+
+  res.status(statusCode).json(payload);
 }

@@ -195,7 +195,7 @@ export function PartnerReportsPage() {
                 {topVouchers.map((item, index) => (
                   <div key={item.id || index} className="flex flex-col gap-1 border-b border-base-200 pb-3 last:border-0 last:pb-0">
                     <div className="flex justify-between items-start gap-2">
-                      <span className="font-semibold text-sm line-clamp-2">{item.name || item.code}</span>
+                      <span className="font-semibold text-sm line-clamp-2">{item.name || item.title || item.code}</span>
                       <span className="text-sm font-bold text-primary whitespace-nowrap">{formatCurrency(item.revenue || 0)}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs text-base-content/60">
