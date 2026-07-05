@@ -10,7 +10,6 @@ function mapReview(review) {
     rating: review.rating,
     comment: review.comment,
     createdAt: review.createdAt,
-    userName: review.user.fullName,
     user: {
       id: review.user.id,
       fullName: review.user.fullName,

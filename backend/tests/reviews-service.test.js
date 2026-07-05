@@ -219,7 +219,7 @@ describe('Reviews Service Tests', () => {
     });
 
     expect(result.review.rating).toBe(4);
-    expect(result.review.userName).toBe('Review Customer');
+    expect(result.review.user.fullName).toBe('Review Customer');
     expect(result.avgRating).toBe(4);
     expect(result.totalCount).toBe(1);
 
