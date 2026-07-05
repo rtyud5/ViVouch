@@ -29,7 +29,7 @@ export function errorMiddleware(err, req, res, next) {
   const statusCode = err.statusCode || 500;
   const payload = {
     success: false,
-    message: err.message || 'Internal Server Error',
+    message: statusCode < 500 ? (err.message || 'Internal Server Error') : 'Internal Server Error',
   };
 
   if (err.code && statusCode < 500) {
