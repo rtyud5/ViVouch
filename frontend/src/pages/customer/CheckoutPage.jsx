@@ -136,7 +136,7 @@ export function CheckoutPage() {
                         src={item.voucher?.imageUrl || "/placeholder.jpg"}
                         alt={item.voucher?.title || item.voucher?.name || "Voucher"}
                         className="w-full h-full object-cover"
-                        onError={(e) => { e.target.src = "https://placehold.co/100x100?text=Voucher"; }}
+                        onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/100x100?text=Voucher"; }}
                       />
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
