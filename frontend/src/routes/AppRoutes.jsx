@@ -1,4 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React, { Suspense } from "react";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { GlobalErrorBoundary } from "../components/common/GlobalErrorBoundary";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { RoleRoute } from "./RoleRoute";
 import { PublicLayout } from "../layouts/PublicLayout";
@@ -37,24 +39,29 @@ import VoucherApprovalsPage from "../pages/admin/VoucherApprovalsPage";
 import OrdersPage from "../pages/admin/OrdersPage";
 import AuditLogsPage from "../pages/admin/AuditLogsPage";
 
-import { AdminComponentsTest } from "../pages/test/AdminComponentsTest";
-import { TestComponentsPage } from "../pages/test/TestComponentsPage";
-import VoucherHooksTest from "../pages/test/VoucherHooksTest";
-import { CartHooksTestWrapper } from "../pages/test/CartHookTest"
+let AdminComponentsTest, TestComponentsPage, VoucherHooksTest, CartHooksTestWrapper;
+
+if (import.meta.env.DEV) {
+  AdminComponentsTest = React.lazy(() => import("../pages/test/AdminComponentsTest").then(m => ({ default: m.AdminComponentsTest })));
+  TestComponentsPage = React.lazy(() => import("../pages/test/TestComponentsPage").then(m => ({ default: m.TestComponentsPage })));
+  VoucherHooksTest = React.lazy(() => import("../pages/test/VoucherHooksTest"));
+  CartHooksTestWrapper = React.lazy(() => import("../pages/test/CartHookTest").then(m => ({ default: m.CartHooksTestWrapper })));
+}
 
 export function AppRoutes() {
   return (
     <BrowserRouter>
+      <GlobalErrorBoundary>
       <Routes>
 
         {/* Test component */}
         {import.meta.env.DEV && (
-          <>
+          <Route element={<Suspense fallback={<div>Loading test suite...</div>}><Outlet /></Suspense>}>
             <Route path="/test/admin-kit" element={<AdminComponentsTest />} />
             <Route path="/test/fe/task3/week1" element={<TestComponentsPage />} /> 
             <Route path="/test/fe/task2/week2" element={<VoucherHooksTest />} /> 
             <Route path="/test/fe/task3/week2" element={ <CartHooksTestWrapper />} /> 
-          </>
+          </Route>
         )}
 
         <Route element={<PublicLayout />}>
@@ -128,6 +135,7 @@ export function AppRoutes() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </GlobalErrorBoundary>
     </BrowserRouter>
   );
 }
