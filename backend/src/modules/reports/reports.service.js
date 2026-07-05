@@ -87,6 +87,7 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
     });
   }
 
+  const voucherTitleMap = new Map(vouchers.map((v) => [v.id, v.title]));
   const topVouchersMap = new Map();
 
   for (const item of orderItems) {
@@ -105,7 +106,7 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
     }
 
     if (!topVouchersMap.has(item.voucherId)) {
-      const vTitle = vouchers.find((v) => v.id === item.voucherId)?.title || 'Unknown Voucher';
+      const vTitle = voucherTitleMap.get(item.voucherId) || 'Unknown Voucher';
       topVouchersMap.set(item.voucherId, {
         id: item.voucherId,
         name: vTitle,
