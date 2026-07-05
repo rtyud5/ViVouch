@@ -142,7 +142,7 @@ export function CheckoutPage() {
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h3 className="font-medium line-clamp-2 text-sm sm:text-base">{item.voucher?.title || item.voucher?.name}</h3>
                       <div className="text-xs sm:text-sm text-base-content/70 mt-1">
-                        Đơn giá: {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(item.voucher?.salePrice || 0)}
+                        Đơn giá: {currencyFormatter.format(item.voucher?.salePrice || 0)}
                       </div>
                       <div className="text-xs sm:text-sm text-base-content/70">Số lượng: {item.qty}</div>
                     </div>
