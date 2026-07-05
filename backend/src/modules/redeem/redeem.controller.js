@@ -6,7 +6,7 @@ export const redeemVoucherCode = asyncHandler(async (req, res) => {
   const { code } = redeemVoucherCodeSchema.parse(req.body);
   const result = await redeemCode(req.user.userId, code);
 
-  res.json({
+  res.status(200).json({
     success: true,
     message: 'Xác thực voucher thành công',
     data: result,
