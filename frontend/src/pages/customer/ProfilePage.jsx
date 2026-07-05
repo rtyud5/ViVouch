@@ -67,7 +67,7 @@ export function ProfilePage() {
     setPwdSuccess("");
     setPwdError(null);
 
-    if (newPassword.length < 6) {
+    if (!newPassword || newPassword.length < 6) {
       setPwdError(new Error("Mật khẩu mới phải có ít nhất 6 ký tự."));
       return;
     }
