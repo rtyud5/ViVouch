@@ -318,7 +318,7 @@ export function VoucherDetailPage() {
 
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold text-base-content/50 uppercase tracking-wider">Giá ưu đãi</span>
-              <div className="flex items-baseline gap-3">
+              <div className="flex items-baseline flex-wrap gap-2 sm:gap-3">
                 <span className="text-3xl font-black text-primary tracking-tight">
                   {voucher.salePrice === 0 ? "Miễn phí" : `${voucher.salePrice.toLocaleString("vi-VN")}đ`}
                 </span>

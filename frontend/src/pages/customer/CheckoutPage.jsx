@@ -125,25 +125,30 @@ export function CheckoutPage() {
           </div>
 
           {/* Cart Items */}
-          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200">
+          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 w-full overflow-hidden">
             <h2 className="text-xl font-semibold mb-4">Sản phẩm ({totalQty})</h2>
             <div className="space-y-4">
               {cartItems.map((item) => (
-                <div key={item.id} className="flex gap-4 items-start">
-                  <div className="w-20 h-20 rounded-xl bg-base-200 overflow-hidden flex-shrink-0">
-                    <img
-                      src={item.voucher?.imageUrl || "/placeholder.jpg"}
-                      alt={item.voucher?.title || item.voucher?.name || "Voucher"}
-                      className="w-full h-full object-cover"
-                      onError={(e) => { e.target.src = "https://placehold.co/100x100?text=Voucher"; }}
-                    />
+                <div key={item.id} className="flex flex-col sm:flex-row gap-4 items-start sm:items-center pb-4 border-b border-base-200 last:border-0 last:pb-0">
+                  <div className="flex gap-4 w-full sm:w-auto flex-1">
+                    <div className="w-20 h-20 rounded-xl bg-base-200 overflow-hidden flex-shrink-0">
+                      <img
+                        src={item.voucher?.imageUrl || "/placeholder.jpg"}
+                        alt={item.voucher?.title || item.voucher?.name || "Voucher"}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.src = "https://placehold.co/100x100?text=Voucher"; }}
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <h3 className="font-medium line-clamp-2 text-sm sm:text-base">{item.voucher?.title || item.voucher?.name}</h3>
+                      <div className="text-xs sm:text-sm text-base-content/70 mt-1">
+                        Đơn giá: {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(item.voucher?.salePrice || 0)}
+                      </div>
+                      <div className="text-xs sm:text-sm text-base-content/70">Số lượng: {item.qty}</div>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium line-clamp-2">{item.voucher?.title || item.voucher?.name}</h3>
-                    <div className="text-sm text-base-content/70 mt-1">Số lượng: {item.qty}</div>
-                  </div>
-                  <div className="font-semibold text-right whitespace-nowrap">
-                    {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                  <div className="font-semibold text-primary sm:text-right w-full sm:w-auto text-sm sm:text-base mt-2 sm:mt-0">
+                    Thành tiền: {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
                       (item.voucher?.salePrice || 0) * item.qty
                     )}
                   </div>
@@ -196,8 +201,8 @@ export function CheckoutPage() {
         </div>
 
         {/* Sticky Summary (Right) */}
-        <div className="lg:w-96">
-          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 sticky top-24">
+        <div className="lg:w-96 w-full">
+          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200 lg:sticky top-24 w-full">
             <h2 className="text-xl font-semibold mb-6">Tóm tắt đơn hàng</h2>
 
             <div className="space-y-4 mb-6">
