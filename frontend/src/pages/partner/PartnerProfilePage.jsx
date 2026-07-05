@@ -57,10 +57,16 @@ function BranchCard({ branch, onToggle }) {
             <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{branch.address}</span>
           </p>
-          {(branch.phone || branch.city) && (
+          {branch.phone && (
             <p className="flex items-center gap-2 text-sm text-base-content/70">
               <Phone className="h-4 w-4" />
-              <span>{branch.phone || branch.city}</span>
+              <span>{branch.phone}</span>
+            </p>
+          )}
+          {branch.city && (
+            <p className="flex items-center gap-2 text-sm text-base-content/70">
+              <Building2 className="h-4 w-4" />
+              <span>{branch.city}</span>
             </p>
           )}
         </div>
