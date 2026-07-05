@@ -148,7 +148,7 @@ export function CheckoutPage() {
                     </div>
                   </div>
                   <div className="font-semibold text-primary sm:text-right w-full sm:w-auto text-sm sm:text-base mt-2 sm:mt-0">
-                    Thành tiền: {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                    Thành tiền: {currencyFormatter.format(
                       (item.voucher?.salePrice || 0) * item.qty
                     )}
                   </div>
