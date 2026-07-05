@@ -3,6 +3,7 @@ import * as partnersController from './partners.controller.js';
 import * as redeemController from '../redeem/redeem.controller.js';
 import { verifyToken } from '../../middlewares/auth.middleware.js';
 import { requireRole } from '../../middlewares/role.middleware.js';
+import reportsRouter from '../reports/reports.routes.js';
 
 const router = Router();
 
@@ -22,5 +23,7 @@ router.put('/vouchers/:id', partnersController.updateVoucher);
 router.post('/vouchers/:id/submit', partnersController.submitVoucher);
 
 router.post('/redeem', redeemController.redeemVoucherCode);
+
+router.use('/reports', reportsRouter);
 
 export default router;

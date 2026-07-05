@@ -53,7 +53,7 @@ export class GlobalErrorBoundary extends React.Component {
             </div>
 
             {/* Hiển thị chi tiết lỗi nếu ở môi trường dev (tùy chọn) */}
-            {typeof process !== "undefined" && process.env?.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <div className="mt-8 text-left bg-base-200 p-4 rounded-xl overflow-x-auto text-xs text-base-content/70">
                 <p className="font-bold mb-1 text-error">{this.state.error.toString()}</p>
                 <pre>{this.state.error.stack}</pre>

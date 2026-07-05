@@ -155,5 +155,46 @@ describe("Partner Vouchers Service Unit Tests", () => {
       expect(result.data[0].usedCount).toBe(0);
       expect(result.pagination.total).toBe(1);
     });
+
+    it("nên lọc theo status — PENDING_APPROVAL trả về đúng voucher", async () => {
+      // Voucher đã được submit ở test trên → status = PENDING_APPROVAL
+      const result = await vouchersService.findByPartner(partnerUserId, {
+        page: 1,
+        limit: 10,
+        status: VOUCHER_STATUS.PENDING_APPROVAL,
+      });
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].status).toBe(VOUCHER_STATUS.PENDING_APPROVAL);
+    });
+
+    it("nên lọc theo status — DRAFT không trả về voucher nào", async () => {
+      const result = await vouchersService.findByPartner(partnerUserId, {
+        page: 1,
+        limit: 10,
+        status: VOUCHER_STATUS.DRAFT,
+      });
+      expect(result.data).toHaveLength(0);
+      expect(result.pagination.total).toBe(0);
+    });
+
+    it("nên tìm kiếm theo keyword trong title", async () => {
+      const result = await vouchersService.findByPartner(partnerUserId, {
+        page: 1,
+        limit: 10,
+        keyword: "Test Voucher",
+      });
+      expect(result.data.length).toBeGreaterThan(0);
+      expect(result.data[0].title).toContain("Test Voucher");
+    });
+
+    it("nên trả về rỗng khi keyword không khớp", async () => {
+      const result = await vouchersService.findByPartner(partnerUserId, {
+        page: 1,
+        limit: 10,
+        keyword: "nonexistent-xyz-keyword-999",
+      });
+      expect(result.data).toHaveLength(0);
+      expect(result.pagination.total).toBe(0);
+    });
   });
 });

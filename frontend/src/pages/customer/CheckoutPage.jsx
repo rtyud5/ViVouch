@@ -6,6 +6,8 @@ import { useAuthStore } from "../../stores/authStore";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CustomerEmptyState } from "../../components/common/CustomerEmptyState";
 
+const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
+
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading: isCartLoading } = useCart();

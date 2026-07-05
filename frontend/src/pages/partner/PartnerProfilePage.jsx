@@ -15,6 +15,7 @@ import {
   UserRound
 } from "lucide-react";
 import { usePartnerProfile, useUpdatePartnerProfile } from "../../features/partner/hooks/usePartnerProfile";
+import { usePartnerBranches, useCreatePartnerBranch, useUpdatePartnerBranch } from "../../features/partner/hooks/usePartnerBranches";
 
 const profileSchema = z.object({
   businessName: z.string().min(2, "Tên doanh nghiệp là bắt buộc"),
@@ -25,14 +26,8 @@ const profileSchema = z.object({
 const branchSchema = z.object({
   name: z.string().min(2, "Tên chi nhánh là bắt buộc"),
   address: z.string().min(5, "Địa chỉ chi nhánh là bắt buộc"),
-  phone: z.string().min(8, "Số điện thoại chi nhánh không hợp lệ")
+  phone: z.string().min(8, "Số điện thoại chi nhánh không hợp lệ").optional().or(z.literal(''))
 });
-
-const initialBranches = [
-  { id: 1, name: "Chi nhánh Quận 1", address: "12 Nguyễn Huệ, Quận 1, TP.HCM", phone: "0281234567", active: true },
-  { id: 2, name: "Chi nhánh Thủ Đức", address: "88 Võ Văn Ngân, TP. Thủ Đức", phone: "0287654321", active: true },
-  { id: 3, name: "Chi nhánh Bình Thạnh", address: "21 Điện Biên Phủ, Bình Thạnh", phone: "0289999888", active: false }
-];
 
 function Toast({ message, tone = "success" }) {
   if (!message) return null;
@@ -54,27 +49,35 @@ function BranchCard({ branch, onToggle }) {
           <div className="flex items-center gap-2">
             <Store className="h-5 w-5 text-primary" />
             <h3 className="text-base font-bold">{branch.name}</h3>
-            <span className={`badge ${branch.active ? "badge-success" : "badge-ghost"}`}>
-              {branch.active ? "Đang hoạt động" : "Tạm dừng"}
+            <span className={`badge ${branch.isActive ? "badge-success" : "badge-ghost"}`}>
+              {branch.isActive ? "Đang hoạt động" : "Tạm dừng"}
             </span>
           </div>
           <p className="flex items-start gap-2 text-sm text-base-content/70">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
             <span>{branch.address}</span>
           </p>
-          <p className="flex items-center gap-2 text-sm text-base-content/70">
-            <Phone className="h-4 w-4" />
-            <span>{branch.phone}</span>
-          </p>
+          {branch.phone && (
+            <p className="flex items-center gap-2 text-sm text-base-content/70">
+              <Phone className="h-4 w-4" />
+              <span>{branch.phone}</span>
+            </p>
+          )}
+          {branch.city && (
+            <p className="flex items-center gap-2 text-sm text-base-content/70">
+              <Building2 className="h-4 w-4" />
+              <span>{branch.city}</span>
+            </p>
+          )}
         </div>
 
         <button
           type="button"
-          className={`btn btn-sm ${branch.active ? "btn-outline btn-success" : "btn-primary"}`}
+          className={`btn btn-sm ${branch.isActive ? "btn-outline btn-success" : "btn-primary"}`}
           onClick={() => onToggle(branch.id)}
         >
-          {branch.active ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
-          {branch.active ? "Tắt hoạt động" : "Kích hoạt"}
+          {branch.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+          {branch.isActive ? "Tắt hoạt động" : "Kích hoạt"}
         </button>
       </div>
     </div>
@@ -85,7 +88,11 @@ export function PartnerProfilePage() {
   const { data: partnerProfile, isLoading: isProfileLoading } = usePartnerProfile();
   const updateProfileMutation = useUpdatePartnerProfile();
 
-  const [branches, setBranches] = useState(initialBranches);
+  const { data: branchesResp, isLoading: isBranchesLoading } = usePartnerBranches();
+  const branches = branchesResp?.data || [];
+  const createBranchMutation = useCreatePartnerBranch();
+  const updateBranchMutation = useUpdatePartnerBranch();
+
   const [toast, setToast] = useState({ message: "", tone: "success" });
   const [showBranchForm, setShowBranchForm] = useState(false);
 
@@ -104,7 +111,7 @@ export function PartnerProfilePage() {
     defaultValues: { name: "", address: "", phone: "" }
   });
 
-  const activeCount = useMemo(() => branches.filter((branch) => branch.active).length, [branches]);
+  const activeCount = useMemo(() => branches.filter((branch) => branch.isActive).length, [branches]);
 
   const showToast = (message, tone = "success") => {
     setToast({ message, tone });
@@ -139,31 +146,32 @@ export function PartnerProfilePage() {
   });
 
   const handleBranchSubmit = branchForm.handleSubmit((values) => {
-    setBranches((current) => [
-      {
-        id: Date.now(),
-        name: values.name,
-        address: values.address,
-        phone: values.phone,
-        active: true
+    createBranchMutation.mutate(values, {
+      onSuccess: () => {
+        branchForm.reset();
+        setShowBranchForm(false);
+        showToast("Đã thêm chi nhánh mới thành công.");
       },
-      ...current
-    ]);
-    branchForm.reset();
-    setShowBranchForm(false);
-    showToast("Đã thêm chi nhánh mới thành công.");
+      onError: (err) => {
+        showToast(err?.response?.data?.message || "Có lỗi xảy ra khi thêm chi nhánh.", "error");
+      }
+    });
   });
 
   const handleToggleBranch = (branchId) => {
     const target = branches.find((branch) => branch.id === branchId);
-    setBranches((current) =>
-      current.map((branch) =>
-        branch.id === branchId ? { ...branch, active: !branch.active } : branch
-      )
-    );
-    showToast(
-      target?.active ? "Đã tạm dừng chi nhánh ngay trên giao diện." : "Đã kích hoạt chi nhánh ngay trên giao diện."
-    );
+    if (!target) return;
+    
+    updateBranchMutation.mutate({ id: branchId, isActive: !target.isActive }, {
+      onSuccess: () => {
+        showToast(
+          target.isActive ? "Đã tạm dừng chi nhánh." : "Đã kích hoạt chi nhánh."
+        );
+      },
+      onError: () => {
+        showToast("Có lỗi xảy ra khi cập nhật trạng thái chi nhánh.", "error");
+      }
+    });
   };
 
   if (isProfileLoading) {
@@ -262,7 +270,7 @@ export function PartnerProfilePage() {
                 <h2 className="text-lg font-bold">Danh sách chi nhánh</h2>
               </div>
               <p className="mt-1 text-sm text-base-content/60">
-                Toggle thay đổi trạng thái ngay trên UI, không cần chờ reload.
+                Thêm chi nhánh mới hoặc bật/tắt trạng thái — thay đổi được lưu ngay lên hệ thống.
               </p>
             </div>
 
@@ -315,9 +323,21 @@ export function PartnerProfilePage() {
           </div>
 
           <div className="mt-4 space-y-4">
-            {branches.map((branch) => (
-              <BranchCard key={branch.id} branch={branch} onToggle={handleToggleBranch} />
-            ))}
+            {isBranchesLoading ? (
+              <div className="space-y-4">
+                {[1, 2].map((key) => (
+                  <div key={key} className="h-28 animate-pulse rounded-2xl bg-base-200" />
+                ))}
+              </div>
+            ) : branches.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-base-300 bg-base-200/40 p-6 text-center text-sm text-base-content/60">
+                Chưa có chi nhánh nào. Hãy thêm chi nhánh đầu tiên cho doanh nghiệp.
+              </p>
+            ) : (
+              branches.map((branch) => (
+                <BranchCard key={branch.id} branch={branch} onToggle={handleToggleBranch} />
+              ))
+            )}
           </div>
         </div>
       </div>

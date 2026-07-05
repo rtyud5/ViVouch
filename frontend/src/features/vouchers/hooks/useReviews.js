@@ -3,8 +3,9 @@ import { getVoucherReviews, createVoucherReview } from "../api/vouchers.api";
 
 // Lấy danh sách đánh giá
 export function useReviews(voucherId, options = {}) {
+  const idStr = voucherId != null ? String(voucherId) : undefined;
   return useQuery({
-    queryKey: ["reviews", voucherId],
+    queryKey: ["reviews", idStr],
     queryFn: () => getVoucherReviews(voucherId),
     enabled: !!voucherId,
     ...options,

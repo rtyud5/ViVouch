@@ -251,7 +251,60 @@ async function main() {
       })
     }
   }
-  console.log('✅ Orders + VoucherCodes: 15')
+
+  // Edge cases for testing Redeem API
+  const edgeOrder = await prisma.order.create({
+    data: {
+      userId: customer1.id,
+      status: 'COMPLETED',
+      totalAmount: 0,
+      items: { create: { voucherId: v.zen_1.id, qty: 2, unitPrice: 0 } },
+      payment: { create: { method: 'WALLET', status: 'PAID', amount: 0 } },
+    }
+  })
+  await prisma.voucherCode.create({
+    data: {
+      code: 'VC-EXPIRED-TEST',
+      orderId: edgeOrder.id,
+      voucherId: v.zen_1.id,
+      ownerId: customer1.id,
+      status: 'EXPIRED',
+      expiresAt: future(-10),
+    }
+  });
+  await prisma.voucherCode.create({
+    data: {
+      code: 'VC-WRONG-PARTNER',
+      orderId: edgeOrder.id,
+      voucherId: v.zen_1.id,
+      ownerId: customer1.id,
+      status: 'ISSUED',
+      expiresAt: future(90),
+    }
+  });
+
+  const reviewReadyOrder = await prisma.order.create({
+    data: {
+      userId: customer3.id,
+      status: 'COMPLETED',
+      totalAmount: v.hdl_2.salePrice,
+      items: { create: { voucherId: v.hdl_2.id, qty: 1, unitPrice: v.hdl_2.salePrice } },
+      payment: { create: { method: 'WALLET', status: 'PAID', amount: v.hdl_2.salePrice } },
+    }
+  });
+  await prisma.voucherCode.create({
+    data: {
+      code: 'VC-REVIEW-READY',
+      orderId: reviewReadyOrder.id,
+      voucherId: v.hdl_2.id,
+      ownerId: customer3.id,
+      status: 'USED',
+      usedAt: new Date(),
+      expiresAt: future(90),
+    }
+  });
+
+  console.log('✅ Orders + VoucherCodes: 18 (Including Edge Cases)')
 
   // Reviews
   const reviewData = [
