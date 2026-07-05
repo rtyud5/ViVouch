@@ -3,7 +3,7 @@ import { AppError } from '../../utils/appError.js';
 import { VOUCHER_CODE_STATUS } from '../../constants/statuses.js';
 
 const pad = (n) => n.toString().padStart(2, '0');
-const formatDate = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+const formatDate = (date) => `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
 
 export const getPartnerReports = async (userId, rangeDays = 30) => {
   const partner = await prisma.partner.findUnique({
@@ -16,11 +16,11 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
 
   const now = new Date();
   const endDate = new Date(now);
-  endDate.setHours(23, 59, 59, 999);
+  endDate.setUTCHours(23, 59, 59, 999);
 
   const startDate = new Date(now);
-  startDate.setDate(now.getDate() - rangeDays + 1);
-  startDate.setHours(0, 0, 0, 0);
+  startDate.setUTCDate(now.getUTCDate() - rangeDays + 1);
+  startDate.setUTCHours(0, 0, 0, 0);
 
   const vouchers = await prisma.voucher.findMany({
     where: { partnerId: partner.id },
