@@ -14,7 +14,8 @@ export function DashboardLayout({
   brandIcon,
   theme,
   customAvatar,
-  mobileNavFilter = () => true
+  mobileNavFilter = () => true,
+  isCollapsible = false
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -94,37 +95,58 @@ export function DashboardLayout({
           onKeyDown={(e) => (e.key === 'Enter' || e.key === 'Escape') && closeSidebar()}
         />
 
-        <aside className={`w-[260px] min-h-full text-white flex flex-col ${theme.sidebarBg}`}>
-          <div className={`px-6 py-8 ${theme.sidebarHeaderBg || ''}`}>
-            <div className={`flex items-center gap-3 ${theme.sidebarBrandIconColor}`}>
-              <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+        <aside className={`min-h-full text-white flex flex-col transition-all duration-300 ease-in-out ${theme.sidebarBg} ${
+          isCollapsible ? 'w-[260px] lg:w-[72px] hover:lg:w-[260px] group/sidebar' : 'w-[260px]'
+        }`}>
+          <div className={`py-8 transition-all duration-300 ${theme.sidebarHeaderBg || ''} ${
+            isCollapsible ? 'px-4 lg:px-5 lg:group-hover/sidebar:px-6' : 'px-6'
+          }`}>
+            <div className={`flex items-center transition-all duration-300 ${
+              isCollapsible ? 'justify-start lg:justify-center lg:group-hover/sidebar:justify-start gap-3 lg:gap-0 lg:group-hover/sidebar:gap-3' : 'gap-3'
+            } ${theme.sidebarBrandIconColor}`}>
+              <span className="material-symbols-outlined text-[28px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
                 {brandIcon}
               </span>
-              <h1 className="text-xl font-bold tracking-tight">{brandName}</h1>
+              <h1 className={`text-xl font-bold tracking-tight transition-all duration-300 whitespace-nowrap ${
+                isCollapsible ? 'lg:opacity-0 lg:group-hover/sidebar:opacity-100 lg:w-0 lg:group-hover/sidebar:w-auto lg:overflow-hidden' : ''
+              }`}>
+                {brandName}
+              </h1>
             </div>
-            <p className={`text-[12px] uppercase tracking-widest mt-2 font-medium opacity-70 ${theme.sidebarSubtitleColor}`}>
+            <p className={`text-[12px] uppercase tracking-widest mt-2 font-medium opacity-70 transition-all duration-300 whitespace-nowrap ${theme.sidebarSubtitleColor} ${
+              isCollapsible ? 'lg:opacity-0 lg:group-hover/sidebar:opacity-100 lg:h-0 lg:group-hover/sidebar:h-auto lg:overflow-hidden' : ''
+            }`}>
               {brandSubtitle}
             </p>
           </div>
 
-          <ul className="menu flex-1 px-3 gap-1 text-[14px] mt-2">
+          <ul className={`menu flex-1 gap-1 text-[14px] mt-2 transition-all duration-300 ${
+            isCollapsible ? 'px-3 lg:px-2 lg:group-hover/sidebar:px-3' : 'px-3'
+          }`}>
             {navItems.map((item) => (
               <li key={item.path}>
                 <NavLink to={item.path} onClick={closeSidebar}>
                   {({ isActive }) => (
                     <span className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium
+                      flex items-center rounded-lg transition-all duration-200 font-medium
+                      ${isCollapsible 
+                        ? 'px-4 py-3 lg:px-3 lg:justify-center lg:group-hover/sidebar:justify-start lg:group-hover/sidebar:px-4 lg:group-hover/sidebar:gap-3 gap-0' 
+                        : 'px-4 py-3 gap-3'}
                       ${isActive
                         ? `${theme.navItemActiveBg} ${theme.navItemActiveText} border-l-4 ${theme.navItemActiveBorder} font-bold`
                         : `${theme.navItemText} ${theme.navItemHoverBg} ${theme.navItemHoverText} border-l-4 border-transparent`}
                     `}>
                       <span
-                        className="material-symbols-outlined text-[20px]"
+                        className="material-symbols-outlined text-[20px] shrink-0"
                         style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
                       >
                         {item.icon}
                       </span>
-                      {item.label}
+                      <span className={`transition-all duration-300 whitespace-nowrap ${
+                        isCollapsible ? 'lg:opacity-0 lg:group-hover/sidebar:opacity-100 lg:w-0 lg:group-hover/sidebar:w-auto lg:overflow-hidden' : ''
+                      }`}>
+                        {item.label}
+                      </span>
                     </span>
                   )}
                 </NavLink>
@@ -132,14 +154,22 @@ export function DashboardLayout({
             ))}
           </ul>
 
-          <div className={`mt-auto p-4 border-t ${theme.logoutBorder}`}>
+          <div className={`mt-auto border-t transition-all duration-300 ${theme.logoutBorder} ${
+            isCollapsible ? 'p-4 lg:p-2 lg:group-hover/sidebar:p-4' : 'p-4'
+          }`}>
             <button
               type="button"
               onClick={onLogout}
-              className={`btn btn-ghost w-full justify-start gap-3 text-[14px] font-medium normal-case ${theme.navItemText} ${theme.logoutHoverBg} ${theme.logoutHoverText}`}
+              className={`btn btn-ghost w-full gap-3 text-[14px] font-medium normal-case transition-all duration-300 ${theme.navItemText} ${theme.logoutHoverBg} ${theme.logoutHoverText} ${
+                isCollapsible ? 'justify-start lg:justify-center lg:group-hover/sidebar:justify-start lg:px-3' : 'justify-start px-4'
+              }`}
             >
-              <span className="material-symbols-outlined text-[20px]">logout</span>
-              Đăng xuất
+              <span className="material-symbols-outlined text-[20px] shrink-0">logout</span>
+              <span className={`transition-all duration-300 whitespace-nowrap ${
+                isCollapsible ? 'lg:opacity-0 lg:group-hover/sidebar:opacity-100 lg:w-0 lg:group-hover/sidebar:w-auto lg:overflow-hidden' : ''
+              }`}>
+                Đăng xuất
+              </span>
             </button>
           </div>
         </aside>
