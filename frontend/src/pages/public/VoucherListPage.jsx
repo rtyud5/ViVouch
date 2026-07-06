@@ -7,7 +7,7 @@ import { SortDropdown } from "../../components/voucher/SortDropdown";
 import { SearchInput } from "../../components/common/SearchInput";
 import { Pagination } from "../../components/common/Pagination";
 import { EmptyState } from "../../components/common/EmptyState";
-import { ApiErrorToast } from "../../components/common/ApiErrorToast";
+import { ErrorRetryPanel } from "../../components/common";
 import { useVouchers, useCategories } from "../../features/vouchers/hooks";
 import { buildVoucherQueryParams } from "../../features/vouchers/utils/buildVoucherQueryParams";
 import { mapVoucherForCard } from "../../features/vouchers/utils/mapVoucherForCard";
@@ -132,11 +132,6 @@ export function VoucherListPage() {
 
   return (
     <div className="bg-background min-h-screen pb-24 md:pb-0">
-      <ApiErrorToast
-        error={error || categoriesError}
-        message="Không thể tải danh sách voucher"
-      />
-
       <header className="sticky top-0 z-40 bg-surface shadow-sm">
         <div className="max-w-[1200px] mx-auto">
           <div className="flex items-center gap-3 px-container-margin py-base h-16">
@@ -196,6 +191,12 @@ export function VoucherListPage() {
               <VoucherCardSkeleton key={i} />
             ))}
           </div>
+        ) : error || categoriesError ? (
+          <ErrorRetryPanel 
+            title="Không thể tải danh sách voucher" 
+            description="Dữ liệu voucher tạm thời không truy cập được. Vui lòng thử lại." 
+            onRetry={() => window.location.reload()} 
+          />
         ) : vouchers.length === 0 ? (
           <EmptyState
             title="Không tìm thấy voucher"

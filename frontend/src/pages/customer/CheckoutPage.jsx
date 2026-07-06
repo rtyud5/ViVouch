@@ -5,10 +5,11 @@ import { useCheckout } from "../../features/orders/hooks";
 import { useAuthStore } from "../../stores/authStore";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CustomerEmptyState } from "../../components/common/CustomerEmptyState";
+import { ErrorRetryPanel } from "../../components/common";
 
 export function CheckoutPage() {
   const navigate = useNavigate();
-  const { cart, cartTotal, isLoading: isCartLoading } = useCart();
+  const { cart, cartTotal, isLoading: isCartLoading, error: cartError } = useCart();
   const checkoutMutation = useCheckout();
   const { user } = useAuthStore();
 
@@ -72,6 +73,18 @@ export function CheckoutPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
+
+  if (cartError) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        <ErrorRetryPanel 
+          title="Không thể tải thông tin thanh toán" 
+          description="Dữ liệu giỏ hàng tạm thời không truy cập được. Vui lòng thử lại." 
+          onRetry={() => window.location.reload()} 
+        />
       </div>
     );
   }

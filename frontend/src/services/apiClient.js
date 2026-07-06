@@ -22,13 +22,16 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+let isRedirecting = false;
+
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       useAuthStore.getState().clearAuth();
 
-      if (window.location.pathname !== "/login") {
+      if (!isRedirecting && window.location.pathname !== "/login") {
+        isRedirecting = true;
         window.location.assign("/login");
       }
     }

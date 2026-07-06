@@ -5,6 +5,7 @@ import { useCart } from "../../features/cart/hooks/useCart";
 import { CartItem } from "../../features/cart/components/CartItem";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
+import { ErrorRetryPanel } from "../../components/common";
 
 export function CartPage() {
   const navigate = useNavigate();
@@ -72,6 +73,18 @@ export function CartPage() {
             <div className="h-64 w-full bg-base-300 rounded-2xl"></div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-16">
+        <ErrorRetryPanel 
+          title="Không thể tải giỏ hàng" 
+          description="Dữ liệu giỏ hàng tạm thời không truy cập được. Vui lòng thử lại." 
+          onRetry={() => window.location.reload()} 
+        />
       </div>
     );
   }

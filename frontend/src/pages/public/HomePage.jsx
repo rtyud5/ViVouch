@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { VoucherCard } from "../../components/voucher/VoucherCard";
 import { VoucherCardSkeleton } from "../../components/voucher/VoucherCardSkeleton";
-import { ApiErrorToast } from "../../components/common/ApiErrorToast";
+import { ErrorRetryPanel } from "../../components/common";
 import { useVouchers, useCategories } from "../../features/vouchers/hooks";
 import { buildVoucherQueryParams } from "../../features/vouchers/utils/buildVoucherQueryParams";
 import { mapVoucherForCard } from "../../features/vouchers/utils/mapVoucherForCard";
@@ -200,11 +200,6 @@ export function HomePage() {
 
   return (
     <main className="max-w-screen-xl mx-auto px-4 py-6">
-      <ApiErrorToast
-        error={vouchersError || categoriesError}
-        message="Không thể tải dữ liệu voucher"
-      />
-
       <HeroBanner />
 
       <CategoryTabs
@@ -224,7 +219,15 @@ export function HomePage() {
         </Link>
       </div>
 
-      <VoucherGrid vouchers={vouchers} isLoading={showVouchersLoading} />
+      {vouchersError || categoriesError ? (
+        <ErrorRetryPanel 
+          title="Không thể tải danh sách voucher" 
+          description="Dữ liệu voucher tạm thời không truy cập được. Vui lòng thử lại." 
+          onRetry={() => window.location.reload()} 
+        />
+      ) : (
+        <VoucherGrid vouchers={vouchers} isLoading={showVouchersLoading} />
+      )}
     </main>
   );
 }
