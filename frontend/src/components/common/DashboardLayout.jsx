@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 /**
  * Shared Dashboard Layout component to eliminate duplicate code
@@ -124,13 +125,16 @@ export function DashboardLayout({
             {navItems.map((item) => (
               <li key={item.path}>
                 <NavLink to={item.path} onClick={closeSidebar}>
-                  {({ isActive }) => (
+                  {({ isActive }) => {
+                    const borderClass = isCollapsible ? 'lg:border-l-0 lg:group-hover/sidebar:border-l-4' : 'border-l-4';
+                    const activeClasses = `${theme.navItemActiveBg} ${theme.navItemActiveText} ${borderClass} ${theme.navItemActiveBorder} font-bold`;
+                    const inactiveClasses = `${theme.navItemText} ${theme.navItemHoverBg} ${theme.navItemHoverText} ${borderClass} border-transparent`;
+
+                    return (
                     <span className={`
                       flex items-center gap-3 py-3 rounded-lg transition-all duration-200 font-medium whitespace-nowrap
                       ${isCollapsible ? 'px-2 lg:px-0 lg:justify-center lg:group-hover/sidebar:justify-start lg:group-hover/sidebar:px-4' : 'px-4'}
-                      ${isActive
-                        ? `${theme.navItemActiveBg} ${theme.navItemActiveText} ${isCollapsible ? 'lg:border-l-0 lg:group-hover/sidebar:border-l-4' : 'border-l-4'} ${theme.navItemActiveBorder} font-bold`
-                        : `${theme.navItemText} ${theme.navItemHoverBg} ${theme.navItemHoverText} ${isCollapsible ? 'lg:border-l-0 lg:group-hover/sidebar:border-l-4' : 'border-l-4'} border-transparent`}
+                      ${isActive ? activeClasses : inactiveClasses}
                     `}>
                       <span
                         className="material-symbols-outlined shrink-0 text-[20px] w-6 flex justify-center"
@@ -142,7 +146,8 @@ export function DashboardLayout({
                         {item.label}
                       </span>
                     </span>
-                  )}
+                    );
+                  }}
                 </NavLink>
               </li>
             ))}
@@ -166,3 +171,45 @@ export function DashboardLayout({
     </div>
   );
 }
+
+DashboardLayout.propTypes = {
+  drawerId: PropTypes.string.isRequired,
+  navItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      path: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+      icon: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onLogout: PropTypes.func.isRequired,
+  brandName: PropTypes.string.isRequired,
+  brandSubtitle: PropTypes.string,
+  brandIcon: PropTypes.string,
+  theme: PropTypes.shape({
+    contentBg: PropTypes.string,
+    topbarBg: PropTypes.string,
+    topbarBorder: PropTypes.string,
+    hamburgerColor: PropTypes.string,
+    brandColor: PropTypes.string,
+    mobileNavBg: PropTypes.string,
+    mobileNavBorder: PropTypes.string,
+    mobileNavActiveText: PropTypes.string,
+    mobileNavText: PropTypes.string,
+    sidebarBg: PropTypes.string,
+    sidebarHeaderBg: PropTypes.string,
+    sidebarBrandIconColor: PropTypes.string,
+    sidebarSubtitleColor: PropTypes.string,
+    navItemActiveBg: PropTypes.string,
+    navItemActiveText: PropTypes.string,
+    navItemActiveBorder: PropTypes.string,
+    navItemText: PropTypes.string,
+    navItemHoverBg: PropTypes.string,
+    navItemHoverText: PropTypes.string,
+    logoutBorder: PropTypes.string,
+    logoutHoverBg: PropTypes.string,
+    logoutHoverText: PropTypes.string,
+  }).isRequired,
+  customAvatar: PropTypes.node,
+  mobileNavFilter: PropTypes.func,
+  isCollapsible: PropTypes.bool,
+};
