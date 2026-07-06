@@ -164,7 +164,7 @@ export function VoucherListPage() {
           <VoucherFilter
             activeCategory={category}
             onCategoryChange={handleCategoryChange}
-            categories={categories}
+            categories={categories || []}
           />
         </div>
       </header>

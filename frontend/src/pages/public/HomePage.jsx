@@ -205,7 +205,7 @@ export function HomePage() {
       <CategoryTabs
         activeCategory={activeCategory}
         onChange={setActiveCategory}
-        categories={categories}
+        categories={categories || []}
         isLoading={categoriesLoading}
       />
 

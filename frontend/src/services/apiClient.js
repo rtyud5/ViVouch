@@ -33,6 +33,9 @@ apiClient.interceptors.response.use(
       if (!isRedirecting && window.location.pathname !== "/login") {
         isRedirecting = true;
         window.location.assign("/login");
+        setTimeout(() => {
+          isRedirecting = false;
+        }, 5000);
       }
     }
 

@@ -103,7 +103,7 @@ export function CartPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 md:py-10 bg-base-100 min-h-screen">
-      <ApiErrorToast error={error || mutationError} message={error ? "Lỗi khi tải giỏ hàng" : "Lỗi thao tác giỏ hàng"} />
+      <ApiErrorToast error={mutationError} message="Lỗi thao tác giỏ hàng" />
 
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-base-content tracking-tight">
