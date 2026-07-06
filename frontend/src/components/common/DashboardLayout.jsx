@@ -14,10 +14,12 @@ export function DashboardLayout({
   brandIcon,
   theme,
   customAvatar,
-  mobileNavFilter = () => true
+  mobileNavFilter = () => true,
+  isCollapsible = false
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const closeSidebar = () => setIsSidebarOpen(false);
+
 
   return (
     <div className={`drawer lg:drawer-open min-h-screen font-['Be_Vietnam_Pro'] ${isSidebarOpen ? 'drawer-open' : ''}`}>
@@ -94,37 +96,51 @@ export function DashboardLayout({
           onKeyDown={(e) => (e.key === 'Enter' || e.key === 'Escape') && closeSidebar()}
         />
 
-        <aside className={`w-[260px] min-h-full text-white flex flex-col ${theme.sidebarBg}`}>
-          <div className={`px-6 py-8 ${theme.sidebarHeaderBg || ''}`}>
+        <aside className={`
+          min-h-full text-white flex flex-col overflow-hidden
+          ${theme.sidebarBg}
+          ${isCollapsible
+            ? 'w-[260px] lg:w-[72px] lg:hover:w-[260px] transition-[width] duration-300 ease-in-out group/sidebar'
+            : 'w-[260px]'}
+        `}>
+
+          {/* Header */}
+          <div className={`py-6 ${theme.sidebarHeaderBg || ''} ${isCollapsible ? 'px-4 lg:px-0 lg:flex lg:flex-col lg:items-center lg:hover:items-start lg:group-hover/sidebar:px-5' : 'px-5'} transition-all duration-300`}>
             <div className={`flex items-center gap-3 ${theme.sidebarBrandIconColor}`}>
-              <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+              <span className="material-symbols-outlined shrink-0 text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                 {brandIcon}
               </span>
-              <h1 className="text-xl font-bold tracking-tight">{brandName}</h1>
+              <h1 className={`text-xl font-bold tracking-tight whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${isCollapsible ? 'lg:w-0 lg:opacity-0 lg:group-hover/sidebar:w-auto lg:group-hover/sidebar:opacity-100' : ''}`}>
+                {brandName}
+              </h1>
             </div>
-            <p className={`text-[12px] uppercase tracking-widest mt-2 font-medium opacity-70 ${theme.sidebarSubtitleColor}`}>
+            <p className={`text-[12px] uppercase tracking-widest mt-2 font-medium whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${theme.sidebarSubtitleColor} ${isCollapsible ? 'lg:h-0 lg:mt-0 lg:opacity-0 lg:group-hover/sidebar:h-auto lg:group-hover/sidebar:mt-2 lg:group-hover/sidebar:opacity-70' : 'opacity-70'}`}>
               {brandSubtitle}
             </p>
           </div>
 
-          <ul className="menu flex-1 px-3 gap-1 text-[14px] mt-2">
+          {/* Navigation */}
+          <ul className={`menu flex-1 gap-1 text-[14px] mt-2 ${isCollapsible ? 'px-2 lg:px-[10px] lg:group-hover/sidebar:px-3' : 'px-3'} transition-all duration-300`}>
             {navItems.map((item) => (
               <li key={item.path}>
                 <NavLink to={item.path} onClick={closeSidebar}>
                   {({ isActive }) => (
                     <span className={`
-                      flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium
+                      flex items-center gap-3 py-3 rounded-lg transition-all duration-200 font-medium whitespace-nowrap
+                      ${isCollapsible ? 'px-2 lg:px-0 lg:justify-center lg:group-hover/sidebar:justify-start lg:group-hover/sidebar:px-4' : 'px-4'}
                       ${isActive
-                        ? `${theme.navItemActiveBg} ${theme.navItemActiveText} border-l-4 ${theme.navItemActiveBorder} font-bold`
-                        : `${theme.navItemText} ${theme.navItemHoverBg} ${theme.navItemHoverText} border-l-4 border-transparent`}
+                        ? `${theme.navItemActiveBg} ${theme.navItemActiveText} ${isCollapsible ? 'lg:border-l-0 lg:group-hover/sidebar:border-l-4' : 'border-l-4'} ${theme.navItemActiveBorder} font-bold`
+                        : `${theme.navItemText} ${theme.navItemHoverBg} ${theme.navItemHoverText} ${isCollapsible ? 'lg:border-l-0 lg:group-hover/sidebar:border-l-4' : 'border-l-4'} border-transparent`}
                     `}>
                       <span
-                        className="material-symbols-outlined text-[20px]"
+                        className="material-symbols-outlined shrink-0 text-[20px] w-6 flex justify-center"
                         style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
                       >
                         {item.icon}
                       </span>
-                      {item.label}
+                      <span className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsible ? 'lg:w-0 lg:opacity-0 lg:group-hover/sidebar:w-auto lg:group-hover/sidebar:opacity-100' : ''}`}>
+                        {item.label}
+                      </span>
                     </span>
                   )}
                 </NavLink>
@@ -132,14 +148,17 @@ export function DashboardLayout({
             ))}
           </ul>
 
-          <div className={`mt-auto p-4 border-t ${theme.logoutBorder}`}>
+          {/* Logout */}
+          <div className={`mt-auto border-t ${theme.logoutBorder} ${isCollapsible ? 'p-2 lg:px-[10px] lg:py-3 lg:group-hover/sidebar:px-4' : 'p-4'} transition-all duration-300`}>
             <button
               type="button"
               onClick={onLogout}
-              className={`btn btn-ghost w-full justify-start gap-3 text-[14px] font-medium normal-case ${theme.navItemText} ${theme.logoutHoverBg} ${theme.logoutHoverText}`}
+              className={`btn btn-ghost w-full gap-3 text-[14px] font-medium normal-case flex-nowrap ${isCollapsible ? 'justify-center lg:justify-center lg:group-hover/sidebar:justify-start' : 'justify-start'} ${theme.navItemText} ${theme.logoutHoverBg} ${theme.logoutHoverText}`}
             >
-              <span className="material-symbols-outlined text-[20px]">logout</span>
-              Đăng xuất
+              <span className="material-symbols-outlined shrink-0 text-[20px] w-6 flex justify-center">logout</span>
+              <span className={`text-left whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${isCollapsible ? 'lg:w-0 lg:opacity-0 lg:group-hover/sidebar:w-auto lg:group-hover/sidebar:opacity-100' : ''}`}>
+                Đăng xuất
+              </span>
             </button>
           </div>
         </aside>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { AdminTable } from '../../features/admin/components';
 import { useVoucherApprovals, useApproveVoucher, useRejectVoucher } from '../../features/admin/hooks/useVoucherApprovals';
@@ -97,8 +98,8 @@ export default function VoucherApprovalsPage() {
         <AdminTable columns={columns} data={vouchers} loading={isLoading} onRowClick={(v) => setSelectedVoucher(v)} />
       </div>
 
-      {/* Modal */}
-      {selectedVoucher && (
+      {/* Modal - rendered via Portal to avoid stacking context issues */}
+      {selectedVoucher && document.body && createPortal(
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden text-[#0b1c30]">
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10">
@@ -154,7 +155,8 @@ export default function VoucherApprovalsPage() {
                )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
