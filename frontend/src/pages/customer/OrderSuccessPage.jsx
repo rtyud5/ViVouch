@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 
 const CONFETTI_COLORS = ["#00694c", "#68dbae", "#ffba38", "#b7131a"];
@@ -128,7 +128,27 @@ export function OrderSuccessPage() {
   }, [location.state, navigate, location.pathname]);
 
   if (!successData || !successData.orderId) {
-    return <Navigate to="/customer/home" replace />;
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center py-20 px-4 bg-base-50 min-h-[80vh] animate-fade-in">
+        <div className="bg-base-100 p-8 rounded-3xl shadow-sm text-center max-w-md w-full border border-base-200">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-6">
+            <span className="material-symbols-outlined text-[40px]">inventory_2</span>
+          </div>
+          <h2 className="text-2xl font-bold mb-3">Chưa có thông tin đơn hàng</h2>
+          <p className="text-base-content/70 mb-8 leading-relaxed">
+            Có vẻ bạn vừa tải lại trang hoặc phiên giao dịch đã kết thúc. Các mã ưu đãi (nếu có) đã được lưu an toàn vào tài khoản của bạn.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link to="/customer/my-vouchers" className="btn btn-primary w-full rounded-xl font-bold">
+              Xem voucher của tôi
+            </Link>
+            <Link to="/customer/home" className="btn btn-ghost w-full rounded-xl font-medium text-base-content/70 hover:text-primary">
+              Về trang chủ
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const { orderId, voucherCodes } = successData;

@@ -5,12 +5,14 @@ import { useCheckout } from "../../features/orders/hooks";
 import { useAuthStore } from "../../stores/authStore";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CustomerEmptyState } from "../../components/common/CustomerEmptyState";
+import { ErrorRetryPanel } from "../../components/common";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
 export function CheckoutPage() {
   const navigate = useNavigate();
-  const { cart, cartTotal, isLoading: isCartLoading } = useCart();
+  const { cart, cartTotal, isLoading: isCartLoading, error: cartError } = useCart();
   const checkoutMutation = useCheckout();
   const { user } = useAuthStore();
 
@@ -74,6 +76,18 @@ export function CheckoutPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <span className="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    );
+  }
+
+  if (cartError) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-16">
+        <ErrorRetryPanel 
+          title="Không thể tải thông tin thanh toán" 
+          description="Dữ liệu giỏ hàng tạm thời không truy cập được. Vui lòng thử lại." 
+          onRetry={() => window.location.reload()} 
+        />
       </div>
     );
   }
@@ -144,13 +158,13 @@ export function CheckoutPage() {
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h3 className="font-medium line-clamp-2 text-sm sm:text-base">{item.voucher?.title || item.voucher?.name}</h3>
                       <div className="text-xs sm:text-sm text-base-content/70 mt-1">
-                        Đơn giá: {currencyFormatter.format(item.voucher?.salePrice || 0)}
+                        Đơn giá: {formatCurrency(item.voucher?.salePrice || 0)}
                       </div>
                       <div className="text-xs sm:text-sm text-base-content/70">Số lượng: {item.qty}</div>
                     </div>
                   </div>
                   <div className="font-semibold text-primary sm:text-right w-full sm:w-auto text-sm sm:text-base mt-2 sm:mt-0">
-                    Thành tiền: {currencyFormatter.format(
+                    Thành tiền: {formatCurrency(
                       (item.voucher?.salePrice || 0) * item.qty
                     )}
                   </div>

@@ -5,6 +5,7 @@ import { useCart } from "../../features/cart/hooks/useCart";
 import { CartItem } from "../../features/cart/components/CartItem";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
+import { ErrorRetryPanel } from "../../components/common";
 
 export function CartPage() {
   const navigate = useNavigate();
@@ -76,6 +77,18 @@ export function CartPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-16">
+        <ErrorRetryPanel 
+          title="Không thể tải giỏ hàng" 
+          description="Dữ liệu giỏ hàng tạm thời không truy cập được. Vui lòng thử lại." 
+          onRetry={() => window.location.reload()} 
+        />
+      </div>
+    );
+  }
+
   // Lấy danh sách items, xử lý an toàn
   const items = cart?.items || [];
   const isEmpty = items.length === 0;
@@ -90,7 +103,7 @@ export function CartPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 md:py-10 bg-base-100 min-h-screen">
-      <ApiErrorToast error={error || mutationError} message={error ? "Lỗi khi tải giỏ hàng" : "Lỗi thao tác giỏ hàng"} />
+      <ApiErrorToast error={mutationError} message="Lỗi thao tác giỏ hàng" />
 
       <div className="flex items-center justify-between mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-extrabold text-base-content tracking-tight">
