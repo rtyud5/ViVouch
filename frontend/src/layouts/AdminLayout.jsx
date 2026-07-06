@@ -77,7 +77,6 @@ export function AdminLayout() {
       theme={adminTheme}
       customAvatar={adminAvatar}
       mobileNavFilter={(item) => item.path !== '/admin/users'}
-      isCollapsible={true}
     />
   );
 }
