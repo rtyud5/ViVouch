@@ -8,7 +8,7 @@ export default function OrdersPage() {
   const [searchInput, setSearchInput] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-  const { data, isLoading } = useOrders(params);
+  const { data, isLoading, isError, error, refetch } = useOrders(params);
   const { data: orderDetailData } = useOrderById(selectedOrderId);
   const orders = data?.data?.orders || [];
   const total = data?.data?.pagination?.total || 0;
@@ -87,8 +87,26 @@ export default function OrdersPage() {
 
   return (
     <div className="p-6 h-full flex flex-col relative bg-[#f8f9ff]">
+      <div className="mb-6 flex justify-between items-center text-[#0b1c30]">
+        <h1 className="text-2xl font-bold">Quản lý Đơn hàng</h1>
+      </div>
+
+      {/* Error banner */}
+      {isError && !isLoading && (
+        <div className="mb-4 flex items-center gap-3 px-4 py-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700">
+          <span className="material-symbols-outlined text-lg">error</span>
+          <span className="flex-1">{error?.response?.data?.message || 'Không tải được danh sách đơn hàng. Vui lòng thử lại.'}</span>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="px-3 py-1 rounded border border-red-300 hover:bg-red-100 font-medium"
+          >
+            Thử lại
+          </button>
+        </div>
+      )}
+
       <div className="mb-6 flex flex-col gap-4">
-        <h1 className="text-2xl font-bold text-[#0b1c30]">Quản lý đơn hàng</h1>
         <div className="flex flex-wrap items-center gap-3 bg-white p-3 rounded border border-gray-200 shadow-sm">
           <div className="relative flex-1 max-w-sm">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>

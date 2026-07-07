@@ -41,7 +41,7 @@ function Toast({ message, tone = "success" }) {
   );
 }
 
-function BranchCard({ branch, onToggle }) {
+function BranchCard({ branch, onToggle, isToggling }) {
   return (
     <div className="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -71,12 +71,17 @@ function BranchCard({ branch, onToggle }) {
           )}
         </div>
 
+        {/* disabled khi đang có request đang chạy để tránh spam click */}
         <button
           type="button"
           className={`btn btn-sm ${branch.isActive ? "btn-outline btn-success" : "btn-primary"}`}
           onClick={() => onToggle(branch.id)}
+          disabled={isToggling}
         >
-          {branch.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+          {isToggling
+            ? <span className="loading loading-spinner loading-xs" />
+            : branch.isActive ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />
+          }
           {branch.isActive ? "Tắt hoạt động" : "Kích hoạt"}
         </button>
       </div>
@@ -335,7 +340,12 @@ export function PartnerProfilePage() {
               </p>
             ) : (
               branches.map((branch) => (
-                <BranchCard key={branch.id} branch={branch} onToggle={handleToggleBranch} />
+                <BranchCard
+                  key={branch.id}
+                  branch={branch}
+                  onToggle={handleToggleBranch}
+                  isToggling={updateBranchMutation.isPending && updateBranchMutation.variables?.id === branch.id}
+                />
               ))
             )}
           </div>

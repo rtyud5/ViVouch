@@ -9,7 +9,7 @@ export default function VoucherApprovalsPage() {
   const [selectedVoucher, setSelectedVoucher] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   
-  const { data, isLoading } = useVoucherApprovals(params);
+  const { data, isLoading, isError, error, refetch } = useVoucherApprovals(params);
   const { mutate: approveVoucher } = useApproveVoucher();
   const { mutate: rejectVoucher } = useRejectVoucher();
 
@@ -73,9 +73,26 @@ export default function VoucherApprovalsPage() {
   ];
 
   return (
-    <div className="p-6 text-[#0b1c30]">
+    <div className="p-6 h-full flex flex-col relative bg-[#f8f9ff]">
+      <div className="mb-6 flex justify-between items-center text-[#0b1c30]">
+        <h1 className="text-2xl font-bold">Kiểm duyệt Voucher</h1>
+      </div>
+
+      {/* Error banner */}
+      {isError && !isLoading && (
+        <div className="mb-4 flex items-center gap-3 px-4 py-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700">
+          <span className="material-symbols-outlined text-lg">error</span>
+          <span className="flex-1">{error?.response?.data?.message || 'Không tải được danh sách voucher. Vui lòng thử lại.'}</span>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="px-3 py-1 rounded border border-red-300 hover:bg-red-100 font-medium"
+          >
+            Thử lại
+          </button>
+        </div>
+      )}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold">Duyệt Voucher</h2>
         <p className="text-sm text-gray-500 mt-1">Quản lý và phê duyệt các voucher mới từ đối tác.</p>
       </div>
 
