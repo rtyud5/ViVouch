@@ -10,14 +10,17 @@ export default function VoucherApprovalsPage() {
   const [rejectReason, setRejectReason] = useState('');
   
   const { data, isLoading, isError, error, refetch } = useVoucherApprovals(params);
-  const { mutate: approveVoucher } = useApproveVoucher();
-  const { mutate: rejectVoucher } = useRejectVoucher();
+  const { mutate: approveVoucher, isPending: isApprovePending } = useApproveVoucher();
+  const { mutate: rejectVoucher, isPending: isRejectPending } = useRejectVoucher();
 
   const vouchers = data?.data?.vouchers || [];
 
   const handleApprove = (voucherId) => {
-    approveVoucher(voucherId);
-    setSelectedVoucher(null);
+    approveVoucher(voucherId, {
+      onSuccess: () => {
+        setSelectedVoucher(null);
+      }
+    });
   };
 
   const handleReject = (voucherId) => {
@@ -25,9 +28,12 @@ export default function VoucherApprovalsPage() {
       alert("Vui lòng nhập lý do từ chối");
       return;
     }
-    rejectVoucher({ voucherId, reason: rejectReason });
-    setSelectedVoucher(null);
-    setRejectReason('');
+    rejectVoucher({ voucherId, reason: rejectReason }, {
+      onSuccess: () => {
+        setSelectedVoucher(null);
+        setRejectReason('');
+      }
+    });
   };
 
   const columns = [
@@ -157,14 +163,20 @@ export default function VoucherApprovalsPage() {
                           />
                        </div>
                        <div className="flex justify-end gap-3 pt-2">
-                          <button onClick={() => setSelectedVoucher(null)} className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100">Hủy bỏ</button>
+                          <button 
+                            onClick={() => setSelectedVoucher(null)} 
+                            className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100"
+                            disabled={isApprovePending || isRejectPending}
+                          >Hủy bỏ</button>
                           <button 
                             onClick={() => handleReject(selectedVoucher.id)}
-                            className="px-6 py-2 rounded-lg border border-red-500 text-red-500 font-semibold hover:bg-red-50"
+                            className="px-6 py-2 rounded-lg border border-red-500 text-red-500 font-semibold hover:bg-red-50 disabled:opacity-50"
+                            disabled={isApprovePending || isRejectPending}
                           >Từ chối</button>
                           <button 
                             onClick={() => handleApprove(selectedVoucher.id)}
-                            className="px-6 py-2 rounded-lg bg-amber-500 text-white font-semibold flex items-center gap-2 hover:bg-amber-600"
+                            className="px-6 py-2 rounded-lg bg-amber-500 text-white font-semibold flex items-center gap-2 hover:bg-amber-600 disabled:opacity-50"
+                            disabled={isApprovePending || isRejectPending}
                           ><span className="material-symbols-outlined text-[18px]">check_circle</span> Duyệt Voucher</button>
                        </div>
                     </div>

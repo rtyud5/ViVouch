@@ -28,7 +28,7 @@ export function RedeemVoucherPage() {
         },
         onError: (err) => {
           const errCode = err?.response?.data?.code;
-          const errMessage = err?.response?.data?.message || "Đã xảy ra lỗi";
+          let errMessage = err?.response?.data?.message || "Đã xảy ra lỗi";
 
           const cardErrorCodes = [
             "VOUCHER_CODE_USED",
@@ -36,10 +36,21 @@ export function RedeemVoucherPage() {
             "VOUCHER_CODE_NOT_FOUND",
             "INVALID_VOUCHER_CODE",
             "FORBIDDEN",
+            "WRONG_PARTNER",
             "VOUCHER_CODE_CANCELLED",
             "VOUCHER_CODE_LOCKED",
             "BRANCH_REQUIRED"
           ];
+
+          if (errCode === 'VOUCHER_CODE_USED') {
+            errMessage = "Voucher này đã được sử dụng.";
+          } else if (errCode === 'VOUCHER_CODE_EXPIRED') {
+            errMessage = "Voucher này đã hết hạn sử dụng.";
+          } else if (errCode === 'WRONG_PARTNER' || errCode === 'FORBIDDEN') {
+            errMessage = "Voucher này không thuộc về đối tác hiện tại.";
+          } else if (errCode === 'VOUCHER_CODE_NOT_FOUND') {
+            errMessage = "Không tìm thấy mã voucher này trong hệ thống.";
+          }
 
           if (cardErrorCodes.includes(errCode)) {
             setErrorResult({ code: errCode, message: errMessage });

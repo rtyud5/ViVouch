@@ -68,10 +68,10 @@ export function PartnerReportsPage() {
   const topVouchers = reportData?.data?.topVouchers || [];
 
   const summaryCards = [
-    { ...METRICS[0], value: formatCurrency(summary.revenue) },
-    { ...METRICS[1], value: (summary.orders || 0).toLocaleString("vi-VN") },
-    { ...METRICS[2], value: (summary.customers || 0).toLocaleString("vi-VN") },
-    { ...METRICS[3], value: `${Number(summary.conversion || 0).toFixed(1)}%` }
+    { ...METRICS[0], value: formatCurrency(summary?.revenue || 0) },
+    { ...METRICS[1], value: (summary?.orders || 0).toLocaleString("vi-VN") },
+    { ...METRICS[2], value: (summary?.customers || 0).toLocaleString("vi-VN") },
+    { ...METRICS[3], value: `${Number(summary?.conversion || 0).toFixed(1)}%` }
   ];
 
   return (
