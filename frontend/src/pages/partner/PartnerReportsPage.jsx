@@ -61,7 +61,7 @@ function StatCardSkeleton() {
 export function PartnerReportsPage() {
   const [rangeDays, setRangeDays] = useState(30);
 
-  const { data: reportData, isLoading, isError } = usePartnerReports(rangeDays);
+  const { data: reportData, isLoading, isError, error, refetch } = usePartnerReports(rangeDays);
 
   const summary = reportData?.data?.summary || { revenue: 0, orders: 0, customers: 0, conversion: 0 };
   const chartData = reportData?.data?.revenueByDay || [];
@@ -76,6 +76,22 @@ export function PartnerReportsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Error banner — hiển thị khi API thất bại, không che toàn bộ trang */}
+      {isError && !isLoading && (
+        <div className="alert alert-error shadow-sm rounded-2xl">
+          <span className="font-medium">
+            {error?.response?.data?.message || "Không tải được báo cáo. Vui lòng thử lại."}
+          </span>
+          <button
+            type="button"
+            className="btn btn-sm btn-ghost ml-auto"
+            onClick={() => refetch()}
+          >
+            Thử lại
+          </button>
+        </div>
+      )}
+
       <div className="rounded-[2rem] border border-base-300 bg-base-100 p-6 shadow-sm">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">

@@ -8,7 +8,7 @@ export default function PartnersPage() {
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
 
-  const { data, isLoading } = usePartners(params);
+  const { data, isLoading, isError, error, refetch } = usePartners(params);
   const { mutate: approvePartner } = useApprovePartner();
   const { mutate: rejectPartner } = useRejectPartner();
 
@@ -105,6 +105,21 @@ export default function PartnersPage() {
       <div className="mb-6 flex justify-between items-center text-[#0b1c30]">
         <h1 className="text-2xl font-bold">Quản lý đối tác</h1>
       </div>
+
+      {/* Error banner */}
+      {isError && !isLoading && (
+        <div className="mb-4 flex items-center gap-3 px-4 py-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700">
+          <span className="material-symbols-outlined text-lg">error</span>
+          <span className="flex-1">{error?.response?.data?.message || 'Không tải được danh sách đối tác. Vui lòng thử lại.'}</span>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="px-3 py-1 rounded border border-red-300 hover:bg-red-100 font-medium"
+          >
+            Thử lại
+          </button>
+        </div>
+      )}
 
       <div className="bg-white border text-[#0b1c30] border-gray-200 rounded-xl flex-1 flex flex-col shadow-sm">
         <div className="px-6 pt-4 border-b border-gray-200">

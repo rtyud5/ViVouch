@@ -6,9 +6,12 @@ import PropTypes from 'prop-types';
  * Uses consistent color mapping according to the design system.
  * 
  * @param {Object} props
- * @param {string} props.status - The status key to display
+ * @param {string} props.status - The status key to display (null/undefined → renders nothing)
  */
 export const AdminStatusBadge = ({ status }) => {
+  // Không render gì nếu status chưa có (vd: payment null)
+  if (!status) return null;
+
   const config = {
     // Partner statuses
     ACTIVE:            { label: 'Hoạt động',      bg: '#dcfce7', text: '#166534' },
@@ -29,6 +32,15 @@ export const AdminStatusBadge = ({ status }) => {
     USED:              { label: 'Đã dùng',           bg: '#dcfce7', text: '#166534' },
     CANCELLED:         { label: 'Đã hủy',           bg: '#fee2e2', text: '#991b1b' },
     LOCKED:            { label: 'Bị khóa',          bg: '#fee2e2', text: '#991b1b' },
+
+    // Payment statuses
+    PAID:              { label: 'Đã thanh toán',    bg: '#dcfce7', text: '#166534' },
+    PENDING_PAYMENT:   { label: 'Chờ thanh toán',   bg: '#fef9c3', text: '#854d0e' },
+    FAILED:            { label: 'Thất bại',          bg: '#fee2e2', text: '#991b1b' },
+    REFUNDED:          { label: 'Hoàn tiền',         bg: '#dbeafe', text: '#1e40af' },
+
+    // Order statuses
+    COMPLETED:         { label: 'Hoàn thành',       bg: '#dcfce7', text: '#166534' },
     
     // User roles/statuses
     CUSTOMER:          { label: 'Khách hàng',       bg: '#dbeafe', text: '#1e40af' },
@@ -49,5 +61,6 @@ export const AdminStatusBadge = ({ status }) => {
 };
 
 AdminStatusBadge.propTypes = {
-  status: PropTypes.string.isRequired,
+  status: PropTypes.string, 
 };
+
