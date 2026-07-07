@@ -61,7 +61,7 @@ function StatCardSkeleton() {
 export function PartnerReportsPage() {
   const [rangeDays, setRangeDays] = useState(30);
 
-  const { data: reportData, isLoading, isError, error, refetch } = usePartnerReports(rangeDays);
+  const { data: reportData, isLoading, isFetching, isError, error, refetch } = usePartnerReports(rangeDays);
 
   const summary = reportData?.data?.summary || { revenue: 0, orders: 0, customers: 0, conversion: 0 };
   const chartData = reportData?.data?.revenueByDay || [];
@@ -114,7 +114,7 @@ export function PartnerReportsPage() {
                 type="button"
                 className={`join-item btn btn-sm border-0 px-4 ${rangeDays === option.value ? "btn-primary text-white" : "btn-ghost"}`}
                 onClick={() => setRangeDays(option.value)}
-                disabled={isLoading}
+                disabled={isLoading || isFetching}
               >
                 {option.label}
               </button>
@@ -124,7 +124,7 @@ export function PartnerReportsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {isLoading
+        {(isLoading || isFetching)
           ? Array.from({ length: 4 }).map((_, idx) => <StatCardSkeleton key={idx} />)
           : summaryCards.map((card) => <StatCard key={card.label} {...card} />)}
       </div>
@@ -149,7 +149,7 @@ export function PartnerReportsPage() {
           </div>
 
           <div className="h-[320px]">
-            {isLoading ? (
+            {(isLoading || isFetching) ? (
               <div className="w-full h-full bg-base-200 rounded-xl animate-pulse"></div>
             ) : chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -200,7 +200,7 @@ export function PartnerReportsPage() {
           </div>
 
           <div className="h-[280px] overflow-y-auto pr-2">
-            {isLoading ? (
+            {(isLoading || isFetching) ? (
               <div className="space-y-4">
                 {Array.from({ length: 4 }).map((_, idx) => (
                   <div key={idx} className="h-12 w-full bg-base-200 rounded animate-pulse"></div>
@@ -237,7 +237,7 @@ export function PartnerReportsPage() {
         </div>
 
         <div className="overflow-x-auto">
-          {isLoading ? (
+          {(isLoading || isFetching) ? (
             <div className="space-y-2 mt-4">
                {Array.from({ length: 5 }).map((_, idx) => (
                   <div key={idx} className="h-10 w-full bg-base-200 rounded animate-pulse"></div>

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRedeemVoucher } from "../../features/partner/hooks/useRedeemVoucher";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CheckCircle2, XCircle, AlertTriangle, Info } from "lucide-react";
@@ -8,7 +8,6 @@ export function RedeemVoucherPage() {
   const [redeemResult, setRedeemResult] = useState(null);
   const [errorResult, setErrorResult] = useState(null);
   const [toastError, setToastError] = useState(null);
-  const inputRef = useRef(null);
 
   const { mutate, isPending } = useRedeemVoucher();
 
@@ -67,8 +66,7 @@ export function RedeemVoucherPage() {
     setRedeemResult(null);
     setErrorResult(null);
     setToastError(null);
-    // Auto-focus input after reset so partner can immediately type next code
-    setTimeout(() => inputRef.current?.focus(), 0);
+    // autoFocus on the input will handle focus naturally after re-render
   };
 
   const renderSuccessCard = () => (
@@ -154,12 +152,17 @@ export function RedeemVoucherPage() {
                   <span className="label-text text-lg font-medium">Nhập mã Voucher</span>
                 </label>
                 <input
-                  ref={inputRef}
                   type="text"
                   placeholder="VOUCHER-CODE"
                   className="input input-bordered input-lg w-full font-mono uppercase text-center text-xl tracking-widest"
                   value={code}
-                  onChange={(e) => setCode(e.target.value.toUpperCase())}
+                onChange={(e) => {
+                    const newCode = e.target.value.toUpperCase();
+                    setCode(newCode);
+                    // Clear stale error/result as soon as the user starts typing a new code
+                    if (errorResult) setErrorResult(null);
+                    if (toastError) setToastError(null);
+                  }}
                   disabled={isPending}
                   autoFocus
                 />

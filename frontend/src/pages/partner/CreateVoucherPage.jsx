@@ -78,8 +78,10 @@ export function CreateVoucherPage() {
   const draftMutation = useMutation({
     mutationFn: createVoucherDraft,
     onSuccess: () => {
-      // Xóa cache để PartnerVoucherListPage tự tải lại danh sách mới nhất
+      // Invalidate all affected caches so Voucher List, Dashboard KPI, and Reports refresh
       queryClient.invalidateQueries({ queryKey: ["partnerVouchers"] });
+      queryClient.invalidateQueries({ queryKey: ["partnerReports"] });
+      queryClient.invalidateQueries({ queryKey: ["partnerProfile"] });
       alert("Lưu nháp thành công!");
       navigate("/partner/vouchers");
     },
@@ -101,8 +103,10 @@ export function CreateVoucherPage() {
       return submitVoucherForApproval(voucherId);
     },
     onSuccess: () => {
-      // Xóa cache để PartnerVoucherListPage tự tải lại danh sách mới nhất
+      // Invalidate all affected caches so Voucher List, Dashboard KPI, and Reports refresh
       queryClient.invalidateQueries({ queryKey: ["partnerVouchers"] });
+      queryClient.invalidateQueries({ queryKey: ["partnerReports"] });
+      queryClient.invalidateQueries({ queryKey: ["partnerProfile"] });
       alert("Gửi kiểm duyệt thành công!");
       navigate("/partner/vouchers");
     },
