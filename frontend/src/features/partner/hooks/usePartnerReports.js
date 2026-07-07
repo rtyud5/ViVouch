@@ -7,6 +7,8 @@ export const usePartnerReports = (range) => {
   return useQuery({
     queryKey: [...PARTNER_REPORTS_QUERY_KEY, range],
     queryFn: () => getPartnerReports(range),
-    enabled: !!range, 
+    enabled: !!range,
+    staleTime: 0,
+    placeholderData: undefined,
   });
 };
