@@ -344,7 +344,7 @@ export function PartnerProfilePage() {
                   key={branch.id}
                   branch={branch}
                   onToggle={handleToggleBranch}
-                  isToggling={updateBranchMutation.isPending}
+                  isToggling={updateBranchMutation.isPending && updateBranchMutation.variables?.id === branch.id}
                 />
               ))
             )}
