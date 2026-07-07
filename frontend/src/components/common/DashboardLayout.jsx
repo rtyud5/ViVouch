@@ -87,7 +87,7 @@ export function DashboardLayout({
       </div>
 
       {/* ── drawer-side ── */}
-      <div className="drawer-side z-50">
+      <div className="drawer-side z-50 lg:overflow-visible">
         <label
           htmlFor={drawerId}
           aria-label="Đóng menu"
@@ -97,11 +97,14 @@ export function DashboardLayout({
           onKeyDown={(e) => (e.key === 'Enter' || e.key === 'Escape') && closeSidebar()}
         />
 
+        {/* Spacer that acts as rigid placeholder for the layout grid */}
+        {isCollapsible && <div className="hidden lg:block w-[72px] shrink-0"></div>}
+
         <aside className={`
           min-h-full text-white flex flex-col overflow-hidden
           ${theme.sidebarBg}
           ${isCollapsible
-            ? 'w-[260px] lg:w-[72px] lg:hover:w-[260px] transition-[width] duration-300 ease-in-out group/sidebar'
+            ? 'w-[260px] lg:w-[72px] lg:hover:w-[260px] transition-[width] duration-300 ease-in-out group/sidebar lg:absolute lg:top-0 lg:left-0 lg:bottom-0 lg:z-[60]'
             : 'w-[260px]'}
         `}>
 
