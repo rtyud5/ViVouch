@@ -23,7 +23,7 @@ export default function UsersPage() {
   const currentUser = useAuthStore((state) => state.user);
 
   const { data, isLoading } = useUsers(params);
-  const { mutate: toggleUserLock } = useToggleUserLock();
+  const { mutate: toggleUserLock, isPending: isTogglePending } = useToggleUserLock();
 
   const users = data?.data?.users || [];
   const pagination = data?.data?.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 };
@@ -53,6 +53,7 @@ export default function UsersPage() {
       onSuccess: (res) => {
         const isLocked = res?.data?.isLocked;
         setToastSuccess(isLocked ? 'Đã khóa tài khoản thành công.' : 'Đã mở khóa tài khoản thành công.');
+        setTimeout(() => setToastSuccess(''), 4000);
       },
       onError: (err) => {
         setToastError(err);
@@ -142,7 +143,8 @@ export default function UsersPage() {
                 aria-checked={!row.isLocked}
                 aria-label={row.isLocked ? "Mở khóa người dùng" : "Khóa người dùng"}
                 onClick={(e) => handleToggleLock(e, row.id)}
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${row.isLocked ? 'bg-gray-300' : 'bg-green-500'}`}
+                disabled={isTogglePending}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${row.isLocked ? 'bg-gray-300' : 'bg-green-500'} disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition shadow-sm ${row.isLocked ? 'translate-x-[2px]' : 'translate-x-4'}`} />
               </button>

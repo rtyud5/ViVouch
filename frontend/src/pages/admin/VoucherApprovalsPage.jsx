@@ -24,6 +24,7 @@ export default function VoucherApprovalsPage() {
     approveVoucher(voucherId, {
       onSuccess: () => {
         setToastSuccess('Đã phê duyệt voucher thành công.');
+        setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
       },
       onError: (err) => {
@@ -41,6 +42,7 @@ export default function VoucherApprovalsPage() {
     rejectVoucher({ voucherId, reason: rejectReason }, {
       onSuccess: () => {
         setToastSuccess('Đã từ chối voucher thành công.');
+        setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
         setRejectReason('');
       },

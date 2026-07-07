@@ -23,7 +23,8 @@ export default function PartnersPage() {
     approvePartner(partnerId, {
       onSuccess: () => {
         setToastSuccess('Đã phê duyệt đối tác thành công.');
-        setSelectedPartner(null);
+        setTimeout(() => setToastSuccess(''), 4000);
+        setSelectedPartner((prev) => (prev?.id === partnerId ? null : prev));
       },
       onError: (err) => {
         setToastError(err);
@@ -40,7 +41,8 @@ export default function PartnersPage() {
     rejectPartner({ partnerId, reason: rejectReason }, {
       onSuccess: () => {
         setToastSuccess('Đã từ chối đối tác thành công.');
-        setSelectedPartner(null);
+        setTimeout(() => setToastSuccess(''), 4000);
+        setSelectedPartner((prev) => (prev?.id === partnerId ? null : prev));
         setRejectReason('');
       },
       onError: (err) => {
@@ -107,14 +109,16 @@ export default function PartnersPage() {
           <div className="flex justify-end gap-2 pr-6">
             <button 
               onClick={(e) => { e.stopPropagation(); handleApprovePartner(row.id); }}
-              className="p-1 text-green-600 hover:bg-green-50 rounded" 
+              disabled={isApprovePending || isRejectPending}
+              className="p-1 text-green-600 hover:bg-green-50 rounded disabled:opacity-50 disabled:pointer-events-none" 
               title="Duyệt"
             >
               <span className="material-symbols-outlined text-[20px]">check_circle</span>
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); setSelectedPartner(row); }}
-              className="p-1 text-red-600 hover:bg-red-50 rounded"
+              disabled={isApprovePending || isRejectPending}
+              className="p-1 text-red-600 hover:bg-red-50 rounded disabled:opacity-50 disabled:pointer-events-none"
               title="Từ chối"
             >
               <span className="material-symbols-outlined text-[20px]">cancel</span>
