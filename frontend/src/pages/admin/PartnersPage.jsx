@@ -2,26 +2,51 @@ import React, { useState } from 'react';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { AdminTable } from '../../features/admin/components';
 import { usePartners, useApprovePartner, useRejectPartner } from '../../features/admin/hooks/usePartners';
+import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
+import { ApiErrorToast } from '../../components/common/ApiErrorToast';
 
 export default function PartnersPage() {
   const [params, setParams] = useState({ page: 1, limit: 10, status: '', search: '' });
   const [selectedPartner, setSelectedPartner] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [toastSuccess, setToastSuccess] = useState('');
+  const [toastError, setToastError] = useState(null);
 
   const { data, isLoading, isError, error, refetch } = usePartners(params);
-  const { mutate: approvePartner } = useApprovePartner();
-  const { mutate: rejectPartner } = useRejectPartner();
+  const { mutate: approvePartner, isPending: isApprovePending } = useApprovePartner();
+  const { mutate: rejectPartner, isPending: isRejectPending } = useRejectPartner();
 
   const partners = data?.data?.partners || [];
+
+  const handleApprovePartner = (partnerId) => {
+    setToastError(null);
+    approvePartner(partnerId, {
+      onSuccess: () => {
+        setToastSuccess('Đã phê duyệt đối tác thành công.');
+        setSelectedPartner(null);
+      },
+      onError: (err) => {
+        setToastError(err);
+      },
+    });
+  };
 
   const handleReject = (partnerId) => {
     if (!rejectReason.trim()) {
       alert("Vui lòng nhập lý do từ chối");
       return;
     }
-    rejectPartner({ partnerId, reason: rejectReason });
-    setSelectedPartner(null);
-    setRejectReason('');
+    setToastError(null);
+    rejectPartner({ partnerId, reason: rejectReason }, {
+      onSuccess: () => {
+        setToastSuccess('Đã từ chối đối tác thành công.');
+        setSelectedPartner(null);
+        setRejectReason('');
+      },
+      onError: (err) => {
+        setToastError(err);
+      },
+    });
   };
 
   const columns = [
@@ -81,7 +106,7 @@ export default function PartnersPage() {
         return (
           <div className="flex justify-end gap-2 pr-6">
             <button 
-              onClick={(e) => { e.stopPropagation(); approvePartner(row.id); }}
+              onClick={(e) => { e.stopPropagation(); handleApprovePartner(row.id); }}
               className="p-1 text-green-600 hover:bg-green-50 rounded" 
               title="Duyệt"
             >
@@ -102,6 +127,8 @@ export default function PartnersPage() {
 
   return (
     <div className="p-6 h-full flex flex-col relative bg-[#f8f9ff]">
+      <ApiSuccessToast message={toastSuccess} />
+      <ApiErrorToast error={toastError} />
       <div className="mb-6 flex justify-between items-center text-[#0b1c30]">
         <h1 className="text-2xl font-bold">Quản lý đối tác</h1>
       </div>
@@ -189,7 +216,8 @@ export default function PartnersPage() {
                           className="px-6 py-2 rounded-lg border border-red-500 text-red-500 font-semibold hover:bg-red-50"
                         >Từ chối</button>
                         <button
-                          onClick={() => { approvePartner(selectedPartner.id); setSelectedPartner(null); }}
+                          onClick={() => handleApprovePartner(selectedPartner.id)}
+                          disabled={isApprovePending || isRejectPending}
                           className="px-6 py-2 rounded-lg bg-amber-500 text-white font-semibold flex items-center gap-2 hover:bg-amber-600"
                         ><span className="material-symbols-outlined text-[18px]">check_circle</span> Duyệt đối tác</button>
                      </div>

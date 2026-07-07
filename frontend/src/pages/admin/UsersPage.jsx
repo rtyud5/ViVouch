@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { AdminTable, AdminStatusBadge } from '../../features/admin/components';
 import { useUsers, useToggleUserLock } from '../../features/admin/hooks/useUsers';
+import { useAuthStore } from '../../stores/authStore';
+import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
+import { ApiErrorToast } from '../../components/common/ApiErrorToast';
 
 const debounce = (func, wait) => {
   let timeout;
@@ -15,6 +18,9 @@ export default function UsersPage() {
   const [params, setParams] = useState({ page: 1, limit: 10, role: '', isLocked: '', search: '' });
   const [searchInput, setSearchInput] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [toastSuccess, setToastSuccess] = useState('');
+  const [toastError, setToastError] = useState(null);
+  const currentUser = useAuthStore((state) => state.user);
 
   const { data, isLoading } = useUsers(params);
   const { mutate: toggleUserLock } = useToggleUserLock();
@@ -42,7 +48,16 @@ export default function UsersPage() {
 
   const handleToggleLock = (e, userId) => {
     e.stopPropagation();
-    toggleUserLock(userId);
+    setToastError(null);
+    toggleUserLock(userId, {
+      onSuccess: (res) => {
+        const isLocked = res?.data?.isLocked;
+        setToastSuccess(isLocked ? 'Đã khóa tài khoản thành công.' : 'Đã mở khóa tài khoản thành công.');
+      },
+      onError: (err) => {
+        setToastError(err);
+      },
+    });
   };
 
   const columns = [
@@ -114,25 +129,34 @@ export default function UsersPage() {
     {
       key: 'status',
       label: 'Trạng thái',
-      render: (row) => (
-        <div className="flex justify-center">
-          <button 
-            type="button"
-            role="switch"
-            aria-checked={!row.isLocked}
-            aria-label={row.isLocked ? "Mở khóa người dùng" : "Khóa người dùng"}
-            onClick={(e) => handleToggleLock(e, row.id)}
-            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${row.isLocked ? 'bg-gray-300' : 'bg-green-500'}`}
-          >
-            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition shadow-sm ${row.isLocked ? 'translate-x-[2px]' : 'translate-x-4'}`} />
-          </button>
-        </div>
-      ),
+      render: (row) => {
+        const isSelf = currentUser?.id === row.id;
+        return (
+          <div className="flex justify-center">
+            {isSelf ? (
+              <span className="text-xs text-gray-400 italic" title="Không thể khóa tài khoản của chính mình">Bạn</span>
+            ) : (
+              <button 
+                type="button"
+                role="switch"
+                aria-checked={!row.isLocked}
+                aria-label={row.isLocked ? "Mở khóa người dùng" : "Khóa người dùng"}
+                onClick={(e) => handleToggleLock(e, row.id)}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${row.isLocked ? 'bg-gray-300' : 'bg-green-500'}`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition shadow-sm ${row.isLocked ? 'translate-x-[2px]' : 'translate-x-4'}`} />
+              </button>
+            )}
+          </div>
+        );
+      },
     },
   ];
 
   return (
     <div className="p-6 h-full flex flex-col relative">
+      <ApiSuccessToast message={toastSuccess} />
+      <ApiErrorToast error={toastError} />
       {/* Header */}
       <div className="flex justify-between items-end mb-6 shrink-0">
         <div>
