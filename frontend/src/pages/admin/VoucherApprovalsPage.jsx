@@ -3,11 +3,15 @@ import { createPortal } from 'react-dom';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { AdminTable } from '../../features/admin/components';
 import { useVoucherApprovals, useApproveVoucher, useRejectVoucher } from '../../features/admin/hooks/useVoucherApprovals';
+import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
+import { ApiErrorToast } from '../../components/common/ApiErrorToast';
 
 export default function VoucherApprovalsPage() {
   const [params, setParams] = useState({ page: 1, limit: 10, status: 'PENDING_APPROVAL' });
   const [selectedVoucher, setSelectedVoucher] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [toastSuccess, setToastSuccess] = useState('');
+  const [toastError, setToastError] = useState(null);
   
   const { data, isLoading, isError, error, refetch } = useVoucherApprovals(params);
   const { mutate: approveVoucher, isPending: isApprovePending } = useApproveVoucher();
@@ -16,10 +20,16 @@ export default function VoucherApprovalsPage() {
   const vouchers = data?.data?.vouchers || [];
 
   const handleApprove = (voucherId) => {
+    setToastError(null);
     approveVoucher(voucherId, {
       onSuccess: () => {
+        setToastSuccess('Đã phê duyệt voucher thành công.');
+        setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
-      }
+      },
+      onError: (err) => {
+        setToastError(err);
+      },
     });
   };
 
@@ -28,11 +38,17 @@ export default function VoucherApprovalsPage() {
       alert("Vui lòng nhập lý do từ chối");
       return;
     }
+    setToastError(null);
     rejectVoucher({ voucherId, reason: rejectReason }, {
       onSuccess: () => {
+        setToastSuccess('Đã từ chối voucher thành công.');
+        setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
         setRejectReason('');
-      }
+      },
+      onError: (err) => {
+        setToastError(err);
+      },
     });
   };
 
@@ -80,6 +96,8 @@ export default function VoucherApprovalsPage() {
 
   return (
     <div className="p-6 h-full flex flex-col relative bg-[#f8f9ff]">
+      <ApiSuccessToast message={toastSuccess} />
+      <ApiErrorToast error={toastError} />
       <div className="mb-6 flex justify-between items-center text-[#0b1c30]">
         <h1 className="text-2xl font-bold">Kiểm duyệt Voucher</h1>
       </div>
