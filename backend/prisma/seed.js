@@ -4,7 +4,66 @@ import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Seeding...')
+  console.log('Seeding process started...')
+
+  // 1. Guard safety check
+  if (process.env.NODE_ENV === 'production') {
+    console.error('Safety guard: Cannot run seed script in production environment.')
+    process.exit(1)
+  }
+
+  // 2. Wipe database tables in order
+  console.log('Wiping existing data...')
+
+  console.log('Clearing VoucherUsageLog...')
+  await prisma.voucherUsageLog.deleteMany()
+
+  console.log('Clearing Review...')
+  await prisma.review.deleteMany()
+
+  console.log('Clearing VoucherCode...')
+  await prisma.voucherCode.deleteMany()
+
+  console.log('Clearing Payment...')
+  await prisma.payment.deleteMany()
+
+  console.log('Clearing OrderItem...')
+  await prisma.orderItem.deleteMany()
+
+  console.log('Clearing Order...')
+  await prisma.order.deleteMany()
+
+  console.log('Clearing CartItem...')
+  await prisma.cartItem.deleteMany()
+
+  console.log('Clearing Cart...')
+  await prisma.cart.deleteMany()
+
+  console.log('Clearing VoucherBranch...')
+  await prisma.voucherBranch.deleteMany()
+
+  console.log('Clearing Voucher...')
+  await prisma.voucher.deleteMany()
+
+  console.log('Clearing Branch...')
+  await prisma.branch.deleteMany()
+
+  console.log('Clearing Partner...')
+  await prisma.partner.deleteMany()
+
+  console.log('Clearing RefreshToken...')
+  await prisma.refreshToken.deleteMany()
+
+  console.log('Clearing AuditLog...')
+  await prisma.auditLog.deleteMany()
+
+  console.log('Clearing User...')
+  await prisma.user.deleteMany()
+
+  console.log('Clearing Category...')
+  await prisma.category.deleteMany()
+
+  console.log('Database wiped successfully.')
 
   // ── Categories ──────────────────────────────────────────────────────────
   const categories = await Promise.all([
@@ -14,7 +73,7 @@ async function main() {
     prisma.category.upsert({ where: { slug: 'mua-sam' },    update: {}, create: { name: 'Mua sắm',   slug: 'mua-sam',   icon: '🛍️' } }),
     prisma.category.upsert({ where: { slug: 'giai-tri' },   update: {}, create: { name: 'Giải trí',  slug: 'giai-tri',  icon: '🎮' } }),
   ])
-  console.log('✅ Categories:', categories.length)
+  console.log('Categories seeded:', categories.length)
 
   // ── Users ────────────────────────────────────────────────────────────────
   const hash = (pw) => bcrypt.hash(pw, 10)
@@ -53,7 +112,7 @@ async function main() {
     where: { email: 'customer3@test.com' }, update: {},
     create: { email: 'customer3@test.com', fullName: 'Lê Văn C', phone: '0901000003', passwordHash: await hash('Test@123'), role: 'CUSTOMER' }
   })
-  console.log('✅ Users: 8')
+  console.log('Users seeded: 8')
 
   // ── Partners ─────────────────────────────────────────────────────────────
   const haiDiLao = await prisma.partner.upsert({
@@ -72,7 +131,7 @@ async function main() {
     where: { taxCode: '0456789012' }, update: {},
     create: { userId: pendingUser.id, businessName: 'Nhà hàng Biển Đông', taxCode: '0456789012', representativeName: 'Lê Thị Mai', status: 'PENDING' }
   })
-  console.log('✅ Partners: 4')
+  console.log('Partners seeded: 4')
 
   // ── Branches ──────────────────────────────────────────────────────────────
   const hdl_q1 = await prisma.branch.upsert({
@@ -95,11 +154,12 @@ async function main() {
     where: { partnerId_name: { partnerId: goTravel.id, name: 'GoTravel HCMC' } }, update: {},
     create: { partnerId: goTravel.id, name: 'GoTravel HCMC', address: '45 Lê Lợi, Q.1' }
   })
-  console.log('✅ Branches: 5')
+  console.log('Branches seeded: 5')
 
   // ── Vouchers ──────────────────────────────────────────────────────────────
   const now = new Date()
   const future = (days) => new Date(now.getTime() + days * 86400000)
+  const past = (days) => new Date(now.getTime() - days * 86400000)
 
   const vDataRaw = [
     // Haidilao
@@ -115,6 +175,13 @@ async function main() {
       description: 'Set lẩu cá nhân đầy đủ topping cho 1 người.',
       conditions: 'Áp dụng các ngày trong tuần. Không áp dụng cuối tuần.',
       imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400' },
+    // Expired Haidilao Voucher
+    { partnerId: haiDiLao.id, categoryId: categories[0].id, key: 'hdl_expired',
+      title: 'Buffet Lẩu cuối tuần — Haidilao (Hết hạn)', originalPrice: 350000, salePrice: 220000,
+      totalQty: 100, soldQty: 25, status: 'EXPIRED',
+      description: 'Gói buffet lẩu cuối tuần đã hết hạn.',
+      conditions: 'Không còn thời hạn sử dụng.',
+      imageUrl: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400' },
     // Zen Spa
     { partnerId: zenSpa.id, categoryId: categories[1].id, key: 'zen_1',
       title: 'Massage thư giãn 90 phút — Zen Spa', originalPrice: 450000, salePrice: 249000,
@@ -158,14 +225,14 @@ async function main() {
       update: {},
       create: {
         ...data,
-        saleStart: now,
-        saleEnd: future(60),
-        useStart: now,
-        useEnd: future(90),
+        saleStart: data.status === 'EXPIRED' ? past(40) : now,
+        saleEnd: data.status === 'EXPIRED' ? past(10) : future(60),
+        useStart: data.status === 'EXPIRED' ? past(40) : now,
+        useEnd: data.status === 'EXPIRED' ? past(1) : future(90),
       }
     })
   }
-  console.log('✅ Vouchers:', Object.keys(v).length)
+  console.log('Vouchers seeded:', Object.keys(v).length)
 
   // ── VoucherBranches ───────────────────────────────────────────────────────
   const vbData = [
@@ -173,6 +240,7 @@ async function main() {
     { voucherId: v.hdl_1.id, branchId: hdl_q7.id },
     { voucherId: v.hdl_2.id, branchId: hdl_q1.id },
     { voucherId: v.hdl_2.id, branchId: hdl_q7.id },
+    { voucherId: v.hdl_expired.id, branchId: hdl_q1.id },
     { voucherId: v.hdl_pending.id, branchId: hdl_q1.id },
     { voucherId: v.zen_1.id, branchId: zen_q3.id },
     { voucherId: v.zen_1.id, branchId: zen_q10.id },
@@ -185,7 +253,7 @@ async function main() {
       where: { voucherId_branchId: vb }, update: {}, create: vb
     })
   }
-  console.log('✅ VoucherBranches:', vbData.length)
+  console.log('VoucherBranches seeded:', vbData.length)
 
   // ── Carts ────────────────────────────────────────────────────────────────
   const cart1 = await prisma.cart.upsert({
@@ -206,7 +274,7 @@ async function main() {
       update: { qty: item.qty }, create: item
     })
   }
-  console.log('✅ Carts seeded')
+  console.log('Carts seeded')
 
   // ── Orders + VoucherCodes + Reviews ───────────────────────────────────────
   const { nanoid } = await import('nanoid')
@@ -271,7 +339,7 @@ async function main() {
       status: 'EXPIRED',
       expiresAt: future(-10),
     }
-  });
+  })
   await prisma.voucherCode.create({
     data: {
       code: 'VC-WRONG-PARTNER',
@@ -281,7 +349,7 @@ async function main() {
       status: 'ISSUED',
       expiresAt: future(90),
     }
-  });
+  })
 
   const reviewReadyOrder = await prisma.order.create({
     data: {
@@ -291,7 +359,7 @@ async function main() {
       items: { create: { voucherId: v.hdl_2.id, qty: 1, unitPrice: v.hdl_2.salePrice } },
       payment: { create: { method: 'WALLET', status: 'PAID', amount: v.hdl_2.salePrice } },
     }
-  });
+  })
   await prisma.voucherCode.create({
     data: {
       code: 'VC-REVIEW-READY',
@@ -302,9 +370,9 @@ async function main() {
       usedAt: new Date(),
       expiresAt: future(90),
     }
-  });
+  })
 
-  console.log('✅ Orders + VoucherCodes: 18 (Including Edge Cases)')
+  console.log('Orders + VoucherCodes: 18 (Including Edge Cases)')
 
   // Reviews
   const reviewData = [
@@ -320,9 +388,9 @@ async function main() {
       update: {}, create: r
     })
   }
-  console.log('✅ Reviews:', reviewData.length)
+  console.log('Reviews seeded:', reviewData.length)
 
-  console.log('\n🎉 Seed hoàn thành!')
+  console.log('Seeding process completed successfully!')
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
   console.log('Tài khoản test:')
   console.log('  Admin:     admin@vivouch.com     / Admin@123')
