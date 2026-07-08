@@ -74,8 +74,18 @@ export function CheckoutPage() {
 
   if (isCartLoading && !cart) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
+      <div className="max-w-5xl mx-auto px-4 py-8 animate-pulse">
+        <div className="h-8 w-48 bg-base-300 rounded mb-8"></div>
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 space-y-6">
+            <div className="bg-base-200/50 rounded-2xl h-40"></div>
+            <div className="bg-base-200/50 rounded-2xl h-64"></div>
+            <div className="bg-base-200/50 rounded-2xl h-48"></div>
+          </div>
+          <div className="lg:w-96 w-full">
+            <div className="bg-base-200/50 rounded-2xl h-72"></div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
@@ -27,6 +27,18 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+
+  useEffect(() => {
+    try {
+      const message = sessionStorage.getItem("authMessage");
+      if (message) {
+        setFormError(message);
+        sessionStorage.removeItem("authMessage");
+      }
+    } catch (e) {
+      console.warn("sessionStorage is not available:", e);
+    }
+  }, []);
 
   const loginMutation = useMutation({
     mutationFn: ({ email, password }) => login(email, password),

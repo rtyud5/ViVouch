@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { ReviewCard } from "./ReviewCard";
 import { AlertCircle } from "lucide-react";
+import { CustomerEmptyState } from "../common/CustomerEmptyState";
 
 export function ReviewList({ reviews = [], isLoading = false, error = null }) {
   if (isLoading) {
@@ -39,8 +40,8 @@ export function ReviewList({ reviews = [], isLoading = false, error = null }) {
 
   if (!reviews || reviews.length === 0) {
     return (
-      <div className="w-full bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 mt-6 text-center">
-        <p className="text-base-content/50 italic text-sm">Chưa có đánh giá nào cho voucher này.</p>
+      <div className="w-full bg-base-100 rounded-2xl shadow-sm border border-base-200 p-6 mt-6">
+        <CustomerEmptyState type="reviews" />
       </div>
     );
   }
