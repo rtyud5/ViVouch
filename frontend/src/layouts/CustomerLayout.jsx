@@ -2,7 +2,6 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useCart } from '../features/cart/hooks/useCart';
 import { BottomNav } from '../components/common/BottomNav';
-import { GlobalErrorBoundary } from '../components/common/GlobalErrorBoundary';
 
 /**
  * CustomerLayout
@@ -183,9 +182,7 @@ export function CustomerLayout() {
       {/* ── Main Content ────────────────────────────────────────────────────── */}
       {/* pb-16 trên mobile để nội dung không bị BottomNav che khuất */}
       <main className="flex-grow pb-16 md:pb-0">
-        <GlobalErrorBoundary>
-          <Outlet />
-        </GlobalErrorBoundary>
+        <Outlet />
       </main>
 
       {/* ── BottomNav — chỉ mobile ─────────────────────────────────────────── */}

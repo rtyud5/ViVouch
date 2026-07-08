@@ -29,10 +29,14 @@ export function LoginPage() {
   const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
-    const message = sessionStorage.getItem("authMessage");
-    if (message) {
-      setFormError(message);
-      sessionStorage.removeItem("authMessage");
+    try {
+      const message = sessionStorage.getItem("authMessage");
+      if (message) {
+        setFormError(message);
+        sessionStorage.removeItem("authMessage");
+      }
+    } catch (e) {
+      console.warn("sessionStorage is not available:", e);
     }
   }, []);
 

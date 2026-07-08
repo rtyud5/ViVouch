@@ -89,7 +89,8 @@ export function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-6 md:py-8 animate-pulse">
+      <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-6 md:py-8 animate-pulse" role="status" aria-live="polite">
+        <span className="sr-only">Đang tải thông tin cá nhân...</span>
         <div className="h-10 w-48 bg-base-300 rounded mb-6 md:mb-8"></div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <section className="lg:col-span-4">
@@ -104,8 +105,8 @@ export function ProfilePage() {
              </div>
           </section>
           <div className="lg:col-span-8 flex flex-col gap-6">
-             <div className="card bg-base-100 shadow-sm border border-base-200 h-64 bg-base-200/50"></div>
-             <div className="card bg-base-100 shadow-sm border border-base-200 h-64 bg-base-200/50"></div>
+             <div className="card shadow-sm border border-base-200 h-64 bg-base-200/50"></div>
+             <div className="card shadow-sm border border-base-200 h-64 bg-base-200/50"></div>
           </div>
         </div>
       </div>
