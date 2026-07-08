@@ -87,7 +87,7 @@ export function DashboardLayout({
       </div>
 
       {/* ── drawer-side ── */}
-      <div className="drawer-side z-50 lg:overflow-visible">
+      <div className="drawer-side z-50 lg:relative lg:overflow-visible">
         <label
           htmlFor={drawerId}
           aria-label="Đóng menu"
