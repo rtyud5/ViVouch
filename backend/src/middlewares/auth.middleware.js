@@ -1,16 +1,12 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
+import { AppError } from "../utils/appError.js";
 
-/**
- * Middleware xác thực token JWT
- */
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    const error = new Error("Chưa xác thực");
-    error.statusCode = 401;
-    return next(error);
+    return next(new AppError("Chưa xác thực", 401, "UNAUTHORIZED"));
   }
 
   const token = authHeader.split(" ")[1];
@@ -19,17 +15,14 @@ export const verifyToken = (req, res, next) => {
     const decoded = jwt.verify(token, env.JWT_ACCESS_SECRET);
     req.user = {
       userId: decoded.userId,
-      role: decoded.role
+      role: decoded.role,
     };
-    next();
+    return next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
-      const error = new Error("Token expired");
-      error.statusCode = 401;
-      return next(error);
+      return next(new AppError("Token expired", 401, "TOKEN_EXPIRED"));
     }
-    const error = new Error("Invalid token");
-    error.statusCode = 401;
-    return next(error);
+
+    return next(new AppError("Invalid token", 401, "INVALID_TOKEN"));
   }
 };
