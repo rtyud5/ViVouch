@@ -7,6 +7,16 @@ export const checkoutSchema = z.object({
       qty: z.coerce.number().int("Số lượng phải là số nguyên").min(1, "Số lượng tối thiểu phải là 1").optional().default(1)
     })
   ).min(1, "Danh sách sản phẩm không được rỗng"),
-  paymentMethod: z.string().optional().default("MOCK_GATEWAY")
+  paymentMethod: z.string().optional().default("MOCK_GATEWAY"),
+  recipientName: z.string().optional().nullable(),
+  recipientPhone: z.string().optional().nullable(),
+  note: z.string().optional().nullable()
+});
+
+export const cartCheckoutSchema = z.object({
+  paymentMethod: z.string().optional().default("MOCK_GATEWAY"),
+  recipientName: z.string().optional().nullable(),
+  recipientPhone: z.string().optional().nullable(),
+  note: z.string().optional().nullable()
 });
 
