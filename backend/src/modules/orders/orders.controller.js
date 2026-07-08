@@ -1,5 +1,5 @@
 import ordersService from "./orders.service.js";
-import { checkoutSchema } from "./orders.validator.js";
+import { checkoutSchema, cartCheckoutSchema } from "./orders.validator.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 /**
@@ -18,7 +18,8 @@ export const buyNow = asyncHandler(async (req, res) => {
   const parsedData = checkoutSchema.parse(req.body);
 
   try {
-    const result = await ordersService.buyNow(userId, parsedData.items, parsedData.paymentMethod);
+    const { items, ...checkoutData } = parsedData;
+    const result = await ordersService.buyNow(userId, items, checkoutData);
 
     return res.status(201).json({
       success: true,
@@ -27,19 +28,10 @@ export const buyNow = asyncHandler(async (req, res) => {
     });
   } catch (err) {
     // Bắt và xử lý lỗi business logic từ service
-    if (
-      err.message === "EMPTY_ITEMS" ||
-      err.message.startsWith("INSUFFICIENT_STOCK:") ||
-      err.message.startsWith("VOUCHER_UNAVAILABLE:")
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: err.message
-      });
-    }
-
-    // Ném các lỗi khác lên cho global error handler
-    throw err;
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
   }
 });
 
@@ -55,9 +47,11 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
     throw error;
   }
 
+  // Validate request body qua Zod
+  const checkoutData = cartCheckoutSchema.parse(req.body);
+
   try {
-    const { paymentMethod } = req.body;
-    const result = await ordersService.checkoutFromCart(userId, paymentMethod || 'MOCK_GATEWAY');
+    const result = await ordersService.checkoutFromCart(userId, checkoutData);
 
     return res.status(201).json({
       success: true,
@@ -66,19 +60,10 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
     });
   } catch (err) {
     // Bắt và xử lý lỗi business logic từ service
-    if (
-      err.message === "EMPTY_CART" ||
-      err.message.startsWith("INSUFFICIENT_STOCK:") ||
-      err.message.startsWith("VOUCHER_UNAVAILABLE:")
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: err.message
-      });
-    }
-
-    // Ném các lỗi khác lên cho global error handler
-    throw err;
+    return res.status(400).json({
+      success: false,
+      message: err.message
+    });
   }
 });
 

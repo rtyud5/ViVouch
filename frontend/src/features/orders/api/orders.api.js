@@ -2,12 +2,15 @@ import { apiClient } from "../../../services/apiClient";
 
 const BASE = "/customer/orders";
 
-export async function checkout(items, paymentMethod) {
+export async function checkout(items, paymentMethod, recipientName, recipientPhone, note) {
   const payload = { items };
 
   if (paymentMethod) {
     payload.paymentMethod = paymentMethod;
   }
+  if (recipientName !== undefined && recipientName !== null) payload.recipientName = recipientName;
+  if (recipientPhone !== undefined && recipientPhone !== null) payload.recipientPhone = recipientPhone;
+  if (note !== undefined && note !== null) payload.note = note;
 
   const { data } = await apiClient.post(`${BASE}/cart/checkout`, payload);
   return data.data;

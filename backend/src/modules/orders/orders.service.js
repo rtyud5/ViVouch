@@ -1,5 +1,6 @@
 import { prisma } from '../../config/prisma.js';
 import { customAlphabet } from 'nanoid';
+import { log as auditLog } from '../auditLogs/auditLog.service.js';
 
 const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
@@ -10,9 +11,15 @@ const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
  * @param {Object} tx - Prisma Transaction Client
  * @param {string} userId - ID của người dùng
  * @param {Array<{id: string, qty: number}>} sortedItems - Danh sách voucher đã được sắp xếp để tránh deadlock
+ * @param {Object} checkoutData - Thông tin thanh toán và quà tặng/ghi chú
  * @returns {Promise<Object>} Kết quả checkout
  */
-const processCheckout = async (tx, userId, sortedItems, paymentMethod = 'MOCK_GATEWAY') => {
+const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
+  const paymentMethod = checkoutData.paymentMethod || 'MOCK_GATEWAY';
+  const recipientName = checkoutData.recipientName || null;
+  const recipientPhone = checkoutData.recipientPhone || null;
+  const note = checkoutData.note || null;
+
   let totalAmount = 0;
   const orderItemsData = [];
   const returnVoucherCodes = [];
@@ -24,18 +31,34 @@ const processCheckout = async (tx, userId, sortedItems, paymentMethod = 'MOCK_GA
     // Row-level lock: Lock row của voucher để đảm bảo an toàn đồng thời
     await tx.$executeRaw`SELECT id FROM "Voucher" WHERE id = ${voucherId} FOR UPDATE`;
 
-    const voucher = await tx.voucher.findFirst({
-      where: { id: voucherId, status: 'ON_SALE' }
+    const voucher = await tx.voucher.findUnique({
+      where: { id: voucherId }
     });
 
     if (!voucher) {
-      throw new Error("VOUCHER_UNAVAILABLE:" + voucherId);
+      throw new Error("Không tìm thấy voucher hoặc voucher không tồn tại.");
+    }
+
+    if (voucher.status !== 'ON_SALE') {
+      throw new Error(`Voucher "${voucher.title}" hiện không còn được bán.`);
+    }
+
+    // Check saleStart/saleEnd cơ bản khi checkout
+    const now = new Date();
+    if (voucher.saleStart && now < new Date(voucher.saleStart)) {
+      throw new Error(`Voucher "${voucher.title}" chưa đến thời gian mở bán.`);
+    }
+    if (voucher.saleEnd && now > new Date(voucher.saleEnd)) {
+      throw new Error(`Voucher "${voucher.title}" đã hết hạn bán.`);
     }
 
     // Kiểm tra tồn kho
     const remainingQty = voucher.totalQty - voucher.soldQty;
+    if (remainingQty <= 0) {
+      throw new Error(`Voucher "${voucher.title}" đã hết số lượng phát hành.`);
+    }
     if (remainingQty < qty) {
-      throw new Error("INSUFFICIENT_STOCK:" + voucherId);
+      throw new Error(`Voucher "${voucher.title}" không đủ số lượng yêu cầu (Còn lại: ${remainingQty}).`);
     }
 
     // Cập nhật số lượng đã bán (soldQty)
@@ -86,6 +109,9 @@ const processCheckout = async (tx, userId, sortedItems, paymentMethod = 'MOCK_GA
       userId,
       status: 'COMPLETED',
       totalAmount,
+      recipientName,
+      recipientPhone,
+      note,
       items: {
         create: orderItemsData.map(({ voucherId, qty, unitPrice }) => ({
           voucherId, qty, unitPrice
@@ -107,6 +133,14 @@ const processCheckout = async (tx, userId, sortedItems, paymentMethod = 'MOCK_GA
     }
   });
 
+  // Ghi audit log
+  await auditLog(userId, 'CHECKOUT', 'Order', order.id, {
+    totalAmount,
+    recipientName,
+    recipientPhone,
+    note
+  }, tx);
+
   return {
     orderId: order.id,
     voucherCodes: returnVoucherCodes
@@ -117,9 +151,10 @@ const processCheckout = async (tx, userId, sortedItems, paymentMethod = 'MOCK_GA
  * Luồng Mua Ngay (Buy Now)
  * @param {string} userId - ID của người dùng
  * @param {Array<{id: string, qty: number}>} items - Danh sách voucher cần mua
+ * @param {Object} checkoutData - Thông tin thanh toán và quà tặng/ghi chú
  * @returns {Promise<Object>} Order đã tạo
  */
-export const buyNow = async (userId, items, paymentMethod = 'MOCK_GATEWAY') => {
+export const buyNow = async (userId, items, checkoutData = {}) => {
   if (!items || items.length === 0) {
     throw new Error('EMPTY_ITEMS');
   }
@@ -136,7 +171,7 @@ export const buyNow = async (userId, items, paymentMethod = 'MOCK_GATEWAY') => {
   const sortedItems = aggregatedItems.sort((a, b) => a.id.localeCompare(b.id));
 
   return await prisma.$transaction(async (tx) => {
-    return await processCheckout(tx, userId, sortedItems, paymentMethod);
+    return await processCheckout(tx, userId, sortedItems, checkoutData);
   }, {
     timeout: 10000
   });
@@ -145,9 +180,10 @@ export const buyNow = async (userId, items, paymentMethod = 'MOCK_GATEWAY') => {
 /**
  * Luồng Thanh Toán từ Giỏ hàng (Checkout from Cart)
  * @param {string} userId - ID của người dùng
+ * @param {Object} checkoutData - Thông tin thanh toán và quà tặng/ghi chú
  * @returns {Promise<Object>} Order đã tạo
  */
-export const checkoutFromCart = async (userId, paymentMethod = 'MOCK_GATEWAY') => {
+export const checkoutFromCart = async (userId, checkoutData = {}) => {
   let cartItemIdsToDelete = [];
 
   const result = await prisma.$transaction(async (tx) => {
@@ -175,7 +211,7 @@ export const checkoutFromCart = async (userId, paymentMethod = 'MOCK_GATEWAY') =
     cartItemIdsToDelete = cart.items.map(item => item.id);
 
     // Thực thi xử lý Checkout lõi
-    return await processCheckout(tx, userId, sortedItems, paymentMethod);
+    return await processCheckout(tx, userId, sortedItems, checkoutData);
   }, {
     timeout: 10000
   });

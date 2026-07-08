@@ -18,6 +18,10 @@ export function CheckoutPage() {
 
   const [paymentMethod, setPaymentMethod] = useState("VIVOUCH_WALLET");
   const [localError, setLocalError] = useState(null);
+  const [isGift, setIsGift] = useState(false);
+  const [recipientName, setRecipientName] = useState("");
+  const [recipientPhone, setRecipientPhone] = useState("");
+  const [note, setNote] = useState("");
 
   const cartItems = cart?.items || [];
   const items = React.useMemo(
@@ -40,9 +44,28 @@ export function CheckoutPage() {
   const handleCheckout = async () => {
     try {
       setLocalError(null);
+
+      if (isGift) {
+        if (!recipientName.trim()) {
+          setLocalError(new Error("Vui lòng nhập tên người nhận quà."));
+          return;
+        }
+        if (!recipientPhone.trim()) {
+          setLocalError(new Error("Vui lòng nhập số điện thoại người nhận quà."));
+          return;
+        }
+        if (!/^[0-9+]{9,15}$/.test(recipientPhone.trim())) {
+          setLocalError(new Error("Số điện thoại người nhận không hợp lệ (yêu cầu từ 9 đến 15 chữ số)."));
+          return;
+        }
+      }
+
       const result = await checkoutMutation.mutateAsync({
         items,
         paymentMethod,
+        recipientName: isGift ? recipientName.trim() : null,
+        recipientPhone: isGift ? recipientPhone.trim() : null,
+        note: note.trim() || null,
       });
 
       if (!result?.orderId) {
@@ -147,6 +170,64 @@ export function CheckoutPage() {
                 <span className="text-base-content/70">Email</span>
                 <span className="font-medium text-right">{user?.email || "Chưa cập nhật"}</span>
               </div>
+            </div>
+          </div>
+
+          {/* Gift Info & Notes */}
+          <div className="bg-base-100 rounded-2xl p-6 shadow-sm border border-base-200">
+            <h2 className="text-xl font-semibold mb-4">Thông tin nhận quà & Ghi chú</h2>
+            
+            <div className="form-control mb-4">
+              <label className="label cursor-pointer justify-start gap-3">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary rounded-md"
+                  checked={isGift}
+                  onChange={(e) => setIsGift(e.target.checked)}
+                />
+                <span className="label-text font-medium text-base-content">Mua làm quà tặng cho người khác</span>
+              </label>
+            </div>
+
+            {isGift && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text font-semibold text-base-content">Tên người nhận <span className="text-error">*</span></span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Nhập tên người nhận"
+                    className="input input-bordered w-full rounded-xl bg-base-100 text-base-content"
+                    value={recipientName}
+                    onChange={(e) => setRecipientName(e.target.value)}
+                  />
+                </div>
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text font-semibold text-base-content">Số điện thoại người nhận <span className="text-error">*</span></span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Nhập số điện thoại"
+                    className="input input-bordered w-full rounded-xl bg-base-100 text-base-content font-mono"
+                    value={recipientPhone}
+                    onChange={(e) => setRecipientPhone(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="form-control w-full">
+              <label className="label">
+                <span className="label-text font-semibold text-base-content">Ghi chú đơn hàng</span>
+              </label>
+              <textarea
+                placeholder="Nhập ghi chú hoặc lời nhắn gửi kèm (không bắt buộc)..."
+                className="textarea textarea-bordered w-full rounded-xl h-24 resize-none bg-base-100 text-base-content"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
             </div>
           </div>
 

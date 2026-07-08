@@ -276,6 +276,7 @@ export function VoucherDetailPage() {
             description={voucher.description}
             conditions={voucher.conditions}
             branches={voucher.branches}
+            cancelPolicy={voucher.cancelPolicy}
           />
 
           <div id="reviews-section" className="flex flex-col gap-2 mt-4 scroll-mt-24">

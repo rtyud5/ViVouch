@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Info, ShieldAlert, MapPin, Phone } from "lucide-react";
+import { Info, ShieldAlert, MapPin, Phone, ShieldCheck } from "lucide-react";
 
 /**
  * DetailTabs component
@@ -10,13 +10,15 @@ import { Info, ShieldAlert, MapPin, Phone } from "lucide-react";
  * @param {string} description - Mô tả voucher
  * @param {Array<string>} conditions - Danh sách điều kiện áp dụng
  * @param {Array<object>} branches - Danh sách chi nhánh áp dụng
+ * @param {string} cancelPolicy - Chính sách hoàn hủy
  */
-export function DetailTabs({ description = "", conditions = [], branches = [] }) {
+export function DetailTabs({ description = "", conditions = [], branches = [], cancelPolicy = "" }) {
   const [activeTab, setActiveTab] = useState("description");
 
   const tabs = [
     { id: "description", label: "Mô tả", icon: Info },
     { id: "conditions", label: "Điều kiện áp dụng", icon: ShieldAlert },
+    { id: "cancelPolicy", label: "Chính sách hoàn hủy", icon: ShieldCheck },
     { id: "branches", label: "Chi nhánh áp dụng", icon: MapPin },
   ];
 
@@ -77,6 +79,13 @@ export function DetailTabs({ description = "", conditions = [], branches = [] })
             ) : (
               <p className="text-base-content/50 italic text-sm">Không có điều kiện áp dụng cụ thể.</p>
             )}
+          </div>
+        )}
+
+        {/* Tab 4: Cancel Policy */}
+        {activeTab === "cancelPolicy" && (
+          <div className="prose max-w-none text-base-content/80 leading-relaxed text-sm sm:text-base animate-fadeIn">
+            <p className="whitespace-pre-line">{cancelPolicy || "Không có chính sách hoàn hủy cụ thể."}</p>
           </div>
         )}
 

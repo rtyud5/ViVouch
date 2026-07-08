@@ -42,6 +42,7 @@ describe('Cart Checkout API Tests', () => {
       await prisma.partner.deleteMany({ where: { id: { in: partnerIds } } });
     }
 
+    await prisma.auditLog.deleteMany({ where: { actorId: { in: userIds } } });
     await prisma.user.deleteMany({ where: { id: { in: userIds } } });
     await prisma.category.deleteMany({ where: { slug: 'checkout-api-test' } });
   };

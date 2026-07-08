@@ -126,6 +126,51 @@ export function OrdersPage() {
                     {order.items.map((item, index) => (
                       <OrderItemCard key={index} item={item} />
                     ))}
+
+                    <div className="bg-base-200/40 rounded-xl p-4 mt-2 text-sm space-y-2 border border-base-200">
+                      <div className="flex justify-between flex-wrap gap-2">
+                        <span className="text-base-content/70 font-medium">Phương thức thanh toán:</span>
+                        <span className="font-semibold text-base-content">
+                          {order.payment?.method === "VIVOUCH_WALLET" && "Ví ViVouch (Mô phỏng)"}
+                          {order.payment?.method === "BANK_TRANSFER" && "Chuyển khoản ngân hàng (Mô phỏng)"}
+                          {order.payment?.method === "COD" && "Thanh toán khi nhận hàng (Mô phỏng)"}
+                          {!["VIVOUCH_WALLET", "BANK_TRANSFER", "COD"].includes(order.payment?.method) && `${order.payment?.method || "Không rõ"} (Mô phỏng)`}
+                        </span>
+                      </div>
+                      <div className="flex justify-between flex-wrap gap-2">
+                        <span className="text-base-content/70 font-medium">Trạng thái thanh toán:</span>
+                        <span className={`font-semibold ${order.payment?.status === "PAID" ? "text-success" : "text-warning"}`}>
+                          {order.payment?.status === "PAID" && "Đã thanh toán (Mô phỏng)"}
+                          {order.payment?.status === "PENDING" && "Chờ thanh toán (Mô phỏng)"}
+                          {order.payment?.status === "REFUNDED" && "Đã hoàn tiền (Mô phỏng)"}
+                          {order.payment?.status === "FAILED" && "Thất bại (Mô phỏng)"}
+                        </span>
+                      </div>
+
+                      {(order.recipientName || order.recipientPhone || order.note) && (
+                        <div className="border-t border-base-200 pt-3 mt-3 space-y-2">
+                          <h4 className="font-bold text-xs text-primary uppercase tracking-wider">Thông tin quà tặng & Ghi chú</h4>
+                          {order.recipientName && (
+                            <div className="flex justify-between flex-wrap gap-2">
+                              <span className="text-base-content/70">Người nhận:</span>
+                              <span className="font-semibold text-base-content">{order.recipientName}</span>
+                            </div>
+                          )}
+                          {order.recipientPhone && (
+                            <div className="flex justify-between flex-wrap gap-2">
+                              <span className="text-base-content/70">Số điện thoại người nhận:</span>
+                              <span className="font-semibold text-base-content font-mono">{order.recipientPhone}</span>
+                            </div>
+                          )}
+                          {order.note && (
+                            <div className="flex justify-between flex-wrap gap-2">
+                              <span className="text-base-content/70">Ghi chú / Lời nhắn:</span>
+                              <span className="font-medium text-base-content text-right italic">"{order.note}"</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
