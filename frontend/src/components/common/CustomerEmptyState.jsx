@@ -15,6 +15,11 @@ const TYPE_CONFIG = {
     icon: 'shopping_cart',
     title: 'Giỏ hàng trống',
     description: 'Chưa có sản phẩm nào trong giỏ hàng. Hãy lấp đầy nó thôi!'
+  },
+  reviews: {
+    icon: 'rate_review',
+    title: 'Chưa có đánh giá',
+    description: 'Voucher này chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ trải nghiệm!'
   }
 };
 

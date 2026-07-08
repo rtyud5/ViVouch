@@ -32,6 +32,7 @@ apiClient.interceptors.response.use(
 
       if (!isRedirecting && window.location.pathname !== "/login") {
         isRedirecting = true;
+        sessionStorage.setItem("authMessage", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
         window.location.assign("/login");
         setTimeout(() => {
           isRedirecting = false;
