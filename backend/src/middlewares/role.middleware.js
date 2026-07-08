@@ -1,36 +1,27 @@
 import { ROLES } from "../constants/roles.js";
+import { AppError } from "../utils/appError.js";
 
 const VALID_ROLES = Object.values(ROLES);
 
-/**
- * Middleware kiểm tra quyền truy cập theo vai trò (Role-Based Access Control)
- * @param {...string} roles Danh sách các vai trò được phép truy cập
- */
 export const requireRole = (...roles) => {
-  // Chuẩn hóa danh sách roles truyền vào thành chữ in hoa
-  const normalizedRoles = roles.map(r => r.toUpperCase());
+  const normalizedRoles = roles.map((role) => role.toUpperCase());
 
-  // Kiểm tra xem các role truyền vào middleware có hợp lệ trong hệ thống hay không
-  const invalidRoles = normalizedRoles.filter(r => !VALID_ROLES.includes(r));
+  const invalidRoles = normalizedRoles.filter((role) => !VALID_ROLES.includes(role));
   if (invalidRoles.length > 0) {
-    throw new Error(`Cấu hình Role không hợp lệ: ${invalidRoles.join(", ")}`);
+    throw new Error(`Cau hinh Role khong hop le: ${invalidRoles.join(", ")}`);
   }
 
   return (req, res, next) => {
     if (!req.user || !req.user.role) {
-      const error = new Error("Chưa xác thực");
-      error.statusCode = 401;
-      return next(error);
+      return next(new AppError("Chưa xác thực", 401, "UNAUTHORIZED"));
     }
 
     const userRole = req.user.role.toUpperCase();
 
     if (!normalizedRoles.includes(userRole)) {
-      const error = new Error("Không có quyền truy cập");
-      error.statusCode = 403;
-      return next(error);
+      return next(new AppError("Không có quyền truy cập", 403, "FORBIDDEN"));
     }
 
-    next();
+    return next();
   };
 };
