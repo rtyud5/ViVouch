@@ -46,7 +46,7 @@
 | Browse + Cart + Checkout + Profile | ✅ 11 | ❌ 1 | ⛔ 1 (partial) |
 
 - **B101** (P2 — Checkout no Back button): ❌ → backlog W6
-- **B106** (P2 — Review form `userEligibility`): ⚠️ Partial — form UI có, BE API hoạt động, nhưng backend không trả `userEligibility` → form luôn ở NOT_ELIGIBLE
+- **B106** (P2 — Review form `userEligibility`): ⚠️ Partial — backend không trả `userEligibility` → frontend ẩn form submit (xem `WriteReviewForm.jsx` lines 43-49, `VoucherDetailPage.jsx` line 284). User bị chặn ở UI level, không thể submit review khi eligibility là NOT_ELIGIBLE hoặc missing.
 
 ### 🟣 Flow 4: Redeem Code (RDM-01 → RDM-07)
 | Scope | Pass | Fail | Block |
@@ -73,7 +73,7 @@
 | B102 | **P3** | `BranchesPage.jsx` | Stub rỗng, không nội dung | → **Backlog W6** |
 | B103 | **P2** | `PartnerDashboardPage.jsx` | Bộ lọc thời gian chart không wire state | → **Backlog W6** |
 | B104 | **P2** | `PartnerDashboardPage.jsx` | Nút "Xem tất cả" thiếu onClick | → **Backlog W6** |
-| B106 | **P2** | `VoucherDetailPage.jsx` + BE vouchers service | `userEligibility` backend chưa trả → form review luôn NOT_ELIGIBLE | → **Backlog W6** |
+| B106 | **P2** | `VoucherDetailPage.jsx` + BE vouchers service | `userEligibility` backend chưa trả → frontend ẩn form submit, user bị chặn ở UI level | → **Backlog W6** |
 
 > **Feature creep check:** ✅ Không phát hiện feature creep. Tất cả changes trong W5 là fix/hardening chính đáng.
 
@@ -135,5 +135,5 @@ Seed data includes edge cases:
 | Medium | Thêm nút Back trên CheckoutPage (navigate(-1) hoặc Link to /customer/cart) | B101 |
 | Medium | Kết nối select range vào state + fetch API thật cho Partner Dashboard chart | B103 |
 | Medium | Thêm onClick handler cho "Xem tất cả" trên Partner Dashboard timeline | B104 |
-| Medium | FE Wire review form: backend trả `userEligibility` để form hiển thị ELIGIBLE | B106 |
+| Medium | Backend trả `userEligibility` để frontend hiển thị form review khi user ELIGIBLE (hiện tại form bị ẩn) | B106 |
 | Low | Quyết định scope Branches: W6 hoặc out-of-scope | B102 |

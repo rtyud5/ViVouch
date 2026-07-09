@@ -67,7 +67,7 @@
 | CUS-10 | My Vouchers — QR Modal | Click xem QR → modal hiện code + QR rõ | ✅ | QRCodeModal component có sẵn |
 | CUS-11 | Profile — Cập nhật thông tin | Lưu thông tin thành công | ✅ | API `PUT /api/users/me` hoạt động (BE test pass) |
 | CUS-12 | Profile — Đổi mật khẩu | Đổi mật khẩu thành công | ✅ | API `POST /api/users/me/change-password` hoạt động (BE test pass) |
-| CUS-13 | Viết Review sau khi USED | Form submit review → review xuất hiện trên VoucherDetail | ⛔ | **B106** (P2 — backlog W6): WriteReviewForm UI đã có, BE API hoạt động, nhưng backend không trả 'userEligibility' → form luôn hiển thị "NOT_ELIGIBLE". User vẫn submit được, API xử lý đúng. |
+| CUS-13 | Viết Review sau khi USED | Form submit review → review xuất hiện trên VoucherDetail | ⛔ | **B106** (P2 — backlog W6): Backend không trả 'userEligibility' → frontend ẩn form submit (`WriteReviewForm.jsx` lines 43-49). User bị chặn ở UI level, không thể submit review. BE API hoạt động đúng nhưng không thể test từ UI. |
 
 ---
 
@@ -96,7 +96,7 @@
 | B103 | **P2** | PTN-03 | Dashboard chart time filter không wire | → **Backlog W6** |
 | B104 | **P2** | PTN-04 | Nút "Xem tất cả" hoạt động gần đây không có onClick | → **Backlog W6** |
 | B105 | **P1** | ADM-06 | ~~Modal Voucher bị Sidebar che~~ | **✅ ĐÃ SỬA** (fixAdminUI) |
-| B106 | **P2** | CUS-13 | WriteReviewForm UI có, nhưng backend không trả `userEligibility` | → **Backlog W6** |
+| B106 | **P2** | CUS-13 | Backend không trả `userEligibility` → frontend ẩn form submit, user bị chặn ở UI | → **Backlog W6** |
 
 > **W5.3 Bug Gate Summary:** P0 = 0 bugs mới, P1 = 0 bugs mở (B105 đã fix). Tất cả P2/P3 (B101, B102, B103, B104, B106) được ghi backlog W6. **Không phát hiện bug mới** ngoài danh sách đã biết.
 
