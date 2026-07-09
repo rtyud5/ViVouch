@@ -71,7 +71,7 @@ function VoucherCodeItem({ code }) {
     <div className="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-6 flex flex-col sm:flex-row gap-6 items-center hover:shadow-md transition-shadow">
       {/* QR Code Container */}
       <div className="bg-white p-3 rounded-2xl border-2 border-primary/20 shadow-sm flex-shrink-0">
-        <QRCodeSVG value={code.code} size={120} level="Q" includeMargin={false} />
+        <QRCodeSVG value={code.code} size={120} level="Q" marginSize={0} />
       </div>
       
       {/* Thông tin */}
