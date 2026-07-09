@@ -67,7 +67,7 @@
 | CUS-10 | My Vouchers — QR Modal | Click xem QR → modal hiện code + QR rõ | ✅ | QRCodeModal component có sẵn |
 | CUS-11 | Profile — Cập nhật thông tin | Lưu thông tin thành công | ✅ | API `PUT /api/users/me` hoạt động (BE test pass) |
 | CUS-12 | Profile — Đổi mật khẩu | Đổi mật khẩu thành công | ✅ | API `POST /api/users/me/change-password` hoạt động (BE test pass) |
-| CUS-13 | Viết Review sau khi USED | Form submit review → review xuất hiện trên VoucherDetail | ⚠️ | **B106** (P2 — backlog W6): WriteReviewForm UI đã có, BE API hoạt động, nhưng backend không trả `userEligibility` → form luôn hiển thị "NOT_ELIGIBLE". User vẫn submit được, API xử lý đúng. |
+| CUS-13 | Viết Review sau khi USED | Form submit review → review xuất hiện trên VoucherDetail | ⛔ | **B106** (P2 — backlog W6): WriteReviewForm UI đã có, BE API hoạt động, nhưng backend không trả 'userEligibility' → form luôn hiển thị "NOT_ELIGIBLE". User vẫn submit được, API xử lý đúng. |
 
 ---
 
