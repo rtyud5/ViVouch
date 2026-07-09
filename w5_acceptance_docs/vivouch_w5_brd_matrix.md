@@ -84,7 +84,7 @@
 > **W5.3 Update (2026-07-09):** Đã chạy regression + bug gate. P0/P1 = 0 mới. Tất cả P2/P3 ghi backlog W6.
 
 > **W5 Coverage Summary:**
-> - **Implemented (✅):** 26 features (sau regression verified)
+> - **Implemented (✅):** 24 features (sau regression verified)
 > - **Partial (⚠️):** 9 features — xem danh sách gap
 > - **Mocked (🛑):** 5 features — không có BE hoặc chỉ stub
 > - **Out-of-scope (⚪):** 0
