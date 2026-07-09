@@ -45,6 +45,8 @@
 |:---|---:|---:|---:|
 | Browse + Cart + Checkout + Profile | ✅ 11 | ❌ 1 | ⛔ 1 (partial) |
 
+- **Kết quả E2E Regression:** Luồng E2E (Login → Browse → Cart → Checkout → Order Success → My Vouchers → Profile) đã được chạy thành công trên 3 breakpoints (Desktop 1280px, Tablet 768px, Mobile 375px). 
+- **Console Errors:** Console sạch, không phát hiện spam error.
 - **B101** (P2 — Checkout no Back button): ❌ → backlog W6
 - **B106** (P2 — Review form `userEligibility`): ⚠️ Partial — form UI có, BE API hoạt động, nhưng backend không trả `userEligibility` → form luôn ở NOT_ELIGIBLE
 
