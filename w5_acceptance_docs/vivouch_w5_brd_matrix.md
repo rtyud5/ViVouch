@@ -33,7 +33,7 @@
 | **Customer** | Trang Order Success + QR/Code | ✅ | Hiển thị QR, copy code, confetti animation |
 | **Customer** | My Vouchers (ISSUED/USED/EXPIRED) | ✅ | Tab filter, QR Modal có sẵn |
 | **Customer** | Profile (cập nhật thông tin) | ✅ | `ProfilePage.jsx` hoàn chỉnh, đổi mật khẩu có |
-| **Customer** | Đánh giá Voucher (Review) | ⚠️ | BE hoàn chỉnh + tested; FE hook `useReviews.js` có, nhưng **chỉ hiển thị review**, form submit review chưa được tích hợp vào VoucherDetailPage |
+| **Customer** | Đánh giá Voucher (Review) | ⚠️ | BE hoàn chỉnh + tested; FE `WriteReviewForm` đã tích hợp vào `VoucherDetailPage.jsx`, nhưng backend **không trả `userEligibility`** → form luôn NOT_ELIGIBLE. API submit vẫn hoạt động. B106 → **backlog W6** |
 | **Customer** | Empty states / Error states | ✅ | `CustomerEmptyState`, `ErrorRetryPanel`, `LoadingSpinner` đã có |
 
 ---
@@ -81,11 +81,13 @@
 
 ---
 
-> **W5 Coverage Summary:**
-> - **Implemented (✅):** 26 features
-> - **Partial (⚠️):** 9 features — cần triage ưu tiên
-> - **Mocked (🛑):** 5 features — không có BE hoặc chỉ stub
-> - **Out-of-scope (⚪):** 0 — tất cả feature mocked đã được track
+> **W5.3 Update (2026-07-09):** Đã chạy regression + bug gate. P0/P1 = 0 mới. Tất cả P2/P3 ghi backlog W6.
 
-> **P1 còn mở:** B101 (Checkout thiếu nút Back), B103/B104 (Partner Dashboard filter/nút không hoạt động)
+> **W5 Coverage Summary:**
+> - **Implemented (✅):** 24 features (sau regression verified)
+> - **Partial (⚠️):** 9 features — xem danh sách gap
+> - **Mocked (🛑):** 5 features — không có BE hoặc chỉ stub
+> - **Out-of-scope (⚪):** 0
+
 > **P đã đóng:** B105 (Admin Voucher Modal z-index — đã fix và push lên `fixAdminUI`)
+> **P2/P3 ghi backlog W6:** B101 (Checkout Back), B103 (Dashboard filter), B104 (Xem tất cả), B106 (Review eligibility), B102 (Branches stub)
