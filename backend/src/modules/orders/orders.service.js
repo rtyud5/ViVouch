@@ -15,6 +15,23 @@ const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
  * @returns {Promise<Object>} Kết quả checkout
  */
 const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
+  // --- CHỐNG DOUBLE SUBMIT (Atomic check-then-act) ---
+  // Lock row của User để tuần tự hóa các yêu cầu thanh toán đồng thời từ cùng 1 user (áp dụng cho cả buyNow và cart-checkout)
+  await tx.$executeRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+  
+  // Kiểm tra xem có order nào vừa được tạo trong 5 giây qua không (whitelist các đơn đang sống)
+  const recentOrder = await tx.order.findFirst({
+    where: {
+      userId,
+      status: { in: ['PENDING_PAYMENT', 'COMPLETED'] },
+      createdAt: { gte: new Date(Date.now() - 5000) }
+    }
+  });
+  if (recentOrder) {
+    throw new Error('Thao tác quá nhanh. Vui lòng chờ ít giây trước khi tiếp tục.');
+  }
+  // ----------------------------------------------------
+
   const paymentMethod = checkoutData.paymentMethod || 'MOCK_GATEWAY';
   const recipientName = checkoutData.recipientName || null;
   const recipientPhone = checkoutData.recipientPhone || null;
@@ -184,10 +201,16 @@ export const buyNow = async (userId, items, checkoutData = {}) => {
  * @returns {Promise<Object>} Order đã tạo
  */
 export const checkoutFromCart = async (userId, checkoutData = {}) => {
-  let cartItemIdsToDelete = [];
+  return await prisma.$transaction(async (tx) => {
+    // 0. Lock User trước để đảm bảo thứ tự lock nhất quán: User -> Cart -> Voucher
+    await tx.$executeRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
 
-  const result = await prisma.$transaction(async (tx) => {
-    // Lấy giỏ hàng
+    // 1. Lock Cart trước khi đọc để đảm bảo atomic cho luồng giỏ hàng
+    // Lưu ý: Các API thêm/sửa/xóa CartItem khác hiện chưa được bọc transaction chung với lock này,
+    // nên lock này chủ yếu để chặn double-submit trên chính đường checkout này.
+    await tx.$executeRaw`SELECT id FROM "Cart" WHERE "userId" = ${userId} FOR UPDATE`;
+
+    // 2. Lấy giỏ hàng
     const cart = await tx.cart.findUnique({
       where: { userId },
       include: {
@@ -207,27 +230,23 @@ export const checkoutFromCart = async (userId, checkoutData = {}) => {
     // Sắp xếp items theo id để tránh deadlock khi lock nhiều row
     const sortedItems = [...checkoutItems].sort((a, b) => a.id.localeCompare(b.id));
 
-    // Lấy ID để xóa sau transaction
-    cartItemIdsToDelete = cart.items.map(item => item.id);
+    const cartItemIdsToDelete = cart.items.map(item => item.id);
 
-    // Thực thi xử lý Checkout lõi
-    return await processCheckout(tx, userId, sortedItems, checkoutData);
+    // 3. Thực thi xử lý Checkout lõi (Sẽ thực hiện lock User và trừ tồn kho)
+    const result = await processCheckout(tx, userId, sortedItems, checkoutData);
+
+    // 4. Xóa các cart items đã mua ngay BÊN TRONG transaction để đảm bảo tính nhất quán (Clear fallback: rollback if fails)
+    if (cartItemIdsToDelete.length > 0) {
+      await tx.cartItem.deleteMany({
+        where: { id: { in: cartItemIdsToDelete } }
+      });
+      // Nếu có lỗi lúc xóa, toàn bộ transaction sẽ tự rollback
+    }
+
+    return result;
   }, {
     timeout: 10000
   });
-
-  // Xóa các cart items đã mua sau khi transaction hoàn tất thành công
-  if (cartItemIdsToDelete.length > 0) {
-    try {
-      await prisma.cartItem.deleteMany({
-        where: { id: { in: cartItemIdsToDelete } }
-      });
-    } catch (err) {
-      console.error("Lỗi xóa CartItem ngoài transaction:", err);
-    }
-  }
-
-  return result;
 };
 
 /**
