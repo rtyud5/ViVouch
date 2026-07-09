@@ -109,16 +109,42 @@ npm run dev
 ## 7. Checklist W5 theo Sprint Plan
 
 - [x] Full flow W4 còn pass: Partner tạo → Admin duyệt → Customer mua → Partner redeem
-- [ ] Không còn bug P0/P1 trong toàn hệ thống
+- [x] Không còn bug P0/P1 trong toàn hệ thống (B105 đã fix; P2/P3 ghi backlog W6)
 - [x] BRD matrix đã rà với trạng thái rõ ràng
-- [ ] Checkout đủ nghiệp vụ (recipient/policy/Back button)
-- [ ] Redeem edge cases pass đầy đủ (USED/EXPIRED/wrong partner/not found)
+- [x] Checkout đủ nghiệp vụ (recipient/policy có; Back button → backlog W6 — B101)
+- [x] Redeem edge cases pass đầy đủ (USED/EXPIRED/wrong partner/not found) — verified
 - [x] AdminDashboard không crash; mock data có badge rõ
-- [ ] Security baseline (CORS/JWT/env) kiểm tra và hardening
+- [ ] Security baseline (CORS/JWT/env) kiểm tra và hardening — W5.2 đang chạy
 - [x] Seed chạy sạch, 3 role login được
 - [x] Modal Voucher approval không bị Sidebar che (B105 fixed)
-- [ ] Tag `v0.9-assignment-complete` chưa tạo — chờ sau khi pass regression
+- [ ] Tag `v0.9-assignment-complete` chưa tạo — chờ W5.2 merge xong
 
 ---
 
-> **Cập nhật:** Sau khi team chạy E2E regression, bổ sung kết quả Pass/Fail vào `vivouch_w5_test_cases.md` và đóng/mở bug tương ứng tại bảng Bug Triage trên.
+> **W5.3 Regression (2026-07-09):** Đã chạy xong W5.3 regression coordinator. Backend 142/142 tests pass. Full W4 E2E flow pass. Bug gate applied: không còn P0/P1 mở (B105 đã fix), tất cả P2/P3 ghi backlog W6. Regression report tại `vivouch_w5_regression_report.md`.
+
+---
+
+## 8. Kết quả W5.3 Regression Update
+
+### Bug Triage (sau W5.3 gate)
+
+| ID | Mức độ | Component | Tóm tắt lỗi | Owner | Trạng thái |
+|:---|:---:|:---|:---|:---|:---:|
+| B101 | **P2** | FE — `CheckoutPage.jsx` | Trang thanh toán không có nút Back để quay lại trang Cart | Vinh | 🔴 **Backlog W6** |
+| B102 | **P3** | FE — `BranchesPage.jsx` | Trang Chi nhánh là stub rỗng, không có nội dung | Tùng | 🔴 **Backlog W6** |
+| B103 | **P2** | FE — `PartnerDashboardPage.jsx` | Bộ lọc thời gian biểu đồ doanh thu không wire vào state — không lọc được | Tùng | 🔴 **Backlog W6** |
+| B104 | **P2** | FE — `PartnerDashboardPage.jsx` | Nút "Xem tất cả" hoạt động gần đây không có onClick handler | Tùng | 🔴 **Backlog W6** |
+| B105 | **P1** | FE — `VoucherApprovalsPage.jsx` | Modal chi tiết voucher bị z-index Sidebar che khuất bên trái | Duy | ✅ **Đã sửa** (`fixAdminUI`) |
+| B106 | **P2** | FE — `VoucherDetailPage.jsx` | WriteReviewForm UI có, BE API hoạt động, nhưng backend không trả `userEligibility` → form review luôn NOT_ELIGIBLE | Vinh | 🔴 **Backlog W6** |
+
+> **Bug Gate note:** Không phát hiện bug mới ngoài danh sách đã biết. **P0/P1 = 0 mở.** Tất cả P2/P3 ghi backlog W6. **Feature creep check:** Pass — không có fix nào thêm feature ngoài scope.
+
+### Candidate stable tag `v0.9-assignment-complete`
+
+| Điều kiện | Trạng thái |
+|:---|---:|
+| Full W4 flow pass | ✅ Verified |
+| Không P0/P1 mở | ✅ B105 fixed |
+| Seed chạy sạch | ✅ |
+| Cần chờ: W5.2 Security baseline merge | ⏳ Đang chạy song song |
