@@ -207,8 +207,8 @@ model Order {
   payment      Payment?
   voucherCodes VoucherCode[]
 
-  @@index([userId])
   @@index([status])
+  @@index([userId, createdAt])
 }
 
 model OrderItem {
