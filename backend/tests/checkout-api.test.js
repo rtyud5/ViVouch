@@ -12,6 +12,8 @@ describe('Cart Checkout API Tests', () => {
 
   let customerToken = '';
   let voucherId = '';
+  let partnerId = '';
+  let categoryId = '';
 
   const cleanup = async () => {
     const emails = [customerEmail, partnerEmail];
@@ -53,6 +55,7 @@ describe('Cart Checkout API Tests', () => {
     const category = await prisma.category.create({
       data: { name: 'Checkout API Test', slug: 'checkout-api-test' },
     });
+    categoryId = category.id;
 
     const passwordHash = await bcrypt.hash(password, 10);
 
@@ -83,6 +86,7 @@ describe('Cart Checkout API Tests', () => {
         status: 'APPROVED',
       },
     });
+    partnerId = partner.id;
 
     const voucher = await prisma.voucher.create({
       data: {
@@ -166,5 +170,58 @@ describe('Cart Checkout API Tests', () => {
     expect(order?.payment?.status).toBe('PAID');
     expect(order?.items).toHaveLength(1);
     expect(order?.items[0].qty).toBe(2);
+  });
+
+  it('returns 400 when buying an out-of-stock voucher via buyNow', async () => {
+    const outOfStockVoucher = await prisma.voucher.create({
+      data: {
+        partnerId,
+        categoryId,
+        title: 'Out of stock Voucher',
+        originalPrice: 100000,
+        salePrice: 75000,
+        totalQty: 10,
+        soldQty: 10,
+        status: VOUCHER_STATUS.ON_SALE,
+      },
+    });
+
+    const res = await request(app)
+      .post('/api/customer/orders/checkout')
+      .set('Authorization', `Bearer ${customerToken}`)
+      .send({
+        items: [{ voucherId: outOfStockVoucher.id, qty: 1 }],
+        paymentMethod: 'VIVOUCH_WALLET'
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+
+  it('returns 400 when buying an expired sale voucher via buyNow', async () => {
+    const expiredVoucher = await prisma.voucher.create({
+      data: {
+        partnerId,
+        categoryId,
+        title: 'Expired Voucher',
+        originalPrice: 100000,
+        salePrice: 75000,
+        totalQty: 10,
+        soldQty: 0,
+        status: VOUCHER_STATUS.ON_SALE,
+        saleEnd: new Date(Date.now() - 86400000), // expired yesterday
+      },
+    });
+
+    const res = await request(app)
+      .post('/api/customer/orders/checkout')
+      .set('Authorization', `Bearer ${customerToken}`)
+      .send({
+        items: [{ voucherId: expiredVoucher.id, qty: 1 }],
+        paymentMethod: 'VIVOUCH_WALLET'
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
   });
 });
