@@ -33,7 +33,7 @@
 ### 🟢 Flow 2: Partner Portal (PTN-01 → PTN-11)
 | Scope | Pass | Fail | Block |
 |:---|---:|---:|---:|
-| Dashboard + Vouchers + Reports + Redeem | ✅ 7 | ❌ 4 | ⛔ 0 |
+| Dashboard + Vouchers + Reports + Redeem | ✅ 8 | ❌ 3 | ⛔ 0 |
 
 - **B103** (P2 — Dashboard chart time filter): ❌ Không wire → backlog W6
 - **B104** (P2 — "Xem tất cả" no onClick): ❌ → backlog W6
