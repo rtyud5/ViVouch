@@ -73,7 +73,7 @@ export function QRCodeModal({ isOpen, onClose, voucherCode }) {
             value={code || ''}
             size={160}
             level="H"
-            includeMargin={false}
+            marginSize={0}
             className="w-full h-full object-contain rounded-lg shadow-sm"
           />
         </div>

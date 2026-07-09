@@ -70,8 +70,8 @@ function VoucherCodeItem({ code }) {
   return (
     <div className="bg-base-100 rounded-3xl border border-base-200 shadow-sm p-6 flex flex-col sm:flex-row gap-6 items-center hover:shadow-md transition-shadow">
       {/* QR Code Container */}
-      <div className="bg-white p-3 rounded-2xl border border-base-200 shadow-sm flex-shrink-0">
-        <QRCodeSVG value={code.code} size={110} level="M" includeMargin={false} />
+      <div className="bg-white p-3 rounded-2xl border-2 border-primary/20 shadow-sm flex-shrink-0">
+        <QRCodeSVG value={code.code} size={120} level="Q" marginSize={0} />
       </div>
       
       {/* Thông tin */}
@@ -86,9 +86,9 @@ function VoucherCodeItem({ code }) {
             HSD: {code.expiresAt ? new Date(code.expiresAt).toLocaleDateString("vi-VN") : "Không thời hạn"}
           </div>
           
-          <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
-            <div className="bg-base-200/50 px-3 py-1.5 rounded-lg border border-base-200/50">
-              <span className="font-mono font-bold text-primary tracking-widest text-[15px]">{code.code}</span>
+          <div className="flex flex-wrap items-center gap-3 justify-center sm:justify-start">
+            <div className="bg-primary/5 px-4 py-2 rounded-lg border border-primary/20">
+              <span className="font-mono font-bold text-primary tracking-[0.15em] text-[16px] select-all">{code.code}</span>
             </div>
             <button 
               className={`btn btn-sm rounded-lg ${copied ? 'btn-success text-white border-success' : 'btn-outline btn-primary'}`}

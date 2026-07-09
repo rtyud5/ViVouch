@@ -277,7 +277,8 @@ export function CheckoutPage() {
                   checked={paymentMethod === "VIVOUCH_WALLET"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <span className="font-medium">Ví ViVouch (Mô phỏng)</span>
+                <span className="font-medium">Ví ViVouch</span>
+                <span className="badge badge-warning badge-sm ml-auto">Thanh toán mô phỏng</span>
               </label>
 
               <label className="flex items-center gap-3 p-4 border border-base-200 rounded-xl cursor-pointer hover:bg-base-200/50 transition-colors">
@@ -301,7 +302,8 @@ export function CheckoutPage() {
                   checked={paymentMethod === "BANK_TRANSFER"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <span className="font-medium">Chuyển khoản (Mô phỏng)</span>
+                <span className="font-medium">Chuyển khoản</span>
+                <span className="badge badge-warning badge-sm ml-auto">Thanh toán mô phỏng</span>
               </label>
             </div>
           </div>
