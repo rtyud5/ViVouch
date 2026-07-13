@@ -1,26 +1,39 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRedeemVoucher } from "../../features/partner/hooks/useRedeemVoucher";
+import { usePartnerBranches } from "../../features/partner/hooks/usePartnerBranches";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CheckCircle2, XCircle, AlertTriangle, Info } from "lucide-react";
 
 export function RedeemVoucherPage() {
   const [code, setCode] = useState("");
+  const [branchId, setBranchId] = useState("");
   const [redeemResult, setRedeemResult] = useState(null);
   const [errorResult, setErrorResult] = useState(null);
   const [toastError, setToastError] = useState(null);
 
   const { mutate, isPending } = useRedeemVoucher();
+  const { data: branchesResponse, isLoading: isLoadingBranches } = usePartnerBranches();
+  const activeBranches = useMemo(
+    () => (branchesResponse?.data || []).filter((branch) => branch.isActive),
+    [branchesResponse],
+  );
+
+  useEffect(() => {
+    if (!branchId && activeBranches.length > 0) {
+      setBranchId(activeBranches[0].id);
+    }
+  }, [activeBranches, branchId]);
 
   const handleRedeem = (e) => {
     e.preventDefault();
-    if (!code || isPending) return;
+    if (!code || !branchId || isPending) return;
 
     setRedeemResult(null);
     setErrorResult(null);
     setToastError(null);
 
     mutate(
-      { code },
+      { code, branchId },
       {
         onSuccess: (data) => {
           setRedeemResult(data);
@@ -38,7 +51,8 @@ export function RedeemVoucherPage() {
             "WRONG_PARTNER",
             "VOUCHER_CODE_CANCELLED",
             "VOUCHER_CODE_LOCKED",
-            "BRANCH_REQUIRED"
+            "BRANCH_REQUIRED",
+            "INVALID_BRANCH_SCOPE"
           ];
 
           if (errCode === 'VOUCHER_CODE_USED') {
@@ -49,6 +63,8 @@ export function RedeemVoucherPage() {
             errMessage = "Voucher này không thuộc về đối tác hiện tại.";
           } else if (errCode === 'VOUCHER_CODE_NOT_FOUND') {
             errMessage = "Không tìm thấy mã voucher này trong hệ thống.";
+          } else if (errCode === 'INVALID_BRANCH_SCOPE') {
+            errMessage = "Voucher này không áp dụng tại chi nhánh đã chọn.";
           }
 
           if (cardErrorCodes.includes(errCode)) {
@@ -87,6 +103,10 @@ export function RedeemVoucherPage() {
           <div className="flex justify-between border-b pb-2">
             <span className="text-base-content/70">Khách hàng:</span>
             <span className="font-medium">{redeemResult.customerName}</span>
+          </div>
+          <div className="flex justify-between border-b pb-2">
+            <span className="text-base-content/70">Chi nhánh:</span>
+            <span className="font-medium">{redeemResult.branchName}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-base-content/70">Thời gian đổi:</span>
@@ -147,6 +167,34 @@ export function RedeemVoucherPage() {
         <div className="max-w-md mx-auto">
           <form onSubmit={handleRedeem} className="card bg-base-100 shadow-md">
             <div className="card-body">
+              <div className="form-control w-full mb-4">
+                <label className="label">
+                  <span className="label-text text-lg font-medium">Chi nhánh đổi mã</span>
+                </label>
+                <select
+                  className="select select-bordered select-lg w-full"
+                  value={branchId}
+                  onChange={(event) => setBranchId(event.target.value)}
+                  disabled={isPending || isLoadingBranches}
+                >
+                  <option value="">
+                    {isLoadingBranches ? "Đang tải chi nhánh..." : "Chọn chi nhánh"}
+                  </option>
+                  {activeBranches.map((branch) => (
+                    <option key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </option>
+                  ))}
+                </select>
+                {!isLoadingBranches && activeBranches.length === 0 && (
+                  <div className="label">
+                    <span className="label-text-alt text-error">
+                      Cần kích hoạt ít nhất một chi nhánh trước khi đổi mã.
+                    </span>
+                  </div>
+                )}
+              </div>
+
               <div className="form-control w-full">
                 <label className="label">
                   <span className="label-text text-lg font-medium">Nhập mã Voucher</span>
@@ -172,7 +220,7 @@ export function RedeemVoucherPage() {
                 <button
                   type="submit"
                   className="btn btn-primary w-full btn-lg"
-                  disabled={!code.trim() || isPending}
+                  disabled={!code.trim() || !branchId || isPending}
                 >
                   {isPending ? (
                     <span className="loading loading-spinner"></span>

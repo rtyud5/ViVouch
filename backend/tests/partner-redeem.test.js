@@ -11,7 +11,7 @@ describe('Redeem Service Tests', () => {
   let customerId, partnerUserId, wrongPartnerUserId, partnerId, wrongPartnerId, categoryId;
   let voucherId, wrongVoucherId;
   let issuedCode, usedCode, expiredCode, wrongPartnerCode, cancelledCode, lockedCode;
-  let branchId;
+  let branchId, unlinkedBranchId;
 
   const cleanup = async () => {
     const emails = [customerEmail, partnerEmail, wrongPartnerEmail];
@@ -89,6 +89,10 @@ describe('Redeem Service Tests', () => {
       data: { partnerId, name: 'Main Branch', address: '123 Street' }
     });
     branchId = branch.id;
+    const unlinkedBranch = await prisma.branch.create({
+      data: { partnerId, name: 'Unlinked Branch', address: '456 Street' }
+    });
+    unlinkedBranchId = unlinkedBranch.id;
 
     // Setup Vouchers
     const rightVoucher = await prisma.voucher.create({
@@ -132,9 +136,10 @@ describe('Redeem Service Tests', () => {
   });
 
   it('successfully redeems an ISSUED valid code', async () => {
-    const res = await redeemService.redeemCode(partnerUserId, issuedCode.code);
+    const res = await redeemService.redeemCode(partnerUserId, issuedCode.code, branchId);
     expect(res.voucherTitle).toBe('Right Voucher');
     expect(res.customerName).toBe('Redeem Customer');
+    expect(res.branchId).toBe(branchId);
     expect(res.redeemedAt).toBeDefined();
 
     // Check DB status changed
@@ -143,36 +148,54 @@ describe('Redeem Service Tests', () => {
   });
 
   it('rejects a code that is already USED', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, usedCode.code))
+    await expect(redeemService.redeemCode(partnerUserId, usedCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400, code: 'VOUCHER_CODE_USED' });
   });
 
   it('rejects an EXPIRED code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, expiredCode.code))
+    await expect(redeemService.redeemCode(partnerUserId, expiredCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400, code: 'VOUCHER_CODE_EXPIRED' });
   });
 
   it('rejects a code belonging to a different partner', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, wrongPartnerCode.code))
+    await expect(redeemService.redeemCode(partnerUserId, wrongPartnerCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
     
     // Also test reverse: wrong partner trying to redeem right code
-    await expect(redeemService.redeemCode(wrongPartnerUserId, issuedCode.code))
+    await expect(redeemService.redeemCode(wrongPartnerUserId, issuedCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
   });
 
   it('rejects a CANCELLED code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, cancelledCode.code))
+    await expect(redeemService.redeemCode(partnerUserId, cancelledCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400 });
   });
 
   it('rejects a LOCKED code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, lockedCode.code))
+    await expect(redeemService.redeemCode(partnerUserId, lockedCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400 });
   });
 
   it('rejects a non-existent code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, 'DOES-NOT-EXIST-CODE'))
+    await expect(redeemService.redeemCode(partnerUserId, 'DOES-NOT-EXIST-CODE', branchId))
       .rejects.toMatchObject({ statusCode: 404, code: 'VOUCHER_CODE_NOT_FOUND' });
+  });
+
+  it('rejects an active branch outside the voucher scope without consuming the code', async () => {
+    const scopedCode = await prisma.voucherCode.create({
+      data: {
+        code: 'TEST-WRONG-BRANCH',
+        orderId: issuedCode.orderId,
+        voucherId,
+        ownerId: customerId,
+        status: VOUCHER_CODE_STATUS.ISSUED,
+      },
+    });
+
+    await expect(redeemService.redeemCode(partnerUserId, scopedCode.code, unlinkedBranchId))
+      .rejects.toMatchObject({ statusCode: 403, code: 'INVALID_BRANCH_SCOPE' });
+
+    const unchanged = await prisma.voucherCode.findUnique({ where: { id: scopedCode.id } });
+    expect(unchanged.status).toBe(VOUCHER_CODE_STATUS.ISSUED);
   });
 });
