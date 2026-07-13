@@ -56,7 +56,7 @@ const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
       throw new Error("Không tìm thấy voucher hoặc voucher không tồn tại.");
     }
 
-    if (voucher.status !== 'ON_SALE') {
+    if (voucher.status !== 'ON_SALE' || voucher.partner.status !== 'APPROVED') {
       throw new Error(`Voucher "${voucher.title}" hiện không còn được bán.`);
     }
 
