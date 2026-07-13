@@ -23,6 +23,15 @@ export const verifyToken = async (req, res, next) => {
     return next(new AppError("Invalid token", 401, "INVALID_TOKEN"));
   }
 
+  if (
+    !decoded
+    || typeof decoded !== 'object'
+    || typeof decoded.userId !== 'string'
+    || !decoded.userId.trim()
+  ) {
+    return next(new AppError('Invalid token', 401, 'INVALID_TOKEN'));
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },

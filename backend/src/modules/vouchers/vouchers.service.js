@@ -343,41 +343,51 @@ export async function submitVoucher(userId, voucherId) {
     throw new AppError('Không thể gửi duyệt voucher đã hết thời gian mở bán', 400, 'SALE_PERIOD_EXPIRED');
   }
 
-  return prisma.$transaction(async (tx) => {
-    const activeBranches = await tx.branch.findMany({
-      where: { partnerId: partner.id, isActive: true },
-      select: { id: true },
-    });
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const activeBranches = await tx.branch.findMany(
+        { where: { partnerId: partner.id, isActive: true }, select: { id: true } },
+      );
 
-    if (activeBranches.length === 0) {
+      if (activeBranches.length === 0) {
+        throw new AppError(
+          'Cần ít nhất một chi nhánh đang hoạt động trước khi gửi duyệt voucher',
+          400,
+          'BRANCH_REQUIRED',
+        );
+      }
+
+      await tx.voucherBranch.createMany({
+        data: activeBranches.map((branch) => ({ voucherId, branchId: branch.id })),
+        skipDuplicates: true,
+      });
+
+      const updatedVoucher = await tx.voucher.update({
+        where: { id: voucherId, status: voucher.status },
+        data: { status: VOUCHER_STATUS.PENDING_APPROVAL },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorId: userId,
+          action: 'SUBMIT_VOUCHER',
+          targetType: 'Voucher',
+          targetId: voucherId,
+        },
+      });
+
+      return updatedVoucher;
+    });
+  } catch (error) {
+    if (error?.code === 'P2025') {
       throw new AppError(
-        'Cần ít nhất một chi nhánh đang hoạt động trước khi gửi duyệt voucher',
+        'Trạng thái voucher đã thay đổi, không thể gửi duyệt lại',
         400,
-        'BRANCH_REQUIRED',
+        'INVALID_STATUS_TRANSITION',
       );
     }
-
-    await tx.voucherBranch.createMany({
-      data: activeBranches.map((branch) => ({ voucherId, branchId: branch.id })),
-      skipDuplicates: true,
-    });
-
-    const updatedVoucher = await tx.voucher.update({
-      where: { id: voucherId, status: voucher.status },
-      data: { status: VOUCHER_STATUS.PENDING_APPROVAL }
-    });
-
-    await tx.auditLog.create({
-      data: {
-        actorId: userId,
-        action: 'SUBMIT_VOUCHER',
-        targetType: 'Voucher',
-        targetId: voucherId
-      }
-    });
-
-    return updatedVoucher;
-  });
+    throw error;
+  }
 }
 
 export async function findByPartner(userId, filters) {

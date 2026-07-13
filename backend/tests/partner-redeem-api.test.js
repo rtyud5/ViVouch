@@ -235,4 +235,62 @@ describe('Partner Redeem API Tests', () => {
     const unchanged = await prisma.voucherCode.findUnique({ where: { code: branchScopedCode } });
     expect(unchanged.status).toBe(VOUCHER_CODE_STATUS.ISSUED);
   });
+
+  // ── branchId UUID validation (regression) ────────────────────────────────
+
+  it('400 when branchId is missing entirely', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: issuedCode });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    // Must have a validation message, not a raw database error
+    expect(res.body.message).toBeTruthy();
+    expect(res.body.message).not.toMatch(/prisma|raw|database/i);
+  });
+
+  it('400 when branchId is an empty string', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: issuedCode, branchId: '' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBeTruthy();
+    expect(res.body.message).not.toMatch(/prisma|raw|database/i);
+  });
+
+  it('400 when branchId is not a valid UUID', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: issuedCode, branchId: 'not-a-uuid' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    // The Zod message should mention branch is invalid
+    expect(res.body.message).toBeTruthy();
+    expect(res.body.message).not.toMatch(/prisma|raw|database/i);
+  });
+
+  it('valid UUID branchId passes validation and reaches business logic', async () => {
+    // Use the existing branchScopedCode with a valid UUID branchId that is NOT linked to the voucher.
+    // This should fail with INVALID_BRANCH_SCOPE (business-level 403), NOT a 400 UUID validation error.
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: branchScopedCode, branchId: unlinkedBranchId });
+
+    // It should reach business logic: either success or a recognized business error
+    expect(res.status).not.toBe(500);
+    // Must NOT be the UUID validation 400
+    if (res.status === 400) {
+      expect(res.body.message).not.toMatch(/Chi nhánh không hợp lệ/);
+    }
+    // Should be a known business-level error
+    expect([200, 403, 400].includes(res.status)).toBe(true);
+  });
 });

@@ -213,4 +213,73 @@ describe("Partner Vouchers Service Unit Tests", () => {
       expect(result.pagination.total).toBe(0);
     });
   });
+
+  describe("submitVoucher() — concurrent submission (regression)", () => {
+    let concurrentVoucherId = "";
+
+    beforeAll(async () => {
+      const concurrentVoucher = await prisma.voucher.create({
+        data: {
+          partnerId,
+          categoryId,
+          title: "Concurrent Submit Test Voucher",
+          originalPrice: 100000,
+          salePrice: 75000,
+          totalQty: 10,
+          soldQty: 0,
+          status: VOUCHER_STATUS.DRAFT,
+          saleStart: new Date(Date.now() - 60_000),   // already started
+          saleEnd: new Date(Date.now() + 86_400_000), // tomorrow
+        },
+      });
+      concurrentVoucherId = concurrentVoucher.id;
+
+      // Ensure the partner has an active branch for the submit to succeed
+      await prisma.branch.updateMany({
+        where: { id: branchId },
+        data: { isActive: true },
+      });
+    });
+
+    afterAll(async () => {
+      await prisma.auditLog.deleteMany({ where: { targetId: concurrentVoucherId } });
+      await prisma.voucherBranch.deleteMany({ where: { voucherId: concurrentVoucherId } });
+      await prisma.voucher.deleteMany({ where: { id: concurrentVoucherId } });
+    });
+
+    it("dois concurrent submits: exatamente um sucede, o outro lança INVALID_STATUS_TRANSITION 400", async () => {
+      // Fire two concurrent submits
+      const [r1, r2] = await Promise.allSettled([
+        vouchersService.submitVoucher(partnerUserId, concurrentVoucherId),
+        vouchersService.submitVoucher(partnerUserId, concurrentVoucherId),
+      ]);
+
+      const successes = [r1, r2].filter((r) => r.status === "fulfilled");
+      const failures  = [r1, r2].filter((r) => r.status === "rejected");
+
+      // Exactly one should succeed
+      expect(successes).toHaveLength(1);
+      // Exactly one should fail
+      expect(failures).toHaveLength(1);
+
+      const failureReason = failures[0].reason;
+
+      // Must NOT leak raw P2025
+      expect(failureReason?.code).not.toBe("P2025");
+      // Must be 400
+      expect(failureReason?.statusCode).toBe(400);
+      // Must carry INVALID_STATUS_TRANSITION code
+      expect(failureReason?.code).toBe("INVALID_STATUS_TRANSITION");
+
+      // Final state must be PENDING_APPROVAL
+      const voucher = await prisma.voucher.findUnique({ where: { id: concurrentVoucherId } });
+      expect(voucher.status).toBe(VOUCHER_STATUS.PENDING_APPROVAL);
+
+      // Should have exactly one SUBMIT_VOUCHER audit log
+      const logs = await prisma.auditLog.findMany({
+        where: { targetId: concurrentVoucherId, action: "SUBMIT_VOUCHER" },
+      });
+      expect(logs).toHaveLength(1);
+    });
+  });
 });

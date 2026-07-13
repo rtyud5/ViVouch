@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { resolveActiveBranchId } from "../../utils/branchSelection";
 import { useRedeemVoucher } from "../../features/partner/hooks/useRedeemVoucher";
 import { usePartnerBranches } from "../../features/partner/hooks/usePartnerBranches";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
@@ -19,8 +20,9 @@ export function RedeemVoucherPage() {
   );
 
   useEffect(() => {
-    if (!branchId && activeBranches.length > 0) {
-      setBranchId(activeBranches[0].id);
+    const next = resolveActiveBranchId(branchId, activeBranches);
+    if (next !== branchId) {
+      setBranchId(next);
     }
   }, [activeBranches, branchId]);
 

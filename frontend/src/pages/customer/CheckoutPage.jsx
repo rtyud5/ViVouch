@@ -7,6 +7,7 @@ import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CustomerEmptyState } from "../../components/common/CustomerEmptyState";
 import { ErrorRetryPanel } from "../../components/common";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { createCheckoutIdempotencyKey } from "../../utils/idempotencyKey";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
@@ -62,8 +63,12 @@ export function CheckoutPage() {
       }
 
       if (!idempotencyKeyRef.current) {
-        idempotencyKeyRef.current = globalThis.crypto?.randomUUID?.()
-          || `checkout-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        try {
+          idempotencyKeyRef.current = createCheckoutIdempotencyKey();
+        } catch (keyErr) {
+          setLocalError(keyErr);
+          return;
+        }
       }
 
       const result = await checkoutMutation.mutateAsync({

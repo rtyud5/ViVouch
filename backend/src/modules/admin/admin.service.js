@@ -126,6 +126,7 @@ export async function approveVoucher(adminId, voucherId) {
       const canGoOnSale = voucher.saleStart
         && voucher.saleEnd
         && voucher.saleStart <= voucher.saleEnd
+        && voucher.saleStart <= now
         && voucher.saleEnd >= now
         && voucher.soldQty < voucher.totalQty;
 
