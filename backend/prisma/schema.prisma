@@ -194,6 +194,7 @@ model CartItem {
 model Order {
   id             String      @id @default(uuid())
   userId         String
+  idempotencyKey String?
   status         OrderStatus @default(PENDING_PAYMENT)
   totalAmount    Decimal     @db.Decimal(12, 0)
   recipientName  String?
@@ -209,6 +210,7 @@ model Order {
 
   @@index([status])
   @@index([userId, createdAt])
+  @@unique([userId, idempotencyKey])
 }
 
 model OrderItem {

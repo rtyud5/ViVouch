@@ -14,6 +14,9 @@ describe('Partner Redeem API Tests', () => {
   let usedCode = '';
   let expiredCode = '';
   let wrongPartnerCode = '';
+  let branchScopedCode = '';
+  let branchId = '';
+  let unlinkedBranchId = '';
 
   const cleanup = async () => {
     const emails = [customerEmail, partnerEmail, 'redeem_api_wrong_partner@test.com'];
@@ -94,6 +97,12 @@ describe('Partner Redeem API Tests', () => {
     const branch = await prisma.branch.create({
       data: { partnerId: partner.id, name: 'Main Branch', address: '123 Street' },
     });
+    branchId = branch.id;
+
+    const unlinkedBranch = await prisma.branch.create({
+      data: { partnerId: partner.id, name: 'Unlinked Branch', address: '456 Street' },
+    });
+    unlinkedBranchId = unlinkedBranch.id;
 
     const rightVoucher = await prisma.voucher.create({
       data: {
@@ -145,6 +154,7 @@ describe('Partner Redeem API Tests', () => {
       expiresAt: new Date(Date.now() - 100000),
     });
     wrongPartnerCode = await createCode('API-WRONG-PARTNER', wrongVoucher.id, VOUCHER_CODE_STATUS.ISSUED);
+    branchScopedCode = await createCode('API-WRONG-BRANCH', rightVoucher.id, VOUCHER_CODE_STATUS.ISSUED);
 
     const loginRes = await request(app).post('/api/auth/login').send({ email: partnerEmail, password });
     partnerToken = loginRes.body.data.accessToken;
@@ -164,19 +174,20 @@ describe('Partner Redeem API Tests', () => {
     const res = await request(app)
       .post('/api/partner/redeem')
       .set('Authorization', `Bearer ${partnerToken}`)
-      .send({ code: issuedCode });
+      .send({ code: issuedCode, branchId });
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.data.voucherTitle).toBe('Redeem API Voucher');
     expect(res.body.data.customerName).toBe('Redeem API Customer');
+    expect(res.body.data.branchId).toBe(branchId);
   });
 
   it('rejects USED code via HTTP', async () => {
     const res = await request(app)
       .post('/api/partner/redeem')
       .set('Authorization', `Bearer ${partnerToken}`)
-      .send({ code: usedCode });
+      .send({ code: usedCode, branchId });
 
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VOUCHER_CODE_USED');
@@ -186,7 +197,7 @@ describe('Partner Redeem API Tests', () => {
     const res = await request(app)
       .post('/api/partner/redeem')
       .set('Authorization', `Bearer ${partnerToken}`)
-      .send({ code: expiredCode });
+      .send({ code: expiredCode, branchId });
 
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('VOUCHER_CODE_EXPIRED');
@@ -196,7 +207,7 @@ describe('Partner Redeem API Tests', () => {
     const res = await request(app)
       .post('/api/partner/redeem')
       .set('Authorization', `Bearer ${partnerToken}`)
-      .send({ code: wrongPartnerCode });
+      .send({ code: wrongPartnerCode, branchId });
 
     expect(res.status).toBe(403);
     expect(res.body.code).toBe('FORBIDDEN');
@@ -206,9 +217,80 @@ describe('Partner Redeem API Tests', () => {
     const res = await request(app)
       .post('/api/partner/redeem')
       .set('Authorization', `Bearer ${partnerToken}`)
-      .send({ code: 'API-DOES-NOT-EXIST' });
+      .send({ code: 'API-DOES-NOT-EXIST', branchId });
 
     expect(res.status).toBe(404);
     expect(res.body.code).toBe('VOUCHER_CODE_NOT_FOUND');
+  });
+
+  it('rejects a branch outside the voucher scope without consuming the code', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: branchScopedCode, branchId: unlinkedBranchId });
+
+    expect(res.status).toBe(403);
+    expect(res.body.code).toBe('INVALID_BRANCH_SCOPE');
+
+    const unchanged = await prisma.voucherCode.findUnique({ where: { code: branchScopedCode } });
+    expect(unchanged.status).toBe(VOUCHER_CODE_STATUS.ISSUED);
+  });
+
+  // ── branchId UUID validation (regression) ────────────────────────────────
+
+  it('400 when branchId is missing entirely', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: issuedCode });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    // Must have a validation message, not a raw database error
+    expect(res.body.message).toBeTruthy();
+    expect(res.body.message).not.toMatch(/prisma|raw|database/i);
+  });
+
+  it('400 when branchId is an empty string', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: issuedCode, branchId: '' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBeTruthy();
+    expect(res.body.message).not.toMatch(/prisma|raw|database/i);
+  });
+
+  it('400 when branchId is not a valid UUID', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: issuedCode, branchId: 'not-a-uuid' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    // The Zod message should mention branch is invalid
+    expect(res.body.message).toBeTruthy();
+    expect(res.body.message).not.toMatch(/prisma|raw|database/i);
+  });
+
+  it('valid UUID branchId passes validation and reaches business logic', async () => {
+    // Use the existing branchScopedCode with a valid UUID branchId that is NOT linked to the voucher.
+    // This should fail with INVALID_BRANCH_SCOPE (business-level 403), NOT a 400 UUID validation error.
+    const res = await request(app)
+      .post('/api/partner/redeem')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: branchScopedCode, branchId: unlinkedBranchId });
+
+    // It should reach business logic: either success or a recognized business error
+    expect(res.status).not.toBe(500);
+    // Must NOT be the UUID validation 400
+    if (res.status === 400) {
+      expect(res.body.message).not.toMatch(/Chi nhánh không hợp lệ/);
+    }
+    // Should be a known business-level error
+    expect([200, 403, 400].includes(res.status)).toBe(true);
   });
 });

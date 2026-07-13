@@ -2,7 +2,7 @@ import { apiClient } from "../../../services/apiClient";
 
 const BASE = "/customer/orders";
 
-export async function checkout(items, paymentMethod, recipientName, recipientPhone, note) {
+export async function checkout(items, paymentMethod, recipientName, recipientPhone, note, idempotencyKey) {
   const payload = { items };
 
   if (paymentMethod) {
@@ -12,7 +12,9 @@ export async function checkout(items, paymentMethod, recipientName, recipientPho
   if (recipientPhone !== undefined && recipientPhone !== null) payload.recipientPhone = recipientPhone;
   if (note !== undefined && note !== null) payload.note = note;
 
-  const { data } = await apiClient.post(`${BASE}/cart/checkout`, payload);
+  const { data } = await apiClient.post(`${BASE}/cart/checkout`, payload, {
+    headers: { "Idempotency-Key": idempotencyKey },
+  });
   return data.data;
 }
 

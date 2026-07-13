@@ -99,6 +99,8 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
         salePrice: 80000,
         totalQty: 50,
         status: "PENDING_APPROVAL",
+        saleStart: new Date(Date.now() - 60_000),
+        saleEnd: new Date(Date.now() + 86_400_000),
       },
     });
     voucherId = voucher.id;
@@ -312,7 +314,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
       expect(res.body.success).toBe(true);
 
       const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } });
-      expect(voucher.status).toBe("APPROVED");
+      expect(voucher.status).toBe("ON_SALE");
       expect(voucher.approvedBy).toBe(adminId);
       expect(voucher.approvedAt).not.toBeNull();
 
@@ -432,6 +434,135 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
         },
       });
       expect(log).toBeTruthy();
+    });
+  });
+
+  describe("Voucher approval lifecycle — saleStart/saleEnd timing (regression)", () => {
+    let futureSaleVoucherId = "";
+    let expiredSaleVoucherId = "";
+    let onSaleVoucherId = "";
+    const lifecycleVoucherIds = [];
+
+    beforeAll(async () => {
+      // Voucher C: saleEnd already expired → stays APPROVED
+      const expiredSale = await prisma.voucher.create({
+        data: {
+          partnerId,
+          categoryId,
+          title: "Test Voucher SaleEnd Expired",
+          originalPrice: 100000,
+          salePrice: 80000,
+          totalQty: 50,
+          soldQty: 0,
+          status: "PENDING_APPROVAL",
+          saleStart: new Date(Date.now() - 7_200_000), // 2h ago
+          saleEnd: new Date(Date.now() - 3_600_000),   // 1h ago (expired)
+        },
+      });
+      expiredSaleVoucherId = expiredSale.id;
+      lifecycleVoucherIds.push(expiredSaleVoucherId);
+
+      // Voucher B: saleStart in the future → stays APPROVED (not ON_SALE)
+      const futureSale = await prisma.voucher.create({
+        data: {
+          partnerId,
+          categoryId,
+          title: "Test Voucher FutureSaleStart",
+          originalPrice: 100000,
+          salePrice: 80000,
+          totalQty: 50,
+          soldQty: 0,
+          status: "PENDING_APPROVAL",
+          saleStart: new Date(Date.now() + 86_400_000), // tomorrow
+          saleEnd: new Date(Date.now() + 172_800_000),  // day after tomorrow
+        },
+      });
+      futureSaleVoucherId = futureSale.id;
+      lifecycleVoucherIds.push(futureSaleVoucherId);
+
+      // Voucher A: saleStart already started → goes ON_SALE
+      const onSale = await prisma.voucher.create({
+        data: {
+          partnerId,
+          categoryId,
+          title: "Test Voucher AlreadyOnSale",
+          originalPrice: 100000,
+          salePrice: 80000,
+          totalQty: 50,
+          soldQty: 0,
+          status: "PENDING_APPROVAL",
+          saleStart: new Date(Date.now() - 60_000),   // 1 min ago
+          saleEnd: new Date(Date.now() + 86_400_000), // tomorrow
+        },
+      });
+      onSaleVoucherId = onSale.id;
+      lifecycleVoucherIds.push(onSaleVoucherId);
+    });
+
+    afterAll(async () => {
+      await prisma.auditLog.deleteMany({
+        where: { targetId: { in: lifecycleVoucherIds } },
+      });
+      await prisma.voucher.deleteMany({
+        where: { id: { in: lifecycleVoucherIds } },
+      });
+    });
+
+    it("A. saleStart in the past → status ON_SALE, approvedAt set, approvedBy correct, published=true in audit", async () => {
+      const res = await request(app)
+        .post(`/api/admin/vouchers/${onSaleVoucherId}/approve`)
+        .set("Authorization", `Bearer ${adminToken}`);
+
+      expect(res.status).toBe(200);
+
+      const voucher = await prisma.voucher.findUnique({ where: { id: onSaleVoucherId } });
+      expect(voucher.status).toBe("ON_SALE");
+      expect(voucher.approvedBy).toBe(adminId);
+      expect(voucher.approvedAt).not.toBeNull();
+
+      const log = await prisma.auditLog.findFirst({
+        where: { action: AUDIT_ACTIONS.ADMIN_APPROVE_VOUCHER, targetId: onSaleVoucherId },
+      });
+      expect(log).toBeTruthy();
+      expect(log.metadata?.published).toBe(true);
+    });
+
+    it("B. saleStart in the future → status APPROVED (not ON_SALE), approvedAt set, published=false", async () => {
+      const res = await request(app)
+        .post(`/api/admin/vouchers/${futureSaleVoucherId}/approve`)
+        .set("Authorization", `Bearer ${adminToken}`);
+
+      expect(res.status).toBe(200);
+
+      const voucher = await prisma.voucher.findUnique({ where: { id: futureSaleVoucherId } });
+      expect(voucher.status).toBe("APPROVED");
+      expect(voucher.approvedBy).toBe(adminId);
+      expect(voucher.approvedAt).not.toBeNull();
+
+      const log = await prisma.auditLog.findFirst({
+        where: { action: AUDIT_ACTIONS.ADMIN_APPROVE_VOUCHER, targetId: futureSaleVoucherId },
+      });
+      expect(log).toBeTruthy();
+      expect(log.metadata?.published).toBe(false);
+    });
+
+    it("C. saleEnd already expired → status APPROVED (not ON_SALE), published=false", async () => {
+      const res = await request(app)
+        .post(`/api/admin/vouchers/${expiredSaleVoucherId}/approve`)
+        .set("Authorization", `Bearer ${adminToken}`);
+
+      expect(res.status).toBe(200);
+
+      const voucher = await prisma.voucher.findUnique({ where: { id: expiredSaleVoucherId } });
+      expect(voucher.status).toBe("APPROVED");
+      expect(voucher.approvedBy).toBe(adminId);
+      expect(voucher.approvedAt).not.toBeNull();
+
+      const log = await prisma.auditLog.findFirst({
+        where: { action: AUDIT_ACTIONS.ADMIN_APPROVE_VOUCHER, targetId: expiredSaleVoucherId },
+      });
+      expect(log).toBeTruthy();
+      expect(log.metadata?.published).toBe(false);
     });
   });
 });

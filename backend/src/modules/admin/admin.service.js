@@ -122,21 +122,36 @@ export async function approveVoucher(adminId, voucherId) {
 
   try {
     return await prisma.$transaction(async (tx) => {
-      const updatedVoucher = await tx.voucher.update({
+      const now = new Date();
+      const canGoOnSale = voucher.saleStart
+        && voucher.saleEnd
+        && voucher.saleStart <= voucher.saleEnd
+        && voucher.saleStart <= now
+        && voucher.saleEnd >= now
+        && voucher.soldQty < voucher.totalQty;
+
+      let updatedVoucher = await tx.voucher.update({
         where: { id: voucherId, status: 'PENDING_APPROVAL' },
         data: {
           status: 'APPROVED',
-          approvedAt: new Date(),
+          approvedAt: now,
           approvedBy: adminId,
         },
       });
+
+      if (canGoOnSale) {
+        updatedVoucher = await tx.voucher.update({
+          where: { id: voucherId, status: 'APPROVED' },
+          data: { status: 'ON_SALE' },
+        });
+      }
 
       await auditLog.log(
         adminId,
         AUDIT_ACTIONS.ADMIN_APPROVE_VOUCHER,
         'Voucher',
         voucherId,
-        {},
+        { published: canGoOnSale },
         tx,
       );
 

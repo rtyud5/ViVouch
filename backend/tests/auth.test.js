@@ -241,4 +241,79 @@ describe("Authentication & Authorization API Tests", () => {
       expect(res.body.message).toBe("Số điện thoại đã tồn tại trong hệ thống");
     });
   });
+
+  describe("JWT payload shape validation (regression)", () => {
+    it("401 INVALID_TOKEN khi token được ký hợp lệ nhưng payload là string", async () => {
+      // jwt.sign with a string payload → decoded will be a string, not an object
+      const stringPayloadToken = jwt.sign("just-a-string", env.JWT_ACCESS_SECRET);
+
+      const res = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${stringPayloadToken}`);
+
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe("INVALID_TOKEN");
+    });
+
+    it("401 INVALID_TOKEN khi token hợp lệ nhưng payload object không có userId", async () => {
+      const noUserIdToken = jwt.sign({ role: "CUSTOMER", email: "x@x.com" }, env.JWT_ACCESS_SECRET);
+
+      const res = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${noUserIdToken}`);
+
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe("INVALID_TOKEN");
+    });
+
+    it("401 INVALID_TOKEN khi token có userId là chuỗi rỗng", async () => {
+      const emptyUserIdToken = jwt.sign({ userId: "" }, env.JWT_ACCESS_SECRET);
+
+      const res = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${emptyUserIdToken}`);
+
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
+      expect(res.body.code).toBe("INVALID_TOKEN");
+    });
+
+    it("200 khi token hoàn toàn hợp lệ — không ảnh hưởng sau khi thêm payload shape check", async () => {
+      const res = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${customerToken}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+    });
+
+    it("403 ACCOUNT_LOCKED khi user bị lock — shape check không can thiệp", async () => {
+      // Create a locked user
+      const lockedEmail = "locked_jwt_test@example.com";
+      await prisma.user.deleteMany({ where: { email: lockedEmail } });
+
+      const lockedUser = await prisma.user.create({
+        data: {
+          email: lockedEmail,
+          fullName: "Locked JWT User",
+          passwordHash: "$2b$10$placeholder",
+          role: "CUSTOMER",
+          status: "LOCKED",
+        },
+      });
+
+      const lockedToken = jwt.sign({ userId: lockedUser.id }, env.JWT_ACCESS_SECRET);
+
+      const res = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${lockedToken}`);
+
+      expect(res.status).toBe(403);
+      expect(res.body.code).toBe("ACCOUNT_LOCKED");
+
+      await prisma.user.delete({ where: { id: lockedUser.id } });
+    });
+  });
 });

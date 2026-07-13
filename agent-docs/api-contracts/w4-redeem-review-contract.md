@@ -1,16 +1,17 @@
 # W4 API Contract — Redeem & Reviews
 
 ## POST /api/partner/redeem
-Request body: { "code": "VC-2026-XXXXXXXXXX" }
+Request body: { "code": "VC-2026-XXXXXXXXXX", "branchId": "<branch-id>" }
 Auth: PARTNER
 
 Success 200:
-{ "success": true, "message": "...", "data": { "voucherTitle", "customerName", "redeemedAt" } }
+{ "success": true, "message": "...", "data": { "voucherTitle", "customerName", "branchId", "branchName", "redeemedAt" } }
 
 Errors:
 - 404: code không tồn tại
 - 400: USED / EXPIRED
 - 403: sai partner
+- 403 `INVALID_BRANCH_SCOPE`: chi nhánh không hoạt động hoặc voucher không áp dụng tại chi nhánh
 
 ---
 

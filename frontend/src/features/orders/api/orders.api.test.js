@@ -13,12 +13,23 @@ describe("orders.api", () => {
   it("sends checkout payload to cart checkout endpoint", async () => {
     apiClient.post.mockResolvedValue({ data: { data: { orderId: "1" } } });
 
-    const result = await checkout([{ id: "v1", qty: 2 }], "MOMO");
+    const result = await checkout(
+      [{ id: "v1", qty: 2 }],
+      "MOMO",
+      undefined,
+      undefined,
+      undefined,
+      "checkout-key-123",
+    );
 
-    expect(apiClient.post).toHaveBeenCalledWith("/customer/orders/cart/checkout", {
-      items: [{ id: "v1", qty: 2 }],
-      paymentMethod: "MOMO",
-    });
+    expect(apiClient.post).toHaveBeenCalledWith(
+      "/customer/orders/cart/checkout",
+      {
+        items: [{ id: "v1", qty: 2 }],
+        paymentMethod: "MOMO",
+      },
+      { headers: { "Idempotency-Key": "checkout-key-123" } },
+    );
     expect(result).toEqual({ orderId: "1" });
   });
 

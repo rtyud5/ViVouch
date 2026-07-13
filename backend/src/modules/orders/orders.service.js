@@ -4,6 +4,37 @@ import { log as auditLog } from '../auditLogs/auditLog.service.js';
 
 const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
+const mapExistingOrder = (order) => ({
+  orderId: order.id,
+  idempotentReplay: true,
+  voucherCodes: order.voucherCodes.map((voucherCode) => ({
+    code: voucherCode.code,
+    voucherId: voucherCode.voucherId,
+    voucherTitle: voucherCode.voucher.title,
+    imageUrl: voucherCode.voucher.imageUrl,
+    expiresAt: voucherCode.expiresAt,
+  })),
+});
+
+const findIdempotentOrder = async (tx, userId, idempotencyKey) => {
+  if (!idempotencyKey) return null;
+
+  const order = await tx.order.findUnique({
+    where: {
+      userId_idempotencyKey: { userId, idempotencyKey },
+    },
+    include: {
+      voucherCodes: {
+        include: {
+          voucher: { select: { title: true, imageUrl: true } },
+        },
+      },
+    },
+  });
+
+  return order ? mapExistingOrder(order) : null;
+};
+
 /**
  * Helper xử lý lõi của luồng Checkout (gồm khóa dòng, kiểm tra tồn kho, tạo Order, tạo Payment)
  * Chạy bên trong một Prisma Transaction đã được khởi tạo.
@@ -15,22 +46,11 @@ const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
  * @returns {Promise<Object>} Kết quả checkout
  */
 const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
-  // --- CHỐNG DOUBLE SUBMIT (Atomic check-then-act) ---
-  // Lock row của User để tuần tự hóa các yêu cầu thanh toán đồng thời từ cùng 1 user (áp dụng cho cả buyNow và cart-checkout)
+  // Tuần tự hóa checkout của cùng một user để check idempotency và trừ kho là atomic.
   await tx.$executeRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
-  
-  // Kiểm tra xem có order nào vừa được tạo trong 5 giây qua không (whitelist các đơn đang sống)
-  const recentOrder = await tx.order.findFirst({
-    where: {
-      userId,
-      status: { in: ['PENDING_PAYMENT', 'COMPLETED'] },
-      createdAt: { gte: new Date(Date.now() - 5000) }
-    }
-  });
-  if (recentOrder) {
-    throw new Error('Thao tác quá nhanh. Vui lòng chờ ít giây trước khi tiếp tục.');
-  }
-  // ----------------------------------------------------
+
+  const existingOrder = await findIdempotentOrder(tx, userId, checkoutData.idempotencyKey);
+  if (existingOrder) return existingOrder;
 
   const paymentMethod = checkoutData.paymentMethod || 'MOCK_GATEWAY';
   const recipientName = checkoutData.recipientName || null;
@@ -49,14 +69,15 @@ const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
     await tx.$executeRaw`SELECT id FROM "Voucher" WHERE id = ${voucherId} FOR UPDATE`;
 
     const voucher = await tx.voucher.findUnique({
-      where: { id: voucherId }
+      where: { id: voucherId },
+      include: { partner: { select: { status: true } } },
     });
 
     if (!voucher) {
       throw new Error("Không tìm thấy voucher hoặc voucher không tồn tại.");
     }
 
-    if (voucher.status !== 'ON_SALE') {
+    if (voucher.status !== 'ON_SALE' || voucher.partner.status !== 'APPROVED') {
       throw new Error(`Voucher "${voucher.title}" hiện không còn được bán.`);
     }
 
@@ -124,6 +145,7 @@ const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
   const order = await tx.order.create({
     data: {
       userId,
+      idempotencyKey: checkoutData.idempotencyKey || null,
       status: 'COMPLETED',
       totalAmount,
       recipientName,
@@ -204,6 +226,9 @@ export const checkoutFromCart = async (userId, checkoutData = {}) => {
   return await prisma.$transaction(async (tx) => {
     // 0. Lock User trước để đảm bảo thứ tự lock nhất quán: User -> Cart -> Voucher
     await tx.$executeRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+
+    const existingOrder = await findIdempotentOrder(tx, userId, checkoutData.idempotencyKey);
+    if (existingOrder) return existingOrder;
 
     // 1. Lock Cart trước khi đọc để đảm bảo atomic cho luồng giỏ hàng
     // Lưu ý: Các API thêm/sửa/xóa CartItem khác hiện chưa được bọc transaction chung với lock này,

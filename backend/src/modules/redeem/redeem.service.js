@@ -25,7 +25,7 @@ function assertRedeemable(voucherCode, now = new Date()) {
   }
 }
 
-export async function redeemCode(partnerUserId, code) {
+export async function redeemCode(partnerUserId, code, branchId) {
   const partner = await prisma.partner.findUnique({ where: { userId: partnerUserId } });
 
   if (!partner || partner.status !== 'APPROVED') {
@@ -51,6 +51,7 @@ export async function redeemCode(partnerUserId, code) {
   assertRedeemable(voucherCode);
 
   let redeemedAt;
+  let redeemedBranch;
 
   await prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE id = ${voucherCode.id} FOR UPDATE`;
@@ -67,6 +68,24 @@ export async function redeemCode(partnerUserId, code) {
     }
 
     assertRedeemable(lockedVoucherCode, redeemedAt);
+
+    redeemedBranch = await tx.branch.findFirst({
+      where: {
+        id: branchId,
+        partnerId: partner.id,
+        isActive: true,
+        voucherBranches: { some: { voucherId: voucherCode.voucherId } },
+      },
+      select: { id: true, name: true },
+    });
+
+    if (!redeemedBranch) {
+      throw new AppError(
+        'Chi nhánh không hoạt động hoặc voucher không áp dụng tại chi nhánh này',
+        403,
+        'INVALID_BRANCH_SCOPE',
+      );
+    }
 
     const updated = await tx.voucherCode.updateMany({
       where: {
@@ -87,32 +106,11 @@ export async function redeemCode(partnerUserId, code) {
       throw new AppError('Mã đã được sử dụng', 400, 'VOUCHER_CODE_USED');
     }
 
-    let branch = await tx.branch.findFirst({
-      where: {
-        partnerId: partner.id,
-        isActive: true,
-        voucherBranches: { some: { voucherId: voucherCode.voucherId } },
-      },
-      select: { id: true },
-    });
-
-    if (!branch) {
-      branch = await tx.branch.findFirst({
-        where: { partnerId: partner.id, isActive: true },
-        orderBy: { createdAt: 'asc' },
-        select: { id: true },
-      });
-    }
-
-    if (!branch) {
-      throw new AppError('Partner chưa có chi nhánh hoạt động để ghi nhận đổi mã', 400, 'BRANCH_REQUIRED');
-    }
-
     await tx.voucherUsageLog.create({
       data: {
         voucherCodeId: voucherCode.id,
         redeemedBy: partner.userId,
-        branchId: branch.id,
+        branchId: redeemedBranch.id,
         redeemedAt,
       },
     });
@@ -125,7 +123,7 @@ export async function redeemCode(partnerUserId, code) {
         targetId: voucherCode.id,
         metadata: {
           code: voucherCode.code,
-          branchId: branch.id,
+          branchId: redeemedBranch.id,
           redeemedAt,
         },
       },
@@ -137,6 +135,8 @@ export async function redeemCode(partnerUserId, code) {
   return {
     voucherTitle: voucherCode.voucher.title,
     customerName: voucherCode.owner.fullName,
+    branchId: redeemedBranch.id,
+    branchName: redeemedBranch.name,
     redeemedAt: redeemedAt.toISOString(),
   };
 }

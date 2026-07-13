@@ -14,8 +14,8 @@ export function useCheckout(options = {}) {
   const { onSuccess, ...mutationOptions } = options;
 
   return useMutation({
-    mutationFn: ({ items, paymentMethod, recipientName, recipientPhone, note }) => 
-      checkout(items, paymentMethod, recipientName, recipientPhone, note),
+    mutationFn: ({ items, paymentMethod, recipientName, recipientPhone, note, idempotencyKey }) =>
+      checkout(items, paymentMethod, recipientName, recipientPhone, note, idempotencyKey),
     onSuccess: async (...args) => {
       await invalidateCheckoutQueries(queryClient);
 

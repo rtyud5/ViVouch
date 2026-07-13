@@ -7,6 +7,7 @@ import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CustomerEmptyState } from "../../components/common/CustomerEmptyState";
 import { ErrorRetryPanel } from "../../components/common";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { createCheckoutIdempotencyKey } from "../../utils/idempotencyKey";
 
 const currencyFormatter = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
 
@@ -14,6 +15,7 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading: isCartLoading, error: cartError } = useCart();
   const checkoutMutation = useCheckout();
+  const idempotencyKeyRef = React.useRef(null);
   const { user } = useAuthStore();
 
   const [paymentMethod, setPaymentMethod] = useState("VIVOUCH_WALLET");
@@ -60,12 +62,22 @@ export function CheckoutPage() {
         }
       }
 
+      if (!idempotencyKeyRef.current) {
+        try {
+          idempotencyKeyRef.current = createCheckoutIdempotencyKey();
+        } catch (keyErr) {
+          setLocalError(keyErr);
+          return;
+        }
+      }
+
       const result = await checkoutMutation.mutateAsync({
         items,
         paymentMethod,
         recipientName: isGift ? recipientName.trim() : null,
         recipientPhone: isGift ? recipientPhone.trim() : null,
         note: note.trim() || null,
+        idempotencyKey: idempotencyKeyRef.current,
       });
 
       if (!result?.orderId) {
