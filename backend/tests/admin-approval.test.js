@@ -99,6 +99,8 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
         salePrice: 80000,
         totalQty: 50,
         status: "PENDING_APPROVAL",
+        saleStart: new Date(Date.now() - 60_000),
+        saleEnd: new Date(Date.now() + 86_400_000),
       },
     });
     voucherId = voucher.id;
@@ -312,7 +314,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
       expect(res.body.success).toBe(true);
 
       const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } });
-      expect(voucher.status).toBe("APPROVED");
+      expect(voucher.status).toBe("ON_SALE");
       expect(voucher.approvedBy).toBe(adminId);
       expect(voucher.approvedAt).not.toBeNull();
 
