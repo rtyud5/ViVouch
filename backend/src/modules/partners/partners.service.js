@@ -9,6 +9,18 @@ export async function getPartnerByUserId(userId) {
   return partner;
 }
 
+export async function getApprovedPartnerByUserId(userId) {
+  const partner = await getPartnerByUserId(userId);
+  if (partner.status !== 'APPROVED') {
+    throw new AppError(
+      'Tài khoản Partner chưa được duyệt hoặc đã bị tạm ngưng',
+      403,
+      'PARTNER_NOT_ACTIVE',
+    );
+  }
+  return partner;
+}
+
 export async function getProfile(userId) {
   const partner = await getPartnerByUserId(userId);
   return partner;

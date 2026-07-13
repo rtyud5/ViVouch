@@ -59,6 +59,16 @@ export const createVoucherSchema = z.object({
 }).refine(data => data.salePrice < data.originalPrice, {
   message: 'salePrice phải nhỏ hơn originalPrice',
   path: ['salePrice'],
+}).superRefine((data, ctx) => {
+  if (data.saleStart && data.saleEnd && data.saleStart > data.saleEnd) {
+    ctx.addIssue({ code: 'custom', message: 'saleEnd phải lớn hơn hoặc bằng saleStart', path: ['saleEnd'] });
+  }
+  if (data.useStart && data.useEnd && data.useStart > data.useEnd) {
+    ctx.addIssue({ code: 'custom', message: 'useEnd phải lớn hơn hoặc bằng useStart', path: ['useEnd'] });
+  }
+  if (data.saleEnd && data.useEnd && data.useEnd < data.saleEnd) {
+    ctx.addIssue({ code: 'custom', message: 'useEnd không được kết thúc trước saleEnd', path: ['useEnd'] });
+  }
 });
 
 // ── Update voucher body ──────────────────────────────────────────────────────

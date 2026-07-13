@@ -12,6 +12,7 @@ describe("Partner Vouchers Service Unit Tests", () => {
   let partnerId = "";
   let categoryId = "";
   let draftVoucherId = "";
+  let branchId = "";
 
   beforeAll(async () => {
     // Cleanup existing test data if any
@@ -59,6 +60,15 @@ describe("Partner Vouchers Service Unit Tests", () => {
       }
     });
     partnerId = partner.id;
+
+    const branch = await prisma.branch.create({
+      data: {
+        partnerId,
+        name: "Partner Voucher Test Branch",
+        address: "123 Test Street",
+      },
+    });
+    branchId = branch.id;
   });
 
   afterAll(async () => {
@@ -67,9 +77,13 @@ describe("Partner Vouchers Service Unit Tests", () => {
       where: { actorId: partnerUserId }
     });
 
+    await prisma.voucherBranch.deleteMany({ where: { branchId } });
+
     await prisma.voucher.deleteMany({
       where: { partnerId }
     });
+
+    await prisma.branch.deleteMany({ where: { id: branchId } });
 
     await prisma.partner.deleteMany({
       where: { id: partnerId }
@@ -89,7 +103,9 @@ describe("Partner Vouchers Service Unit Tests", () => {
         title: "Test Voucher DRAFT",
         originalPrice: 100000,
         salePrice: 80000,
-        totalQty: 10
+        totalQty: 10,
+        saleStart: new Date(Date.now() - 60_000),
+        saleEnd: new Date(Date.now() + 86_400_000),
       };
 
       const voucher = await vouchersService.createVoucher(partnerUserId, data);

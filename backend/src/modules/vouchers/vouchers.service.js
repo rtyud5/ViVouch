@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '../../config/prisma.js';
 import { AppError } from '../../utils/appError.js';
-import { getPartnerByUserId } from '../partners/partners.service.js';
+import { getApprovedPartnerByUserId, getPartnerByUserId } from '../partners/partners.service.js';
 import { canTransition } from '../../utils/stateMachine.js';
 import { VOUCHER_STATUS, voucherTransitions } from '../../constants/statuses.js';
 
@@ -11,6 +11,18 @@ const toNum = (decimal) => Number(decimal);
 
 const calcDiscount = (original, sale) =>
   original > 0 ? Math.round((1 - sale / original) * 100) : 0;
+
+function assertValidVoucherSchedule({ saleStart, saleEnd, useStart, useEnd }) {
+  if (saleStart && saleEnd && new Date(saleStart) > new Date(saleEnd)) {
+    throw new AppError('saleEnd phải lớn hơn hoặc bằng saleStart', 400, 'INVALID_SALE_PERIOD');
+  }
+  if (useStart && useEnd && new Date(useStart) > new Date(useEnd)) {
+    throw new AppError('useEnd phải lớn hơn hoặc bằng useStart', 400, 'INVALID_USE_PERIOD');
+  }
+  if (saleEnd && useEnd && new Date(useEnd) < new Date(saleEnd)) {
+    throw new AppError('useEnd không được kết thúc trước saleEnd', 400, 'INVALID_USE_PERIOD');
+  }
+}
 
 function mapPartnerVoucher(v, usedCount) {
   const originalPrice = toNum(v.originalPrice);
@@ -68,7 +80,16 @@ export async function findMany(filters) {
   try {
     const { page, limit, keyword, categoryId, city, minPrice, maxPrice, minDiscount, sort } = filters;
 
-    const conditions = [Prisma.sql`v.status = 'ON_SALE'`];
+    const conditions = [
+      Prisma.sql`v.status = 'ON_SALE'`,
+      Prisma.sql`(v."saleStart" IS NULL OR v."saleStart" <= NOW())`,
+      Prisma.sql`(v."saleEnd" IS NULL OR v."saleEnd" >= NOW())`,
+      Prisma.sql`v."soldQty" < v."totalQty"`,
+      Prisma.sql`EXISTS (
+        SELECT 1 FROM "Partner" p
+        WHERE p.id = v."partnerId" AND p.status = 'APPROVED'
+      )`,
+    ];
 
     if (keyword) conditions.push(Prisma.sql`v.title ILIKE ${'%' + keyword + '%'}`);
     if (categoryId) conditions.push(Prisma.sql`v."categoryId" = ${categoryId}`);
@@ -76,7 +97,7 @@ export async function findMany(filters) {
       conditions.push(Prisma.sql`EXISTS (
       SELECT 1 FROM "VoucherBranch" vb
       JOIN "Branch" b ON vb."branchId" = b.id
-      WHERE vb."voucherId" = v.id AND b.city ILIKE ${'%' + city + '%'}
+      WHERE vb."voucherId" = v.id AND b."isActive" = true AND b.city ILIKE ${'%' + city + '%'}
     )`);
     }
     if (minPrice !== undefined) conditions.push(Prisma.sql`v."salePrice" >= ${minPrice}`);
@@ -155,9 +176,10 @@ export async function findById(id) {
   const voucher = await prisma.voucher.findUnique({
     where: { id },
     include: {
-      partner: { select: { businessName: true, taxCode: true } },
+      partner: { select: { businessName: true, taxCode: true, status: true } },
       category: { select: { id: true, name: true, slug: true, icon: true } },
       voucherBranches: {
+        where: { branch: { isActive: true } },
         include: {
           branch: { select: { id: true, name: true, address: true, city: true } },
         },
@@ -176,7 +198,15 @@ export async function findById(id) {
     },
   });
 
-  if (!voucher || voucher.status !== 'ON_SALE') {
+  const now = new Date();
+  const isAvailable = voucher
+    && voucher.status === 'ON_SALE'
+    && voucher.partner.status === 'APPROVED'
+    && (!voucher.saleStart || voucher.saleStart <= now)
+    && (!voucher.saleEnd || voucher.saleEnd >= now)
+    && voucher.soldQty < voucher.totalQty;
+
+  if (!isAvailable) {
     throw new AppError('Voucher not found', 404, 'VOUCHER_NOT_FOUND');
   }
 
@@ -206,7 +236,10 @@ export async function findById(id) {
     useEnd: voucher.useEnd,
     conditions: voucher.conditions,
     cancelPolicy: voucher.cancelPolicy,
-    partner: voucher.partner,
+    partner: {
+      businessName: voucher.partner.businessName,
+      taxCode: voucher.partner.taxCode,
+    },
     category: voucher.category,
     branches: voucher.voucherBranches.map((vb) => vb.branch),
     reviews: voucher.reviews,
@@ -217,18 +250,41 @@ export async function findById(id) {
 // ── Partner Voucher Management ───────────────────────────────────────────────
 
 export async function createVoucher(userId, data) {
-  const partner = await getPartnerByUserId(userId);
-  return prisma.voucher.create({
-    data: {
-      ...data,
-      partnerId: partner.id,
-      status: VOUCHER_STATUS.DRAFT
-    }
+  const partner = await getApprovedPartnerByUserId(userId);
+  assertValidVoucherSchedule(data);
+
+  return prisma.$transaction(async (tx) => {
+    const activeBranches = await tx.branch.findMany({
+      where: { partnerId: partner.id, isActive: true },
+      select: { id: true },
+    });
+
+    const voucher = await tx.voucher.create({
+      data: {
+        ...data,
+        partnerId: partner.id,
+        status: VOUCHER_STATUS.DRAFT,
+        voucherBranches: activeBranches.length > 0
+          ? { create: activeBranches.map((branch) => ({ branchId: branch.id })) }
+          : undefined,
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        actorId: userId,
+        action: 'CREATE_VOUCHER',
+        targetType: 'Voucher',
+        targetId: voucher.id,
+      },
+    });
+
+    return voucher;
   });
 }
 
 export async function updateVoucher(userId, voucherId, data) {
-  const partner = await getPartnerByUserId(userId);
+  const partner = await getApprovedPartnerByUserId(userId);
   const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } });
 
   if (!voucher) throw new AppError('Voucher not found', 404, 'VOUCHER_NOT_FOUND');
@@ -246,6 +302,18 @@ export async function updateVoucher(userId, voucherId, data) {
     throw new AppError('salePrice phải nhỏ hơn originalPrice', 400, 'INVALID_PRICE');
   }
 
+  const nextTotalQty = data.totalQty ?? voucher.totalQty;
+  if (nextTotalQty < voucher.soldQty) {
+    throw new AppError('totalQty không được nhỏ hơn số lượng đã bán', 400, 'INVALID_TOTAL_QTY');
+  }
+
+  assertValidVoucherSchedule({
+    saleStart: data.saleStart ?? voucher.saleStart,
+    saleEnd: data.saleEnd ?? voucher.saleEnd,
+    useStart: data.useStart ?? voucher.useStart,
+    useEnd: data.useEnd ?? voucher.useEnd,
+  });
+
   return prisma.voucher.update({
     where: { id: voucherId },
     data
@@ -253,7 +321,7 @@ export async function updateVoucher(userId, voucherId, data) {
 }
 
 export async function submitVoucher(userId, voucherId) {
-  const partner = await getPartnerByUserId(userId);
+  const partner = await getApprovedPartnerByUserId(userId);
   const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } });
 
   if (!voucher) throw new AppError('Voucher not found', 404, 'VOUCHER_NOT_FOUND');
@@ -263,9 +331,39 @@ export async function submitVoucher(userId, voucherId) {
     throw new AppError('Trạng thái hiện tại không hợp lệ để duyệt', 400, 'INVALID_STATUS_TRANSITION');
   }
 
+  if (!voucher.saleStart || !voucher.saleEnd) {
+    throw new AppError(
+      'Cần khai báo đầy đủ thời gian bắt đầu và kết thúc mở bán',
+      400,
+      'SALE_PERIOD_REQUIRED',
+    );
+  }
+  assertValidVoucherSchedule(voucher);
+  if (voucher.saleEnd <= new Date()) {
+    throw new AppError('Không thể gửi duyệt voucher đã hết thời gian mở bán', 400, 'SALE_PERIOD_EXPIRED');
+  }
+
   return prisma.$transaction(async (tx) => {
+    const activeBranches = await tx.branch.findMany({
+      where: { partnerId: partner.id, isActive: true },
+      select: { id: true },
+    });
+
+    if (activeBranches.length === 0) {
+      throw new AppError(
+        'Cần ít nhất một chi nhánh đang hoạt động trước khi gửi duyệt voucher',
+        400,
+        'BRANCH_REQUIRED',
+      );
+    }
+
+    await tx.voucherBranch.createMany({
+      data: activeBranches.map((branch) => ({ voucherId, branchId: branch.id })),
+      skipDuplicates: true,
+    });
+
     const updatedVoucher = await tx.voucher.update({
-      where: { id: voucherId },
+      where: { id: voucherId, status: voucher.status },
       data: { status: VOUCHER_STATUS.PENDING_APPROVAL }
     });
 
