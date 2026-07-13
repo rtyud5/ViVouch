@@ -141,6 +141,7 @@ describe('Cart Checkout API Tests', () => {
     const checkoutRes = await request(app)
       .post('/api/customer/orders/cart/checkout')
       .set('Authorization', `Bearer ${customerToken}`)
+      .set('Idempotency-Key', 'checkout-cart-success-001')
       .send({ paymentMethod: 'VIVOUCH_WALLET' });
 
     expect(checkoutRes.status).toBe(201);
@@ -170,6 +171,22 @@ describe('Cart Checkout API Tests', () => {
     expect(order?.payment?.status).toBe('PAID');
     expect(order?.items).toHaveLength(1);
     expect(order?.items[0].qty).toBe(2);
+
+    const replayRes = await request(app)
+      .post('/api/customer/orders/cart/checkout')
+      .set('Authorization', `Bearer ${customerToken}`)
+      .set('Idempotency-Key', 'checkout-cart-success-001')
+      .send({ paymentMethod: 'VIVOUCH_WALLET' });
+
+    expect(replayRes.status).toBe(200);
+    expect(replayRes.body.data.orderId).toBe(checkoutRes.body.data.orderId);
+    expect(replayRes.body.data.idempotentReplay).toBe(true);
+    expect(replayRes.body.data.voucherCodes).toHaveLength(2);
+
+    const matchingOrders = await prisma.order.count({
+      where: { userId: order.userId, idempotencyKey: 'checkout-cart-success-001' },
+    });
+    expect(matchingOrders).toBe(1);
   });
 
   it('returns 400 when buying an out-of-stock voucher via buyNow', async () => {
@@ -190,7 +207,7 @@ describe('Cart Checkout API Tests', () => {
       .post('/api/customer/orders/checkout')
       .set('Authorization', `Bearer ${customerToken}`)
       .send({
-        items: [{ voucherId: outOfStockVoucher.id, qty: 1 }],
+        items: [{ id: outOfStockVoucher.id, qty: 1 }],
         paymentMethod: 'VIVOUCH_WALLET'
       });
 
@@ -217,7 +234,7 @@ describe('Cart Checkout API Tests', () => {
       .post('/api/customer/orders/checkout')
       .set('Authorization', `Bearer ${customerToken}`)
       .send({
-        items: [{ voucherId: expiredVoucher.id, qty: 1 }],
+        items: [{ id: expiredVoucher.id, qty: 1 }],
         paymentMethod: 'VIVOUCH_WALLET'
       });
 

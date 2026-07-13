@@ -1,6 +1,23 @@
 import ordersService from "./orders.service.js";
+import { randomUUID } from "node:crypto";
 import { checkoutSchema, cartCheckoutSchema } from "./orders.validator.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
+import { AppError } from "../../utils/appError.js";
+
+function getIdempotencyKey(req) {
+  const value = req.get("Idempotency-Key");
+  if (!value) return randomUUID();
+
+  const key = value.trim();
+  if (key.length < 8 || key.length > 128) {
+    throw new AppError(
+      "Idempotency-Key phải có độ dài từ 8 đến 128 ký tự",
+      400,
+      "INVALID_IDEMPOTENCY_KEY",
+    );
+  }
+  return key;
+}
 
 /**
  * Mua ngay (Buy Now)
@@ -19,18 +36,22 @@ export const buyNow = asyncHandler(async (req, res) => {
 
   try {
     const { items, ...checkoutData } = parsedData;
-    const result = await ordersService.buyNow(userId, items, checkoutData);
+    const result = await ordersService.buyNow(userId, items, {
+      ...checkoutData,
+      idempotencyKey: getIdempotencyKey(req),
+    });
 
-    return res.status(201).json({
+    return res.status(result.idempotentReplay ? 200 : 201).json({
       success: true,
       message: "Tạo đơn hàng thành công",
       data: result
     });
   } catch (err) {
     // Bắt và xử lý lỗi business logic từ service
-    return res.status(400).json({
+    return res.status(err.statusCode || 400).json({
       success: false,
-      message: err.message
+      message: err.message,
+      code: err.code || 'CHECKOUT_FAILED',
     });
   }
 });
@@ -51,18 +72,22 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
   const checkoutData = cartCheckoutSchema.parse(req.body);
 
   try {
-    const result = await ordersService.checkoutFromCart(userId, checkoutData);
+    const result = await ordersService.checkoutFromCart(userId, {
+      ...checkoutData,
+      idempotencyKey: getIdempotencyKey(req),
+    });
 
-    return res.status(201).json({
+    return res.status(result.idempotentReplay ? 200 : 201).json({
       success: true,
       message: "Thanh toán từ giỏ hàng thành công",
       data: result
     });
   } catch (err) {
     // Bắt và xử lý lỗi business logic từ service
-    return res.status(400).json({
+    return res.status(err.statusCode || 400).json({
       success: false,
-      message: err.message
+      message: err.message,
+      code: err.code || 'CHECKOUT_FAILED',
     });
   }
 });

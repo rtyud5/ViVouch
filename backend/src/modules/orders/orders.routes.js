@@ -51,6 +51,14 @@ router.get("/voucher-codes", ordersController.getUserVoucherCodes);
  *       - Orders
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Idempotency-Key
+ *         schema:
+ *           type: string
+ *           minLength: 8
+ *           maxLength: 128
+ *         description: Khoá duy nhất cho một lần checkout; gửi lại cùng khoá sẽ nhận lại đơn cũ.
  *     requestBody:
  *       required: true
  *       content:
@@ -78,6 +86,8 @@ router.get("/voucher-codes", ordersController.getUserVoucherCodes);
  *     responses:
  *       201:
  *         description: Tạo đơn hàng thành công
+ *       200:
+ *         description: Trả lại kết quả đơn hàng đã tạo với cùng Idempotency-Key
  *       400:
  *         description: Dữ liệu không hợp lệ hoặc hết hàng
  *       401:
@@ -95,9 +105,19 @@ router.post("/checkout", ordersController.buyNow);
  *       - Orders
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Idempotency-Key
+ *         schema:
+ *           type: string
+ *           minLength: 8
+ *           maxLength: 128
+ *         description: Khoá duy nhất cho một lần checkout; gửi lại cùng khoá sẽ nhận lại đơn cũ.
  *     responses:
  *       201:
  *         description: Thanh toán từ giỏ hàng thành công
+ *       200:
+ *         description: Trả lại kết quả đơn hàng đã tạo với cùng Idempotency-Key
  *       400:
  *         description: Giỏ hàng rỗng hoặc hết hàng
  *       401:
