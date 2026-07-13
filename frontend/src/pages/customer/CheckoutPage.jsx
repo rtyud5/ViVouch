@@ -14,6 +14,7 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading: isCartLoading, error: cartError } = useCart();
   const checkoutMutation = useCheckout();
+  const idempotencyKeyRef = React.useRef(null);
   const { user } = useAuthStore();
 
   const [paymentMethod, setPaymentMethod] = useState("VIVOUCH_WALLET");
@@ -60,12 +61,18 @@ export function CheckoutPage() {
         }
       }
 
+      if (!idempotencyKeyRef.current) {
+        idempotencyKeyRef.current = globalThis.crypto?.randomUUID?.()
+          || `checkout-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      }
+
       const result = await checkoutMutation.mutateAsync({
         items,
         paymentMethod,
         recipientName: isGift ? recipientName.trim() : null,
         recipientPhone: isGift ? recipientPhone.trim() : null,
         note: note.trim() || null,
+        idempotencyKey: idempotencyKeyRef.current,
       });
 
       if (!result?.orderId) {
