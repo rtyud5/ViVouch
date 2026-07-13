@@ -305,6 +305,12 @@ describe("Admin Management API Tests", () => {
       });
       expect(log).toBeDefined();
       expect(log.actorId).toBe(sharedState.adminId);
+
+      const blockedRes = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${sharedState.customerToken}`);
+      expect(blockedRes.status).toBe(403);
+      expect(blockedRes.body.code).toBe("ACCOUNT_LOCKED");
     });
 
     it("200 unlock user thành công", async () => {
