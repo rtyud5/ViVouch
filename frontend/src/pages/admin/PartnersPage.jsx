@@ -217,7 +217,8 @@ export default function PartnersPage() {
                         <button onClick={() => setSelectedPartner(null)} className="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100">Hủy bỏ</button>
                         <button
                           onClick={() => handleReject(selectedPartner.id)}
-                          className="px-6 py-2 rounded-lg border border-red-500 text-red-500 font-semibold hover:bg-red-50"
+                          disabled={isApprovePending || isRejectPending}
+                          className="px-6 py-2 rounded-lg border border-red-500 text-red-500 font-semibold hover:bg-red-50 disabled:opacity-50"
                         >Từ chối</button>
                         <button
                           onClick={() => handleApprovePartner(selectedPartner.id)}

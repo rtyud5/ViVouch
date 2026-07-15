@@ -24,7 +24,8 @@ const ACTION_LABELS = {
   [AUDIT_ACTIONS.ADMIN_UNLOCK_USER]: "Mở khóa người dùng",
   [AUDIT_ACTIONS.PARTNER_CREATE_VOUCHER]: "Tạo voucher",
   [AUDIT_ACTIONS.PARTNER_SUBMIT_VOUCHER]: "Gửi duyệt voucher",
-  [AUDIT_ACTIONS.CUSTOMER_CHECKOUT]: "Đặt hàng"
+  [AUDIT_ACTIONS.CUSTOMER_CHECKOUT]: "Đặt hàng",
+  [AUDIT_ACTIONS.PARTNER_REDEEM_VOUCHER]: "Đổi mã voucher"
 };
 
 const ACTION_COLORS = {
@@ -34,7 +35,8 @@ const ACTION_COLORS = {
   "Mở khóa": "bg-green-100 text-green-800",
   "Tạo": "bg-blue-100 text-blue-800",
   "Gửi duyệt": "bg-yellow-100 text-yellow-800",
-  "Đặt hàng": "bg-purple-100 text-purple-800"
+  "Đặt hàng": "bg-purple-100 text-purple-800",
+  "Đổi mã": "bg-emerald-100 text-emerald-800"
 };
 
 const getBadgeStyle = (action) => {
