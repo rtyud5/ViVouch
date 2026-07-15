@@ -19,7 +19,7 @@ Bộ kiểm tra sau đây nhằm đóng vai trò làm tài liệu hướng dẫn
 | Scenario ID | Test Steps | Expected API Result |
 |:---:|:---|:---|
 | **RS-LC-01** | JWT của Customer A (Hợp lệ). Dùng Admin đổi `Customer A` sang Status `LOCKED`. Customer A ấn "Add to cart". | `403 ACCOUNT_LOCKED` |
-| **RS-LC-02** | JWT của Partner B (Hợp lệ). Dùng Admin đổi `Partner B` sang Status `REJECTED/BANNED`. Partner B gọi `POST /api/partner/vouchers`. | `403 PARTNER_NOT_ACTIVE` |
+| **RS-LC-02** | JWT của Partner B (Hợp lệ). Dùng Admin đổi `Partner B` sang Status `REJECTED/BANNED`. Partner B gọi các API Partner. | `403 PARTNER_NOT_ACTIVE` (khi CRUD voucher) <br/> `403 FORBIDDEN` (khi đối soát redeem mã) |
 | **RS-LC-03** | JWT Customer bị `LOCKED`. Customer gọi API `GET /api/users/me` để lấy thông tin. | `403 ACCOUNT_LOCKED` (Bởi AuthMiddleware) |
 
 ## Nhóm 3: Scenarios về Boundary của Voucher Status Cycle
@@ -36,6 +36,6 @@ Bộ kiểm tra sau đây nhằm đóng vai trò làm tài liệu hướng dẫn
 
 | Scenario ID | Test Steps | Expected API Result |
 |:---:|:---|:---|
-| **RS-RD-01** | Partner A lấy Mã Code QR của Partner B để Scan và bắn lên `/api/partner/redeem` (Xài chung chi nhánh ảo). | `403 FORBIDDEN - Không có quyền xác thực mã này` |
+| **RS-RD-01** | Partner A lấy Mã Code QR của Partner B để Scan và bắn lên `/api/partner/redeem` (đây là endpoint hợp nhất cho cả check và confirm thực tế). | `403 FORBIDDEN - Không có quyền xác thực mã này` |
 | **RS-RD-02** | Partner A Scan Mã của mình nhưng sử dụng chi nhánh (B) Không đăng ký cho Voucher đó. | `403 INVALID_BRANCH_SCOPE` |
 | **RS-RD-03** | Partner Scan Mã 2 lần liên tục với cùng 1 Voucher Code. Lần 1 thành công. | Lần 1: `200` <br/> Lần 2: `400 VOUCHER_CODE_USED` |
