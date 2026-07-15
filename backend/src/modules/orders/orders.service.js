@@ -1,6 +1,7 @@
 import { prisma } from '../../config/prisma.js';
 import { customAlphabet } from 'nanoid';
 import { log as auditLog } from '../auditLogs/auditLog.service.js';
+import { AppError } from '../../utils/appError.js';
 
 const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
@@ -19,9 +20,10 @@ const mapExistingOrder = (order) => ({
 const findIdempotentOrder = async (tx, userId, idempotencyKey) => {
   if (!idempotencyKey) return null;
 
-  const order = await tx.order.findUnique({
+  const order = await tx.order.findFirst({
     where: {
-      userId_idempotencyKey: { userId, idempotencyKey },
+      userId,
+      idempotencyKey,
     },
     include: {
       voucherCodes: {
@@ -74,29 +76,29 @@ const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
     });
 
     if (!voucher) {
-      throw new Error("Không tìm thấy voucher hoặc voucher không tồn tại.");
+      throw new AppError('Không tìm thấy voucher hoặc voucher không tồn tại.', 404, 'VOUCHER_NOT_FOUND');
     }
 
     if (voucher.status !== 'ON_SALE' || voucher.partner.status !== 'APPROVED') {
-      throw new Error(`Voucher "${voucher.title}" hiện không còn được bán.`);
+      throw new AppError(`Voucher "${voucher.title}" hiện không còn được bán.`, 400, 'VOUCHER_UNAVAILABLE');
     }
 
     // Check saleStart/saleEnd cơ bản khi checkout
     const now = new Date();
     if (voucher.saleStart && now < new Date(voucher.saleStart)) {
-      throw new Error(`Voucher "${voucher.title}" chưa đến thời gian mở bán.`);
+      throw new AppError(`Voucher "${voucher.title}" chưa đến thời gian mở bán.`, 400, 'VOUCHER_NOT_YET_ON_SALE');
     }
     if (voucher.saleEnd && now > new Date(voucher.saleEnd)) {
-      throw new Error(`Voucher "${voucher.title}" đã hết hạn bán.`);
+      throw new AppError(`Voucher "${voucher.title}" đã hết hạn bán.`, 400, 'VOUCHER_SALE_EXPIRED');
     }
 
     // Kiểm tra tồn kho
     const remainingQty = voucher.totalQty - voucher.soldQty;
     if (remainingQty <= 0) {
-      throw new Error(`Voucher "${voucher.title}" đã hết số lượng phát hành.`);
+      throw new AppError(`Voucher "${voucher.title}" đã hết số lượng phát hành.`, 400, 'VOUCHER_OUT_OF_STOCK');
     }
     if (remainingQty < qty) {
-      throw new Error(`Voucher "${voucher.title}" không đủ số lượng yêu cầu (Còn lại: ${remainingQty}).`);
+      throw new AppError(`Voucher "${voucher.title}" không đủ số lượng yêu cầu (Còn lại: ${remainingQty}).`, 400, 'VOUCHER_OUT_OF_STOCK');
     }
 
     // Cập nhật số lượng đã bán (soldQty)
@@ -195,7 +197,7 @@ const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
  */
 export const buyNow = async (userId, items, checkoutData = {}) => {
   if (!items || items.length === 0) {
-    throw new Error('EMPTY_ITEMS');
+    throw new AppError('Danh sách sản phẩm không được rỗng', 400, 'EMPTY_ITEMS');
   }
 
   // Gộp các item trùng ID và cộng dồn số lượng
@@ -244,7 +246,7 @@ export const checkoutFromCart = async (userId, checkoutData = {}) => {
     });
 
     if (!cart || !cart.items || cart.items.length === 0) {
-      throw new Error('EMPTY_CART');
+      throw new AppError('Giỏ hàng trống', 400, 'EMPTY_CART');
     }
 
     const checkoutItems = cart.items.map(item => ({
