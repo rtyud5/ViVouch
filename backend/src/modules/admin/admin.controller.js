@@ -1,5 +1,5 @@
 import * as adminService from './admin.service.js';
-import { rejectSchema, idParamSchema, ordersQuerySchema, partnersQuerySchema, vouchersQuerySchema } from './admin.validator.js';
+import { rejectSchema, idParamSchema, ordersQuerySchema, partnersQuerySchema, vouchersQuerySchema, auditLogsQuerySchema } from './admin.validator.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 
 export const getDashboardStats = asyncHandler(async (req, res) => {
@@ -90,7 +90,7 @@ export const getOrderById = asyncHandler(async (req, res) => {
 });
 
 export const getAuditLogs = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 10, action, targetType } = req.query;
+  const { page = 1, limit = 10, action, targetType } = auditLogsQuerySchema.parse(req.query);
   const pageNum = Math.max(1, parseInt(page, 10) || 1);
   const limitNum = Math.max(1, Math.min(100, parseInt(limit, 10) || 10));
   const data = await adminService.findManyAuditLogs(
