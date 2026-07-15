@@ -110,6 +110,7 @@ export function AppRoutes() {
         }>
           <Route path="dashboard" element={<PartnerDashboardPage />} />
           <Route path="vouchers/new" element={<CreateVoucherPage />} />
+          <Route path="vouchers/:id/edit" element={<CreateVoucherPage />} />
           <Route path="vouchers" element={<PartnerVoucherListPage />} />
           <Route path="validation" element={<RedeemVoucherPage />} />
           <Route path="reports" element={<PartnerReportsPage />} />

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Ticket,
   ShoppingCart,
@@ -80,6 +80,8 @@ const MOCK_TIMELINE = [
 
 export function PartnerDashboardPage() {
   const navigate = useNavigate();
+  // B103: chart range selector state (chart data is mock; state tracks selected label)
+  const [chartRange, setChartRange] = useState('30d');
 
   // Fetch profile partner
   const { data: profileData, isLoading: isProfileLoading } = useQuery({
@@ -198,16 +200,20 @@ export function PartnerDashboardPage() {
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold text-gray-800">Doanh thu 30 ngày qua</h3>
+              <h3 className="text-lg font-bold text-gray-800">
+                Doanh thu {chartRange === '7d' ? 'tuần này' : chartRange === 'month' ? 'tháng này' : '30 ngày qua'}
+              </h3>
               <MockDataBadge />
             </div>
             <select
               className="select select-bordered select-sm bg-gray-50"
               aria-label="Chọn khoảng thời gian"
+              value={chartRange}
+              onChange={(e) => setChartRange(e.target.value)}
             >
-              <option>30 ngày qua</option>
-              <option>Tuần này</option>
-              <option>Tháng này</option>
+              <option value="30d">30 ngày qua</option>
+              <option value="7d">Tuần này</option>
+              <option value="month">Tháng này</option>
             </select>
           </div>
           <div className="flex-1 min-h-[300px] w-full">
@@ -252,7 +258,13 @@ export function PartnerDashboardPage() {
               <h3 className="text-lg font-bold text-gray-800">Hoạt động gần đây</h3>
               <MockDataBadge />
             </div>
-            <button className="text-purple-600 text-sm font-medium hover:underline">Xem tất cả</button>
+            {/* B104: navigate to reports page */}
+            <button
+              className="text-purple-600 text-sm font-medium hover:underline"
+              onClick={() => navigate('/partner/reports')}
+            >
+              Xem tất cả
+            </button>
           </div>
           <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-100 before:to-transparent">
             {MOCK_TIMELINE.map((item) => (

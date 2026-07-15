@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getPartnerVouchers } from '../../features/partner/api/vouchers.api';
 
@@ -82,6 +82,7 @@ function formatDate(isoStr) {
 
 // Main Component 
 export function PartnerVoucherListPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('ALL');
   const [keyword, setKeyword]     = useState('');
   const [debouncedKw, setDebouncedKw] = useState('');
@@ -309,6 +310,7 @@ export function PartnerVoucherListPage() {
                             data-tip="Chỉnh sửa"
                             disabled={!['DRAFT', 'REJECTED'].includes(v.status)}
                             aria-label={`Chỉnh sửa voucher ${v.title}`}
+                            onClick={() => navigate(`/partner/vouchers/${v.id}/edit`)}
                           >
                             <span className="material-symbols-outlined text-[20px]">edit</span>
                           </button>

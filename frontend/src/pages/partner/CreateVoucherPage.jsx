@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Save, Send } from "lucide-react";
 import { VoucherCard } from "../../components/voucher/VoucherCard";
-import { createVoucherDraft, submitVoucherForApproval } from "../../features/partner/api/vouchers.api";
+import { createVoucherDraft, submitVoucherForApproval, updateVoucher, getPartnerVouchers } from "../../features/partner/api/vouchers.api";
 import { getCategories } from "../../features/vouchers/api/vouchers.api";
 import { voucherFormSchema } from "./schemas/voucherFormSchema";
+import { apiClient } from "../../services/apiClient";
 
 const defaultValues = {
   name: "",
@@ -28,12 +29,16 @@ function getErrorMessage(error) {
 export function CreateVoucherPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  // NEW-B113: detect edit mode from route param
+  const { id: voucherId } = useParams();
+  const isEditMode = Boolean(voucherId);
 
   const {
     register,
     handleSubmit,
     control,
     setValue,
+    reset,
     formState: { errors },
     trigger,
   } = useForm({
@@ -52,6 +57,36 @@ export function CreateVoucherPage() {
   });
 
   const categories = categoriesData?.data ?? categoriesData ?? [];
+
+  // NEW-B113: Fetch voucher data when in edit mode to pre-fill the form
+  const { isLoading: isVoucherLoading } = useQuery({
+    queryKey: ["partnerVoucherDetail", voucherId],
+    queryFn: async () => {
+      const response = await apiClient.get(`/partner/vouchers/${voucherId}`);
+      return response.data?.data ?? response.data;
+    },
+    enabled: isEditMode,
+    // Pre-fill form when data loads
+    onSuccess: (voucher) => {
+      if (!voucher) return;
+      // Convert ISO dates to datetime-local format (YYYY-MM-DDTHH:mm)
+      const toLocalInput = (iso) => {
+        if (!iso) return "";
+        return new Date(iso).toISOString().slice(0, 16);
+      };
+      reset({
+        name: voucher.title ?? "",
+        category: voucher.categoryId ?? "",
+        imageUrl: voucher.imageUrl ?? "",
+        location: voucher.location ?? "",
+        originalPrice: voucher.originalPrice ?? 0,
+        salePrice: voucher.salePrice ?? 0,
+        totalQuantity: voucher.totalQty ?? 1,
+        startDate: toLocalInput(voucher.saleStart),
+        endDate: toLocalInput(voucher.saleEnd),
+      });
+    },
+  });
 
   // Khi categories load xong lần đầu, tự động chọn category đầu tiên
   useEffect(() => {
@@ -75,6 +110,44 @@ export function CreateVoucherPage() {
     soldQuantity: 0,
   };
 
+  const invalidateCaches = () => {
+    queryClient.invalidateQueries({ queryKey: ["partnerVouchers"] });
+    queryClient.invalidateQueries({ queryKey: ["partnerReports"] });
+    queryClient.invalidateQueries({ queryKey: ["partnerProfile"] });
+    if (voucherId) {
+      queryClient.invalidateQueries({ queryKey: ["partnerVoucherDetail", voucherId] });
+    }
+  };
+
+  // NEW-B113: update mutation for edit mode
+  const updateMutation = useMutation({
+    mutationFn: (formData) => updateVoucher(voucherId, formData),
+    onSuccess: () => {
+      invalidateCaches();
+      alert("Cập nhật voucher thành công!");
+      navigate("/partner/vouchers");
+    },
+    onError: (error) => {
+      alert(getErrorMessage(error));
+    },
+  });
+
+  // NEW-B113: update + submit mutation for edit mode
+  const updateAndSubmitMutation = useMutation({
+    mutationFn: async (formData) => {
+      await updateVoucher(voucherId, formData);
+      return submitVoucherForApproval(voucherId);
+    },
+    onSuccess: () => {
+      invalidateCaches();
+      alert("Cập nhật và gửi kiểm duyệt thành công!");
+      navigate("/partner/vouchers");
+    },
+    onError: (error) => {
+      alert(getErrorMessage(error));
+    },
+  });
+
   const draftMutation = useMutation({
     mutationFn: createVoucherDraft,
     onSuccess: () => {
@@ -94,13 +167,13 @@ export function CreateVoucherPage() {
     mutationFn: async (formData) => {
       const created = await createVoucherDraft(formData);
       // Backend trả về { data: { id, ... } } sau khi tạo
-      const voucherId = created?.data?.id || created?.id;
+      const createdId = created?.data?.id || created?.id;
 
-      if (!voucherId) {
+      if (!createdId) {
         throw new Error("Không thể xác định voucher vừa tạo để gửi kiểm duyệt");
       }
 
-      return submitVoucherForApproval(voucherId);
+      return submitVoucherForApproval(createdId);
     },
     onSuccess: () => {
       // Invalidate all affected caches so Voucher List, Dashboard KPI, and Reports refresh
@@ -116,11 +189,19 @@ export function CreateVoucherPage() {
   });
 
   const onSubmitDraft = (data) => {
-    draftMutation.mutate(data);
+    if (isEditMode) {
+      updateMutation.mutate(data);
+    } else {
+      draftMutation.mutate(data);
+    }
   };
 
   const onSubmitApproval = (data) => {
-    submitMutation.mutate(data);
+    if (isEditMode) {
+      updateAndSubmitMutation.mutate(data);
+    } else {
+      submitMutation.mutate(data);
+    }
   };
 
   const nameField = register("name");
@@ -133,15 +214,26 @@ export function CreateVoucherPage() {
   const endDateField = register("endDate");
   const locationField = register("location");
 
-  const isSubmitting = draftMutation.isPending || submitMutation.isPending;
+  const isSubmitting = draftMutation.isPending || submitMutation.isPending || updateMutation.isPending || updateAndSubmitMutation.isPending;
+
+  if (isEditMode && isVoucherLoading) {
+    return (
+      <div className="max-w-7xl mx-auto py-12 px-4 text-center">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
+        <p className="mt-4 text-base-content/70">Đang tải thông tin voucher...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold text-base-content">Tạo Voucher Mới</h1>
+          <h1 className="text-2xl font-bold text-base-content">
+            {isEditMode ? "Chỉnh sửa Voucher" : "Tạo Voucher Mới"}
+          </h1>
           <p className="text-sm text-base-content/70 mt-1">
-            Điền thông tin chi tiết để tạo voucher và xem trước giao diện.
+            {isEditMode ? "Cập nhật thông tin voucher của bạn." : "Điền thông tin chi tiết để tạo voucher và xem trước giao diện."}
           </p>
         </div>
 
@@ -152,12 +244,12 @@ export function CreateVoucherPage() {
             onClick={handleSubmit(onSubmitDraft)}
             disabled={isSubmitting || isCategoriesLoading}
           >
-            {draftMutation.isPending ? (
+            {draftMutation.isPending || updateMutation.isPending ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
               <Save className="w-4 h-4" />
             )}
-            Lưu nháp
+            {isEditMode ? "Lưu thay đổi" : "Lưu nháp"}
           </button>
           <button
             type="button"
@@ -165,12 +257,12 @@ export function CreateVoucherPage() {
             onClick={handleSubmit(onSubmitApproval)}
             disabled={isSubmitting || isCategoriesLoading}
           >
-            {submitMutation.isPending ? (
+            {submitMutation.isPending || updateAndSubmitMutation.isPending ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
               <Send className="w-4 h-4" />
             )}
-            Gửi kiểm duyệt
+            {isEditMode ? "Lưu & Gửi kiểm duyệt" : "Gửi kiểm duyệt"}
           </button>
         </div>
       </div>
