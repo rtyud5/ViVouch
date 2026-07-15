@@ -47,7 +47,7 @@
 | B103 | FE — `PartnerDashboardPage.jsx` | Bộ lọc thời gian chart doanh thu không wire vào state | Tùng | Login partner → Dashboard → Change dropdown → Chart unchanged | 🔴 Open | → Backlog W6 |
 | B104 | FE — `PartnerDashboardPage.jsx` | Nút "Xem tất cả" hoạt động gần đây không có onClick | Tùng | Login partner → Dashboard → Click "Xem tất cả" → Nothing happens | 🔴 Open | → Backlog W6 |
 | B106 | FE — `VoucherDetailPage.jsx` + BE | WriteReviewForm UI có nhưng BE không trả `userEligibility` → form luôn NOT_ELIGIBLE | Vinh | Login customer (has USED code) → Voucher Detail → Review form shows NOT_ELIGIBLE | 🔴 Open | → Backlog W6 |
-| B107 | BE — `auditLog.routes.js` | Audit log READ API route = TODO stub. FE `AuditLogsPage.jsx` exists (7.5KB) but may have no data source. | Huy | Login admin → Audit Logs page → Check if data loads | 🟡 **NEW — Needs verification** | Verify D2 |
+| B107 | BE — `auditLog.routes.js` | Audit log READ API route = TODO stub. FE `AuditLogsPage.jsx` exists (7.5KB) but may have no data source. | Huy | Login admin → Audit Logs page → Check if data loads | ✅ **CLOSED** (False Alarm) | API ok ở admin router |
 
 ---
 
