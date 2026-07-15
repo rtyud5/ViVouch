@@ -50,7 +50,7 @@ export const buyNow = asyncHandler(async (req, res) => {
     // Bắt và xử lý lỗi business logic từ service
     return res.status(err.statusCode || 400).json({
       success: false,
-      message: err.message,
+      message: err.code || err.message || 'CHECKOUT_FAILED',
       code: err.code || 'CHECKOUT_FAILED',
     });
   }
@@ -86,7 +86,7 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
     // Bắt và xử lý lỗi business logic từ service
     return res.status(err.statusCode || 400).json({
       success: false,
-      message: err.message,
+      message: err.code || err.message || 'CHECKOUT_FAILED',
       code: err.code || 'CHECKOUT_FAILED',
     });
   }
