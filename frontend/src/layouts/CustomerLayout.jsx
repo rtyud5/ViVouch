@@ -1,4 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../stores/authStore';
 import { useCart } from '../features/cart/hooks/useCart';
 import { BottomNav } from '../components/common/BottomNav';
@@ -26,6 +27,7 @@ export function CustomerLayout() {
   // ── Auth ────────────────────────────────────────────────────────────────────
   const user      = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const queryClient = useQueryClient();
 
   // ── Cart badge ──────────────────────────────────────────────────────────────
   // cartCount = tổng số lượng sản phẩm trong giỏ (từ React Query cache).
@@ -34,6 +36,7 @@ export function CustomerLayout() {
   // ── Handlers ────────────────────────────────────────────────────────────────
   function handleLogout() {
     clearAuth();                        // xoá token khỏi localStorage + state
+    queryClient.clear();
     navigate('/login', { replace: true });
   }
 

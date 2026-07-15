@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../../stores/authStore";
 import { useCart } from "../../features/cart/hooks/useCart";
 
@@ -17,6 +18,7 @@ export function PublicNavbar() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const queryClient = useQueryClient();
 
   const isCustomer = user?.role === "CUSTOMER";
   const { cartCount } = useCart({ enabled: isAuthenticated && isCustomer });
@@ -37,6 +39,7 @@ export function PublicNavbar() {
   /** Đăng xuất: xóa state + về trang chủ */
   function handleLogout() {
     clearAuth();
+    queryClient.clear();
     navigate("/");
   }
 

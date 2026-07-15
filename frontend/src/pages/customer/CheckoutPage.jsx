@@ -104,6 +104,7 @@ export function CheckoutPage() {
       });
     } catch (error) {
       setLocalError(error);
+      idempotencyKeyRef.current = null;
     }
   };
 
