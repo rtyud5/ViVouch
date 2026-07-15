@@ -66,7 +66,7 @@
 | BR-ADM-04 | Manage orders | ✅ | `OrdersPage` | `GET /api/admin/orders` | `admin-orders-audit.test.js` | Filter, search. Cancel/refund = simulated (ASM-01). |
 | BR-ADM-05 | Manage content (CMS) | ⚪ | `CategoriesPage` (stub), `CmsPagesPage` (stub) | `GET /api/categories` (read-only) | None | **Out-of-scope for W5.** BRD marks as **Medium priority**. Categories seeded and used in catalog filter. Full CMS CRUD → W6 tech debt. |
 | BR-ADM-06 | Admin dashboard | ✅ | `AdminDashboardPage` | `GET /api/admin/dashboard` | `admin-dashboard.test.js` | 4 KPI cards real data. Revenue chart = sample (badge "Dữ liệu mẫu" shown). |
-| BR-ADM-07 | System logs (audit) | ⚠️ | `AuditLogsPage` (7.5KB, functional FE) | BE `auditLog.service.js` (write only), `auditLog.routes.js` = TODO stub | `admin-orders-audit.test.js` (partial) | AuditLog **write** works (called from approval, redeem, checkout). **Read API route not implemented** → FE page may not display data. → **P2 — needs verification.** |
+| BR-ADM-07 | System logs (audit) | ✅ | `AuditLogsPage` | `GET /api/admin/audit-logs` (admin module) | `admin-orders-audit.test.js` (partial) | AuditLog **write** works. **Read API** exists in `admin.routes.js` and functions correctly. (B107 is false alarm). |
 
 ---
 
