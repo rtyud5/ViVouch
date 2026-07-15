@@ -98,13 +98,14 @@ export function CheckoutPage() {
         voucherCodes: mappedVoucherCodes,
       };
 
+      idempotencyKeyRef.current = null; // Clear on success
+
       navigate("/customer/order-success", {
         state: successPayload,
         replace: true,
       });
     } catch (error) {
       setLocalError(error);
-      idempotencyKeyRef.current = null;
     }
   };
 
