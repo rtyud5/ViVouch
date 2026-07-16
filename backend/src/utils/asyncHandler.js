@@ -5,6 +5,7 @@ export function asyncHandler(fn) {
       if (error.name === "ZodError" || error.constructor.name === "ZodError") {
         const issues = error.issues || error.errors;
         error.statusCode = 400;
+        error.code = "VALIDATION_ERROR";
         if (Array.isArray(issues)) {
           error.message = issues
             .map((e) => {
@@ -12,6 +13,10 @@ export function asyncHandler(fn) {
               return `${path}${e.message || e}`;
             })
             .join(", ");
+          error.details = issues.map((e) => ({
+            path: e.path,
+            message: e.message,
+          }));
         }
       }
       next(error);

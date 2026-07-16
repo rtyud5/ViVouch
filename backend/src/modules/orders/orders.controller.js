@@ -26,34 +26,23 @@ export const buyNow = asyncHandler(async (req, res) => {
   const userId = req.user?.userId;
 
   if (!userId) {
-    const error = new Error("Chưa xác thực người dùng");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Chưa xác thực người dùng", 401, "UNAUTHORIZED");
   }
 
   // Validate request body qua Zod
   const parsedData = checkoutSchema.parse(req.body);
 
-  try {
-    const { items, ...checkoutData } = parsedData;
-    const result = await ordersService.buyNow(userId, items, {
-      ...checkoutData,
-      idempotencyKey: getIdempotencyKey(req),
-    });
+  const { items, ...checkoutData } = parsedData;
+  const result = await ordersService.buyNow(userId, items, {
+    ...checkoutData,
+    idempotencyKey: getIdempotencyKey(req),
+  });
 
-    return res.status(result.idempotentReplay ? 200 : 201).json({
-      success: true,
-      message: "Tạo đơn hàng thành công",
-      data: result
-    });
-  } catch (err) {
-    // Bắt và xử lý lỗi business logic từ service
-    return res.status(err.statusCode || 400).json({
-      success: false,
-      message: err.code || err.message || 'CHECKOUT_FAILED',
-      code: err.code || 'CHECKOUT_FAILED',
-    });
-  }
+  return res.status(result.idempotentReplay ? 200 : 201).json({
+    success: true,
+    message: "Tạo đơn hàng thành công",
+    data: result
+  });
 });
 
 /**
@@ -63,33 +52,22 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
   const userId = req.user?.userId;
 
   if (!userId) {
-    const error = new Error("Chưa xác thực người dùng");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Chưa xác thực người dùng", 401, "UNAUTHORIZED");
   }
 
   // Validate request body qua Zod
   const checkoutData = cartCheckoutSchema.parse(req.body);
 
-  try {
-    const result = await ordersService.checkoutFromCart(userId, {
-      ...checkoutData,
-      idempotencyKey: getIdempotencyKey(req),
-    });
+  const result = await ordersService.checkoutFromCart(userId, {
+    ...checkoutData,
+    idempotencyKey: getIdempotencyKey(req),
+  });
 
-    return res.status(result.idempotentReplay ? 200 : 201).json({
-      success: true,
-      message: "Thanh toán từ giỏ hàng thành công",
-      data: result
-    });
-  } catch (err) {
-    // Bắt và xử lý lỗi business logic từ service
-    return res.status(err.statusCode || 400).json({
-      success: false,
-      message: err.code || err.message || 'CHECKOUT_FAILED',
-      code: err.code || 'CHECKOUT_FAILED',
-    });
-  }
+  return res.status(result.idempotentReplay ? 200 : 201).json({
+    success: true,
+    message: "Thanh toán từ giỏ hàng thành công",
+    data: result
+  });
 });
 
 /**
@@ -99,9 +77,7 @@ export const getUserOrders = asyncHandler(async (req, res) => {
   const userId = req.user?.userId;
 
   if (!userId) {
-    const error = new Error("Chưa xác thực người dùng");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Chưa xác thực người dùng", 401, "UNAUTHORIZED");
   }
 
   const orders = await ordersService.getUserOrders(userId);
@@ -120,9 +96,7 @@ export const getUserVoucherCodes = asyncHandler(async (req, res) => {
   const userId = req.user?.userId;
 
   if (!userId) {
-    const error = new Error("Chưa xác thực người dùng");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Chưa xác thực người dùng", 401, "UNAUTHORIZED");
   }
 
   const codes = await ordersService.getUserVoucherCodes(userId);

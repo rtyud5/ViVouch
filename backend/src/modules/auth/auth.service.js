@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
+import { AppError } from "../../utils/appError.js";
 
 /**
  * Đăng ký tài khoản mới (Customer)
@@ -18,9 +19,7 @@ export const register = async (data) => {
   });
 
   if (existingUser) {
-    const error = new Error("Email đã tồn tại trong hệ thống");
-    error.statusCode = 409;
-    throw error;
+    throw new AppError("Email đã tồn tại trong hệ thống", 409, "EMAIL_EXISTS");
   }
 
   // Kiểm tra phone trùng (nếu có cung cấp số điện thoại)
@@ -30,9 +29,7 @@ export const register = async (data) => {
     });
 
     if (existingPhone) {
-      const error = new Error("Số điện thoại đã tồn tại trong hệ thống");
-      error.statusCode = 409;
-      throw error;
+      throw new AppError("Số điện thoại đã tồn tại trong hệ thống", 409, "PHONE_EXISTS");
     }
   }
 
@@ -68,24 +65,18 @@ export const login = async (email, password) => {
   });
 
   if (!user) {
-    const error = new Error("Sai email hoặc mật khẩu");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Sai email hoặc mật khẩu", 401, "INVALID_CREDENTIALS");
   }
 
   // So sánh mật khẩu
   const isMatch = await bcrypt.compare(password, user.passwordHash);
   if (!isMatch) {
-    const error = new Error("Sai email hoặc mật khẩu");
-    error.statusCode = 401;
-    throw error;
+    throw new AppError("Sai email hoặc mật khẩu", 401, "INVALID_CREDENTIALS");
   }
 
   // Kiểm tra trạng thái ACTIVE
   if (user.status !== "ACTIVE") {
-    const error = new Error("Tài khoản của bạn đã bị khóa");
-    error.statusCode = 403;
-    throw error;
+    throw new AppError("Tài khoản của bạn đã bị khóa", 403, "ACCOUNT_LOCKED");
   }
 
   // Ký JWT
@@ -114,9 +105,7 @@ export const getMe = async (userId) => {
   });
 
   if (!user) {
-    const error = new Error("Không tìm thấy người dùng");
-    error.statusCode = 404;
-    throw error;
+    throw new AppError("Không tìm thấy người dùng", 404, "USER_NOT_FOUND");
   }
 
   const { passwordHash: _, ...userWithoutPassword } = user;

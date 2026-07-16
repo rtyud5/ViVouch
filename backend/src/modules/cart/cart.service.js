@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/appError.js";
 
 /**
  * Tính toán các thông số tổng hợp của giỏ hàng
@@ -91,22 +92,16 @@ export const addItem = async (userId, { voucherId, qty = 1 }) => {
     });
 
     if (!voucher) {
-      const error = new Error("Voucher không tồn tại");
-      error.statusCode = 404;
-      throw error;
+      throw new AppError("Voucher không tồn tại", 404, "VOUCHER_NOT_FOUND");
     }
 
     if (voucher.status !== "ON_SALE") {
-      const error = new Error("Voucher không ở trạng thái đang bán");
-      error.statusCode = 400;
-      throw error;
+      throw new AppError("Voucher không ở trạng thái đang bán", 400, "VOUCHER_NOT_ON_SALE");
     }
 
     const remainingQty = voucher.totalQty - voucher.soldQty;
     if (remainingQty < qty) {
-      const error = new Error(`Số lượng voucher còn lại không đủ (còn ${remainingQty})`);
-      error.statusCode = 400;
-      throw error;
+      throw new AppError(`Số lượng voucher còn lại không đủ (còn ${remainingQty})`, 400, "VOUCHER_OUT_OF_STOCK");
     }
 
     // UPSERT CartItem inside transaction
@@ -123,9 +118,7 @@ export const addItem = async (userId, { voucherId, qty = 1 }) => {
       // Nếu cập nhật thì nên kiểm tra lại tổng qty có vượt quá remainingQty không
       const newQty = existingItem.qty + qty;
       if (remainingQty < newQty) {
-        const error = new Error(`Tổng số lượng trong giỏ (${newQty}) vượt quá số lượng còn lại (${remainingQty})`);
-        error.statusCode = 400;
-        throw error;
+        throw new AppError(`Tổng số lượng trong giỏ (${newQty}) vượt quá số lượng còn lại (${remainingQty})`, 400, "VOUCHER_OUT_OF_STOCK");
       }
 
       await tx.cartItem.update({
@@ -164,28 +157,20 @@ export const updateQty = async (userId, cartItemId, qty) => {
     });
 
     if (!item) {
-      const error = new Error("Không tìm thấy sản phẩm này trong giỏ hàng");
-      error.statusCode = 404;
-      throw error;
+      throw new AppError("Không tìm thấy sản phẩm này trong giỏ hàng", 404, "CART_ITEM_NOT_FOUND");
     }
 
     if (item.cart.userId !== userId) {
-      const error = new Error("Không có quyền truy cập sản phẩm này");
-      error.statusCode = 403;
-      throw error;
+      throw new AppError("Không có quyền truy cập sản phẩm này", 403, "FORBIDDEN");
     }
 
     if (item.voucher.status !== "ON_SALE") {
-      const error = new Error("Voucher không ở trạng thái đang bán");
-      error.statusCode = 400;
-      throw error;
+      throw new AppError("Voucher không ở trạng thái đang bán", 400, "VOUCHER_NOT_ON_SALE");
     }
 
     const remainingQty = item.voucher.totalQty - item.voucher.soldQty;
     if (remainingQty < qty) {
-      const error = new Error(`Số lượng voucher còn lại không đủ (còn ${remainingQty})`);
-      error.statusCode = 400;
-      throw error;
+      throw new AppError(`Số lượng voucher còn lại không đủ (còn ${remainingQty})`, 400, "VOUCHER_OUT_OF_STOCK");
     }
 
     await tx.cartItem.update({
@@ -211,15 +196,11 @@ export const removeItem = async (userId, cartItemId) => {
     });
 
     if (!item) {
-      const error = new Error("Không tìm thấy sản phẩm này trong giỏ hàng");
-      error.statusCode = 404;
-      throw error;
+      throw new AppError("Không tìm thấy sản phẩm này trong giỏ hàng", 404, "CART_ITEM_NOT_FOUND");
     }
 
     if (item.cart.userId !== userId) {
-      const error = new Error("Không có quyền truy cập sản phẩm này");
-      error.statusCode = 403;
-      throw error;
+      throw new AppError("Không có quyền truy cập sản phẩm này", 403, "FORBIDDEN");
     }
 
     await tx.cartItem.delete({
