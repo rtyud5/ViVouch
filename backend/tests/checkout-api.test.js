@@ -126,7 +126,7 @@ describe('Cart Checkout API Tests', () => {
       .send({ paymentMethod: 'VIVOUCH_WALLET' });
 
     expect(res.status).toBe(400);
-    expect(res.body.message).toBe('EMPTY_CART');
+    expect(res.body.code).toBe('EMPTY_CART');
   });
 
   it('checkout from cart creates order, voucher codes, and clears cart', async () => {
