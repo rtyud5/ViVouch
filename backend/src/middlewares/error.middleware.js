@@ -44,6 +44,28 @@ export function errorMiddleware(err, req, res, next) {
     });
   }
 
+  if (err.name === "ZodError") {
+    let msg = "Validation Error";
+    try {
+      if (err.errors && err.errors.length > 0) {
+        msg = err.errors[0].message;
+      } else if (err.message && err.message.startsWith("[")) {
+        msg = JSON.parse(err.message)[0].message;
+      } else if (err.issues && err.issues.length > 0) {
+        msg = err.issues[0].message;
+      }
+    } catch (e) {
+      // fallback
+    }
+    
+    return res.status(400).json({
+      success: false,
+      message: msg,
+      code: "VALIDATION_ERROR",
+      details: err.errors || JSON.parse(err.message || "[]"),
+    });
+  }
+
   const isServerError = statusCode >= 500;
   const payload = {
     success: false,
