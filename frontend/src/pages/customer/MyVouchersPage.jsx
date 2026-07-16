@@ -66,7 +66,7 @@ export function MyVouchersPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 animate-pulse">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="h-[120px] md:h-36 bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant shadow-sm flex">
-              <div className="w-[96px] md:w-20 md:h-20 md:m-4 bg-surface-container flex-shrink-0 md:rounded-lg"></div>
+              <div className="w-[96px] h-full md:w-20 md:h-20 md:m-4 bg-surface-container flex-shrink-0 md:rounded-lg"></div>
               <div className="flex-1 p-3 md:p-0 md:py-4 md:pr-4 md:ml-4 flex flex-col justify-center gap-2">
                 <div className="h-4 bg-surface-container rounded w-3/4"></div>
                 <div className="h-3 bg-surface-container rounded w-1/2"></div>
