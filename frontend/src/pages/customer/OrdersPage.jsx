@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { formatDate } from "../../utils/formatDate";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { useOrders } from "../../features/orders/hooks";
@@ -66,13 +67,32 @@ export function OrdersPage() {
 
       <div className="flex flex-col gap-6">
         {isLoading ? (
-          <div className="flex justify-center py-16">
-            <LoadingSpinner size="lg" />
+          <div className="flex flex-col gap-6 animate-pulse">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-surface-container-lowest rounded-xl shadow-sm p-6 border border-surface-variant flex justify-between items-start">
+                <div>
+                  <div className="h-5 bg-surface-container rounded w-32 mb-3"></div>
+                  <div className="h-4 bg-surface-container rounded w-24"></div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <div className="h-6 bg-surface-container rounded w-28 mb-1"></div>
+                  <div className="h-6 bg-surface-container rounded-full w-24"></div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : error ? (
           <ErrorRetryPanel title={errorTitle} description={errorDescription} onRetry={refetch} />
         ) : filteredOrders.length === 0 ? (
-          <CustomerEmptyState type="orders" description={emptyDescription} />
+          <CustomerEmptyState 
+            type="orders" 
+            description={emptyDescription} 
+            action={
+              <Link to="/vouchers" className="btn btn-primary rounded-full px-8 font-bold mt-2">
+                Khám phá voucher ngay
+              </Link>
+            }
+          />
         ) : (
           filteredOrders.map((order) => {
             const normalizedStatus = String(order.status || "").toUpperCase();

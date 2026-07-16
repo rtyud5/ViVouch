@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { VoucherCodeCard } from "../../components/voucher/VoucherCodeCard";
 import { useMyVouchers } from "../../features/orders/hooks";
 import { QRCodeModal, CustomerEmptyState, LoadingSpinner, ErrorRetryPanel } from "../../components/common";
@@ -62,13 +63,30 @@ export function MyVouchersPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-16">
-          <LoadingSpinner size="lg" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 animate-pulse">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="h-[120px] md:h-36 bg-surface-container-lowest rounded-xl border border-dashed border-outline-variant shadow-sm flex">
+              <div className="w-[96px] h-full md:w-20 md:h-20 md:m-4 bg-surface-container flex-shrink-0 md:rounded-lg"></div>
+              <div className="flex-1 p-3 md:p-0 md:py-4 md:pr-4 md:ml-4 flex flex-col justify-center gap-2">
+                <div className="h-4 bg-surface-container rounded w-3/4"></div>
+                <div className="h-3 bg-surface-container rounded w-1/2"></div>
+                <div className="h-3 bg-surface-container rounded w-1/4 mt-auto md:mt-2"></div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : error ? (
         <ErrorRetryPanel title={errorTitle} description={errorDescription} onRetry={refetch} />
       ) : filteredVouchers.length === 0 ? (
-        <CustomerEmptyState type="vouchers" description={emptyDescription} />
+        <CustomerEmptyState 
+          type="vouchers" 
+          description={emptyDescription} 
+          action={
+            <Link to="/vouchers" className="btn btn-primary rounded-full px-8 font-bold mt-2">
+              Khám phá voucher ngay
+            </Link>
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           {filteredVouchers.map((vc) => (
