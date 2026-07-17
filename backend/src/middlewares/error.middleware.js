@@ -46,40 +46,41 @@ export function errorMiddleware(err, req, res, next) {
 
   if (err.name === "ZodError") {
     let msg = "Validation Error";
+    let details = err.errors;
     try {
       let firstError;
       if (err.errors && err.errors.length > 0) {
         firstError = err.errors[0];
+        details = err.errors;
       } else if (err.message && err.message.startsWith("[")) {
-        firstError = JSON.parse(err.message)[0];
+        details = JSON.parse(err.message);
+        firstError = details[0];
       } else if (err.issues && err.issues.length > 0) {
         firstError = err.issues[0];
+        details = err.issues;
+      } else {
+        details = [{ message: err.message }];
       }
       
       if (firstError) {
         msg = firstError.path && firstError.path.length > 0 
           ? `${firstError.path.join('.')}: ${firstError.message}` 
           : firstError.message;
+      } else {
+        msg = err.message;
       }
     } catch (e) {
-      // fallback
-    }
-    
-    let details = [];
-    if (err.errors) details = err.errors;
-    else if (err.issues) details = err.issues;
-    else {
-      try { details = JSON.parse(err.message || "[]"); } catch(e) {}
+      details = details || [];
     }
 
     return res.status(400).json({
       success: false,
       message: msg,
       code: "VALIDATION_ERROR",
-      details,
+      details: details || [],
     });
   }
-
+  
   const isServerError = statusCode >= 500;
   const payload = {
     success: false,
