@@ -48,30 +48,39 @@ export function errorMiddleware(err, req, res, next) {
     let msg = "Validation Error";
     let details = err.errors;
     try {
+      let firstError;
       if (err.errors && err.errors.length > 0) {
-        msg = err.errors[0].message;
+        firstError = err.errors[0];
+        details = err.errors;
       } else if (err.message && err.message.startsWith("[")) {
         details = JSON.parse(err.message);
-        msg = details[0].message;
+        firstError = details[0];
       } else if (err.issues && err.issues.length > 0) {
-        msg = err.issues[0].message;
+        firstError = err.issues[0];
         details = err.issues;
       } else {
-        msg = err.message;
         details = [{ message: err.message }];
+      }
+
+      if (firstError) {
+        msg = firstError.path && firstError.path.length > 0
+          ? `${firstError.path.join('.')}: ${firstError.message}`
+          : firstError.message;
+      } else {
+        msg = err.message;
       }
     } catch (e) {
       details = details || [];
     }
-    
+
     return res.status(400).json({
       success: false,
       message: msg,
       code: "VALIDATION_ERROR",
-      details: details,
+      details: details || [],
     });
   }
-
+  
   const isServerError = statusCode >= 500;
   const payload = {
     success: false,
