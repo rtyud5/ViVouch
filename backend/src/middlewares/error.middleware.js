@@ -61,10 +61,10 @@ export function errorMiddleware(err, req, res, next) {
       } else {
         details = [{ message: err.message }];
       }
-      
+
       if (firstError) {
-        msg = firstError.path && firstError.path.length > 0 
-          ? `${firstError.path.join('.')}: ${firstError.message}` 
+        msg = firstError.path && firstError.path.length > 0
+          ? `${firstError.path.join('.')}: ${firstError.message}`
           : firstError.message;
       } else {
         msg = err.message;
