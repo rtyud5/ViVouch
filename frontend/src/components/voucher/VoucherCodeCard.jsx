@@ -177,7 +177,7 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
         ) : upperStatus === 'USED' && voucherId ? (
           <Link 
             to={`/vouchers/${voucherId}#reviews-section`}
-            className="font-label-md text-[10px] text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:underline"
+            className="font-label-md text-[10px] text-primary mt-2 flex items-center gap-1 hover:underline"
             onClick={(e) => e.stopPropagation()}
           >
             Đánh giá
