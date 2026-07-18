@@ -173,9 +173,7 @@ export async function getDashboardStats() {
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
 
   const rangeDays = 30;
-  const startDate = new Date(now);
-  startDate.setUTCDate(now.getUTCDate() - rangeDays + 1);
-  startDate.setUTCHours(0, 0, 0, 0);
+  const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - rangeDays + 1, 0, 0, 0);
 
   const [totalUsers, activePartners, revenueResult, ordersToday, paymentsLast30Days] = await prisma.$transaction([
     prisma.user.count({ where: { role: 'CUSTOMER' } }),
