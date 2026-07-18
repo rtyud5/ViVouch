@@ -172,7 +172,12 @@ export async function getDashboardStats() {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
 
-  const [totalUsers, activePartners, revenueResult, ordersToday] = await prisma.$transaction([
+  const rangeDays = 30;
+  const startDate = new Date(now);
+  startDate.setUTCDate(now.getUTCDate() - rangeDays + 1);
+  startDate.setUTCHours(0, 0, 0, 0);
+
+  const [totalUsers, activePartners, revenueResult, ordersToday, paymentsLast30Days] = await prisma.$transaction([
     prisma.user.count({ where: { role: 'CUSTOMER' } }),
     prisma.partner.count({ where: { status: 'APPROVED' } }),
     prisma.payment.aggregate({
@@ -187,11 +192,40 @@ export async function getDashboardStats() {
         createdAt: { gte: startOfToday, lt: endOfToday },
       },
     }),
+    prisma.payment.findMany({
+      where: {
+        createdAt: { gte: startDate },
+        status: 'PAID',
+      },
+      select: { amount: true, createdAt: true },
+    })
   ]);
 
   const revenueThisMonth = Number(revenueResult._sum.amount?.toString() ?? '0');
 
-  return { totalUsers, activePartners, revenueThisMonth, ordersToday };
+  const pad = (n) => n.toString().padStart(2, '0');
+  const formatDateForChart = (date) => `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}`;
+
+  const dailyDataMap = new Map();
+  for (let i = 0; i < rangeDays; i++) {
+    const d = new Date(startDate);
+    d.setUTCDate(startDate.getUTCDate() + i);
+    dailyDataMap.set(formatDateForChart(d), 0);
+  }
+
+  for (const payment of paymentsLast30Days) {
+    const dateStr = formatDateForChart(payment.createdAt);
+    if (dailyDataMap.has(dateStr)) {
+      dailyDataMap.set(dateStr, dailyDataMap.get(dateStr) + Number(payment.amount.toString()));
+    }
+  }
+
+  const revenueByDay = Array.from(dailyDataMap.entries()).map(([date, revenue]) => ({
+    date,
+    revenue,
+  }));
+
+  return { totalUsers, activePartners, revenueThisMonth, ordersToday, revenueByDay };
 }
 
 export async function rejectVoucher(adminId, voucherId, reason) {

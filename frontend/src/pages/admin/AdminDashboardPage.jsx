@@ -58,36 +58,6 @@ const formatCompact = (n) => {
 
 /* ─────────────────── Chart mock data (revenue chart — no API yet) ── */
 
-// TODO: replace mock data with API /api/admin/stats/revenue?days=30
-/** Simple seeded PRNG (mulberry32) — deterministic, NOT for crypto use */
-const seededRandom = (seed) => {
-  let s = seed | 0;
-  return () => {
-    s = (s + 0x6d2b79f5) | 0;
-    let t = Math.imul(s ^ (s >>> 15), 1 | s);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4_294_967_296;
-  };
-};
-
-const generateRevenueData = () => {
-  const data = [];
-  const now = new Date();
-  const rand = seededRandom(42);
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    data.push({
-      date: `${dd}/${mm}`,
-      revenue: Math.floor(rand() * 3_000_000) + 500_000,
-    });
-  }
-  return data;
-};
-const revenueData = generateRevenueData();
-
 /** Format relative time from a Date for display */
 const formatTimeAgo = (dateStr) => {
   if (!dateStr) return '';
@@ -410,9 +380,6 @@ export default function AdminDashboardPage() {
                 style={{ fontSize: 18, lineHeight: '28px', color: T.onSurface }}
               >
                 Doanh thu (30 ngày qua)
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ background: T.surfaceContainerHigh, color: T.onSurfaceVariant }}>
-                  Dữ liệu mẫu
-                </span>
               </h2>
               <button
                 type="button"
@@ -425,9 +392,11 @@ export default function AdminDashboardPage() {
               </button>
             </div>
             <div className="h-[280px]">
-              {/* TODO: replace mock data with API /api/admin/stats/revenue?days=30 */}
+              {isLoading ? (
+                <div className="w-full h-full animate-pulse bg-base-200 rounded-lg"></div>
+              ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={revenueData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <BarChart data={stats?.revenueByDay || []} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.surfaceContainerHigh} vertical={false} />
                   <XAxis
                     dataKey="date"
@@ -449,12 +418,13 @@ export default function AdminDashboardPage() {
                     radius={[3, 3, 0, 0]}
                     maxBarSize={20}
                   >
-                    {revenueData.map((_, index) => (
+                    {(stats?.revenueByDay || []).map((_, index) => (
                       <Cell key={`bar-${index}`} fill={getBarFill(index)} />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
+              )}
             </div>
           </div>
         </section>
