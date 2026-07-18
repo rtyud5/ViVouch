@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { formatDate } from '../../utils/formatDate';
 
 const STATUS_CONFIG = {
@@ -66,6 +67,7 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
   const voucherTitle = voucher?.title || voucher?.name || 'Voucher';
   const voucherImage = voucher?.imageUrl || voucher?.image || 'https://placehold.co/100x100';
   const partnerName = voucher?.partner?.businessName || voucher?.partner?.name || 'Đối tác';
+  const voucherId = voucher?.id || voucherCode?.voucherId;
 
   const handleClick = () => {
     if (isUsable && onOpenQR) {
@@ -119,10 +121,21 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
             <p className={`font-body-md text-[11px] font-medium flex items-center gap-1 shrink-0 ${upperStatus === 'EXPIRED' ? 'text-error' : 'text-on-surface-variant'}`}>
               <span className="material-symbols-outlined text-[12px]">timer</span> HSD: {formatDate(displayExpiry)}
             </p>
-            <div className="flex items-center gap-1.5 bg-surface-container-low border border-outline-variant/30 rounded px-1.5 py-1 min-w-0">
-              <span className={`font-mono text-[12px] font-bold tracking-widest truncate ${isUsable ? 'text-primary' : 'text-on-surface-variant'}`}>{code}</span>
-              <span className={`material-symbols-outlined text-[14px] shrink-0 ${isUsable ? 'text-primary' : 'text-on-surface-variant'}`}>qr_code_2</span>
-            </div>
+            {upperStatus === 'USED' && voucherId ? (
+              <Link 
+                to={`/vouchers/${voucherId}#reviews-section`}
+                className="flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 rounded px-2 py-1 min-w-0 hover:bg-primary/20 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="font-label-md text-[12px] font-bold">Đánh giá</span>
+                <span className="material-symbols-outlined text-[14px]">rate_review</span>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-surface-container-low border border-outline-variant/30 rounded px-1.5 py-1 min-w-0">
+                <span className={`font-mono text-[12px] font-bold tracking-widest truncate ${isUsable ? 'text-primary' : 'text-on-surface-variant'}`}>{code}</span>
+                <span className={`material-symbols-outlined text-[14px] shrink-0 ${isUsable ? 'text-primary' : 'text-on-surface-variant'}`}>qr_code_2</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -159,9 +172,17 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
         <div className="bg-surface px-2 py-1 rounded border border-outline-variant/30 w-full text-center truncate">
           <span className="font-mono text-[11px] font-bold tracking-widest text-on-surface">{code}</span>
         </div>
-        {isUsable && onOpenQR && (
+        {isUsable && onOpenQR ? (
           <span className="font-label-md text-[10px] text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">Sử dụng ngay</span>
-        )}
+        ) : upperStatus === 'USED' && voucherId ? (
+          <Link 
+            to={`/vouchers/${voucherId}#reviews-section`}
+            className="font-label-md text-[10px] text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Đánh giá
+          </Link>
+        ) : null}
       </div>
     </article>
   );

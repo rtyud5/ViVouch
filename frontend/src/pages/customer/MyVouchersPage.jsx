@@ -90,7 +90,7 @@ export function MyVouchersPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
           {filteredVouchers.map((vc) => (
-            <VoucherCodeCard key={vc.id} voucherCode={vc} onOpenQR={handleOpenQR} />
+            <VoucherCodeCard key={vc.code || vc.id} voucherCode={vc} onOpenQR={handleOpenQR} />
           ))}
         </div>
       )}
