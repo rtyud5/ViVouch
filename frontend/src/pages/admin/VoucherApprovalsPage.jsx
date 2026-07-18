@@ -26,7 +26,6 @@ export default function VoucherApprovalsPage() {
         setToastSuccess('Đã phê duyệt voucher thành công.');
         setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
-        refetch();
       },
       onError: (err) => {
         setToastError(err);
