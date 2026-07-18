@@ -136,7 +136,7 @@ export default function VoucherApprovalsPage() {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-        <AdminTable columns={columns} data={vouchers} loading={isLoading} onRowClick={(v) => setSelectedVoucher(v)} />
+        <AdminTable columns={columns} data={vouchers} loading={isLoading} onRowClick={(v) => setSelectedVoucher(v)} emptyMessage="Không có voucher nào trong trạng thái này." />
       </div>
 
       {/* Modal - rendered via Portal to avoid stacking context issues */}
