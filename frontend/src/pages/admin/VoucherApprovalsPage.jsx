@@ -46,7 +46,6 @@ export default function VoucherApprovalsPage() {
         setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
         setRejectReason('');
-        refetch();
       },
       onError: (err) => {
         setToastError(err);
