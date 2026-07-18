@@ -26,6 +26,7 @@ export default function VoucherApprovalsPage() {
         setToastSuccess('Đã phê duyệt voucher thành công.');
         setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
+        refetch();
       },
       onError: (err) => {
         setToastError(err);
@@ -45,6 +46,7 @@ export default function VoucherApprovalsPage() {
         setTimeout(() => setToastSuccess(''), 4000);
         setSelectedVoucher(null);
         setRejectReason('');
+        refetch();
       },
       onError: (err) => {
         setToastError(err);
@@ -136,7 +138,7 @@ export default function VoucherApprovalsPage() {
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-        <AdminTable columns={columns} data={vouchers} loading={isLoading} onRowClick={(v) => setSelectedVoucher(v)} />
+        <AdminTable columns={columns} data={vouchers} loading={isLoading} onRowClick={(v) => setSelectedVoucher(v)} emptyMessage="Không có voucher nào trong trạng thái này." />
       </div>
 
       {/* Modal - rendered via Portal to avoid stacking context issues */}
