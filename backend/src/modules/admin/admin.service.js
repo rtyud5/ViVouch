@@ -202,12 +202,12 @@ export async function getDashboardStats() {
   const revenueThisMonth = Number(revenueResult._sum.amount?.toString() ?? '0');
 
   const pad = (n) => n.toString().padStart(2, '0');
-  const formatDateForChart = (date) => `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}`;
+  const formatDateForChart = (date) => `${pad(date.getDate())}/${pad(date.getMonth() + 1)}`;
 
   const dailyDataMap = new Map();
   for (let i = 0; i < rangeDays; i++) {
     const d = new Date(startDate);
-    d.setUTCDate(startDate.getUTCDate() + i);
+    d.setDate(startDate.getDate() + i);
     dailyDataMap.set(formatDateForChart(d), 0);
   }
 
