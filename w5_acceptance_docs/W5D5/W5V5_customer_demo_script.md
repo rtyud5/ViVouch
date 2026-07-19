@@ -62,7 +62,7 @@
 ## Scene C — Customer: Quản lý Vouchers & Đơn hàng
 
 ### C1. Vouchers của tôi
-- **URL:** `/my-vouchers`
+- **URL:** `/customer/my-vouchers`
 - **Expected:** Liệt kê các mã voucher code đã mua (status = ISSUED).
 
 ### C2. Lịch sử đơn hàng
