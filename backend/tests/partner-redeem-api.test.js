@@ -181,6 +181,16 @@ describe('Partner Redeem API Tests', () => {
     expect(res.body.data.voucherTitle).toBe('Redeem API Voucher');
     expect(res.body.data.customerName).toBe('Redeem API Customer');
     expect(res.body.data.branchId).toBe(branchId);
+
+    // Direct evidence: voucherUsageLog record created in same transaction
+    const redeemedCode = await prisma.voucherCode.findUnique({ where: { code: issuedCode } });
+    expect(redeemedCode).not.toBeNull();
+    const usageLog = await prisma.voucherUsageLog.findFirst({
+      where: { voucherCodeId: redeemedCode.id },
+    });
+    expect(usageLog).not.toBeNull();
+    expect(usageLog.branchId).toBe(branchId);
+    expect(usageLog.redeemedAt).toBeInstanceOf(Date);
   });
 
   it('rejects USED code via HTTP', async () => {
