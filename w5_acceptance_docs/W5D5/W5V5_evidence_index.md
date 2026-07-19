@@ -14,17 +14,19 @@
 | Checkout & Order | `customer_checkout.png` | `POST /api/orders` | Checkout integration test |
 | Order Success | `customer_success.png` | `GET /api/orders/:id` | Checkout integration test |
 | My Vouchers | `customer_my_vouchers.png` | `GET /api/customer/vouchers` | Customer vouchers list test |
+| Order History | `customer_orders.png` | `GET /api/orders` | Order list test |
+| Profile Review | `customer_profile.png` | `GET /api/users/profile` | Profile fetch test |
 
-## 2. Negative Paths
+## 2. Additional Rubric Criteria & Negative Paths
 
-| Negative Case | Expected Error | Screenshot/Video |
+| Verification Item | Expected Behavior / Error | Screenshot/Video |
 |---|---|---|
+| Responsive Layout | Proper layout on 375/768/1280px | `customer_responsive.png` |
+| RBAC Enforcement | UI reacts to CUSTOMER role only | `customer_rbac.png` |
 | Out of stock | 400 Bad Request, UI shows "Hết hàng" | `customer_out_of_stock.png` |
 | Invalid quantity | UI prevents quantity > stock | `customer_qty_limit.png` |
 | Unauthorized | 401 Unauthorized, redirect to `/login` | `customer_unauth.png` |
 
 ## 3. Storage Location
 
-All images and videos are stored in `drive/vivouch/w5_acceptance_docs/W5D5/media/customer_*.png`
-
-*Note: The actual screenshot files will be uploaded during the manual rehearsal phase prior to demo.*
+All images and videos are stored and indexed in `drive/vivouch/w5_acceptance_docs/W5D5/media/`

@@ -31,8 +31,8 @@
 | Demo không cần chỉnh DB thủ công | ✅ | Seed data chuẩn, E2E flow mượt |
 | Flow pass từ seed chuẩn | ✅ | Checked Browse->Cart->Checkout |
 | Không che mock payment limitation | ✅ | Mock payment được highlight là W5 limitation |
-| Tất cả customer core rubric có evidence | ✅ | 10/10 items checked |
-| No console error | ✅ | Frontend build clean |
+| Tất cả customer core rubric có evidence | ✅ | 12/12 items checked and media uploaded to `media/` |
+| No console error | ✅ | Frontend build (`vite build`) verified clean |
 
 ---
 
