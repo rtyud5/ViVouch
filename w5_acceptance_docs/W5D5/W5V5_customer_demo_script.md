@@ -54,7 +54,7 @@
 - **Expected:** Chuyển sang trang Order Success.
 
 ### B4. Đặt hàng thành công
-- **URL:** `/order-success/:orderId`
+- **URL:** `/customer/order-success`
 - **Expected:** Hiển thị mã đơn hàng, trạng thái thanh toán, tổng tiền. Nút "Xem voucher của tôi".
 
 ---
