@@ -31,3 +31,14 @@ export const useRejectPartner = () => {
     },
   });
 };
+
+export const useSetPartnerStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ partnerId, status, reason }) => adminApi.setPartnerStatus(partnerId, status, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminPartners'] });
+      queryClient.invalidateQueries({ queryKey: ['adminDashboardStats'] });
+    },
+  });
+};

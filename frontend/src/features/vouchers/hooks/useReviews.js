@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getVoucherReviews, createVoucherReview } from "../api/vouchers.api";
+import { getVoucherReviews, createVoucherReview, getVoucherReviewEligibility } from "../api/vouchers.api";
 
 // Lấy danh sách đánh giá
 export function useReviews(voucherId, options = {}) {
@@ -8,6 +8,16 @@ export function useReviews(voucherId, options = {}) {
     queryKey: ["reviews", idStr],
     queryFn: () => getVoucherReviews(voucherId),
     enabled: !!voucherId,
+    ...options,
+  });
+}
+
+export function useReviewEligibility(voucherId, options = {}) {
+  const idStr = voucherId != null ? String(voucherId) : undefined;
+  return useQuery({
+    queryKey: ["reviewEligibility", idStr],
+    queryFn: () => getVoucherReviewEligibility(voucherId),
+    enabled: Boolean(voucherId),
     ...options,
   });
 }
@@ -23,6 +33,7 @@ export function useCreateReview() {
       const voucherIdStr = String(variables.voucherId);
       queryClient.invalidateQueries({ queryKey: ["reviews", voucherIdStr] });
       queryClient.invalidateQueries({ queryKey: ["voucher", voucherIdStr] });
+      queryClient.invalidateQueries({ queryKey: ["reviewEligibility", voucherIdStr] });
     },
   });
 }

@@ -36,6 +36,13 @@ const router = Router({ mergeParams: true });
  */
 router.get('/', reviewsController.getByVoucher);
 
+router.get(
+  '/eligibility',
+  verifyToken,
+  requireRole('CUSTOMER'),
+  reviewsController.getEligibility,
+);
+
 /**
  * @swagger
  * /api/vouchers/{id}/reviews:

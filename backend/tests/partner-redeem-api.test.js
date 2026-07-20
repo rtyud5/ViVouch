@@ -11,6 +11,7 @@ describe('Partner Redeem API Tests', () => {
 
   let partnerToken = '';
   let issuedCode = '';
+  let checkOnlyCode = '';
   let usedCode = '';
   let expiredCode = '';
   let wrongPartnerCode = '';
@@ -149,6 +150,7 @@ describe('Partner Redeem API Tests', () => {
     };
 
     issuedCode = await createCode('API-ISSUED', rightVoucher.id, VOUCHER_CODE_STATUS.ISSUED);
+    checkOnlyCode = await createCode('API-CHECK-ONLY', rightVoucher.id, VOUCHER_CODE_STATUS.ISSUED);
     usedCode = await createCode('API-USED', rightVoucher.id, VOUCHER_CODE_STATUS.USED, { usedAt: new Date() });
     expiredCode = await createCode('API-EXPIRED', rightVoucher.id, VOUCHER_CODE_STATUS.EXPIRED, {
       expiresAt: new Date(Date.now() - 100000),
@@ -166,13 +168,28 @@ describe('Partner Redeem API Tests', () => {
   });
 
   it('returns 401 without token', async () => {
-    const res = await request(app).post('/api/partner/redeem').send({ code: issuedCode });
+    const res = await request(app).post('/api/partner/redeem/check').send({ code: issuedCode, branchId });
     expect(res.status).toBe(401);
+  });
+
+  it('checks a code without consuming it via HTTP', async () => {
+    const res = await request(app)
+      .post('/api/partner/redeem/check')
+      .set('Authorization', `Bearer ${partnerToken}`)
+      .send({ code: checkOnlyCode, branchId });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.code).toBe(checkOnlyCode);
+    expect(res.body.data.voucherTitle).toBe('Redeem API Voucher');
+
+    const unchanged = await prisma.voucherCode.findUnique({ where: { code: checkOnlyCode } });
+    expect(unchanged.status).toBe(VOUCHER_CODE_STATUS.ISSUED);
+    expect(unchanged.usedAt).toBeNull();
   });
 
   it('redeems an ISSUED code via HTTP', async () => {
     const res = await request(app)
-      .post('/api/partner/redeem')
+      .post('/api/partner/redeem/confirm')
       .set('Authorization', `Bearer ${partnerToken}`)
       .send({ code: issuedCode, branchId });
 

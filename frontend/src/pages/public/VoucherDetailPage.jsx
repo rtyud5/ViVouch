@@ -9,7 +9,7 @@ import { ReviewList } from "../../components/voucher/ReviewList";
 import { WriteReviewForm } from "../../components/voucher/WriteReviewForm";
 import { useAuthStore } from "../../stores/authStore";
 import { useCart } from "../../features/cart/hooks/useCart";
-import { useReviews, useCreateReview } from "../../features/vouchers/hooks/useReviews";
+import { useReviews, useCreateReview, useReviewEligibility } from "../../features/vouchers/hooks/useReviews";
 import { apiClient } from "../../services/apiClient";
 
 export function VoucherDetailPage() {
@@ -17,10 +17,14 @@ export function VoucherDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const currentUser = useAuthStore((state) => state.user);
   const { addToCart } = useCart();
 
   const query = useVoucherDetail(id);
   const reviewsQuery = useReviews(id);
+  const eligibilityQuery = useReviewEligibility(id, {
+    enabled: Boolean(id && isAuthenticated && currentUser?.role === "CUSTOMER"),
+  });
   const { mutateAsync: createReview, isPending: isSubmittingReview } = useCreateReview();
   const voucherResponse = query.data?.data || query.data;
 
@@ -281,8 +285,12 @@ export function VoucherDetailPage() {
 
           <div id="reviews-section" className="flex flex-col gap-2 mt-4 scroll-mt-24">
             <WriteReviewForm
-              eligibility={isAuthenticated ? (voucher?.userEligibility || "NOT_ELIGIBLE") : "NOT_ELIGIBLE"}
-              message={isAuthenticated ? "Bạn cần sử dụng voucher này để có thể đánh giá." : "Vui lòng đăng nhập để đánh giá."}
+              eligibility={eligibilityQuery.data?.data?.eligibility || "NOT_ELIGIBLE"}
+              message={
+                !isAuthenticated
+                  ? "Vui lòng đăng nhập để đánh giá."
+                  : eligibilityQuery.data?.data?.message || "Đang kiểm tra điều kiện đánh giá..."
+              }
               onSubmit={handleReviewSubmit}
               isSubmitting={isSubmittingReview}
             />

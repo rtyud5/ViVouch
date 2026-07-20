@@ -4,6 +4,8 @@ import { AppError } from '../../utils/appError.js';
 import { getApprovedPartnerByUserId, getPartnerByUserId } from '../partners/partners.service.js';
 import { canTransition } from '../../utils/stateMachine.js';
 import { VOUCHER_STATUS, voucherTransitions } from '../../constants/statuses.js';
+import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
+import * as auditLog from '../auditLogs/auditLog.service.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -78,7 +80,7 @@ function mapVoucherSummary(v, avgRating) {
 
 export async function findMany(filters) {
   try {
-    const { page, limit, keyword, categoryId, city, minPrice, maxPrice, minDiscount, sort } = filters;
+    const { page, limit, keyword, categoryId, city, partner, minPrice, maxPrice, minDiscount, sort } = filters;
 
     const conditions = [
       Prisma.sql`v.status = 'ON_SALE'`,
@@ -99,6 +101,13 @@ export async function findMany(filters) {
       JOIN "Branch" b ON vb."branchId" = b.id
       WHERE vb."voucherId" = v.id AND b."isActive" = true AND b.city ILIKE ${'%' + city + '%'}
     )`);
+    }
+    if (partner) {
+      conditions.push(Prisma.sql`EXISTS (
+        SELECT 1 FROM "Partner" partner_filter
+        WHERE partner_filter.id = v."partnerId"
+          AND partner_filter."businessName" ILIKE ${'%' + partner + '%'}
+      )`);
     }
     if (minPrice !== undefined) conditions.push(Prisma.sql`v."salePrice" >= ${minPrice}`);
     if (maxPrice !== undefined) conditions.push(Prisma.sql`v."salePrice" <= ${maxPrice}`);
@@ -270,14 +279,9 @@ export async function createVoucher(userId, data) {
       },
     });
 
-    await tx.auditLog.create({
-      data: {
-        actorId: userId,
-        action: 'CREATE_VOUCHER',
-        targetType: 'Voucher',
-        targetId: voucher.id,
-      },
-    });
+    await auditLog.log(userId, AUDIT_ACTIONS.PARTNER_CREATE_VOUCHER, 'Voucher', voucher.id, {
+      newValues: { status: VOUCHER_STATUS.DRAFT },
+    }, tx);
 
     return voucher;
   });
@@ -367,14 +371,10 @@ export async function submitVoucher(userId, voucherId) {
         data: { status: VOUCHER_STATUS.PENDING_APPROVAL },
       });
 
-      await tx.auditLog.create({
-        data: {
-          actorId: userId,
-          action: 'SUBMIT_VOUCHER',
-          targetType: 'Voucher',
-          targetId: voucherId,
-        },
-      });
+      await auditLog.log(userId, AUDIT_ACTIONS.PARTNER_SUBMIT_VOUCHER, 'Voucher', voucherId, {
+        previousStatus: voucher.status,
+        newStatus: VOUCHER_STATUS.PENDING_APPROVAL,
+      }, tx);
 
       return updatedVoucher;
     });

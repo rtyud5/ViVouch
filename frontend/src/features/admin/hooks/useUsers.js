@@ -19,3 +19,11 @@ export const useToggleUserLock = () => {
     },
   });
 };
+
+export const useAssignUserRole = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, role }) => adminApi.assignUserRole(userId, role),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['adminUsers'] }),
+  });
+};

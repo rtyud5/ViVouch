@@ -8,11 +8,16 @@ const AUDIT_ACTIONS = {
   ADMIN_REJECT_VOUCHER: "ADMIN_REJECT_VOUCHER",
   ADMIN_LOCK_USER: "ADMIN_LOCK_USER",
   ADMIN_UNLOCK_USER: "ADMIN_UNLOCK_USER",
-  PARTNER_CREATE_VOUCHER: "PARTNER_CREATE_VOUCHER",
-  PARTNER_SUBMIT_VOUCHER: "PARTNER_SUBMIT_VOUCHER",
+  PARTNER_CREATE_VOUCHER: "CREATE_VOUCHER",
+  PARTNER_SUBMIT_VOUCHER: "SUBMIT_VOUCHER",
   CUSTOMER_CHECKOUT: "CUSTOMER_CHECKOUT",
   SYSTEM_ISSUE_VOUCHER_CODE: "SYSTEM_ISSUE_VOUCHER_CODE",
-  PARTNER_REDEEM_VOUCHER: "PARTNER_REDEEM_VOUCHER"
+  PARTNER_REDEEM_VOUCHER: "PARTNER_REDEEM_VOUCHER",
+  ADMIN_ASSIGN_ROLE: "ADMIN_ASSIGN_ROLE",
+  ADMIN_SUSPEND_PARTNER: "ADMIN_SUSPEND_PARTNER",
+  ADMIN_REACTIVATE_PARTNER: "ADMIN_REACTIVATE_PARTNER",
+  ADMIN_CANCEL_ORDER: "ADMIN_CANCEL_ORDER",
+  ADMIN_MANAGE_CONTENT: "ADMIN_MANAGE_CONTENT"
 };
 
 const ACTION_LABELS = {
@@ -25,7 +30,12 @@ const ACTION_LABELS = {
   [AUDIT_ACTIONS.PARTNER_CREATE_VOUCHER]: "Tạo voucher",
   [AUDIT_ACTIONS.PARTNER_SUBMIT_VOUCHER]: "Gửi duyệt voucher",
   [AUDIT_ACTIONS.CUSTOMER_CHECKOUT]: "Đặt hàng",
-  [AUDIT_ACTIONS.PARTNER_REDEEM_VOUCHER]: "Đổi mã voucher"
+  [AUDIT_ACTIONS.PARTNER_REDEEM_VOUCHER]: "Đổi mã voucher",
+  [AUDIT_ACTIONS.ADMIN_ASSIGN_ROLE]: "Gán vai trò",
+  [AUDIT_ACTIONS.ADMIN_SUSPEND_PARTNER]: "Tạm ngưng đối tác",
+  [AUDIT_ACTIONS.ADMIN_REACTIVATE_PARTNER]: "Kích hoạt lại đối tác",
+  [AUDIT_ACTIONS.ADMIN_CANCEL_ORDER]: "Hủy/hoàn tiền đơn",
+  [AUDIT_ACTIONS.ADMIN_MANAGE_CONTENT]: "Quản trị nội dung"
 };
 
 const ACTION_COLORS = {
@@ -48,7 +58,7 @@ const getBadgeStyle = (action) => {
 };
 
 export default function AuditLogsPage() {
-  const [params, setParams] = useState({ page: 1, limit: 20, action: '' });
+  const [params, setParams] = useState({ page: 1, limit: 20, action: '', dateFrom: '', dateTo: '' });
   const { data, isLoading } = useAuditLogs(params);
   
   const logs = data?.data?.logs || [];
@@ -64,17 +74,19 @@ export default function AuditLogsPage() {
       <div className="mb-6 flex flex-col gap-4">
         <h1 className="text-2xl font-bold text-[#0b1c30]">Nhật ký hệ thống</h1>
         
-        <div className="flex bg-white p-3 rounded border border-gray-200 shadow-sm">
+        <div className="flex flex-wrap gap-3 bg-white p-3 rounded border border-gray-200 shadow-sm">
           <select
             value={params.action}
             onChange={(e) => setParams(p => ({ ...p, action: e.target.value, page: 1 }))}
             className="pl-3 pr-8 py-1.5 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:border-amber-500 min-w-[200px]"
           >
             <option value="">Tất cả thao tác</option>
-            {Object.keys(AUDIT_ACTIONS).map(action => (
+            {Object.values(AUDIT_ACTIONS).map(action => (
               <option key={action} value={action}>{ACTION_LABELS[action] || action}</option>
             ))}
           </select>
+          <input type="date" value={params.dateFrom} onChange={(event) => setParams((current) => ({ ...current, dateFrom: event.target.value, page: 1 }))} className="input input-bordered input-sm" aria-label="Từ ngày" />
+          <input type="date" value={params.dateTo} onChange={(event) => setParams((current) => ({ ...current, dateTo: event.target.value, page: 1 }))} className="input input-bordered input-sm" aria-label="Đến ngày" />
         </div>
       </div>
 
@@ -92,7 +104,7 @@ export default function AuditLogsPage() {
                   <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Người thực hiện</th>
                   <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Thao tác</th>
                   <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Mục tiêu</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Chi tiết metadata</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Chi tiết thay đổi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm">
@@ -121,8 +133,8 @@ export default function AuditLogsPage() {
                       {log.targetType} <span className="text-gray-400">|</span> {log.targetId?.split('-')[0] || 'N/A'}
                     </td>
                     <td className="px-4 py-3 text-gray-500 text-xs">
-                      <pre className="max-w-xs truncate overflow-hidden bg-gray-50 p-1 rounded border border-gray-100" title={JSON.stringify(log.metadata)}>
-                        {JSON.stringify(log.metadata)}
+                      <pre className="max-w-xs truncate overflow-hidden bg-gray-50 p-1 rounded border border-gray-100" title={JSON.stringify({ old: log.oldValues, new: log.newValues, metadata: log.metadata, ip: log.ipAddress })}>
+                        {JSON.stringify({ old: log.oldValues, new: log.newValues, ip: log.ipAddress })}
                       </pre>
                     </td>
                   </tr>

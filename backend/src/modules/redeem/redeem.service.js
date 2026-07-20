@@ -2,6 +2,7 @@ import { prisma } from '../../config/prisma.js';
 import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
 import { VOUCHER_CODE_STATUS } from '../../constants/statuses.js';
 import { AppError } from '../../utils/appError.js';
+import * as auditLog from '../auditLogs/auditLog.service.js';
 
 function assertRedeemable(voucherCode, now = new Date()) {
   if (voucherCode.status === VOUCHER_CODE_STATUS.USED) {
@@ -25,14 +26,14 @@ function assertRedeemable(voucherCode, now = new Date()) {
   }
 }
 
-export async function redeemCode(partnerUserId, code, branchId) {
-  const partner = await prisma.partner.findUnique({ where: { userId: partnerUserId } });
+async function getPartnerAndVoucherCode(partnerUserId, code, db = prisma) {
+  const partner = await db.partner.findUnique({ where: { userId: partnerUserId } });
 
   if (!partner || partner.status !== 'APPROVED') {
     throw new AppError('Tài khoản đối tác chưa được kích hoạt hoặc đã bị khoá', 403, 'FORBIDDEN');
   }
 
-  const voucherCode = await prisma.voucherCode.findUnique({
+  const voucherCode = await db.voucherCode.findUnique({
     where: { code },
     include: {
       voucher: { select: { partnerId: true, title: true } },
@@ -47,6 +48,57 @@ export async function redeemCode(partnerUserId, code, branchId) {
   if (voucherCode.voucher.partnerId !== partner.id) {
     throw new AppError('Bạn không có quyền xác thực mã này', 403, 'FORBIDDEN');
   }
+
+  return { partner, voucherCode };
+}
+
+async function getRedeemBranch(db, partnerId, voucherId, branchId) {
+  const branch = await db.branch.findFirst({
+    where: {
+      id: branchId,
+      partnerId,
+      isActive: true,
+      voucherBranches: { some: { voucherId } },
+    },
+    select: { id: true, name: true },
+  });
+
+  if (!branch) {
+    throw new AppError(
+      'Chi nhánh không hoạt động hoặc voucher không áp dụng tại chi nhánh này',
+      403,
+      'INVALID_BRANCH_SCOPE',
+    );
+  }
+
+  return branch;
+}
+
+/**
+ * Validates a voucher code without changing its state. This is deliberately
+ * separate from confirmation so partner staff can verify the customer and
+ * branch before consuming the voucher.
+ */
+export async function checkCode(partnerUserId, code, branchId) {
+  const checkedAt = new Date();
+  const { partner, voucherCode } = await getPartnerAndVoucherCode(partnerUserId, code);
+
+  assertRedeemable(voucherCode, checkedAt);
+  const branch = await getRedeemBranch(prisma, partner.id, voucherCode.voucherId, branchId);
+
+  return {
+    code: voucherCode.code,
+    voucherTitle: voucherCode.voucher.title,
+    customerName: voucherCode.owner.fullName,
+    branchId: branch.id,
+    branchName: branch.name,
+    expiresAt: voucherCode.expiresAt?.toISOString() ?? null,
+    checkedAt: checkedAt.toISOString(),
+  };
+}
+
+export async function redeemCode(partnerUserId, code, branchId) {
+  const { partner, voucherCode } = await getPartnerAndVoucherCode(partnerUserId, code);
 
   assertRedeemable(voucherCode);
 
@@ -69,23 +121,7 @@ export async function redeemCode(partnerUserId, code, branchId) {
 
     assertRedeemable(lockedVoucherCode, redeemedAt);
 
-    redeemedBranch = await tx.branch.findFirst({
-      where: {
-        id: branchId,
-        partnerId: partner.id,
-        isActive: true,
-        voucherBranches: { some: { voucherId: voucherCode.voucherId } },
-      },
-      select: { id: true, name: true },
-    });
-
-    if (!redeemedBranch) {
-      throw new AppError(
-        'Chi nhánh không hoạt động hoặc voucher không áp dụng tại chi nhánh này',
-        403,
-        'INVALID_BRANCH_SCOPE',
-      );
-    }
+    redeemedBranch = await getRedeemBranch(tx, partner.id, voucherCode.voucherId, branchId);
 
     const updated = await tx.voucherCode.updateMany({
       where: {
@@ -115,19 +151,13 @@ export async function redeemCode(partnerUserId, code, branchId) {
       },
     });
 
-    await tx.auditLog.create({
-      data: {
-        actorId: partner.userId,
-        action: AUDIT_ACTIONS.PARTNER_REDEEM_VOUCHER,
-        targetType: 'VoucherCode',
-        targetId: voucherCode.id,
-        metadata: {
-          code: voucherCode.code,
-          branchId: redeemedBranch.id,
-          redeemedAt,
-        },
-      },
-    });
+    await auditLog.log(partner.userId, AUDIT_ACTIONS.PARTNER_REDEEM_VOUCHER, 'VoucherCode', voucherCode.id, {
+      code: voucherCode.code,
+      branchId: redeemedBranch.id,
+      redeemedAt,
+      oldValues: { status: VOUCHER_CODE_STATUS.ISSUED },
+      newValues: { status: VOUCHER_CODE_STATUS.USED, usedAt: redeemedAt },
+    }, tx);
   }, {
     timeout: 10000,
   });
@@ -140,3 +170,5 @@ export async function redeemCode(partnerUserId, code, branchId) {
     redeemedAt: redeemedAt.toISOString(),
   };
 }
+
+export const confirmCode = redeemCode;

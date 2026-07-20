@@ -11,6 +11,11 @@ const SORT_TO_API = {
 export function buildVoucherQueryParams({
   keyword,
   category,
+  city,
+  partner,
+  minPrice,
+  maxPrice,
+  minDiscount,
   sort,
   page = 1,
   limit = 8,
@@ -35,6 +40,22 @@ export function buildVoucherQueryParams({
       // Dùng nil UUID hợp lệ để API trả về kết quả rỗng thay vì tải tất cả danh mục.
       params.categoryId = "00000000-0000-0000-0000-000000000000";
     }
+  }
+
+  if (typeof city === "string" && city.trim()) params.city = city.trim();
+  if (typeof partner === "string" && partner.trim()) params.partner = partner.trim();
+
+  const normalizedMinPrice = Number(minPrice);
+  const normalizedMaxPrice = Number(maxPrice);
+  const normalizedDiscount = Number(minDiscount);
+  if (minPrice !== "" && minPrice != null && Number.isFinite(normalizedMinPrice) && normalizedMinPrice >= 0) {
+    params.minPrice = normalizedMinPrice;
+  }
+  if (maxPrice !== "" && maxPrice != null && Number.isFinite(normalizedMaxPrice) && normalizedMaxPrice >= 0) {
+    params.maxPrice = normalizedMaxPrice;
+  }
+  if (minDiscount !== "" && minDiscount != null && Number.isFinite(normalizedDiscount) && normalizedDiscount >= 0) {
+    params.minDiscount = Math.min(100, normalizedDiscount);
   }
 
   return params;

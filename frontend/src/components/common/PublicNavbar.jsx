@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../../stores/authStore";
 import { useCart } from "../../features/cart/hooks/useCart";
+import { logoutSession } from "../../features/auth/api/auth.api";
 
 /**
  * PublicNavbar
@@ -18,6 +19,7 @@ export function PublicNavbar() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
   const queryClient = useQueryClient();
 
   const isCustomer = user?.role === "CUSTOMER";
@@ -37,10 +39,14 @@ export function PublicNavbar() {
   }
 
   /** Đăng xuất: xóa state + về trang chủ */
-  function handleLogout() {
-    clearAuth();
-    queryClient.clear();
-    navigate("/");
+  async function handleLogout() {
+    try {
+      await logoutSession(refreshToken);
+    } finally {
+      clearAuth();
+      queryClient.clear();
+      navigate("/");
+    }
   }
 
   return (

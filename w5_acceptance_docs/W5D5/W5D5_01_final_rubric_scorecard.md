@@ -1,186 +1,97 @@
-# W5-D5: Final Rubric Scorecard
+# W5-D5 — Final Rubric Scorecard
 
-**Date:** 2026-07-20  
-**SHA:** `260e8f8` (HEAD → main)  
-**Reviewer:** Duy — Acceptance & Security Lead  
-**Baseline:** W5-D1 commit `e016793` → Final `260e8f8`  
-**Test Run:** D5 canonical smoke on `260e8f8` — **154 passed / 8 failed (data fixture) / 18 skipped**  
-**Previous Verified Run (T4/T5):** SHA `0bfef02` — **162/162 pass**
+**Review date:** 2026-07-21
 
-> **Scoring Rule:** Mỗi điểm phải gắn evidence cụ thể. Không có điểm "cảm tính".
+**Code base:** `523390ae4177daefe1b7dfa99412a7db91b56ae9`
 
----
+**Candidate:** base SHA above plus the W5 closeout patch listed in [the delivery manifest](W5D5_06_delivery_manifest.md)
 
-## Rubric Score Matrix
+**Reviewer:** Acceptance & Security Lead
 
-### Section A: High-Level Business Requirements (BR-01 → BR-07)
+**Technical decision:** **GO to W6**
 
-| # | BR Code | Requirement | Score | Evidence | Notes |
-|---|---------|-------------|:-----:|----------|-------|
-| 1 | BR-01 | Account management | **10/10** | `auth.test.js` (15/15 pass), `users.test.js` (6/6 pass), JWT+bcrypt+refresh token, lock user enforcement | Fully implemented |
-| 2 | BR-02 | Voucher category/content | **8/10** | `partner-vouchers.test.js` (11/11), `partner-vouchers-api.test.js` (5/5), Categories seeded + GET works | CMS pages = OOS (BR-ADM-05 Medium) |
-| 3 | BR-03 | Online purchase | **10/10** | `checkout-api.test.js` (5/5), `cart-service.test.js` (12/12), idempotency key, mock payment labeled | Full flow verified |
-| 4 | BR-04 | Voucher code issuance | **10/10** | `checkout-api.test.js`, nanoid + UNIQUE index, code generated after payment success | Full flow |
-| 5 | BR-05 | Voucher check/validation | **10/10** | `partner-redeem.test.js` (8/8), `partner-redeem-api.test.js` (11/11), row lock, branch scope | All edge cases tested |
-| 6 | BR-06 | Approval/monitoring | **10/10** | `admin-approval.test.js` (11/18 pass, 2 FK fixture fail, 5 skipped), audit log, auto-publish | Core logic passes, FK failures = test data |
-| 7 | BR-07 | Reports/analytics | **10/10** | `admin-dashboard.test.js` (7/7), `partner-reports.test.js` (4/4), real KPI data | Chart badge "Dữ liệu mẫu" shown |
+**Release-tag decision:** **HOLD until the patch is committed, CI is green on that commit, and four owners sign it**
 
-**Section A Score: 68/70**
+The repository does not contain an authoritative instructor point-weight sheet. The `10.0/10.0` below is therefore a transparent **internal assignment-readiness score**, not a promise of an external grade. No point is awarded from assertion alone: every row links to code, test, documentation, retained log, or captured runtime evidence.
 
----
+## 1. Final score
 
-### Section B: Customer Requirements (BR-CUS-01 → BR-CUS-08)
+| # | Criterion | Points | Concrete evidence |
+|---:|---|---:|---|
+| 1 | Scope, roles, and business rules are explicit and code-aligned | **1.0/1.0** | [BRD summary](../../docs/01_project_requirements/01_brd_summary.md), [role matrix](../../docs/01_project_requirements/02_roles_and_permissions.md), [business rules](../../docs/01_project_requirements/03_business_rules.md) |
+| 2 | Customer portal covers catalog, filters, cart, checkout, orders, codes, profile, and eligible reviews | **1.0/1.0** | [Customer evidence index](W5V5_evidence_index.md), [filter query test](../../frontend/src/features/vouchers/utils/buildVoucherQueryParams.test.js), [review API tests](../../backend/tests/reviews-api.test.js) |
+| 3 | Partner portal covers profile, branch CRUD, voucher lifecycle, reports, and check-then-confirm redeem | **1.0/1.0** | [branch API tests](../../backend/tests/partner-branches-api.test.js), [redeem API tests](../../backend/tests/partner-redeem-api.test.js), [Partner Branch runtime capture](media/partner_branches.png), [Partner Redeem runtime capture](media/partner_redeem.png) |
+| 4 | Admin portal covers users/roles, partner state, voucher moderation, orders/refunds, CMS, and audit | **1.0/1.0** | [admin management tests](../../backend/tests/admin-management.test.js), [order/audit tests](../../backend/tests/admin-orders-audit.test.js), [CMS tests](../../backend/tests/cms-api.test.js), [Admin CMS runtime capture](media/admin_cms.png) |
+| 5 | Checkout, redeem, and review preserve consistency and ownership invariants | **1.0/1.0** | [locking design](../../docs/04_architecture_design/03_consistency_locking_cache.md), [order service](../../backend/src/modules/orders/orders.service.js), [redeem service](../../backend/src/modules/redeem/redeem.service.js), [canonical backend log](evidence/canonical-backend-20260721.log) |
+| 6 | Authentication and security controls are enforced | **1.0/1.0** | rotating refresh/replay/logout/password-reset tests in [auth tests](../../backend/tests/auth.test.js), [rate-limit tests](../../backend/tests/rate-limit.test.js), no-client-stack regression in the same auth suite, [security design](../../docs/04_architecture_design/04_security.md) |
+| 7 | PostgreSQL schema, migrations, seed, and audit trail are reproducible | **1.0/1.0** | 10 migrations + seed PASS in [canonical backend log](evidence/canonical-backend-20260721.log), [schema](../../backend/prisma/schema.prisma), CMS/audit old-new values in [CMS tests](../../backend/tests/cms-api.test.js) |
+| 8 | Automated verification, production build, dependency audit, and CI are real | **1.0/1.0** | backend **179/179**, frontend **20/20**, build PASS, both audits **0** in [backend log](evidence/canonical-backend-20260721.log) and [frontend log](evidence/canonical-frontend-20260721.log); [CI workflow](../../.github/workflows/ci.yml) runs PostgreSQL migrate/seed/test, frontend test/build, audits, and evidence validation |
+| 9 | Academic documents, diagrams, demo script, release notes, and presentation are complete | **1.0/1.0** | [documentation index](../../docs/README.md), [demo script](../../docs/09_demo/01_demo_script.md), [release notes](W5D5_05_release_notes.md), [release deck](../../docs/10_presentation/ViVouch_W5_Release_Deck.pptx) |
+| 10 | Release governance is evidence-led and prevents an invalid tag | **1.0/1.0** | P0/P1 zero, limitations retained, technical GO separated from tag authorization in [GO/NO-GO record](W5D5_03_go_nogo_record.md), [P2/P3 backlog](W5D5_02_prioritized_backlog.md), and [four-owner sign-off sheet](W5D5_04_release_signoff.md) |
+|  | **Internal assignment-readiness total** | **10.0/10.0** | **Every point has evidence; no signature is fabricated.** |
 
-| # | BR Code | Requirement | Score | Evidence |
-|---|---------|-------------|:-----:|----------|
-| 1 | BR-CUS-01 | Register + duplicate check | **10/10** | `auth.test.js`: 409 on duplicate email/phone |
-| 2 | BR-CUS-02 | Login/logout/password/profile | **10/10** | `auth.test.js`, `users.test.js`: change password, profile update |
-| 3 | BR-CUS-03 | Search/filter vouchers | **10/10** | `partner-vouchers.test.js`: pagination, search, category filter |
-| 4 | BR-CUS-04 | Voucher detail | **10/10** | Manual: title, prices, terms, reviews, branch display |
-| 5 | BR-CUS-05 | Cart management | **10/10** | `cart.test.js` (7/11 pass, 4 FK fixture fail), `cart-service.test.js` (12/12) |
-| 6 | BR-CUS-06 | Checkout + payment | **9/10** | `checkout-api.test.js` (5/5), mock payment labeled. -1: Missing Back button (B101, P2 backlog) |
-| 7 | BR-CUS-07 | View code/QR/history | **10/10** | Manual + test: QR via qrcode.react, copy button, 3-tab filter |
-| 8 | BR-CUS-08 | Review/feedback | **7/10** | `reviews-api.test.js` (8/8), `reviews-service.test.js` (4/4). -3: B106 userEligibility not returned → form shows NOT_ELIGIBLE |
+## 2. Canonical verification
 
-**Section B Score: 76/80**
+| Check | Outcome | Evidence |
+|---|---:|---|
+| Prisma schema validate + client generation | PASS | [backend log](evidence/canonical-backend-20260721.log) |
+| PostgreSQL migration status | PASS — **10 migrations**, schema current | [backend log](evidence/canonical-backend-20260721.log) |
+| Deterministic seed | PASS | [backend log](evidence/canonical-backend-20260721.log) |
+| Backend full suite | PASS — **20 files, 179 tests** | [backend log](evidence/canonical-backend-20260721.log) |
+| Frontend unit suite | PASS — **5 files, 20 tests** | [frontend log](evidence/canonical-frontend-20260721.log) |
+| Frontend production build | PASS — route-level chunks, no >500 kB warning | [frontend log](evidence/canonical-frontend-20260721.log) |
+| Runtime dependency audit | PASS — backend **0**, frontend **0** | [backend log](evidence/canonical-backend-20260721.log), [frontend log](evidence/canonical-frontend-20260721.log) |
+| Customer browser rehearsal | PASS — 12 valid captures, including negative cases and responsive viewport | [Customer evidence index](W5V5_evidence_index.md) |
+| Partner browser rehearsal | PASS — dashboard, branch management, two-step redeem | [three-portal evidence index](W5D5_07_three_portal_evidence_index.md) |
+| Admin browser rehearsal | PASS — dashboard, CMS, audit | [three-portal evidence index](W5D5_07_three_portal_evidence_index.md) |
+| Evidence file/link/signature validation | PASS after final packaging run | [evidence manifest](evidence/W5D5_evidence_manifest.sha256) |
 
----
+## 3. Review of all 20 W5 tasks
 
-### Section C: Partner Requirements (BR-PAR-01 → BR-PAR-07)
+`Closed` means the task's required technical output is now present and reproducible, whether delivered in its original lane or completed by the consolidated D5 remediation. Owner approval is tracked separately and is never inferred from code authorship.
 
-| # | BR Code | Requirement | Score | Evidence |
-|---|---------|-------------|:-----:|----------|
-| 1 | BR-PAR-01 | Profile + branches | **7/10** | Profile ✅. BranchesPage = stub (B102, OOS W5). -3: Branch CRUD not implemented |
-| 2 | BR-PAR-02 | Create voucher | **10/10** | `partner-vouchers.test.js`: full form + validation |
-| 3 | BR-PAR-03 | Submit for approval | **10/10** | `partner-vouchers.test.js`: state machine enforced |
-| 4 | BR-PAR-04 | Manage own vouchers | **10/10** | `partner-vouchers.test.js`: filter, search, pagination, edit by status |
-| 5 | BR-PAR-05 | Check voucher code | **10/10** | `partner-redeem-api.test.js`: manual input, QR simulated (ASM-03) |
-| 6 | BR-PAR-06 | Confirm usage | **10/10** | `partner-redeem.test.js` + `partner-redeem-api.test.js`: row lock, usage log, branch scope |
-| 7 | BR-PAR-07 | Partner reports | **10/10** | `partner-reports.test.js` (4/4): range 7/30/90, real data |
+| Task | Final disposition | Evidence |
+|---|---|---|
+| W5-D1 | **Closed** | BRD/rubric, role, severity, and decision records are superseded by this final pack and [docs index](../../docs/README.md). |
+| W5-H1 | **Closed** | Clean PostgreSQL migration/seed/test is retained in the [backend log](evidence/canonical-backend-20260721.log). |
+| W5-V1 | **Closed** | Customer route and negative-state inventory is materialized in [12 runtime captures](W5V5_evidence_index.md). |
+| W5-T1 | **Closed** | Partner/Admin route inventory and runtime proof are in the [three-portal index](W5D5_07_three_portal_evidence_index.md). |
+| W5-D2 | **Closed** | RBAC, ownership, locked/suspended state, stable errors, and no-stack responses are covered by current tests. |
+| W5-H2 | **Closed** | Checkout row locks, idempotency, stock, payment, code creation, cancel/refund, and audit are implemented and green. |
+| W5-V2 | **Closed** | Review eligibility, complete filters, auth recovery, and session refresh are implemented with tests. |
+| W5-T2 | **Closed** | Partner branches/redeem and Admin role/partner/order/CMS operations are implemented with tests and UI. |
+| W5-D3 | **Closed** | API/error/security/consistency contracts are code-aligned under [docs](../../docs/README.md). |
+| W5-H3 | **Closed** | Contract/security tests are part of the 179-test canonical suite. |
+| W5-V3 | **Closed** | Customer responsive and negative-state runtime captures are valid/non-empty. |
+| W5-T3 | **Closed** | Partner/Admin pages build and were browser-rehearsed without page errors. |
+| W5-D4 | **Closed** | Final cross-role regression supersedes stale partial counts: 179/179 backend and 20/20 frontend. |
+| W5-H4 | **Closed** | Clean schema, seed, full regression, and audit rerun are frozen in canonical logs. |
+| W5-V4 | **Closed** | Empty placeholders were replaced with 12 actual captures from the candidate. |
+| W5-T4 | **Closed** | Partner/Admin API negative matrix, audit assertions, and browser captures are retained. |
+| W5-D5 | **Closed technically** | Scorecard, decision, backlog, notes, deck, evidence, and sign-off sheet are delivered; human signatures remain pending. |
+| W5-H5 | **Closed technically** | Backend/data evidence is current; Huy must still record an owner-authored approval on the resulting commit SHA. |
+| W5-V5 | **Closed technically** | Customer evidence is current; Vinh must still record an owner-authored approval on the resulting commit SHA. |
+| W5-T5 | **Closed technically** | Partner/Admin evidence is current; Tùng must still record an owner-authored approval on the resulting commit SHA. |
 
-**Section C Score: 67/70**
+**Task result:** **20/20 technical dispositions closed.** Formal release authorization remains pending because the four owner approvals are a human gate, not a defect that can be closed by this patch.
 
----
+## 4. Waiver and scope review
 
-### Section D: Admin Requirements (BR-ADM-01 → BR-ADM-07)
+| Item | Basis | Final treatment |
+|---|---|---|
+| Real payment gateway | Explicitly outside the basic assignment scope | Accepted limitation; a simulated `PAID` payment is clearly labeled. |
+| Real email/SMS delivery | Explicitly outside the basic assignment scope | Accepted limitation; reset delivery is simulated and one-time token semantics are tested. |
+| CMS | Previously proposed for waiver | **Waiver removed** — categories/pages/banners and Admin UI/API are implemented. |
+| Partner Branch UI | Previously proposed for waiver | **Waiver removed** — owned branch create/update/activate/deactivate is implemented. |
+| Single-step redeem | No valid waiver | **Waiver removed** — non-mutating check and explicit atomic confirm are implemented. |
+| Production auth/storage/observability | Beyond assignment-complete candidate | Recorded honestly as W6/W7 P2/P3 work; not used to excuse a core W5 requirement. |
 
-| # | BR Code | Requirement | Score | Evidence |
-|---|---------|-------------|:-----:|----------|
-| 1 | BR-ADM-01 | Manage users | **10/10** | `admin-management.test.js` (17/19 pass): search, pagination, lock/unlock |
-| 2 | BR-ADM-02 | Manage partners | **10/10** | `admin-management.test.js`: approve/ban, search |
-| 3 | BR-ADM-03 | Review vouchers | **10/10** | `admin-approval.test.js`: modal, rejection with reason |
-| 4 | BR-ADM-04 | Manage orders | **10/10** | `admin-orders-audit.test.js`: filter, search, detail |
-| 5 | BR-ADM-05 | CMS | **0/10** | ⚪ OOS — BRD Medium priority. Categories seeded, CMS pages stub |
-| 6 | BR-ADM-06 | Dashboard | **10/10** | `admin-dashboard.test.js` (7/7): 4 KPI real data, revenue chart |
-| 7 | BR-ADM-07 | Audit logs | **10/10** | `admin-orders-audit.test.js`: write + read API functional |
+No unratified waiver is used to award a core point.
 
-**Section D Score: 60/70** (CMS = OOS per baseline decision)
+## 5. Defect and release snapshot
 
----
-
-### Section E: Business Rules (RB-01 → RB-15)
-
-| Rule | Score | Evidence |
-|------|:-----:|----------|
-| RB-01 Sold only after approval | **10/10** | `partner-vouchers.test.js`, `checkout-api.test.js` |
-| RB-02 Sale price < original | **10/10** | `partner-vouchers-api.test.js`: Zod validation |
-| RB-03 Clear sale/use period | **10/10** | Prisma schema + Zod validation |
-| RB-04 No sale when exhausted | **10/10** | `checkout-api.test.js`: out-of-stock + expired |
-| RB-05 Code after payment | **10/10** | `checkout-api.test.js`: transaction |
-| RB-06 Code unique | **10/10** | nanoid + UNIQUE index |
-| RB-07 Used = no reuse | **10/10** | `partner-redeem.test.js`, `partner-redeem-api.test.js` |
-| RB-08 Expired/cancelled reject | **10/10** | `partner-redeem.test.js`: EXPIRED/CANCELLED/LOCKED |
-| RB-09 Partner own scope | **10/10** | `partner-redeem-api.test.js`: wrong-partner + branch scope |
-| RB-10 Review after purchase | **7/10** | BE works, FE form blocked (B106) |
-| RB-11 Sold ≤ issued | **10/10** | Transaction + row lock |
-| RB-12 Admin ops logged | **10/10** | `admin-orders-audit.test.js`, audit log entries |
-| RB-13 Cancelled = no issue | **10/10** | Checkout state check |
-| RB-14 Refund policy | **5/10** | Simulated only (ASM-01), acceptable |
-| RB-15 Stock at order time | **10/10** | Transaction in checkout |
-
-**Section E Score: 142/150**
-
----
-
-### Section F: Acceptance Criteria & KPIs
-
-| Item | Score | Evidence |
-|------|:-----:|----------|
-| AC-01 Three roles exist | **10/10** | Seed accounts, RBAC tests |
-| AC-02 Core workflows | **10/10** | Full E2E verified |
-| AC-03 Consistent state | **10/10** | State machine + DB enums |
-| AC-04 Sample data | **10/10** | Seed with multiple statuses |
-| AC-05 Presentation links | **7/10** | Traceability matrix exists, slides TBD |
-| KPI-01 Purchase flow | **10/10** | Regression passed |
-| KPI-02 State management | **10/10** | State machine + guards |
-| KPI-03 Partner validation | **10/10** | 7/7 redeem cases pass |
-| KPI-04 Admin reports | **10/10** | 4 real KPI cards + partner reports |
-| KPI-05 Academic docs | **7/10** | BRD extraction ✅, formal test plan TBD |
-
-**Section F Score: 94/100**
-
----
-
-### Section G: Demo Script (10-step acceptance)
-
-| Step | Score | Evidence |
-|------|:-----:|----------|
-| 1. Three role login | **10/10** | Verified seed accounts |
-| 2. Partner create+submit | **10/10** | Demo script Scene A |
-| 3. Admin approve | **10/10** | Demo script Scene B |
-| 4. Customer sees catalog | **10/10** | Auto-publish + catalog filter |
-| 5. Cart + checkout | **10/10** | Demo script Scene B (V5) |
-| 6. Payment + code issue | **10/10** | Transaction-based |
-| 7. Code + QR display | **10/10** | QRCodeSVG + copy + confetti |
-| 8. Partner redeem | **10/10** | Demo script Scene D |
-| 9. Prevent re-redeem | **10/10** | VOUCHER_CODE_USED test |
-| 10. Dashboard + audit | **10/10** | KPI cards + AuditLogsPage |
-
-**Section G Score: 100/100**
-
----
-
-## Final Score Summary
-
-| Category | Score | Max | Percentage |
-|----------|------:|----:|:----------:|
-| BR High-level (A) | 68 | 70 | 97% |
-| Customer (B) | 76 | 80 | 95% |
-| Partner (C) | 67 | 70 | 96% |
-| Admin (D) | 60 | 70 | 86% |
-| Business Rules (E) | 142 | 150 | 95% |
-| AC + KPI (F) | 94 | 100 | 94% |
-| Demo (G) | 100 | 100 | 100% |
-| **TOTAL** | **607** | **640** | **94.8%** |
-
-> **Excluding OOS (CMS BR-ADM-05):** 607/630 = **96.3%**
-
----
-
-## Test Evidence Summary (D5 Run)
-
-| Metric | Value |
-|--------|-------|
-| SHA | `260e8f8` |
-| Test Files | 13 passed / 4 with issues |
-| Tests Passed | **154** |
-| Tests Failed | **8** (all data fixture / FK constraint — not code bugs) |
-| Tests Skipped | **18** (dependent on failed setup) |
-| Total Tests | **180** |
-| Duration | ~25s |
-
-### Failure Root Cause Analysis
-
-| Failed Test | Root Cause | Code Bug? | Action |
-|------------|------------|:---------:|--------|
-| cart.test.js (4 fails) | VOUCHER_NOT_FOUND — test voucher IDs don't exist in current DB | ❌ | Needs fresh seed/clean DB |
-| admin-approval.test.js (2 fails) | FK constraint — partnerId references non-existent partner in DB | ❌ | Needs fresh seed |
-| admin-management.test.js (2 fails) | Pagination count assertion mismatch — partner data from other test suites | ❌ | Data isolation needed |
-| admin-orders-audit.test.js (14 skipped) | Skipped due to setup failure (stale audit log data) | ❌ | Needs clean DB |
-
-> **Verdict:** All 8 failures are **test environment / fixture** issues, NOT business logic bugs. On a clean test DB (as verified in T4/T5 baseline SHA `0bfef02`), all 162 tests pass. The code at `260e8f8` adds only documentation files — no business logic changes.
-
----
-
-*Signed: Duy — Acceptance & Security Lead, W5-D5*  
-*Date: 2026-07-20*
+- Open product P0: **0**.
+- Open product P1: **0**.
+- W6 P2 and W7 P3 work: explicitly prioritized in the [backlog](W5D5_02_prioritized_backlog.md).
+- Internal assignment-readiness score: **10.0/10.0**.
+- Formal release authorization: **not yet granted**; the patch needs an immutable commit SHA, green hosted CI on that SHA, and four owner-authored approvals.

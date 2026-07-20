@@ -8,36 +8,38 @@ import { CustomerLayout } from "../layouts/CustomerLayout";
 import { PartnerLayout } from "../layouts/PartnerLayout";
 import { AdminLayout } from "../layouts/AdminLayout";
 
-import { HomePage } from "../pages/public/HomePage";
-import { LoginPage } from "../pages/public/LoginPage";
-import { NotFoundPage } from "../pages/public/NotFoundPage";
-import { RegisterPage } from "../pages/public/RegisterPage";
-import { VoucherListPage } from "../pages/public/VoucherListPage";
-import { VoucherDetailPage } from "../pages/public/VoucherDetailPage";
+const lazyNamed = (loader, exportName) => React.lazy(() => loader().then((module) => ({ default: module[exportName] })));
 
-// Customer
-import { MyVouchersPage } from "../pages/customer/MyVouchersPage"
-import { ProfilePage } from "../pages/customer/ProfilePage"
-import { CartPage } from "../pages/customer/CartPage"
-import { OrdersPage as CustomerOrdersPage } from "../pages/customer/OrdersPage"
-import { CheckoutPage } from "../pages/customer/CheckoutPage"
-import { OrderSuccessPage } from "../pages/customer/OrderSuccessPage"
+const HomePage = lazyNamed(() => import("../pages/public/HomePage"), "HomePage");
+const LoginPage = lazyNamed(() => import("../pages/public/LoginPage"), "LoginPage");
+const NotFoundPage = lazyNamed(() => import("../pages/public/NotFoundPage"), "NotFoundPage");
+const RegisterPage = lazyNamed(() => import("../pages/public/RegisterPage"), "RegisterPage");
+const ForgotPasswordPage = lazyNamed(() => import("../pages/public/ForgotPasswordPage"), "ForgotPasswordPage");
+const VoucherListPage = lazyNamed(() => import("../pages/public/VoucherListPage"), "VoucherListPage");
+const VoucherDetailPage = lazyNamed(() => import("../pages/public/VoucherDetailPage"), "VoucherDetailPage");
 
-// Partner
-import { PartnerDashboardPage } from "../pages/partner/PartnerDashboardPage"
-import { CreateVoucherPage } from "../pages/partner/CreateVoucherPage"
-import { PartnerVoucherListPage } from "../pages/partner/PartnerVoucherListPage"
-import { PartnerReportsPage } from "../pages/partner/PartnerReportsPage"
-import { PartnerProfilePage } from "../pages/partner/PartnerProfilePage"
-import { RedeemVoucherPage } from "../pages/partner/RedeemVoucherPage"
+const MyVouchersPage = lazyNamed(() => import("../pages/customer/MyVouchersPage"), "MyVouchersPage");
+const ProfilePage = lazyNamed(() => import("../pages/customer/ProfilePage"), "ProfilePage");
+const CartPage = lazyNamed(() => import("../pages/customer/CartPage"), "CartPage");
+const CustomerOrdersPage = lazyNamed(() => import("../pages/customer/OrdersPage"), "OrdersPage");
+const CheckoutPage = lazyNamed(() => import("../pages/customer/CheckoutPage"), "CheckoutPage");
+const OrderSuccessPage = lazyNamed(() => import("../pages/customer/OrderSuccessPage"), "OrderSuccessPage");
 
-// Admin
-import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
-import UsersPage from "../pages/admin/UsersPage";
-import PartnersPage from "../pages/admin/PartnersPage";
-import VoucherApprovalsPage from "../pages/admin/VoucherApprovalsPage";
-import OrdersPage from "../pages/admin/OrdersPage";
-import AuditLogsPage from "../pages/admin/AuditLogsPage";
+const PartnerDashboardPage = lazyNamed(() => import("../pages/partner/PartnerDashboardPage"), "PartnerDashboardPage");
+const CreateVoucherPage = lazyNamed(() => import("../pages/partner/CreateVoucherPage"), "CreateVoucherPage");
+const PartnerVoucherListPage = lazyNamed(() => import("../pages/partner/PartnerVoucherListPage"), "PartnerVoucherListPage");
+const PartnerReportsPage = lazyNamed(() => import("../pages/partner/PartnerReportsPage"), "PartnerReportsPage");
+const PartnerProfilePage = lazyNamed(() => import("../pages/partner/PartnerProfilePage"), "PartnerProfilePage");
+const RedeemVoucherPage = lazyNamed(() => import("../pages/partner/RedeemVoucherPage"), "RedeemVoucherPage");
+const BranchesPage = lazyNamed(() => import("../pages/partner/BranchesPage"), "BranchesPage");
+
+const AdminDashboardPage = React.lazy(() => import("../pages/admin/AdminDashboardPage"));
+const UsersPage = React.lazy(() => import("../pages/admin/UsersPage"));
+const PartnersPage = React.lazy(() => import("../pages/admin/PartnersPage"));
+const VoucherApprovalsPage = React.lazy(() => import("../pages/admin/VoucherApprovalsPage"));
+const OrdersPage = React.lazy(() => import("../pages/admin/OrdersPage"));
+const AuditLogsPage = React.lazy(() => import("../pages/admin/AuditLogsPage"));
+const CmsPagesPage = lazyNamed(() => import("../pages/admin/CmsPagesPage"), "CmsPagesPage");
 
 let AdminComponentsTest, TestComponentsPage, VoucherHooksTest, CartHooksTestWrapper;
 
@@ -52,6 +54,7 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <GlobalErrorBoundary>
+      <Suspense fallback={<div className="min-h-screen grid place-items-center"><span className="loading loading-spinner loading-lg" /></div>}>
       <Routes>
 
         {/* Test component */}
@@ -72,6 +75,7 @@ export function AppRoutes() {
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route
           path="/checkout"
           element={
@@ -113,6 +117,7 @@ export function AppRoutes() {
           <Route path="vouchers/:id/edit" element={<CreateVoucherPage />} />
           <Route path="vouchers" element={<PartnerVoucherListPage />} />
           <Route path="validation" element={<RedeemVoucherPage />} />
+          <Route path="branches" element={<BranchesPage />} />
           <Route path="reports" element={<PartnerReportsPage />} />
           <Route path="profile" element={<PartnerProfilePage />} />
         </Route>
@@ -132,10 +137,12 @@ export function AppRoutes() {
           <Route path="vouchers" element={<VoucherApprovalsPage />} />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="audit" element={<AuditLogsPage />} />
+          <Route path="content" element={<CmsPagesPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </Suspense>
       </GlobalErrorBoundary>
     </BrowserRouter>
   );

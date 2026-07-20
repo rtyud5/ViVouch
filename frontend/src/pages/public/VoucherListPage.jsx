@@ -21,17 +21,27 @@ function readFiltersFromParams(searchParams) {
   return {
     keyword,
     category: searchParams.get("category") ?? "all",
+    city: searchParams.get("city") ?? "",
+    partner: searchParams.get("partner") ?? "",
+    minPrice: searchParams.get("minPrice") ?? "",
+    maxPrice: searchParams.get("maxPrice") ?? "",
+    minDiscount: searchParams.get("minDiscount") ?? "",
     sort: searchParams.get("sort") ?? "popular",
     page: Number.isNaN(parsedPage) || parsedPage < 1 ? 1 : parsedPage,
   };
 }
 
-function buildSearchParams({ keyword, category, sort, page }) {
+function buildSearchParams({ keyword, category, city, partner, minPrice, maxPrice, minDiscount, sort, page }) {
   const params = {};
   if (keyword && typeof keyword === "string" && keyword.trim()) {
     params.keyword = keyword.trim();
   }
   if (category && category !== "all") params.category = category;
+  if (city?.trim()) params.city = city.trim();
+  if (partner?.trim()) params.partner = partner.trim();
+  if (minPrice !== "" && minPrice != null) params.minPrice = String(minPrice);
+  if (maxPrice !== "" && maxPrice != null) params.maxPrice = String(maxPrice);
+  if (minDiscount !== "" && minDiscount != null) params.minDiscount = String(minDiscount);
   if (sort && sort !== "popular") params.sort = sort;
   if (page && page > 1) params.page = String(page);
   return params;
@@ -41,7 +51,7 @@ export function VoucherListPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { keyword, category, sort, page } = readFiltersFromParams(searchParams);
+  const { keyword, category, city, partner, minPrice, maxPrice, minDiscount, sort, page } = readFiltersFromParams(searchParams);
   const { categories, isLoading: categoriesLoading, error: categoriesError } = useCategories();
 
   useEffect(() => {
@@ -55,10 +65,10 @@ export function VoucherListPage() {
 
   const updateFilters = useCallback(
     (updates, { replace = false } = {}) => {
-      const next = { keyword, category, sort, page, ...updates };
+      const next = { keyword, category, city, partner, minPrice, maxPrice, minDiscount, sort, page, ...updates };
       setSearchParams(buildSearchParams(next), { replace });
     },
-    [keyword, category, sort, page, setSearchParams]
+    [keyword, category, city, partner, minPrice, maxPrice, minDiscount, sort, page, setSearchParams]
   );
 
   const voucherParams = useMemo(
@@ -66,12 +76,17 @@ export function VoucherListPage() {
       buildVoucherQueryParams({
         keyword,
         category,
+        city,
+        partner,
+        minPrice,
+        maxPrice,
+        minDiscount,
         sort,
         page,
         limit: PAGE_SIZE,
         categories,
       }),
-    [keyword, category, sort, page, categories]
+    [keyword, category, city, partner, minPrice, maxPrice, minDiscount, sort, page, categories]
   );
 
   const isCategoryFilterActive = category && category !== "all";
@@ -165,6 +180,8 @@ export function VoucherListPage() {
             activeCategory={category}
             onCategoryChange={handleCategoryChange}
             categories={categories || []}
+            advancedFilters={{ city, partner, minPrice, maxPrice, minDiscount }}
+            onAdvancedFiltersChange={(nextFilters) => updateFilters({ ...nextFilters, page: 1 })}
           />
         </div>
       </header>

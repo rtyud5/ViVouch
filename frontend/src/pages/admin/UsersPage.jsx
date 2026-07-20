@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { AdminTable, AdminStatusBadge } from '../../features/admin/components';
-import { useUsers, useToggleUserLock } from '../../features/admin/hooks/useUsers';
+import { useUsers, useToggleUserLock, useAssignUserRole } from '../../features/admin/hooks/useUsers';
 import { useAuthStore } from '../../stores/authStore';
 import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
 import { ApiErrorToast } from '../../components/common/ApiErrorToast';
@@ -24,6 +24,7 @@ export default function UsersPage() {
 
   const { data, isLoading } = useUsers(params);
   const { mutate: toggleUserLock, isPending: isTogglePending } = useToggleUserLock();
+  const { mutate: assignUserRole, isPending: isRolePending } = useAssignUserRole();
 
   const users = data?.data?.users || [];
   const pagination = data?.data?.pagination || { total: 0, page: 1, limit: 10, totalPages: 1 };
@@ -61,6 +62,19 @@ export default function UsersPage() {
     });
   };
 
+  const handleRoleChange = (event, userId) => {
+    event.stopPropagation();
+    const role = event.target.value;
+    setToastError(null);
+    assignUserRole({ userId, role }, {
+      onSuccess: () => {
+        setToastSuccess('Đã cập nhật vai trò và thu hồi các phiên đăng nhập cũ.');
+        setTimeout(() => setToastSuccess(''), 4000);
+      },
+      onError: setToastError,
+    });
+  };
+
   const columns = [
     {
       key: 'user',
@@ -89,27 +103,22 @@ export default function UsersPage() {
       key: 'role',
       label: 'Vai trò',
       render: (row) => {
-        let bg = 'bg-blue-100';
-        let text = 'text-blue-800';
-        let border = 'border-blue-200';
-        let label = 'Khách hàng';
-        
-        if (row.role === 'PARTNER') {
-          bg = 'bg-purple-100';
-          text = 'text-purple-800';
-          border = 'border-purple-200';
-          label = 'Đối tác';
-        } else if (row.role === 'ADMIN') {
-          bg = 'bg-amber-100';
-          text = 'text-amber-800';
-          border = 'border-amber-200';
-          label = 'Admin';
-        }
-
-        return (
-          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${bg} ${text} border ${border}`}>
-            {label}
-          </span>
+        const isSelf = currentUser?.id === row.id;
+        return isSelf ? (
+          <span className="badge badge-warning">{row.role} · Bạn</span>
+        ) : (
+          <select
+            aria-label={`Vai trò của ${row.fullName}`}
+            value={row.role}
+            disabled={isRolePending}
+            onClick={(event) => event.stopPropagation()}
+            onChange={(event) => handleRoleChange(event, row.id)}
+            className="select select-bordered select-xs"
+          >
+            <option value="CUSTOMER">Khách hàng</option>
+            <option value="PARTNER">Đối tác</option>
+            <option value="ADMIN">Admin</option>
+          </select>
         );
       },
     },
@@ -212,12 +221,12 @@ export default function UsersPage() {
         onRowClick={(user) => setSelectedUser(user)}
       />
       
-      {/* Pagination placeholder */}
+      {/* Pagination summary */}
       <div className="mt-4 text-sm text-gray-500 shrink-0">
         Hiển thị trang {pagination.page} / {pagination.totalPages} (Tổng {pagination.total})
       </div>
 
-      {/* Drawer Placeholder if selectedUser */}
+      {/* Selected-user detail drawer */}
       {selectedUser && (
         <aside className="w-[400px] h-full bg-white border-l border-gray-200 shadow-[-8px_0_24px_rgba(0,0,0,0.05)] flex flex-col shrink-0 z-20 absolute right-0 top-0">
           <div className="p-6 border-b border-gray-100 shrink-0 relative bg-gradient-to-b from-blue-50 to-white">

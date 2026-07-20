@@ -116,6 +116,7 @@ describe("Admin Orders & Audit Logs API Tests", () => {
   let adminId = "";
   let adminToken = "";
   let createdOrderId = "";
+  let createdVoucherId = "";
 
   beforeAll(async () => {
     await cleanupAll();
@@ -160,12 +161,24 @@ describe("Admin Orders & Audit Logs API Tests", () => {
         originalPrice: 100,
         salePrice: 90,
         totalQty: 10,
+        soldQty: 1,
         status: "APPROVED"
       }
     });
+    createdVoucherId = voucher.id;
 
     const order = await createTestOrder(customerId, voucher.id);
     createdOrderId = order.id;
+
+    await prisma.voucherCode.create({
+      data: {
+        code: "ADMIN-CANCEL-ISSUED",
+        orderId: order.id,
+        voucherId: voucher.id,
+        ownerId: customerId,
+        status: "ISSUED",
+      },
+    });
 
     await createTestAuditLog(adminId, voucher.id);
   });
@@ -295,6 +308,24 @@ describe("Admin Orders & Audit Logs API Tests", () => {
       expect(res.status).toBe(200);
       expect(res.body.data.logs[0]).toHaveProperty("actor");
       expect(res.body.data.logs[0].actor).toHaveProperty("email");
+    });
+  });
+
+  describe("POST /api/admin/orders/:id/cancel", () => {
+    it("cancels codes, refunds payment, restores stock and writes audit evidence", async () => {
+      const res = await request(app)
+        .post(`/api/admin/orders/${createdOrderId}/cancel`)
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ reason: "Customer-approved cancellation" });
+      expect(res.status).toBe(200);
+      expect(res.body.data.status).toBe("CANCELLED");
+      expect(res.body.data.payment.status).toBe("REFUNDED");
+      expect(res.body.data.voucherCodes[0].status).toBe("CANCELLED");
+
+      const voucher = await prisma.voucher.findUnique({ where: { id: createdVoucherId } });
+      expect(voucher.soldQty).toBe(0);
+      const log = await prisma.auditLog.findFirst({ where: { action: "ADMIN_CANCEL_ORDER", targetId: createdOrderId } });
+      expect(log).toBeTruthy();
     });
   });
 });

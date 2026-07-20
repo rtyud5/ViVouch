@@ -34,3 +34,14 @@ export const create = asyncHandler(async (req, res) => {
     data: result.review,
   });
 });
+
+export const getEligibility = asyncHandler(async (req, res) => {
+  const { id } = voucherReviewParamsSchema.parse(req.params);
+  const result = await reviewsService.getEligibility(req.user.userId, id);
+
+  res.json({
+    success: true,
+    message: 'OK',
+    data: result,
+  });
+});

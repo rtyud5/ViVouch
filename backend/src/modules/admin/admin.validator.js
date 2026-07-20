@@ -4,6 +4,19 @@ export const rejectSchema = z.object({
   reason: z.string().trim().min(1, 'Reason is required'),
 });
 
+export const roleSchema = z.object({
+  role: z.enum(['CUSTOMER', 'PARTNER', 'ADMIN']),
+});
+
+export const partnerStatusSchema = z.object({
+  status: z.enum(['APPROVED', 'SUSPENDED']),
+  reason: z.string().trim().max(500).optional(),
+});
+
+export const cancelOrderSchema = z.object({
+  reason: z.string().trim().min(1, 'Reason is required').max(500),
+});
+
 export const idParamSchema = z.object({
   id: z.string().min(1),
 });
@@ -17,7 +30,7 @@ export const ordersQuerySchema = z.object({
 export const partnersQuerySchema = z.object({
   page: z.string().optional(),
   limit: z.string().optional(),
-  status: z.enum(['PENDING', 'APPROVED', 'REJECTED']).optional(),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED']).optional(),
   search: z.string().optional(),
 });
 
@@ -33,4 +46,7 @@ export const auditLogsQuerySchema = z.object({
   limit: z.string().optional(),
   action: z.string().optional(),
   targetType: z.string().optional(),
+  actorId: z.string().uuid().optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
 });

@@ -1,10 +1,21 @@
 import { asyncHandler } from '../../utils/asyncHandler.js';
-import { redeemCode } from './redeem.service.js';
+import { checkCode, confirmCode } from './redeem.service.js';
 import { redeemVoucherCodeSchema } from './redeem.validator.js';
 
-export const redeemVoucherCode = asyncHandler(async (req, res) => {
+export const checkVoucherCode = asyncHandler(async (req, res) => {
   const { code, branchId } = redeemVoucherCodeSchema.parse(req.body);
-  const result = await redeemCode(req.user.userId, code, branchId);
+  const result = await checkCode(req.user.userId, code, branchId);
+
+  res.status(200).json({
+    success: true,
+    message: 'Mã voucher hợp lệ. Vui lòng xác nhận trước khi sử dụng.',
+    data: result,
+  });
+});
+
+export const confirmVoucherCode = asyncHandler(async (req, res) => {
+  const { code, branchId } = redeemVoucherCodeSchema.parse(req.body);
+  const result = await confirmCode(req.user.userId, code, branchId);
 
   res.status(200).json({
     success: true,
@@ -12,3 +23,6 @@ export const redeemVoucherCode = asyncHandler(async (req, res) => {
     data: result,
   });
 });
+
+// Backward-compatible alias. New clients must call /check then /confirm.
+export const redeemVoucherCode = confirmVoucherCode;

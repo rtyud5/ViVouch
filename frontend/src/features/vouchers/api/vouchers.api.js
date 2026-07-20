@@ -29,3 +29,8 @@ export const createVoucherReview = async (voucherId, data) => {
   const response = await apiClient.post(`/vouchers/${voucherId}/reviews`, data);
   return response.data;
 };
+
+export const getVoucherReviewEligibility = async (voucherId) => {
+  const response = await apiClient.get(`/vouchers/${voucherId}/reviews/eligibility`);
+  return response.data;
+};

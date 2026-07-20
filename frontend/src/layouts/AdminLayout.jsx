@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { DashboardLayout } from '../components/common/DashboardLayout';
+import { logoutSession } from '../features/auth/api/auth.api';
 
 /**
  * AdminLayout - Blueprint for ViVouch Admin Management Portal
@@ -9,10 +10,15 @@ import { DashboardLayout } from '../components/common/DashboardLayout';
 export function AdminLayout() {
   const navigate = useNavigate();
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
 
-  const handleLogout = () => {
-    clearAuth();
-    navigate('/login', { replace: true });
+  const handleLogout = async () => {
+    try {
+      await logoutSession(refreshToken);
+    } finally {
+      clearAuth();
+      navigate('/login', { replace: true });
+    }
   };
 
   const navItems = [
@@ -21,7 +27,7 @@ export function AdminLayout() {
     { label: 'Đối tác', path: '/admin/partners', icon: 'handshake' },
     { label: 'Voucher', path: '/admin/vouchers', icon: 'confirmation_number' },
     { label: 'Đơn hàng', path: '/admin/orders', icon: 'shopping_cart' },
-    // { label: 'Nội dung', path: '/admin/content', icon: 'article' },
+    { label: 'Nội dung', path: '/admin/content', icon: 'article' },
     { label: 'Nhật ký', path: '/admin/audit', icon: 'history' },
     // { label: 'Cài đặt', path: '/admin/settings', icon: 'settings' },
   ];

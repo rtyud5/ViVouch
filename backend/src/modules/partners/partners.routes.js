@@ -4,6 +4,7 @@ import * as redeemController from '../redeem/redeem.controller.js';
 import { verifyToken } from '../../middlewares/auth.middleware.js';
 import { requireRole } from '../../middlewares/role.middleware.js';
 import reportsRouter from '../reports/reports.routes.js';
+import { redeemCheckRateLimiter, redeemConfirmRateLimiter } from '../../middlewares/rateLimit.middleware.js';
 
 const router = Router();
 
@@ -24,9 +25,9 @@ router.post('/vouchers/:id/submit', partnersController.submitVoucher);
 
 /**
  * @swagger
- * /api/partner/redeem:
+ * /api/partner/redeem/check:
  *   post:
- *     summary: Đổi mã voucher tại một chi nhánh cụ thể
+ *     summary: Kiểm tra mã voucher, không thay đổi trạng thái
  *     tags:
  *       - Partners
  *     security:
@@ -46,7 +47,7 @@ router.post('/vouchers/:id/submit', partnersController.submitVoucher);
  *                 description: Chi nhánh hoạt động và được gắn với voucher
  *     responses:
  *       200:
- *         description: Đổi mã thành công
+ *         description: Mã hợp lệ và vẫn ở trạng thái ISSUED
  *       400:
  *         description: Mã đã dùng, hết hạn, bị huỷ hoặc bị khoá
  *       403:
@@ -54,7 +55,11 @@ router.post('/vouchers/:id/submit', partnersController.submitVoucher);
  *       404:
  *         description: Không tìm thấy mã voucher
  */
-router.post('/redeem', redeemController.redeemVoucherCode);
+router.post('/redeem/check', redeemCheckRateLimiter, redeemController.checkVoucherCode);
+router.post('/redeem/confirm', redeemConfirmRateLimiter, redeemController.confirmVoucherCode);
+
+// Compatibility route for clients released before the two-step contract.
+router.post('/redeem', redeemConfirmRateLimiter, redeemController.redeemVoucherCode);
 
 router.use('/reports', reportsRouter);
 

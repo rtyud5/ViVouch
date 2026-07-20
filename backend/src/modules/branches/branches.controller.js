@@ -1,1 +1,6 @@
-// TODO: Implement branches controller functions.
+export {
+  getBranches,
+  createBranch,
+  updateBranch,
+  deleteBranch,
+} from '../partners/partners.controller.js';

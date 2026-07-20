@@ -2,6 +2,7 @@ import { prisma } from '../../config/prisma.js';
 import { customAlphabet } from 'nanoid';
 import { log as auditLog } from '../auditLogs/auditLog.service.js';
 import { AppError } from '../../utils/appError.js';
+import { createSimulatedPayment } from '../payments/payment.service.js';
 
 const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
 
@@ -165,14 +166,7 @@ const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
   });
 
   // Tạo Payment(PAID/mock)
-  await tx.payment.create({
-    data: {
-      orderId: order.id,
-      method: paymentMethod,
-      status: 'PAID',
-      amount: totalAmount
-    }
-  });
+  await createSimulatedPayment(tx, { orderId: order.id, method: paymentMethod, amount: totalAmount });
 
   // Ghi audit log
   await auditLog(userId, 'CHECKOUT', 'Order', order.id, {

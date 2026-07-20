@@ -11,6 +11,7 @@ export const listVouchersSchema = z.object({
   keyword: z.string().trim().optional(),
   categoryId: z.string().optional(),// Bỏ dùng .uuid để tiện cho việc sử dụng seed
   city: z.string().trim().optional(),
+  partner: z.string().trim().optional(),
   minPrice: z.coerce.number().nonnegative().optional(),
   maxPrice: z.coerce.number().nonnegative().optional(),
   minDiscount: z.coerce.number().min(0).max(100).optional(),

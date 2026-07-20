@@ -1,4 +1,3 @@
-import { env } from "../config/env.js";
 import { logger } from "../config/logger.js";
 
 const prismaErrorMap = {
@@ -90,10 +89,6 @@ export function errorMiddleware(err, req, res, next) {
 
   if (!isServerError && err.details) {
     payload.details = err.details;
-  }
-
-  if (!isServerError && env.NODE_ENV !== "production" && err.stack) {
-    payload.stack = err.stack;
   }
 
   return res.status(statusCode).json(payload);

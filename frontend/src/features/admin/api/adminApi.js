@@ -37,6 +37,11 @@ export const rejectPartner = async (partnerId, reason) => {
   return response.data;
 };
 
+export const setPartnerStatus = async (partnerId, status, reason) => {
+  const response = await apiClient.patch(`/admin/partners/${partnerId}/status`, { status, reason });
+  return response.data;
+};
+
 export const getVouchers = async (params) => {
   const response = await apiClient.get('/admin/vouchers', { params: cleanParams(params) });
   return response.data;
@@ -62,6 +67,11 @@ export const toggleUserLock = async (userId) => {
   return response.data;
 };
 
+export const assignUserRole = async (userId, role) => {
+  const response = await apiClient.patch(`/admin/users/${userId}/role`, { role });
+  return response.data;
+};
+
 export const getOrders = async (params) => {
   const response = await apiClient.get('/admin/orders', { params: cleanParams(params) });
   return response.data;
@@ -72,7 +82,17 @@ export const getOrderById = async (id) => {
   return response.data;
 };
 
+export const cancelOrder = async (id, reason) => {
+  const response = await apiClient.post(`/admin/orders/${id}/cancel`, { reason });
+  return response.data;
+};
+
 export const getAuditLogs = async (params) => {
   const response = await apiClient.get('/admin/audit-logs', { params: cleanParams(params) });
   return response.data;
 };
+
+export const getContent = async (type) => (await apiClient.get(`/admin/content/${type}`)).data.data;
+export const createContent = async (type, data) => (await apiClient.post(`/admin/content/${type}`, data)).data.data;
+export const updateContent = async (type, id, data) => (await apiClient.patch(`/admin/content/${type}/${id}`, data)).data.data;
+export const deleteContent = async (type, id) => apiClient.delete(`/admin/content/${type}/${id}`);

@@ -1,5 +1,5 @@
 import * as authService from "./auth.service.js";
-import { registerSchema, loginSchema } from "./auth.validator.js";
+import { registerSchema, loginSchema, refreshTokenSchema, logoutSchema, forgotPasswordSchema, resetPasswordSchema } from "./auth.validator.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 /**
@@ -58,12 +58,41 @@ export const getMe = asyncHandler(async (req, res) => {
   });
 });
 
+export const refresh = asyncHandler(async (req, res) => {
+  const { refreshToken } = refreshTokenSchema.parse(req.body);
+  const result = await authService.refreshSession(refreshToken);
+
+  return res.status(200).json({
+    success: true,
+    message: "Làm mới phiên đăng nhập thành công",
+    data: result
+  });
+});
+
 /**
  * Đăng xuất
  */
-export const logout = (req, res) => {
+export const logout = asyncHandler(async (req, res) => {
+  const { refreshToken } = logoutSchema.parse(req.body || {});
+  await authService.logout(req.user.userId, refreshToken);
   return res.status(200).json({
     success: true,
     message: "Đăng xuất thành công"
   });
-};
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = forgotPasswordSchema.parse(req.body);
+  const data = await authService.requestPasswordReset(email);
+  res.json({
+    success: true,
+    message: "Nếu tài khoản tồn tại, hệ thống đã tạo yêu cầu đặt lại mật khẩu mô phỏng.",
+    data,
+  });
+});
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { resetToken, password } = resetPasswordSchema.parse(req.body);
+  await authService.resetPassword(resetToken, password);
+  res.json({ success: true, message: "Đặt lại mật khẩu thành công" });
+});

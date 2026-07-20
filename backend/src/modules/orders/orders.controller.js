@@ -5,6 +5,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { AppError } from "../../utils/appError.js";
 
 function getIdempotencyKey(req) {
+  if (req.idempotencyKey) return req.idempotencyKey;
   const value = req.get("Idempotency-Key");
   if (!value) return randomUUID();
 

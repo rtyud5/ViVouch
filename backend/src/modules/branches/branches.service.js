@@ -1,1 +1,6 @@
-// TODO: Implement branches service/business logic.
+export {
+  getBranches,
+  createBranch,
+  updateBranch,
+  deleteBranch,
+} from '../partners/partners.service.js';

@@ -42,8 +42,8 @@ export function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: ({ email, password }) => login(email, password),
-    onSuccess: ({ user, accessToken }) => {
-      setAuth({ user, accessToken });
+    onSuccess: ({ user, accessToken, refreshToken }) => {
+      setAuth({ user, accessToken, refreshToken });
       const returnUrl = location.state?.returnUrl;
       const safeReturnUrl = (returnUrl && returnUrl.startsWith("/") && !returnUrl.startsWith("//"))
         ? returnUrl
@@ -167,12 +167,12 @@ export function LoginPage() {
                 >
                   Mật khẩu
                 </label>
-                <a
+                <Link
                   className="font-label-md text-label-md text-primary hover:text-surface-tint transition-colors"
-                  href="#"
+                  to="/forgot-password"
                 >
                   Quên mật khẩu?
-                </a>
+                </Link>
               </div>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-outline">
