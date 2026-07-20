@@ -1,0 +1,1059 @@
+﻿
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.7 [39m[90mD:/ViVouch/ViVouch/backend[39m
+
+[90mstdout[2m | tests/admin-orders-audit.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ auth for agents [www.vestauth.com]
+
+[90mstdout[2m | tests/admin-dashboard.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ suppress logs { quiet: true }
+
+[90mstdout[2m | tests/reviews-api.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ enable debugging { debug: true }
+
+[90mstdout[2m | tests/checkout-api.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ override existing { override: true }
+
+[90mstdout[2m | tests/partner-redeem-api.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ override existing { override: true }
+
+[90mstdout[2m | tests/admin-management.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: â—ˆ secrets for agents [www.dotenvx.com]
+
+[90mstdout[2m | tests/admin-approval.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ enable debugging { debug: true }
+
+[90mstdout[2m | tests/partner-reports.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ override existing { override: true }
+
+[90mstdout[2m | tests/auth.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ enable debugging { debug: true }
+
+[90mstdout[2m | tests/partner-vouchers-api.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: â—ˆ secrets for agents [www.dotenvx.com]
+
+[90mstdout[2m | tests/cart.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ˜ suppress logs { quiet: true }
+
+[90mstdout[2m | tests/users.test.js
+[22m[39mâ—‡ injected env (9) from .env // tip: âŒ auth for agents [www.vestauth.com]
+
+ [32mâœ“[39m tests/cart-service.test.js [2m([22m[2m12 tests[22m[2m)[22m[33m 554[2mms[22m[39m
+ [32mâœ“[39m tests/partner-redeem.test.js [2m([22m[2m8 tests[22m[2m)[22m[33m 616[2mms[22m[39m
+ [32mâœ“[39m tests/partner-vouchers.test.js [2m([22m[2m11 tests[22m[2m)[22m[33m 624[2mms[22m[39m
+ [32mâœ“[39m tests/reviews-validator.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32mâœ“[39m tests/reviews-service.test.js [2m([22m[2m4 tests[22m[2m)[22m[32m 241[2mms[22m[39m
+{"level":40,"time":1784548376354,"pid":1724,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"POST","path":"/api/customer/orders/cart/checkout","msg":"Request failed"}
+{"level":50,"time":1784548376359,"pid":12060,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"[\n  {\n    \"code\": \"custom\",\n    \"path\": [\n      \"salePrice\"\n    ],\n    \"message\": \"salePrice pháº£i nhá» hÆ¡n originalPrice\"\n  }\n]","stack":"ZodError: [\n  {\n    \"code\": \"custom\",\n    \"path\": [\n      \"salePrice\"\n    ],\n    \"message\": \"salePrice pháº£i nhá» hÆ¡n originalPrice\"\n  }\n]\n    at createVoucher (D:/ViVouch/ViVouch/backend/src/modules/partners/partners.controller.js:75:47)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12","name":"ZodError"},"method":"POST","path":"/api/partner/vouchers","msg":"Request failed"}
+{"level":50,"time":1784548376373,"pid":12060,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"[\n  {\n    \"code\": \"custom\",\n    \"message\": \"saleEnd pháº£i lá»›n hÆ¡n hoáº·c báº±ng saleStart\",\n    \"path\": [\n      \"saleEnd\"\n    ]\n  }\n]","stack":"ZodError: [\n  {\n    \"code\": \"custom\",\n    \"message\": \"saleEnd pháº£i lá»›n hÆ¡n hoáº·c báº±ng saleStart\",\n    \"path\": [\n      \"saleEnd\"\n    ]\n  }\n]\n    at createVoucher (D:/ViVouch/ViVouch/backend/src/modules/partners/partners.controller.js:75:47)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12","name":"ZodError"},"method":"POST","path":"/api/partner/vouchers","msg":"Request failed"}
+{"level":40,"time":1784548376377,"pid":1724,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Giá» hĂ ng trá»‘ng","stack":"Error: Giá» hĂ ng trá»‘ng\n    at __vite_ssr_import_0__.prisma.$transaction.timeout (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:249:13)\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Object.checkoutFromCart (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:228:10)\n    at D:/ViVouch/ViVouch/backend/src/modules/orders/orders.controller.js:61:18","statusCode":400,"code":"EMPTY_CART"},"method":"POST","path":"/api/customer/orders/cart/checkout","msg":"Request failed"}
+{"level":50,"time":1784548376385,"pid":12060,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"[\n  {\n    \"code\": \"custom\",\n    \"message\": \"useEnd pháº£i lá»›n hÆ¡n hoáº·c báº±ng useStart\",\n    \"path\": [\n      \"useEnd\"\n    ]\n  }\n]","stack":"ZodError: [\n  {\n    \"code\": \"custom\",\n    \"message\": \"useEnd pháº£i lá»›n hÆ¡n hoáº·c báº±ng useStart\",\n    \"path\": [\n      \"useEnd\"\n    ]\n  }\n]\n    at createVoucher (D:/ViVouch/ViVouch/backend/src/modules/partners/partners.controller.js:75:47)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12","name":"ZodError"},"method":"POST","path":"/api/partner/vouchers","msg":"Request failed"}
+{"level":50,"time":1784548376393,"pid":12060,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"[\n  {\n    \"code\": \"custom\",\n    \"message\": \"useEnd khĂ´ng Ä‘Æ°á»£c káº¿t thĂºc trÆ°á»›c saleEnd\",\n    \"path\": [\n      \"useEnd\"\n    ]\n  }\n]","stack":"ZodError: [\n  {\n    \"code\": \"custom\",\n    \"message\": \"useEnd khĂ´ng Ä‘Æ°á»£c káº¿t thĂºc trÆ°á»›c saleEnd\",\n    \"path\": [\n      \"useEnd\"\n    ]\n  }\n]\n    at createVoucher (D:/ViVouch/ViVouch/backend/src/modules/partners/partners.controller.js:75:47)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12","name":"ZodError"},"method":"POST","path":"/api/partner/vouchers","msg":"Request failed"}
+{"level":50,"time":1784548376401,"pid":12060,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"[\n  {\n    \"origin\": \"number\",\n    \"code\": \"too_small\",\n    \"minimum\": 0,\n    \"inclusive\": false,\n    \"path\": [\n      \"totalQty\"\n    ],\n    \"message\": \"Too small: expected number to be >0\"\n  }\n]","stack":"ZodError: [\n  {\n    \"origin\": \"number\",\n    \"code\": \"too_small\",\n    \"minimum\": 0,\n    \"inclusive\": false,\n    \"path\": [\n      \"totalQty\"\n    ],\n    \"message\": \"Too small: expected number to be >0\"\n  }\n]\n    at createVoucher (D:/ViVouch/ViVouch/backend/src/modules/partners/partners.controller.js:75:47)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12","name":"ZodError"},"method":"POST","path":"/api/partner/vouchers","msg":"Request failed"}
+{"level":40,"time":1784548376407,"pid":17840,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/users/me","msg":"Request failed"}
+{"level":40,"time":1784548376410,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376459,"pid":17840,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"fullName: Há» tĂªn khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng","stack":"ZodError: fullName: Há» tĂªn khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng\n    at D:/ViVouch/ViVouch/backend/src/modules/users/users.controller.js:16:45\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["fullName"],"message":"Há» tĂªn khĂ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng"}]},"method":"PUT","path":"/api/users/me","msg":"Request failed"}
+{"level":40,"time":1784548376458,"pid":13608,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/partner/reports","msg":"Request failed"}
+ [32mâœ“[39m tests/partner-vouchers-api.test.js [2m([22m[2m5 tests[22m[2m)[22m[33m 344[2mms[22m[39m
+{"level":40,"time":1784548376471,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"MĂ£ Ä‘Ă£ Ä‘Æ°á»£c sá»­ dá»¥ng","stack":"Error: MĂ£ Ä‘Ă£ Ä‘Æ°á»£c sá»­ dá»¥ng\n    at assertRedeemable (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:8:11)\n    at redeemCode (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:51:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:7:18","statusCode":400,"code":"VOUCHER_CODE_USED"},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376472,"pid":21980,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"UNAUTHORIZED"},"method":"POST","path":"/api/vouchers/8592e21d-b07b-4742-9bd5-f42df92b4d85/reviews","msg":"Request failed"}
+{"level":40,"time":1784548376488,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"MĂ£ Ä‘Ă£ háº¿t háº¡n","stack":"Error: MĂ£ Ä‘Ă£ háº¿t háº¡n\n    at assertRedeemable (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:12:11)\n    at redeemCode (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:51:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:7:18","statusCode":400,"code":"VOUCHER_CODE_EXPIRED"},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376501,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Báº¡n khĂ´ng cĂ³ quyá»n xĂ¡c thá»±c mĂ£ nĂ y","stack":"Error: Báº¡n khĂ´ng cĂ³ quyá»n xĂ¡c thá»±c mĂ£ nĂ y\n    at redeemCode (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:48:11)\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:7:18","statusCode":403,"code":"FORBIDDEN"},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376504,"pid":21980,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Báº¡n cáº§n sá»­ dá»¥ng voucher trÆ°á»›c khi Ä‘Ă¡nh giĂ¡","stack":"Error: Báº¡n cáº§n sá»­ dá»¥ng voucher trÆ°á»›c khi Ä‘Ă¡nh giĂ¡\n    at D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.service.js:104:15\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Module.createReview (D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.service.js:82:21)\n    at D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.controller.js:29:18","statusCode":403,"code":"VOUCHER_NOT_USED"},"method":"POST","path":"/api/vouchers/8592e21d-b07b-4742-9bd5-f42df92b4d85/reviews","msg":"Request failed"}
+{"level":40,"time":1784548376510,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"MĂ£ voucher khĂ´ng tá»“n táº¡i","stack":"Error: MĂ£ voucher khĂ´ng tá»“n táº¡i\n    at redeemCode (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:44:11)\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:7:18","statusCode":404,"code":"VOUCHER_CODE_NOT_FOUND"},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376529,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Chi nhĂ¡nh khĂ´ng hoáº¡t Ä‘á»™ng hoáº·c voucher khĂ´ng Ă¡p dá»¥ng táº¡i chi nhĂ¡nh nĂ y","stack":"Error: Chi nhĂ¡nh khĂ´ng hoáº¡t Ä‘á»™ng hoáº·c voucher khĂ´ng Ă¡p dá»¥ng táº¡i chi nhĂ¡nh nĂ y\n    at __vite_ssr_import_0__.prisma.$transaction.timeout (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:83:13)\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at redeemCode (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:56:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:7:18","statusCode":403,"code":"INVALID_BRANCH_SCOPE"},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376529,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+{"level":40,"time":1784548376536,"pid":1724,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Voucher \"Out of stock Voucher\" Ä‘Ă£ háº¿t sá»‘ lÆ°á»£ng phĂ¡t hĂ nh.","stack":"Error: Voucher \"Out of stock Voucher\" Ä‘Ă£ háº¿t sá»‘ lÆ°á»£ng phĂ¡t hĂ nh.\n    at processCheckout (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:98:13)\n    at __vite_ssr_import_0__.prisma.$transaction.timeout (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:215:12)\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Object.buyNow (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:214:10)\n    at D:/ViVouch/ViVouch/backend/src/modules/orders/orders.controller.js:36:18","statusCode":400,"code":"VOUCHER_OUT_OF_STOCK"},"method":"POST","path":"/api/customer/orders/checkout","msg":"Request failed"}
+{"level":40,"time":1784548376539,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"branchId: Invalid input: expected string, received undefined","stack":"ZodError: branchId: Invalid input: expected string, received undefined\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:6:54\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["branchId"],"message":"Invalid input: expected string, received undefined"}]},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376540,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Token expired","stack":"Error: Token expired\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:20:19)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"TOKEN_EXPIRED"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+{"level":40,"time":1784548376545,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Invalid token","stack":"Error: Invalid token\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:23:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"INVALID_TOKEN"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+{"level":40,"time":1784548376545,"pid":17840,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Máº­t kháº©u hiá»‡n táº¡i khĂ´ng Ä‘Ăºng","stack":"Error: Máº­t kháº©u hiá»‡n táº¡i khĂ´ng Ä‘Ăºng\n    at Module.changePassword (D:/ViVouch/ViVouch/backend/src/modules/users/users.service.js:78:11)\n    at D:/ViVouch/ViVouch/backend/src/modules/users/users.controller.js:28:3","statusCode":400,"code":"INVALID_CURRENT_PASSWORD"},"method":"POST","path":"/api/users/me/change-password","msg":"Request failed"}
+{"level":40,"time":1784548376548,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"branchId: Thiáº¿u chi nhĂ¡nh Ä‘á»•i voucher, branchId: Chi nhĂ¡nh khĂ´ng há»£p lá»‡","stack":"ZodError: branchId: Thiáº¿u chi nhĂ¡nh Ä‘á»•i voucher, branchId: Chi nhĂ¡nh khĂ´ng há»£p lá»‡\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:6:54\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["branchId"],"message":"Thiáº¿u chi nhĂ¡nh Ä‘á»•i voucher"},{"path":["branchId"],"message":"Chi nhĂ¡nh khĂ´ng há»£p lá»‡"}]},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376551,"pid":13608,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"range: range pháº£i lĂ  7, 30 hoáº·c 90","stack":"ZodError: range: range pháº£i lĂ  7, 30 hoáº·c 90\n    at D:/ViVouch/ViVouch/backend/src/modules/reports/reports.controller.js:6:47\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["range"],"message":"range pháº£i lĂ  7, 30 hoáº·c 90"}]},"method":"GET","path":"/api/partner/reports?range=14","msg":"Request failed"}
+{"level":40,"time":1784548376555,"pid":21980,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Báº¡n Ä‘Ă£ Ä‘Ă¡nh giĂ¡ voucher nĂ y rá»“i","stack":"Error: Báº¡n Ä‘Ă£ Ä‘Ă¡nh giĂ¡ voucher nĂ y rá»“i\n    at D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.service.js:91:15\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Module.createReview (D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.service.js:82:21)\n    at D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.controller.js:29:18","statusCode":409,"code":"REVIEW_ALREADY_EXISTS"},"method":"POST","path":"/api/vouchers/8592e21d-b07b-4742-9bd5-f42df92b4d85/reviews","msg":"Request failed"}
+{"level":40,"time":1784548376553,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"POST","path":"/api/admin/partners/48be0df7-6db9-4e5b-b3d5-57b07e1a32cc/approve","msg":"Request failed"}
+{"level":40,"time":1784548376556,"pid":1724,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Voucher \"Expired Voucher\" Ä‘Ă£ háº¿t háº¡n bĂ¡n.","stack":"Error: Voucher \"Expired Voucher\" Ä‘Ă£ háº¿t háº¡n bĂ¡n.\n    at processCheckout (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:92:13)\n    at __vite_ssr_import_0__.prisma.$transaction.timeout (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:215:12)\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Object.buyNow (D:/ViVouch/ViVouch/backend/src/modules/orders/orders.service.js:214:10)\n    at D:/ViVouch/ViVouch/backend/src/modules/orders/orders.controller.js:36:18","statusCode":400,"code":"VOUCHER_SALE_EXPIRED"},"method":"POST","path":"/api/customer/orders/checkout","msg":"Request failed"}
+{"level":40,"time":1784548376556,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"branchId: Chi nhĂ¡nh khĂ´ng há»£p lá»‡","stack":"ZodError: branchId: Chi nhĂ¡nh khĂ´ng há»£p lá»‡\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:6:54\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["branchId"],"message":"Chi nhĂ¡nh khĂ´ng há»£p lá»‡"}]},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376562,"pid":21980,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"rating: Too small: expected number to be >=1","stack":"ZodError: rating: Too small: expected number to be >=1\n    at D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.controller.js:28:35\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["rating"],"message":"Too small: expected number to be >=1"}]},"method":"POST","path":"/api/vouchers/8592e21d-b07b-4742-9bd5-f42df92b4d85/reviews","msg":"Request failed"}
+{"level":40,"time":1784548376564,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"GET","path":"/api/auth/admin-only","msg":"Request failed"}
+{"level":40,"time":1784548376567,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"POST","path":"/api/admin/partners/48be0df7-6db9-4e5b-b3d5-57b07e1a32cc/approve","msg":"Request failed"}
+{"level":40,"time":1784548376570,"pid":21980,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"rating: Too big: expected number to be <=5","stack":"ZodError: rating: Too big: expected number to be <=5\n    at D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.controller.js:28:35\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["rating"],"message":"Too big: expected number to be <=5"}]},"method":"POST","path":"/api/vouchers/8592e21d-b07b-4742-9bd5-f42df92b4d85/reviews","msg":"Request failed"}
+{"level":40,"time":1784548376576,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"UNAUTHORIZED"},"method":"POST","path":"/api/auth/logout","msg":"Request failed"}
+{"level":40,"time":1784548376577,"pid":21980,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"comment: Too big: expected string to have <=1000 characters","stack":"ZodError: comment: Too big: expected string to have <=1000 characters\n    at D:/ViVouch/ViVouch/backend/src/modules/reviews/reviews.controller.js:28:35\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:25:12\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["comment"],"message":"Too big: expected string to have <=1000 characters"}]},"method":"POST","path":"/api/vouchers/8592e21d-b07b-4742-9bd5-f42df92b4d85/reviews","msg":"Request failed"}
+{"level":40,"time":1784548376576,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Partner not found","stack":"Error: Partner not found\n    at assertPartnerActionAllowed (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:17:11)\n    at Module.approvePartner (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:35:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.controller.js:12:16","statusCode":404,"code":"PARTNER_NOT_FOUND"},"method":"POST","path":"/api/admin/partners/non-existent-id/approve","msg":"Request failed"}
+{"level":40,"time":1784548376579,"pid":19140,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Chi nhĂ¡nh khĂ´ng hoáº¡t Ä‘á»™ng hoáº·c voucher khĂ´ng Ă¡p dá»¥ng táº¡i chi nhĂ¡nh nĂ y","stack":"Error: Chi nhĂ¡nh khĂ´ng hoáº¡t Ä‘á»™ng hoáº·c voucher khĂ´ng Ă¡p dá»¥ng táº¡i chi nhĂ¡nh nĂ y\n    at __vite_ssr_import_0__.prisma.$transaction.timeout (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:83:13)\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at redeemCode (D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js:56:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.controller.js:7:18","statusCode":403,"code":"INVALID_BRANCH_SCOPE"},"method":"POST","path":"/api/partner/redeem","msg":"Request failed"}
+{"level":40,"time":1784548376596,"pid":17996,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/customer/cart","msg":"Request failed"}
+ [32mâœ“[39m tests/partner-reports.test.js [2m([22m[2m4 tests[22m[2m)[22m[33m 483[2mms[22m[39m
+{"level":40,"time":1784548376613,"pid":17996,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"GET","path":"/api/customer/cart","msg":"Request failed"}
+ [32mâœ“[39m tests/checkout-api.test.js [2m([22m[2m5 tests[22m[2m)[22m[33m 503[2mms[22m[39m
+ [32mâœ“[39m tests/reviews-api.test.js [2m([22m[2m8 tests[22m[2m)[22m[33m 516[2mms[22m[39m
+{"level":40,"time":1784548376644,"pid":6260,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/admin/dashboard","msg":"Request failed"}
+{"level":40,"time":1784548376648,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/admin/partners","msg":"Request failed"}
+{"level":40,"time":1784548376649,"pid":17996,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Voucher khĂ´ng tá»“n táº¡i","stack":"Error: Voucher khĂ´ng tá»“n táº¡i\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:95:13\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Module.addItem (D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:89:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.controller.js:41:16","statusCode":404,"code":"VOUCHER_NOT_FOUND"},"method":"POST","path":"/api/customer/cart/items","msg":"Request failed"}
+ [32mâœ“[39m tests/partner-redeem-api.test.js [2m([22m[2m11 tests[22m[2m)[22m[33m 529[2mms[22m[39m
+ [31mâ¯[39m tests/admin-orders-audit.test.js [2m([22m[2m14 tests[22m[2m | [22m[33m14 skipped[39m[2m)[22m[33m 535[2mms[22m[39m
+       [2m[90mâ†“[39m[22m 401 náº¿u khĂ´ng cĂ³ token
+       [2m[90mâ†“[39m[22m 403 náº¿u khĂ´ng pháº£i ADMIN
+       [2m[90mâ†“[39m[22m 200 tráº£ vá» list orders cĂ³ pagination
+       [2m[90mâ†“[39m[22m 200 filter theo status=COMPLETED
+       [2m[90mâ†“[39m[22m 200 search theo orderId
+       [2m[90mâ†“[39m[22m 401 náº¿u khĂ´ng cĂ³ token
+       [2m[90mâ†“[39m[22m 403 náº¿u khĂ´ng pháº£i ADMIN
+       [2m[90mâ†“[39m[22m 404 náº¿u order khĂ´ng tá»“n táº¡i
+       [2m[90mâ†“[39m[22m 200 tráº£ vá» order detail Ä‘áº§y Ä‘á»§
+       [2m[90mâ†“[39m[22m 401 náº¿u khĂ´ng cĂ³ token
+       [2m[90mâ†“[39m[22m 403 náº¿u khĂ´ng pháº£i ADMIN
+       [2m[90mâ†“[39m[22m 200 tráº£ vá» list audit logs cĂ³ pagination
+       [2m[90mâ†“[39m[22m 200 filter theo action=ADMIN_APPROVE_VOUCHER
+       [2m[90mâ†“[39m[22m 200 má»—i log cĂ³ actor info
+{"level":40,"time":1784548376657,"pid":6260,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"GET","path":"/api/admin/dashboard","msg":"Request failed"}
+{"level":40,"time":1784548376659,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"GET","path":"/api/admin/partners","msg":"Request failed"}
+{"level":40,"time":1784548376667,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Email Ä‘Ă£ tá»“n táº¡i trong há»‡ thá»‘ng","stack":"Error: Email Ä‘Ă£ tá»“n táº¡i trong há»‡ thá»‘ng\n    at Module.register (D:/ViVouch/ViVouch/backend/src/modules/auth/auth.service.js:22:11)\n    at D:/ViVouch/ViVouch/backend/src/modules/auth/auth.controller.js:13:16","statusCode":409,"code":"EMAIL_EXISTS"},"method":"POST","path":"/api/auth/register","msg":"Request failed"}
+{"level":40,"time":1784548376670,"pid":17996,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Voucher khĂ´ng tá»“n táº¡i","stack":"Error: Voucher khĂ´ng tá»“n táº¡i\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:95:13\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Module.addItem (D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:89:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.controller.js:41:16","statusCode":404,"code":"VOUCHER_NOT_FOUND"},"method":"POST","path":"/api/customer/cart/items","msg":"Request failed"}
+{"level":40,"time":1784548376675,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Sá»‘ Ä‘iá»‡n thoáº¡i Ä‘Ă£ tá»“n táº¡i trong há»‡ thá»‘ng","stack":"Error: Sá»‘ Ä‘iá»‡n thoáº¡i Ä‘Ă£ tá»“n táº¡i trong há»‡ thá»‘ng\n    at Module.register (D:/ViVouch/ViVouch/backend/src/modules/auth/auth.service.js:32:13)\n    at D:/ViVouch/ViVouch/backend/src/modules/auth/auth.controller.js:13:16","statusCode":409,"code":"PHONE_EXISTS"},"method":"POST","path":"/api/auth/register","msg":"Request failed"}
+{"level":40,"time":1784548376683,"pid":17996,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Voucher khĂ´ng tá»“n táº¡i","stack":"Error: Voucher khĂ´ng tá»“n táº¡i\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:95:13\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Module.addItem (D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:89:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.controller.js:41:16","statusCode":404,"code":"VOUCHER_NOT_FOUND"},"method":"POST","path":"/api/customer/cart/items","msg":"Request failed"}
+{"level":40,"time":1784548376685,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Invalid token","stack":"Error: Invalid token\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:32:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"INVALID_TOKEN"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+{"level":40,"time":1784548376689,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Invalid token","stack":"Error: Invalid token\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:32:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"INVALID_TOKEN"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+{"level":40,"time":1784548376693,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Invalid token","stack":"Error: Invalid token\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:32:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)","statusCode":401,"code":"INVALID_TOKEN"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+{"level":40,"time":1784548376693,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"reason: Invalid input: expected string, received undefined","stack":"ZodError: reason: Invalid input: expected string, received undefined\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.controller.js:18:35\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at param (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:600:14)\n    at param (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:610:14)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["reason"],"message":"Invalid input: expected string, received undefined"}]},"method":"POST","path":"/api/admin/partners/e3ac5cc9-59a1-413c-bb1e-9cb564cb39b2/reject","msg":"Request failed"}
+{"level":40,"time":1784548376697,"pid":17996,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Voucher khĂ´ng tá»“n táº¡i","stack":"Error: Voucher khĂ´ng tá»“n táº¡i\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:95:13\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Module.addItem (D:/ViVouch/ViVouch/backend/src/modules/cart/cart.service.js:89:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/cart/cart.controller.js:41:16","statusCode":404,"code":"VOUCHER_NOT_FOUND"},"method":"POST","path":"/api/customer/cart/items","msg":"Request failed"}
+{"level":40,"time":1784548376700,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"ZodError","message":"reason: Reason is required","stack":"ZodError: reason: Reason is required\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.controller.js:18:35\n    at D:/ViVouch/ViVouch/backend/src/utils/asyncHandler.js:3:21\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:295:15\n    at param (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:600:14)\n    at param (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:610:14)","name":"ZodError","statusCode":400,"code":"VALIDATION_ERROR","details":[{"path":["reason"],"message":"Reason is required"}]},"method":"POST","path":"/api/admin/partners/e3ac5cc9-59a1-413c-bb1e-9cb564cb39b2/reject","msg":"Request failed"}
+{"level":40,"time":1784548376708,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/admin/vouchers","msg":"Request failed"}
+{"level":40,"time":1784548376709,"pid":20348,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"TĂ i khoáº£n Ä‘Ă£ bá»‹ khoĂ¡","stack":"Error: TĂ i khoáº£n Ä‘Ă£ bá»‹ khoĂ¡\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:46:19)","statusCode":403,"code":"ACCOUNT_LOCKED"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+{"level":40,"time":1784548376713,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"GET","path":"/api/admin/vouchers","msg":"Request failed"}
+{"level":40,"time":1784548376718,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"POST","path":"/api/admin/vouchers/22ce94ce-a836-4d0b-90f3-88c1a4fdacea/approve","msg":"Request failed"}
+{"level":40,"time":1784548376723,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"POST","path":"/api/admin/vouchers/22ce94ce-a836-4d0b-90f3-88c1a4fdacea/approve","msg":"Request failed"}
+ [32mâœ“[39m tests/auth.test.js [2m([22m[2m15 tests[22m[2m)[22m[33m 613[2mms[22m[39m
+{"level":40,"time":1784548376737,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"GET","path":"/api/admin/users","msg":"Request failed"}
+{"level":40,"time":1784548376741,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"GET","path":"/api/admin/users","msg":"Request failed"}
+{"level":40,"time":1784548376742,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Voucher not found","stack":"Error: Voucher not found\n    at Module.approveVoucher (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:116:11)\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.controller.js:25:16","statusCode":404,"code":"VOUCHER_NOT_FOUND"},"method":"POST","path":"/api/admin/vouchers/22ce94ce-a836-4d0b-90f3-88c1a4fdacea/approve","msg":"Request failed"}
+ [31mâ¯[39m tests/cart.test.js [2m([22m[2m11 tests[22m[2m | [22m[31m4 failed[39m[2m | [22m[33m4 skipped[39m[2m)[22m[33m 623[2mms[22m[39m
+       [32mâœ“[39m nĂªn cháº·n truy cáº­p náº¿u khĂ´ng gá»­i token[32m 15[2mms[22m[39m
+       [32mâœ“[39m nĂªn cháº·n truy cáº­p (403) náº¿u role lĂ  PARTNER[32m 11[2mms[22m[39m
+       [32mâœ“[39m nĂªn tráº£ vá» giá» hĂ ng trá»‘ng náº¿u chÆ°a cĂ³ item[32m 17[2mms[22m[39m
+[31m       [31mĂ—[31m nĂªn bĂ¡o lá»—i náº¿u thĂªm voucher á»Ÿ tráº¡ng thĂ¡i DRAFT[39m[32m 25[2mms[22m[39m
+[31m       [31mĂ—[31m nĂªn bĂ¡o lá»—i náº¿u sá»‘ lÆ°á»£ng thĂªm lá»›n hÆ¡n sá»‘ lÆ°á»£ng cĂ²n láº¡i[39m[32m 14[2mms[22m[39m
+[31m       [31mĂ—[31m nĂªn thĂªm thĂ nh cĂ´ng voucher ON_SALE vĂ o giá» hĂ ng[39m[32m 13[2mms[22m[39m
+[31m       [31mĂ—[31m nĂªn cá»™ng dá»“n qty khi thĂªm trĂ¹ng voucherId vĂ  khĂ´ng sinh thĂªm row[39m[32m 14[2mms[22m[39m
+       [2m[90mâ†“[39m[22m nĂªn cháº·n user B cáº­p nháº­t cart item cá»§a user A (403)
+       [2m[90mâ†“[39m[22m nĂªn cho phĂ©p user A cáº­p nháº­t sá»‘ lÆ°á»£ng cá»§a chĂ­nh mĂ¬nh
+       [2m[90mâ†“[39m[22m nĂªn cháº·n user B xĂ³a cart item cá»§a user A (403)
+       [2m[90mâ†“[39m[22m nĂªn cho phĂ©p user A xĂ³a cart item cá»§a chĂ­nh mĂ¬nh
+ [32mâœ“[39m tests/admin-dashboard.test.js [2m([22m[2m7 tests[22m[2m)[22m[33m 628[2mms[22m[39m
+{"level":40,"time":1784548376756,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Cannot approve or reject your own partner account","stack":"Error: Cannot approve or reject your own partner account\n    at assertPartnerActionAllowed (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:22:11)\n    at Module.approvePartner (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:35:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.controller.js:12:16","statusCode":400,"code":"SELF_ACTION"},"method":"POST","path":"/api/admin/partners/e37523da-6d79-4cb6-8687-5b7468e122ba/approve","msg":"Request failed"}
+{"level":40,"time":1784548376756,"pid":17840,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Sai email hoáº·c máº­t kháº©u","stack":"Error: Sai email hoáº·c máº­t kháº©u\n    at Module.login (D:/ViVouch/ViVouch/backend/src/modules/auth/auth.service.js:74:11)\n    at D:/ViVouch/ViVouch/backend/src/modules/auth/auth.controller.js:30:18","statusCode":401,"code":"INVALID_CREDENTIALS"},"method":"POST","path":"/api/auth/login","msg":"Request failed"}
+{"level":40,"time":1784548376765,"pid":1164,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Cannot approve or reject your own partner account","stack":"Error: Cannot approve or reject your own partner account\n    at assertPartnerActionAllowed (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:22:11)\n    at Module.rejectPartner (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:78:3)\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.controller.js:19:16","statusCode":400,"code":"SELF_ACTION"},"method":"POST","path":"/api/admin/partners/e37523da-6d79-4cb6-8687-5b7468e122ba/reject","msg":"Request failed"}
+{"level":40,"time":1784548376772,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"ChÆ°a xĂ¡c thá»±c","stack":"Error: ChÆ°a xĂ¡c thá»±c\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:10:17)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at router.handle (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:186:3)\n    at router (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:60:12)\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)","statusCode":401,"code":"UNAUTHORIZED"},"method":"POST","path":"/api/admin/users/f7fa3a6a-ae5b-422c-9298-8d1b4a7f48e2/toggle-lock","msg":"Request failed"}
+{"level":40,"time":1784548376776,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"KhĂ´ng cĂ³ quyá»n truy cáº­p","stack":"Error: KhĂ´ng cĂ³ quyá»n truy cáº­p\n    at D:/ViVouch/ViVouch/backend/src/middlewares/role.middleware.js:22:19\n    at Layer.handleRequest (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:342:13)\n    at D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\ViVouch\\ViVouch\\backend\\node_modules\\router\\index.js:291:5)\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:53:12)","statusCode":403,"code":"FORBIDDEN"},"method":"POST","path":"/api/admin/users/f7fa3a6a-ae5b-422c-9298-8d1b4a7f48e2/toggle-lock","msg":"Request failed"}
+{"level":40,"time":1784548376782,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"Cannot toggle your own lock status","stack":"Error: Cannot toggle your own lock status\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:418:13\n    at Proxy._transactionWithCallback (D:\\ViVouch\\ViVouch\\backend\\node_modules\\@prisma\\client\\runtime\\library.js:130:8000)\n    at Module.toggleUserLock (D:/ViVouch/ViVouch/backend/src/modules/admin/admin.service.js:410:10)\n    at D:/ViVouch/ViVouch/backend/src/modules/admin/admin.controller.js:71:16","statusCode":400,"code":"SELF_ACTION"},"method":"POST","path":"/api/admin/users/7ab89788-a5f1-4625-9e8f-0b991c187f4c/toggle-lock","msg":"Request failed"}
+ [31mâ¯[39m tests/admin-approval.test.js [2m([22m[2m18 tests[22m[2m | [22m[31m2 failed[39m[2m | [22m[33m5 skipped[39m[2m)[22m[33m 675[2mms[22m[39m
+       [32mâœ“[39m 401 náº¿u khĂ´ng cĂ³ token[32m 11[2mms[22m[39m
+       [32mâœ“[39m 403 náº¿u token khĂ´ng pháº£i ADMIN[32m 10[2mms[22m[39m
+       [32mâœ“[39m 404 náº¿u partner khĂ´ng tá»“n táº¡i[32m 12[2mms[22m[39m
+       [32mâœ“[39m 200 approve partner thĂ nh cĂ´ng[32m 29[2mms[22m[39m
+       [32mâœ“[39m 400 náº¿u khĂ´ng cĂ³ reason trong body[32m 7[2mms[22m[39m
+       [32mâœ“[39m 400 náº¿u reason lĂ  chuá»—i rá»—ng[32m 6[2mms[22m[39m
+       [32mâœ“[39m 200 reject partner thĂ nh cĂ´ng[32m 15[2mms[22m[39m
+       [32mâœ“[39m 401 náº¿u khĂ´ng cĂ³ token[32m 3[2mms[22m[39m
+       [32mâœ“[39m 403 náº¿u khĂ´ng pháº£i ADMIN[32m 4[2mms[22m[39m
+[31m       [31mĂ—[31m 400 náº¿u voucher status khĂ´ng pháº£i PENDING_APPROVAL[39m[32m 13[2mms[22m[39m
+[31m       [31mĂ—[31m 200 approve voucher thĂ nh cĂ´ng[39m[32m 9[2mms[22m[39m
+       [32mâœ“[39m 400 náº¿u admin cá»‘ approve partner cá»§a chĂ­nh mĂ¬nh[32m 8[2mms[22m[39m
+       [32mâœ“[39m 400 náº¿u admin cá»‘ reject partner cá»§a chĂ­nh mĂ¬nh[32m 9[2mms[22m[39m
+       [2m[90mâ†“[39m[22m 400 náº¿u khĂ´ng cĂ³ reason
+       [2m[90mâ†“[39m[22m 200 reject voucher thĂ nh cĂ´ng
+       [2m[90mâ†“[39m[22m A. saleStart in the past â†’ status ON_SALE, approvedAt set, approvedBy correct, published=true in audit
+       [2m[90mâ†“[39m[22m B. saleStart in the future â†’ status APPROVED (not ON_SALE), approvedAt set, published=false
+       [2m[90mâ†“[39m[22m C. saleEnd already expired â†’ status APPROVED (not ON_SALE), published=false
+{"level":40,"time":1784548376799,"pid":1856,"hostname":"LAPTOP-7IRDHAGI","err":{"type":"AppError","message":"TĂ i khoáº£n Ä‘Ă£ bá»‹ khoĂ¡","stack":"Error: TĂ i khoáº£n Ä‘Ă£ bá»‹ khoĂ¡\n    at verifyToken (D:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js:46:19)","statusCode":403,"code":"ACCOUNT_LOCKED"},"method":"GET","path":"/api/auth/me","msg":"Request failed"}
+ [32mâœ“[39m tests/users.test.js [2m([22m[2m6 tests[22m[2m)[22m[33m 651[2mms[22m[39m
+ [31mâ¯[39m tests/admin-management.test.js [2m([22m[2m19 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 706[2mms[22m[39m
+       [32mâœ“[39m 401 náº¿u khĂ´ng cĂ³ token[32m 10[2mms[22m[39m
+       [32mâœ“[39m 403 náº¿u khĂ´ng pháº£i ADMIN[32m 8[2mms[22m[39m
+[31m       [31mĂ—[31m 200 tráº£ vá» list partners cĂ³ pagination[39m[32m 25[2mms[22m[39m
+       [32mâœ“[39m 200 filter theo status=PENDING chá»‰ tráº£ vá» PENDING[32m 12[2mms[22m[39m
+[31m       [31mĂ—[31m 200 search theo tĂªn cĂ´ng ty[39m[32m 8[2mms[22m[39m
+       [32mâœ“[39m 401 náº¿u khĂ´ng cĂ³ token[32m 4[2mms[22m[39m
+       [32mâœ“[39m 403 náº¿u khĂ´ng pháº£i ADMIN[32m 5[2mms[22m[39m
+       [32mâœ“[39m 200 tráº£ vá» list vouchers cĂ³ pagination[32m 10[2mms[22m[39m
+       [32mâœ“[39m 200 filter theo status=PENDING_APPROVAL[32m 11[2mms[22m[39m
+       [32mâœ“[39m 401 náº¿u khĂ´ng cĂ³ token[32m 3[2mms[22m[39m
+       [32mâœ“[39m 403 náº¿u khĂ´ng pháº£i ADMIN[32m 4[2mms[22m[39m
+       [32mâœ“[39m 200 tráº£ vá» list users cĂ³ pagination[32m 12[2mms[22m[39m
+       [32mâœ“[39m 200 filter theo role=CUSTOMER[32m 9[2mms[22m[39m
+       [32mâœ“[39m 200 search theo email[32m 7[2mms[22m[39m
+       [32mâœ“[39m 401 náº¿u khĂ´ng cĂ³ token[32m 3[2mms[22m[39m
+       [32mâœ“[39m 403 náº¿u khĂ´ng pháº£i ADMIN[32m 4[2mms[22m[39m
+       [32mâœ“[39m 400 náº¿u admin tá»± lock chĂ­nh mĂ¬nh[32m 8[2mms[22m[39m
+       [32mâœ“[39m 200 lock user thĂ nh cĂ´ng[32m 15[2mms[22m[39m
+       [32mâœ“[39m 200 unlock user thĂ nh cĂ´ng[32m 10[2mms[22m[39m
+node.exe : 
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (:String) [],    
+ RemoteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+[31mâ¯â¯â¯â¯â¯â¯
+[39m[1m[41m Failed 
+Suites 5 [49m[22m[31
+mâ¯â¯â¯â¯â¯â¯â¯
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/admin-
+approval.test.js[2m > 
+[22mAdmin 
+Approve/Reject API 
+(T3.5a)[2m > 
+[22mPOST /api/admin/vo
+uchers/:id/reject
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.voucher
+.create()` invocation 
+in
+D:/ViVouch/ViVouch/back
+end/tests/admin-approva
+l.test.js:391:50
+
+  388 let 
+rejectVoucherId = "";
+  389 
+  390 beforeAll(async 
+() => {
+â†’ 391   const 
+rejectVoucher = await 
+prisma.voucher.create(
+Foreign key constraint 
+violated: `Voucher_part
+nerId_fkey 
+(index)`[39m
+[90m [2mâ¯[22m 
+$n.handleRequestError n
+ode_modules/@prisma/cli
+ent/runtime/library.js:
+[2m121:7315[22m[39m
+[90m [2mâ¯[22m $n.h
+andleAndLogRequestError
+ node_modules/@prisma/c
+lient/runtime/library.j
+s:[2m121:6623[22m[39
+m
+[90m [2mâ¯[22m 
+$n.request node_modules
+/@prisma/client/runtime
+/library.js:[2m121:630
+7[22m[39m
+[90m [2mâ¯[22m l no
+de_modules/@prisma/clie
+nt/runtime/library.js:
+[2m130:9633[22m[39m
+[36m [2mâ¯[22m test
+s/admin-approval.test.j
+s:[2m391:29[22m[39m
+    [90m389|[39m
+    [90m390|[39m     
+[34mbeforeAll[39m([3
+5masync[39m () 
+[33m=>[39m {
+    [90m391|[39m     
+  [35mconst[39m 
+rejectVoucher 
+[33m=[39m 
+[35mawait[39m prisma
+[33m.[39mvoucher[33m.
+[39m[34mcreate[39m({
+    [90m   |[39m     
+                       
+ [31m^[39m
+    [90m392|[39m     
+    data[33m:[39m {
+    [90m393|[39m     
+      
+partnerId[33m,[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[1/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/admin-
+approval.test.js[2m > 
+[22mAdmin 
+Approve/Reject API 
+(T3.5a)[2m > 
+[22mVoucher approval 
+lifecycle â€” 
+saleStart/saleEnd 
+timing (regression)
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.voucher
+.create()` invocation 
+in
+D:/ViVouch/ViVouch/back
+end/tests/admin-approva
+l.test.js:448:48
+
+  445 
+  446 beforeAll(async 
+() => {
+  447   // Voucher C: 
+saleEnd already 
+expired â†’ stays 
+APPROVED
+â†’ 448   const 
+expiredSale = await 
+prisma.voucher.create(
+Foreign key constraint 
+violated: `Voucher_part
+nerId_fkey 
+(index)`[39m
+[90m [2mâ¯[22m 
+$n.handleRequestError n
+ode_modules/@prisma/cli
+ent/runtime/library.js:
+[2m121:7315[22m[39m
+[90m [2mâ¯[22m $n.h
+andleAndLogRequestError
+ node_modules/@prisma/c
+lient/runtime/library.j
+s:[2m121:6623[22m[39
+m
+[90m [2mâ¯[22m 
+$n.request node_modules
+/@prisma/client/runtime
+/library.js:[2m121:630
+7[22m[39m
+[90m [2mâ¯[22m l no
+de_modules/@prisma/clie
+nt/runtime/library.js:
+[2m130:9633[22m[39m
+[36m [2mâ¯[22m test
+s/admin-approval.test.j
+s:[2m448:27[22m[39m
+    [90m446|[39m     
+[34mbeforeAll[39m([3
+5masync[39m () 
+[33m=>[39m {
+    [90m447|[39m     
+  [90m// Voucher C: 
+saleEnd already 
+expired â†’ stays 
+APPROVED[39m
+    [90m448|[39m     
+  [35mconst[39m 
+expiredSale 
+[33m=[39m 
+[35mawait[39m prisma
+[33m.[39mvoucher[33m.
+[39m[34mcreate[39m({
+    [90m   |[39m     
+                      
+[31m^[39m
+    [90m449|[39m     
+    data[33m:[39m {
+    [90m450|[39m     
+      
+partnerId[33m,[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[2/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/admin-
+orders-audit.test.js[2
+m > [22mAdmin Orders 
+& Audit Logs API Tests
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.partner
+.create()` invocation 
+in
+D:/ViVouch/ViVouch/back
+end/tests/admin-orders-
+audit.test.js:145:42
+
+  142   data: { name: 
+"Test Category", slug: 
+"test-category" }
+  143 });
+  144 
+â†’ 145 const partner 
+= await 
+prisma.partner.create(
+Unique constraint 
+failed on the fields: 
+(`taxCode`)[39m
+[90m [2mâ¯[22m 
+$n.handleRequestError n
+ode_modules/@prisma/cli
+ent/runtime/library.js:
+[2m121:7315[22m[39m
+[90m [2mâ¯[22m $n.h
+andleAndLogRequestError
+ node_modules/@prisma/c
+lient/runtime/library.j
+s:[2m121:6623[22m[39
+m
+[90m [2mâ¯[22m 
+$n.request node_modules
+/@prisma/client/runtime
+/library.js:[2m121:630
+7[22m[39m
+[90m [2mâ¯[22m l no
+de_modules/@prisma/clie
+nt/runtime/library.js:
+[2m130:9633[22m[39m
+[36m [2mâ¯[22m test
+s/admin-orders-audit.te
+st.js:[2m145:21[22m[
+39m
+    [90m143|[39m     
+})[33m;[39m
+    [90m144|[39m
+    [90m145|[39m     
+[35mconst[39m 
+partner [33m=[39m 
+[35mawait[39m prisma
+[33m.[39mpartner[33m.
+[39m[34mcreate[39m({
+    [90m   |[39m     
+                
+[31m^[39m
+    [90m146|[39m     
+  data[33m:[39m {
+    [90m147|[39m     
+    userId[33m:[39m p
+artnerUser[33m.[39mid
+[33m,[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[3/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m 
+tests/cart.test.js[2m 
+> [22mCart API 
+Tests[2m > [22mPATCH 
+/api/customer/cart/item
+s/:id (updateQty) & 
+Access Guard
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'id')[39m
+[36m [2mâ¯[22m test
+s/cart.test.js:[2m309:
+43[22m[39m
+    [90m307|[39m     
+    [33m.[39m[35mget
+[39m([32m"/api/custom
+er/cart"[39m)
+    [90m308|[39m     
+    [33m.[39m[35mset
+[39m([32m"Authorizati
+on"[39m[33m,[39m 
+[32m`Bearer [39m[36m
+${[39mtokenA[36m}[39
+m[32m`[39m)[33m;[39
+m
+    [90m309|[39m     
+  cartItemId 
+[33m=[39m res[33m.[
+39mbody[33m.[39mdata
+[33m.[39mitems[[34m0
+[39m][33m.[39mid[33m
+;[39m
+    [90m   |[39m     
+                       
+               
+[31m^[39m
+    [90m310|[39m     
+})[33m;[39m
+    [90m311|[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[4/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m 
+tests/cart.test.js[2m 
+> [22mCart API 
+Tests[2m > 
+[22mDELETE /api/custom
+er/cart/items/:id 
+(removeItem) & Access 
+Guard
+[31m[1mTypeError[22m
+: Cannot read 
+properties of 
+undefined (reading 
+'id')[39m
+[36m [2mâ¯[22m test
+s/cart.test.js:[2m340:
+43[22m[39m
+    [90m338|[39m     
+    [33m.[39m[35mget
+[39m([32m"/api/custom
+er/cart"[39m)
+    [90m339|[39m     
+    [33m.[39m[35mset
+[39m([32m"Authorizati
+on"[39m[33m,[39m 
+[32m`Bearer [39m[36m
+${[39mtokenA[36m}[39
+m[32m`[39m)[33m;[39
+m
+    [90m340|[39m     
+  cartItemId 
+[33m=[39m res[33m.[
+39mbody[33m.[39mdata
+[33m.[39mitems[[34m0
+[39m][33m.[39mid[33m
+;[39m
+    [90m   |[39m     
+                       
+               
+[31m^[39m
+    [90m341|[39m     
+})[33m;[39m
+    [90m342|[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[5/13]â¯[22m
+[39m
+
+
+[31mâ¯â¯â¯â¯â¯â¯
+â¯[39m[1m[41m 
+Failed Tests 8 [49m[2
+2m[31mâ¯â¯â¯â¯â¯â
+¯â¯[39m
+
+[41m[1m FAIL 
+[22m[49m tests/admin-
+approval.test.js[2m > 
+[22mAdmin 
+Approve/Reject API 
+(T3.5a)[2m > 
+[22mPOST /api/admin/vo
+uchers/:id/approve[2m 
+> [22m400 náº¿u 
+voucher status khĂ´ng 
+pháº£i PENDING_APPROVAL
+[31m[1mPrismaClientKn
+ownRequestError[22m: 
+Invalid `prisma.voucher
+.create()` invocation 
+in
+D:/ViVouch/ViVouch/back
+end/tests/admin-approva
+l.test.js:286:49
+
+  283 });
+  284 
+  285 it("400 náº¿u 
+voucher status khĂ´ng 
+pháº£i 
+PENDING_APPROVAL", 
+async () => {
+â†’ 286   const 
+draftVoucher = await 
+prisma.voucher.create(
+Foreign key constraint 
+violated: `Voucher_part
+nerId_fkey 
+(index)`[39m
+[90m [2mâ¯[22m 
+$n.handleRequestError n
+ode_modules/@prisma/cli
+ent/runtime/library.js:
+[2m121:7315[22m[39m
+[90m [2mâ¯[22m $n.h
+andleAndLogRequestError
+ node_modules/@prisma/c
+lient/runtime/library.j
+s:[2m121:6623[22m[39
+m
+[90m [2mâ¯[22m 
+$n.request node_modules
+/@prisma/client/runtime
+/library.js:[2m121:630
+7[22m[39m
+[90m [2mâ¯[22m l no
+de_modules/@prisma/clie
+nt/runtime/library.js:
+[2m130:9633[22m[39m
+[36m [2mâ¯[22m test
+s/admin-approval.test.j
+s:[2m286:28[22m[39m
+    [90m284|[39m
+    [90m285|[39m     
+it("400 náº¿u voucher 
+status khĂ´ng pháº£i 
+PENDING_APPROVAL", 
+async () â€¦
+    [90m286|[39m     
+  [35mconst[39m 
+draftVoucher 
+[33m=[39m 
+[35mawait[39m prisma
+[33m.[39mvoucher[33m.
+[39m[34mcreate[39m({
+    [90m   |[39m     
+                       
+[31m^[39m
+    [90m287|[39m     
+    data[33m:[39m {
+    [90m288|[39m     
+      
+partnerId[33m,[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[6/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/admin-
+approval.test.js[2m > 
+[22mAdmin 
+Approve/Reject API 
+(T3.5a)[2m > 
+[22mPOST /api/admin/vo
+uchers/:id/approve[2m 
+> [22m200 approve 
+voucher thĂnh cĂ´ng
+[31m[1mAssertionError
+[22m: expected 404 to 
+be 200 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+[36m [2mâ¯[22m test
+s/admin-approval.test.j
+s:[2m313:26[22m[39m
+    [90m311|[39m     
+    [33m.[39m[35mset
+[39m([32m"Authorizati
+on"[39m[33m,[39m 
+[32m`Bearer [39m[36m
+${[39madminToken[36m}
+[39m[32m`[39m)[33m;
+[39m
+    [90m312|[39m
+    [90m313|[39m     
+  [34mexpect[39m(res
+[33m.[39mstatus)[33m.
+[39m[34mtoBe[39m([3
+4m200[39m)[33m;[39m
+    [90m   |[39m     
+                     
+[31m^[39m
+    [90m314|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9msuccess)[33m.[39m[
+34mtoBe[39m([35mtrue
+[39m)[33m;[39m
+    [90m315|[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[7/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/admin-
+management.test.js[2m 
+> [22mAdmin 
+Management API 
+Tests[2m > [22mGET /a
+pi/admin/partners[2m 
+> [22m200 tráº£ vá» 
+list partners cĂ³ 
+pagination
+[31m[1mAssertionError
+[22m: expected 1 to 
+be greater than or 
+equal to 2[39m
+[36m [2mâ¯[22m test
+s/admin-management.test
+.js:[2m180:45[22m[39
+m
+    [90m178|[39m     
+  [34mexpect[39m(res
+[33m.[39mstatus)[33m.
+[39m[34mtoBe[39m([3
+4m200[39m)[33m;[39m
+    [90m179|[39m     
+  [34mexpect[39m([33
+mArray[39m[33m.[39m
+[34misArray[39m(res[3
+3m.[39mbody[33m.[39m
+data[33m.[39mpartners
+))[33m.[39m[34mtoBe
+[39m([35mtrue[39m)[3
+3m;[39m
+    [90m180|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9mdata[33m.[39mpartne
+rs[33m.[39mlength)[3
+3m.[39m[34mtoBeGreate
+rThanOrEqual[39m([34m
+2[39m)[33m;[39m
+    [90m   |[39m     
+                       
+                 
+[31m^[39m
+    [90m181|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9mdata[33m.[39mpagina
+tion)[33m.[39m[34mto
+HaveProperty[39m([32m
+"total"[39m)[33m;[39
+m
+    [90m182|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9mdata[33m.[39mpagina
+tion)[33m.[39m[34mto
+HaveProperty[39m([32m
+"page"[39m)[33m;[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[8/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m tests/admin-
+management.test.js[2m 
+> [22mAdmin 
+Management API 
+Tests[2m > [22mGET /a
+pi/admin/partners[2m 
+> [22m200 search theo 
+tĂªn cĂ´ng ty
+[31m[1mAssertionError
+[22m: expected 0 to 
+be greater than or 
+equal to 1[39m
+[36m [2mâ¯[22m test
+s/admin-management.test
+.js:[2m205:45[22m[39
+m
+    [90m203|[39m
+    [90m204|[39m     
+  [34mexpect[39m(res
+[33m.[39mstatus)[33m.
+[39m[34mtoBe[39m([3
+4m200[39m)[33m;[39m
+    [90m205|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9mdata[33m.[39mpartne
+rs[33m.[39mlength)[3
+3m.[39m[34mtoBeGreate
+rThanOrEqual[39m([34m
+1[39m)[33m;[39m
+    [90m   |[39m     
+                       
+                 
+[31m^[39m
+    [90m206|[39m     
+  const found = res.bod
+y.data.partners.some((p
+) => p.businessName â€¦
+    [90m207|[39m     
+  [34mexpect[39m(foun
+d)[33m.[39m[34mtoBe
+[39m([35mtrue[39m)[3
+3m;[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯â¯[9/13]â¯[22m
+[39m
+
+[41m[1m FAIL 
+[22m[49m 
+tests/cart.test.js[2m 
+> [22mCart API 
+Tests[2m > [22mPOST /
+api/customer/cart/items
+ (addItem)[2m > 
+[22mnĂªn bĂ¡o lá»—i 
+náº¿u thĂªm voucher 
+á»Ÿ tráº¡ng thĂ¡i DRAFT
+[31m[1mAssertionError
+[22m: expected 404 to 
+be 400 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 404[39m
+
+[36m [2mâ¯[22m test
+s/cart.test.js:[2m253:
+26[22m[39m
+    [90m251|[39m     
+    [33m.[39m[34msen
+d[39m({ 
+voucherId[33m:[39m vo
+ucherDraft[33m.[39mid
+[33m,[39m 
+qty[33m:[39m 
+[34m1[39m 
+})[33m;[39m
+    [90m252|[39m
+    [90m253|[39m     
+  [34mexpect[39m(res
+[33m.[39mstatus)[33m.
+[39m[34mtoBe[39m([3
+4m400[39m)[33m;[39m
+    [90m   |[39m     
+                     
+[31m^[39m
+    [90m254|[39m     
+  expect(res.body.messa
+ge).toContain("khĂ´ng 
+á»Ÿ tráº¡ng thĂ¡i 
+Ä‘ang bĂ¡n"â€¦
+    [90m255|[39m     
+})[33m;[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯[10/13]â¯[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m 
+tests/cart.test.js[2m 
+> [22mCart API 
+Tests[2m > [22mPOST /
+api/customer/cart/items
+ (addItem)[2m > 
+[22mnĂªn bĂ¡o lá»—i 
+náº¿u sá»‘ lÆ°á»£ng 
+thĂªm lá»›n hÆ¡n sá»‘ 
+lÆ°á»£ng cĂ²n láº¡i
+[31m[1mAssertionError
+[22m: expected 404 to 
+be 400 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 404[39m
+
+[36m [2mâ¯[22m test
+s/cart.test.js:[2m263:
+26[22m[39m
+    [90m261|[39m     
+    .send({ voucherId: 
+voucherLimited.id, 
+qty: 2 }); // 
+remaining â€¦
+    [90m262|[39m
+    [90m263|[39m     
+  [34mexpect[39m(res
+[33m.[39mstatus)[33m.
+[39m[34mtoBe[39m([3
+4m400[39m)[33m;[39m
+    [90m   |[39m     
+                     
+[31m^[39m
+    [90m264|[39m     
+  expect(res.body.messa
+ge).toContain("Sá»‘ 
+lÆ°á»£ng voucher cĂ²n 
+láº¡i khĂ´â€¦
+    [90m265|[39m     
+})[33m;[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯[11/13]â¯[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m 
+tests/cart.test.js[2m 
+> [22mCart API 
+Tests[2m > [22mPOST /
+api/customer/cart/items
+ (addItem)[2m > 
+[22mnĂªn thĂªm thĂnh 
+cĂ´ng voucher ON_SALE 
+vĂo giá» hĂng
+[31m[1mAssertionError
+[22m: expected 404 to 
+be 200 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+[36m [2mâ¯[22m test
+s/cart.test.js:[2m273:
+26[22m[39m
+    [90m271|[39m     
+    [33m.[39m[34msen
+d[39m({ 
+voucherId[33m:[39m vo
+ucherOnSale[33m.[39mi
+d[33m,[39m 
+qty[33m:[39m 
+[34m2[39m 
+})[33m;[39m
+    [90m272|[39m
+    [90m273|[39m     
+  [34mexpect[39m(res
+[33m.[39mstatus)[33m.
+[39m[34mtoBe[39m([3
+4m200[39m)[33m;[39m
+    [90m   |[39m     
+                     
+[31m^[39m
+    [90m274|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9mdata[33m.[39mitems)
+[33m.[39m[34mtoHaveL
+ength[39m([34m1[39m)
+[33m;[39m
+    [90m275|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9mdata[33m.[39mitems[
+[34m0[39m][33m.[39m
+voucherId)[33m.[39m[
+34mtoBe[39m(voucherOnS
+ale[33m.[39mid)[33m;
+[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯[12/13]â¯[22m[
+39m
+
+[41m[1m FAIL 
+[22m[49m 
+tests/cart.test.js[2m 
+> [22mCart API 
+Tests[2m > [22mPOST /
+api/customer/cart/items
+ (addItem)[2m > 
+[22mnĂªn cá»™ng dá»“n 
+qty khi thĂªm trĂ¹ng 
+voucherId vĂ khĂ´ng 
+sinh thĂªm row
+[31m[1mAssertionError
+[22m: expected 404 to 
+be 200 // Object.is 
+equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 404[39m
+
+[36m [2mâ¯[22m test
+s/cart.test.js:[2m293:
+26[22m[39m
+    [90m291|[39m     
+    [33m.[39m[34msen
+d[39m({ 
+voucherId[33m:[39m vo
+ucherOnSale[33m.[39mi
+d[33m,[39m 
+qty[33m:[39m 
+[34m1[39m 
+})[33m;[39m
+    [90m292|[39m
+    [90m293|[39m     
+  [34mexpect[39m(res
+[33m.[39mstatus)[33m.
+[39m[34mtoBe[39m([3
+4m200[39m)[33m;[39m
+    [90m   |[39m     
+                     
+[31m^[39m
+    [90m294|[39m     
+  expect(res.body.data.
+items).toHaveLength(1);
+ // Still 1 unique râ€¦
+    [90m295|[39m     
+  [34mexpect[39m(res
+[33m.[39mbody[33m.[3
+9mdata[33m.[39mitems[
+[34m0[39m][33m.[39m
+qty)[33m.[39m[34mtoB
+e[39m([34m3[39m)[33
+m;[39m  [90m// 2 + 1 
+= 3[39m
+
+[31m[2mâ¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯â
+¯â¯â¯â¯â¯â¯â¯â¯
+â¯â¯[13/13]â¯[22m[
+39m
+
+
+[2m Test Files [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m13 passed[39m[22m[90m (17)[39m
+[2m      Tests [22m [1m[31m8 failed[39m[22m[2m | [22m[1m[32m131 passed[39m[22m[2m | [22m[33m23 skipped[39m[90m (162)[39m
+[2m   Start at [22m 18:52:54
+[2m   Duration [22m 2.68s[2m (transform 2.72s, setup 0ms, import 20.19s, tests 8.85s, environment 3ms)[22m
+
