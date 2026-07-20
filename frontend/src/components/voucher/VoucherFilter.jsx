@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 
 /** Chip filter — giống mockup vivouch_search_results */
-const FILTER_CHIPS = [
-  { key: "category", label: "Danh mục" },
-];
+const FILTER_CHIPS = [{ key: "category", label: "Danh mục" }];
 function ChevronDown() {
   return (
     <svg
@@ -22,8 +20,15 @@ function ChevronDown() {
  * VoucherFilter — hàng chip Danh mục / Khu vực / Giá / Giảm giá
  * (theo vivouch_search_results_desktop & mobile mockup)
  */
-export function VoucherFilter({ activeCategory, onCategoryChange, categories = [] }) {
+export function VoucherFilter({
+  activeCategory,
+  onCategoryChange,
+  categories = [],
+  advancedFilters = {},
+  onAdvancedFiltersChange = () => {},
+}) {
   const [openChip, setOpenChip] = useState(null);
+  const [draft, setDraft] = useState(advancedFilters);
   const panelRef = useRef(null);
 
   const categoryOptions = useMemo(
@@ -31,12 +36,26 @@ export function VoucherFilter({ activeCategory, onCategoryChange, categories = [
       { key: "all", label: "Tất cả" },
       ...categories.map((cat) => ({ key: cat.slug, label: cat.name })),
     ],
-    [categories]
+    [categories],
   );
 
   const isCategoryActive = activeCategory !== "all";
   const activeCategoryLabel =
     categoryOptions.find((c) => c.key === activeCategory)?.label ?? "Tất cả";
+
+  useEffect(() => {
+    setDraft(advancedFilters);
+  }, [
+    advancedFilters.city,
+    advancedFilters.partner,
+    advancedFilters.minPrice,
+    advancedFilters.maxPrice,
+    advancedFilters.minDiscount,
+  ]);
+
+  const hasAdvancedFilters = Object.values(advancedFilters).some(
+    (value) => value !== "" && value != null,
+  );
 
   // Đóng dropdown khi click ra ngoài
   useEffect(() => {
@@ -110,8 +129,120 @@ export function VoucherFilter({ activeCategory, onCategoryChange, categories = [
             </div>
           );
         })}
+        <details className="dropdown shrink-0">
+          <summary className={chipClass(hasAdvancedFilters)}>
+            Bộ lọc nâng cao
+            <ChevronDown />
+          </summary>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              onAdvancedFiltersChange(draft);
+              event.currentTarget.closest("details")?.removeAttribute("open");
+            }}
+            className="dropdown-content z-50 mt-2 w-[min(92vw,520px)] rounded-xl border border-outline-variant bg-surface-container-lowest p-4 shadow-xl"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-on-surface">
+              <label className="text-sm font-medium">
+                Khu vực
+                <input
+                  className="input input-bordered input-sm w-full mt-1"
+                  placeholder="Ví dụ: Hồ Chí Minh"
+                  value={draft.city || ""}
+                  onChange={(event) =>
+                    setDraft((current) => ({
+                      ...current,
+                      city: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label className="text-sm font-medium">
+                Đối tác
+                <input
+                  className="input input-bordered input-sm w-full mt-1"
+                  placeholder="Tên doanh nghiệp"
+                  value={draft.partner || ""}
+                  onChange={(event) =>
+                    setDraft((current) => ({
+                      ...current,
+                      partner: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label className="text-sm font-medium">
+                Giá từ
+                <input
+                  type="number"
+                  min="0"
+                  className="input input-bordered input-sm w-full mt-1"
+                  value={draft.minPrice || ""}
+                  onChange={(event) =>
+                    setDraft((current) => ({
+                      ...current,
+                      minPrice: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label className="text-sm font-medium">
+                Giá đến
+                <input
+                  type="number"
+                  min="0"
+                  className="input input-bordered input-sm w-full mt-1"
+                  value={draft.maxPrice || ""}
+                  onChange={(event) =>
+                    setDraft((current) => ({
+                      ...current,
+                      maxPrice: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label className="text-sm font-medium sm:col-span-2">
+                Giảm tối thiểu (%)
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  className="input input-bordered input-sm w-full mt-1"
+                  value={draft.minDiscount || ""}
+                  onChange={(event) =>
+                    setDraft((current) => ({
+                      ...current,
+                      minDiscount: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm"
+                onClick={() => {
+                  const empty = {
+                    city: "",
+                    partner: "",
+                    minPrice: "",
+                    maxPrice: "",
+                    minDiscount: "",
+                  };
+                  setDraft(empty);
+                  onAdvancedFiltersChange(empty);
+                }}
+              >
+                Xóa bộ lọc
+              </button>
+              <button type="submit" className="btn btn-primary btn-sm">
+                Áp dụng
+              </button>
+            </div>
+          </form>
+        </details>
       </div>
     </div>
   );
 }
-

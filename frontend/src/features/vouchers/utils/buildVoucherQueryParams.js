@@ -11,6 +11,11 @@ const SORT_TO_API = {
 export function buildVoucherQueryParams({
   keyword,
   category,
+  city,
+  partner,
+  minPrice,
+  maxPrice,
+  minDiscount,
   sort,
   page = 1,
   limit = 8,
@@ -36,6 +41,22 @@ export function buildVoucherQueryParams({
       params.categoryId = "00000000-0000-0000-0000-000000000000";
     }
   }
+
+  if (typeof city === "string" && city.trim()) params.city = city.trim();
+  if (typeof partner === "string" && partner.trim()) params.partner = partner.trim();
+
+  const addNumeric = (key, val, maxVal = null) => {
+    if (val !== "" && val != null) {
+      const num = Number(val);
+      if (Number.isFinite(num) && num >= 0) {
+        params[key] = maxVal != null ? Math.min(maxVal, num) : num;
+      }
+    }
+  };
+
+  addNumeric("minPrice", minPrice);
+  addNumeric("maxPrice", maxPrice);
+  addNumeric("minDiscount", minDiscount, 100);
 
   return params;
 }

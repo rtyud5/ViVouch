@@ -13,6 +13,8 @@ import adminRouter from './modules/admin/admin.routes.js';
 import ordersRouter from './modules/orders/orders.routes.js';
 import partnersRouter from './modules/partners/partners.routes.js';
 import usersRouter from './modules/users/users.routes.js';
+import cmsRouter from './modules/cms/cms.routes.js';
+import { requestContextMiddleware } from './middlewares/requestContext.middleware.js';
 
 const app = express();
 const allowedOrigins = [
@@ -39,12 +41,14 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(requestContextMiddleware);
 
 app.get("/health", (req, res) => res.json({ success: true, message: "Voucher API is running" }));
 
 app.use("/api-docs", swaggerDocs);
 app.use("/api/auth", authRoutes);
 app.use('/api/categories', categoriesRouter);
+app.use('/api/content', cmsRouter);
 app.use('/api/vouchers', vouchersRouter);
 app.use('/api/customer/cart', cartRouter);
 app.use('/api/customer/orders', ordersRouter);

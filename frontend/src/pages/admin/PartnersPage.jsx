@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { AdminTable } from '../../features/admin/components';
-import { usePartners, useApprovePartner, useRejectPartner } from '../../features/admin/hooks/usePartners';
+import { usePartners, useApprovePartner, useRejectPartner, useSetPartnerStatus } from '../../features/admin/hooks/usePartners';
 import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
 import { ApiErrorToast } from '../../components/common/ApiErrorToast';
 
@@ -15,6 +15,7 @@ export default function PartnersPage() {
   const { data, isLoading, isError, error, refetch } = usePartners(params);
   const { mutate: approvePartner, isPending: isApprovePending } = useApprovePartner();
   const { mutate: rejectPartner, isPending: isRejectPending } = useRejectPartner();
+  const { mutate: setPartnerStatus, isPending: isStatusPending } = useSetPartnerStatus();
 
   const partners = data?.data?.partners || [];
 
@@ -48,6 +49,23 @@ export default function PartnersPage() {
       onError: (err) => {
         setToastError(err);
       },
+    });
+  };
+
+  const handleOperationalStatus = (partner) => {
+    const nextStatus = partner.status === 'SUSPENDED' ? 'APPROVED' : 'SUSPENDED';
+    const reason = nextStatus === 'SUSPENDED'
+      ? window.prompt('Nhập lý do tạm ngưng đối tác:')
+      : undefined;
+    if (nextStatus === 'SUSPENDED' && !reason?.trim()) return;
+
+    setToastError(null);
+    setPartnerStatus({ partnerId: partner.id, status: nextStatus, reason }, {
+      onSuccess: () => {
+        setToastSuccess(nextStatus === 'SUSPENDED' ? 'Đã tạm ngưng đối tác.' : 'Đã kích hoạt lại đối tác.');
+        setTimeout(() => setToastSuccess(''), 4000);
+      },
+      onError: setToastError,
     });
   };
 
@@ -92,6 +110,9 @@ export default function PartnersPage() {
         } else if (row.status === 'REJECTED') {
           badgeClass = "bg-red-100 text-red-800";
           statusText = "Từ chối";
+        } else if (row.status === 'SUSPENDED') {
+          badgeClass = "bg-gray-200 text-gray-800";
+          statusText = "Tạm ngưng";
         }
         return (
           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badgeClass}`}>
@@ -104,6 +125,18 @@ export default function PartnersPage() {
       key: 'actions',
       label: 'Hành động',
       render: (row) => {
+        if (row.status === 'APPROVED' || row.status === 'SUSPENDED') {
+          return (
+            <button
+              type="button"
+              onClick={(event) => { event.stopPropagation(); handleOperationalStatus(row); }}
+              disabled={isStatusPending}
+              className={`btn btn-xs ${row.status === 'SUSPENDED' ? 'btn-success' : 'btn-warning'}`}
+            >
+              {row.status === 'SUSPENDED' ? 'Kích hoạt' : 'Tạm ngưng'}
+            </button>
+          );
+        }
         if (row.status !== 'PENDING') return null;
         return (
           <div className="flex justify-end gap-2 pr-6">
@@ -172,6 +205,12 @@ export default function PartnersPage() {
               className={`pb-3 font-semibold ${params.status === 'APPROVED' ? 'text-amber-600 border-b-2 border-amber-500' : 'text-gray-500'}`}
             >
               Đã duyệt
+            </button>
+            <button
+              onClick={() => setParams(p => ({ ...p, status: 'SUSPENDED', page: 1 }))}
+              className={`pb-3 font-semibold ${params.status === 'SUSPENDED' ? 'text-amber-600 border-b-2 border-amber-500' : 'text-gray-500'}`}
+            >
+              Tạm ngưng
             </button>
           </div>
         </div>

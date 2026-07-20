@@ -11,6 +11,7 @@ describe("Authentication & Authorization API Tests", () => {
   const password = "Password123!";
 
   let customerToken = "";
+  let customerRefreshToken = "";
   let adminToken = "";
 
   beforeAll(async () => {
@@ -41,6 +42,7 @@ describe("Authentication & Authorization API Tests", () => {
         password
       });
     customerToken = resCustomerLogin.body.data.accessToken;
+    customerRefreshToken = resCustomerLogin.body.data.refreshToken;
 
     // 2. Đăng ký Admin (đăng ký dạng customer trước rồi nâng cấp role)
     const resAdminReg = await request(app)
@@ -131,6 +133,70 @@ describe("Authentication & Authorization API Tests", () => {
     });
   });
 
+  describe("POST /api/auth/refresh", () => {
+    it("rotates the refresh token and returns a fresh access token", async () => {
+      const firstToken = customerRefreshToken;
+      const res = await request(app)
+        .post("/api/auth/refresh")
+        .send({ refreshToken: firstToken });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.accessToken).toBeTruthy();
+      expect(res.body.data.refreshToken).toBeTruthy();
+      expect(res.body.data.refreshToken).not.toBe(firstToken);
+      customerRefreshToken = res.body.data.refreshToken;
+
+      const replay = await request(app)
+        .post("/api/auth/refresh")
+        .send({ refreshToken: firstToken });
+      expect(replay.status).toBe(401);
+      expect(replay.body.code).toBe("INVALID_REFRESH_TOKEN");
+    });
+
+    it("rejects a malformed refresh token", async () => {
+      const res = await request(app)
+        .post("/api/auth/refresh")
+        .send({ refreshToken: "not-a-token" });
+      expect(res.status).toBe(401);
+      expect(res.body.code).toBe("INVALID_REFRESH_TOKEN");
+    });
+  });
+
+  describe("Simulated forgot/reset password", () => {
+    it("issues a one-time reset token and accepts the new password", async () => {
+      const requested = await request(app)
+        .post("/api/auth/forgot-password")
+        .send({ email: customerEmail });
+      expect(requested.status).toBe(200);
+      expect(requested.body.data.delivery).toBe("SIMULATED");
+      expect(requested.body.data.resetToken).toBeTruthy();
+
+      const resetToken = requested.body.data.resetToken;
+      const reset = await request(app)
+        .post("/api/auth/reset-password")
+        .send({ resetToken, password: "NewPassword456" });
+      expect(reset.status).toBe(200);
+
+      const replay = await request(app)
+        .post("/api/auth/reset-password")
+        .send({ resetToken, password: "OtherPassword789" });
+      expect(replay.status).toBe(401);
+
+      const loginWithNewPassword = await request(app)
+        .post("/api/auth/login")
+        .send({ email: customerEmail, password: "NewPassword456" });
+      expect(loginWithNewPassword.status).toBe(200);
+    });
+
+    it("does not disclose whether an email exists", async () => {
+      const res = await request(app)
+        .post("/api/auth/forgot-password")
+        .send({ email: "unknown-user@example.com" });
+      expect(res.status).toBe(200);
+      expect(res.body.data.resetToken).toBeNull();
+    });
+  });
+
   describe("Role Guard (requireRole)", () => {
     it("nên trả về 403 nếu user có role CUSTOMER cố gắng truy cập route của ADMIN", async () => {
       const res = await request(app)
@@ -140,6 +206,7 @@ describe("Authentication & Authorization API Tests", () => {
       expect(res.status).toBe(403);
       expect(res.body.success).toBe(false);
       expect(res.body.message).toBe("Không có quyền truy cập");
+      expect(res.body).not.toHaveProperty("stack");
     });
 
     it("nên trả về 200 nếu user có role ADMIN truy cập route của ADMIN", async () => {

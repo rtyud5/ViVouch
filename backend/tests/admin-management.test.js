@@ -9,6 +9,7 @@ const sharedState = {
   customerToken: "",
   adminId: "",
   userId_customer: "",
+  userId_customer2: "",
   partnerId_pending: "",
   partnerId_approved: "",
   voucherId_pending: "",
@@ -63,9 +64,10 @@ async function createTestUsers() {
     .send({ email: CUSTOMER1_EMAIL, password: PASSWORD, fullName: "Customer Mgmt 1", phone: "0910000002" });
   sharedState.userId_customer = resCust1Reg.body.data.id;
 
-  await request(app)
+  const resCust2Reg = await request(app)
     .post("/api/auth/register")
     .send({ email: CUSTOMER2_EMAIL, password: PASSWORD, fullName: "Customer Mgmt 2", phone: "0910000003" });
+  sharedState.userId_customer2 = resCust2Reg.body.data.id;
 
   const resCustomerLogin = await request(app)
     .post("/api/auth/login")
@@ -330,6 +332,40 @@ describe("Admin Management API Tests", () => {
       });
       expect(log).toBeDefined();
       expect(log.actorId).toBe(sharedState.adminId);
+    });
+  });
+
+  describe("Admin role and partner operational status", () => {
+    it("assigns a role and records the change", async () => {
+      const res = await request(app)
+        .patch(`/api/admin/users/${sharedState.userId_customer2}/role`)
+        .set("Authorization", `Bearer ${sharedState.adminToken}`)
+        .send({ role: "ADMIN" });
+      expect(res.status).toBe(200);
+      expect(res.body.data.role).toBe("ADMIN");
+
+      const log = await prisma.auditLog.findFirst({
+        where: { action: "ADMIN_ASSIGN_ROLE", targetId: sharedState.userId_customer2 },
+        orderBy: { createdAt: "desc" },
+      });
+      expect(log.oldValues).toEqual({ role: "CUSTOMER" });
+      expect(log.newValues).toEqual({ role: "ADMIN" });
+    });
+
+    it("suspends and reactivates an approved partner", async () => {
+      const suspended = await request(app)
+        .patch(`/api/admin/partners/${sharedState.partnerId_approved}/status`)
+        .set("Authorization", `Bearer ${sharedState.adminToken}`)
+        .send({ status: "SUSPENDED", reason: "Compliance review" });
+      expect(suspended.status).toBe(200);
+      expect(suspended.body.data.status).toBe("SUSPENDED");
+
+      const reactivated = await request(app)
+        .patch(`/api/admin/partners/${sharedState.partnerId_approved}/status`)
+        .set("Authorization", `Bearer ${sharedState.adminToken}`)
+        .send({ status: "APPROVED" });
+      expect(reactivated.status).toBe(200);
+      expect(reactivated.body.data.status).toBe("APPROVED");
     });
   });
 });

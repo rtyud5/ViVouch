@@ -1,5 +1,7 @@
 # W6 Operational Backlog — Partner/Admin Portal
 
+> **Historical W5-T5 snapshot.** This file is retained for provenance and is superseded by the [final W6/W7 backlog](W5D5_02_prioritized_backlog.md). Branch management, Categories/CMS, direct usage/audit assertions, audit filters, and the previously failing review assertions were closed during consolidated D5 remediation; do not treat their rows below as open work.
+
 **Carryover from W5-T5 | Owner: Partner & Admin Portal Lead**  
 **Date:** 2026-07-19  
 **Priority:** P2 = Within W6 | P3 = Nice-to-have / Post-submission

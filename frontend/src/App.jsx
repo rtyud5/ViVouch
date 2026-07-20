@@ -1,3 +1,4 @@
+import React from "react";
 import { QueryProvider } from "./app/providers/QueryProvider";
 import { AppRoutes } from "./routes/AppRoutes";
 

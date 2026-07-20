@@ -191,6 +191,30 @@ describe('Reviews API Tests', () => {
       expect(res.body.data).toHaveProperty('avgRating');
       expect(res.body.data).toHaveProperty('totalCount');
     });
+
+    it('returns customer review eligibility from voucher ownership and usage', async () => {
+      const [eligible, notEligible, alreadyReviewed] = await Promise.all([
+        request(app)
+          .get(`/api/vouchers/${voucherId}/reviews/eligibility`)
+          .set('Authorization', `Bearer ${usedCustomerToken}`),
+        request(app)
+          .get(`/api/vouchers/${voucherId}/reviews/eligibility`)
+          .set('Authorization', `Bearer ${unusedCustomerToken}`),
+        request(app)
+          .get(`/api/vouchers/${voucherId}/reviews/eligibility`)
+          .set('Authorization', `Bearer ${duplicateCustomerToken}`),
+      ]);
+
+      expect(eligible.status).toBe(200);
+      expect(eligible.body.data.eligibility).toBe('ELIGIBLE');
+      expect(notEligible.body.data.eligibility).toBe('NOT_ELIGIBLE');
+      expect(alreadyReviewed.body.data.eligibility).toBe('ALREADY_REVIEWED');
+    });
+
+    it('requires authentication for review eligibility', async () => {
+      const res = await request(app).get(`/api/vouchers/${voucherId}/reviews/eligibility`);
+      expect(res.status).toBe(401);
+    });
   });
 
   describe('POST /api/vouchers/:id/reviews', () => {

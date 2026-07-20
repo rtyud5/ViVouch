@@ -2,6 +2,8 @@ import { Router } from "express";
 import * as ordersController from "./orders.controller.js";
 import { verifyToken } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
+import { checkoutRateLimiter } from "../../middlewares/rateLimit.middleware.js";
+import { captureIdempotencyKey } from "../../middlewares/idempotency.middleware.js";
 
 const router = Router();
 
@@ -93,7 +95,7 @@ router.get("/voucher-codes", ordersController.getUserVoucherCodes);
  *       401:
  *         description: Chưa xác thực
  */
-router.post("/checkout", ordersController.buyNow);
+router.post("/checkout", checkoutRateLimiter, captureIdempotencyKey, ordersController.buyNow);
 
 /**
  * @swagger
@@ -123,6 +125,6 @@ router.post("/checkout", ordersController.buyNow);
  *       401:
  *         description: Chưa xác thực
  */
-router.post("/cart/checkout", ordersController.checkoutFromCart);
+router.post("/cart/checkout", checkoutRateLimiter, captureIdempotencyKey, ordersController.checkoutFromCart);
 
 export default router;

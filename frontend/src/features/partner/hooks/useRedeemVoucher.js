@@ -1,5 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { redeemVoucher } from "../api/redeem.api";
+import { checkVoucher, redeemVoucher } from "../api/redeem.api";
+
+export const useCheckVoucher = () => useMutation({
+  mutationFn: checkVoucher,
+});
 
 export const useRedeemVoucher = () => {
   const queryClient = useQueryClient();

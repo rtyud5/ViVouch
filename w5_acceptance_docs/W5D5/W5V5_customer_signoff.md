@@ -1,5 +1,7 @@
 # W5-V5: Portal Sign-Off Document (Customer)
 
+> **Historical scope sign-off for SHA `0bfef02`; not release authorization for the current patch.** Use the [four-owner final sheet](W5D5_04_release_signoff.md) and [current Customer evidence](W5V5_evidence_index.md).
+
 **Date:** 2026-07-19  
 **SHA:** 0bfef02 (main, up-to-date)  
 **Operator:** Customer Portal Lead (Vinh)  

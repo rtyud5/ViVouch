@@ -1,5 +1,7 @@
 # W5-T5: Evidence Index — Partner/Admin Portal
 
+> **Historical snapshot for SHA `0bfef02`.** Superseded for release decisions by the [final scorecard](W5D5_01_final_rubric_scorecard.md), [current three-portal evidence](W5D5_07_three_portal_evidence_index.md), and canonical 179-test log. Stale limitations and counts below are preserved only as provenance.
+
 **Date:** 2026-07-19  
 **SHA:** 0bfef02 (main)  
 **Operator:** Partner & Admin Portal Lead  

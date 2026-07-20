@@ -3,6 +3,7 @@ import { prisma } from '../../config/prisma.js';
 import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
 import { VOUCHER_CODE_STATUS, VOUCHER_STATUS } from '../../constants/statuses.js';
 import { AppError } from '../../utils/appError.js';
+import * as auditLog from '../auditLogs/auditLog.service.js';
 
 function mapReview(review) {
   return {
@@ -77,6 +78,38 @@ export async function getByVoucher(voucherId, { page = 1, limit = 10 } = {}) {
   };
 }
 
+export async function getEligibility(userId, voucherId) {
+  await assertVoucherCanShowReviews(voucherId);
+
+  const [existingReview, usedCode] = await Promise.all([
+    prisma.review.findUnique({
+      where: { userId_voucherId: { userId, voucherId } },
+      select: { id: true },
+    }),
+    prisma.voucherCode.findFirst({
+      where: {
+        ownerId: userId,
+        voucherId,
+        status: VOUCHER_CODE_STATUS.USED,
+      },
+      select: { id: true },
+    }),
+  ]);
+
+  if (existingReview) {
+    return { eligibility: 'ALREADY_REVIEWED', message: 'Bạn đã đánh giá voucher này.' };
+  }
+
+  if (usedCode) {
+    return { eligibility: 'ELIGIBLE', message: 'Bạn có thể đánh giá voucher này.' };
+  }
+
+  return {
+    eligibility: 'NOT_ELIGIBLE',
+    message: 'Bạn cần sử dụng voucher này trước khi đánh giá.',
+  };
+}
+
 export async function createReview(userId, voucherId, data) {
   try {
     const created = await prisma.$transaction(async (tx) => {
@@ -116,19 +149,12 @@ export async function createReview(userId, voucherId, data) {
         },
       });
 
-      await tx.auditLog.create({
-        data: {
-          actorId: userId,
-          action: AUDIT_ACTIONS.CUSTOMER_CREATE_REVIEW,
-          targetType: 'Review',
-          targetId: review.id,
-          metadata: {
-            voucherId,
-            voucherCodeId: usedCode.id,
-            rating: review.rating,
-          },
-        },
-      });
+      await auditLog.log(userId, AUDIT_ACTIONS.CUSTOMER_CREATE_REVIEW, 'Review', review.id, {
+        voucherId,
+        voucherCodeId: usedCode.id,
+        rating: review.rating,
+        newValues: { rating: review.rating, comment: review.comment },
+      }, tx);
 
       return {
         review: mapReview(review),

@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useOrders, useOrderById } from '../../features/admin/hooks/useOrders';
+import { useOrders, useOrderById, useCancelOrder } from '../../features/admin/hooks/useOrders';
 import { AdminTable } from '../../features/admin/components/AdminTable';
 import { AdminStatusBadge } from '../../features/admin/components/AdminStatusBadge';
+import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
+import { ApiErrorToast } from '../../components/common/ApiErrorToast';
 
 export default function OrdersPage() {
   const [params, setParams] = useState({ page: 1, limit: 10, status: '', search: '' });
   const [searchInput, setSearchInput] = useState('');
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [toastSuccess, setToastSuccess] = useState('');
+  const [toastError, setToastError] = useState(null);
 
   const { data, isLoading, isError, error, refetch } = useOrders(params);
   const { data: orderDetailData } = useOrderById(selectedOrderId);
@@ -14,6 +19,20 @@ export default function OrdersPage() {
   const total = data?.data?.pagination?.total || 0;
   const totalPages = data?.data?.pagination?.totalPages || 1;
   const selectedOrder = orderDetailData?.data;
+  const cancelOrder = useCancelOrder();
+
+  const handleCancelOrder = () => {
+    if (!selectedOrder || !cancelReason.trim()) return;
+    setToastError(null);
+    cancelOrder.mutate({ id: selectedOrder.id, reason: cancelReason.trim() }, {
+      onSuccess: () => {
+        setToastSuccess('Đã hủy đơn, khóa mã voucher và mô phỏng hoàn tiền.');
+        setTimeout(() => setToastSuccess(''), 4000);
+        setCancelReason('');
+      },
+      onError: setToastError,
+    });
+  };
 
   // Debounce search
   useEffect(() => {
@@ -87,6 +106,8 @@ export default function OrdersPage() {
 
   return (
     <div className="p-6 h-full flex flex-col relative bg-[#f8f9ff]">
+      <ApiSuccessToast message={toastSuccess} />
+      <ApiErrorToast error={toastError} />
       <div className="mb-6 flex justify-between items-center text-[#0b1c30]">
         <h1 className="text-2xl font-bold">Quản lý Đơn hàng</h1>
       </div>
@@ -241,6 +262,30 @@ export default function OrdersPage() {
                     </div>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {selectedOrder.status !== 'CANCELLED' && (
+              <section className="rounded-lg border border-red-200 bg-red-50 p-4">
+                <h4 className="font-bold text-red-800">Hủy đơn / hoàn tiền mô phỏng</h4>
+                <p className="mt-1 text-xs text-red-700">
+                  Không thể hủy khi bất kỳ mã nào đã được sử dụng. Mã chưa dùng sẽ chuyển CANCELLED và tồn kho được hoàn lại.
+                </p>
+                <textarea
+                  value={cancelReason}
+                  onChange={(event) => setCancelReason(event.target.value)}
+                  maxLength={500}
+                  placeholder="Lý do hủy đơn..."
+                  className="textarea textarea-bordered w-full mt-3 bg-white"
+                />
+                <button
+                  type="button"
+                  className="btn btn-error btn-sm mt-3 w-full"
+                  disabled={!cancelReason.trim() || cancelOrder.isPending}
+                  onClick={handleCancelOrder}
+                >
+                  {cancelOrder.isPending ? <span className="loading loading-spinner" /> : 'Xác nhận hủy và hoàn tiền'}
+                </button>
               </section>
             )}
           </div>

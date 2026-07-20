@@ -3,6 +3,7 @@ import * as authController from "./auth.controller.js";
 import { verifyToken } from "../../middlewares/auth.middleware.js";
 import { requireRole } from "../../middlewares/role.middleware.js";
 import { ROLES } from "../../constants/roles.js";
+import { authRateLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 const router = Router();
 
@@ -78,7 +79,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/register", authController.register);
+router.post("/register", authRateLimiter, authController.register);
 
 /**
  * @swagger
@@ -153,7 +154,11 @@ router.post("/register", authController.register);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post("/login", authController.login);
+router.post("/login", authRateLimiter, authController.login);
+
+router.post("/refresh", authRateLimiter, authController.refresh);
+router.post("/forgot-password", authRateLimiter, authController.forgotPassword);
+router.post("/reset-password", authRateLimiter, authController.resetPassword);
 
 /**
  * @swagger

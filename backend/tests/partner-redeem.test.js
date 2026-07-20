@@ -10,7 +10,7 @@ describe('Redeem Service Tests', () => {
 
   let customerId, partnerUserId, wrongPartnerUserId, partnerId, wrongPartnerId, categoryId;
   let voucherId, wrongVoucherId;
-  let issuedCode, usedCode, expiredCode, wrongPartnerCode, cancelledCode, lockedCode;
+  let issuedCode, checkOnlyCode, usedCode, expiredCode, wrongPartnerCode, cancelledCode, lockedCode;
   let branchId, unlinkedBranchId;
 
   const cleanup = async () => {
@@ -123,6 +123,7 @@ describe('Redeem Service Tests', () => {
     };
 
     issuedCode = await createCode('TEST-ISSUED', voucherId, VOUCHER_CODE_STATUS.ISSUED);
+    checkOnlyCode = await createCode('TEST-CHECK-ONLY', voucherId, VOUCHER_CODE_STATUS.ISSUED);
     usedCode = await createCode('TEST-USED', voucherId, VOUCHER_CODE_STATUS.USED, { usedAt: new Date() });
     expiredCode = await createCode('TEST-EXPIRED', voucherId, VOUCHER_CODE_STATUS.EXPIRED, { expiresAt: new Date(Date.now() - 100000) });
     wrongPartnerCode = await createCode('TEST-WRONG-PARTNER', wrongVoucherId, VOUCHER_CODE_STATUS.ISSUED);
@@ -133,6 +134,18 @@ describe('Redeem Service Tests', () => {
   afterAll(async () => {
     await cleanup();
     await prisma.$disconnect();
+  });
+
+  it('checks an ISSUED code without consuming it', async () => {
+    const res = await redeemService.checkCode(partnerUserId, checkOnlyCode.code, branchId);
+    expect(res.voucherTitle).toBe('Right Voucher');
+    expect(res.customerName).toBe('Redeem Customer');
+    expect(res.branchId).toBe(branchId);
+    expect(res.checkedAt).toBeDefined();
+
+    const unchanged = await prisma.voucherCode.findUnique({ where: { code: checkOnlyCode.code } });
+    expect(unchanged.status).toBe(VOUCHER_CODE_STATUS.ISSUED);
+    expect(unchanged.usedAt).toBeNull();
   });
 
   it('successfully redeems an ISSUED valid code', async () => {

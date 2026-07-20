@@ -1,77 +1,86 @@
-# W5 GO/NO-GO Decision Record
+# W5-D5 — GO/NO-GO Decision and Release Record
 
-**Date:** 2026-07-20  
-**Current SHA:** `260e8f8` (HEAD)  
-**Lead Decision Maker:** Duy (Acceptance & Security Lead)
+**Decision date:** 2026-07-21
 
----
+**Code base:** `523390ae4177daefe1b7dfa99412a7db91b56ae9`
 
-## 1. Baseline Context
-The W5 assignment required 20 specific functionalities covering Authentication, Partner capabilities (manage voucher, redeem code), Customer capabilities (browse, cart, checkout with mock payment, get code), and Admin capabilities (approve/reject vouchers and partners, view aggregated KPI statistics).
+**Candidate under review:** base SHA plus the W5 closeout patch in [the delivery manifest](W5D5_06_delivery_manifest.md)
 
-This decision record evaluates the project at commit `260e8f8` against the W5-D1 BRD baseline, security criteria, and acceptance criteria.
+**Decision owner:** Acceptance & Security Lead
 
----
+## Decision
 
-## 2. Gate Criteria Assessment
+- **GO — technical candidate may proceed to W6 and demonstration preparation.**
+- **NO-GO / HOLD — do not create a release tag yet.** Apply the patch, commit it as one immutable candidate SHA, obtain green hosted CI on that SHA, and collect all four owner-authored approvals first.
 
-### 2.1 Bug Gate (P0/P1 Count)
-- **Target:** 0 P0s, 0 P1s
-- **Current Status:** 0 P0s, 0 P1s.
-- **Evidence:** W5D4 Regression Report, W5D1 Bug Board tracked completion of all critical bugs (e.g., errorMiddleware crash parsing).
-- **Result:** ✅ PASSED
+This split decision is deliberate: the system has no open P0/P1 and the evidence is green, but a tool cannot manufacture a team member's signature or a hosted CI URL for unpushed code.
 
-### 2.2 Security & RBAC Gate
-- **Target:** 100% Core routes protected, state machines enforced.
-- **Current Status:** 4.1.7 test suite (162 tests) confirms full protection on:
-    - Admin `userEligibility` protection (Voucher status transition prevents DRAFT/REJECTED going to sale).
-    - Voucher redemption row locks (USED prevents re-use).
-    - Customer scope (only USED voucher buyers can leave a Review).
-    - Checkout idempotency and stock limitation validation.
-- **Result:** ✅ PASSED
+## 1. Gate assessment
 
-### 2.3 Rubric Compliance
-- **Target:** Implement all core workflows described in A/B/C/D sections.
-- **Current Status:** 94.8% passing. 96.3% excluding explicit Out-Of-Scope items (CMS/Branches).
-- **Known limitations:** Payment is mocked (intentional W5 limitation). Branch checking works but uses seeded data instead of full CRUD UI. All core operations function E2E.
-- **Result:** ✅ PASSED
+| Gate | Required | Observed | Result |
+|---|---|---|---:|
+| Product P0/P1 | 0/0 | P0 = **0**, P1 = **0** after consolidated remediation | **PASS** |
+| Evidence links/files | accessible, valid, non-empty | local link validator passes; 18 runtime PNGs are valid and non-empty | **PASS** |
+| Known limitations | complete and honest | payment/email simulation, localStorage, per-process rate limits, demo analytics, and patch/CI/signature state are explicit | **PASS** |
+| Canonical backend | migrate/seed/test/audit pass | 10 migrations current; seed pass; **179/179**; runtime audit **0** | **PASS** |
+| Canonical frontend | test/build/audit pass | **20/20**; production build pass; runtime audit **0** | **PASS** |
+| Three-portal browser rehearsal | pass | Customer 12, Partner 3, Admin 3 captures; no page error in final portal rehearsal | **PASS** |
+| 20 tasks/waivers | 20/20 disposition | **20/20 technical outputs closed**; no silent/unratified waiver used for a core point | **PASS** |
+| Internal rubric | evidence for every point | **10.0/10.0 internal assignment-readiness** | **PASS** |
+| Immutable frozen candidate | one commit SHA | current handoff is base SHA plus patch; resulting commit SHA does not yet exist | **HOLD** |
+| Hosted CI | green on frozen SHA | workflow is executable locally/in source, but cannot run on an unpushed patch | **HOLD** |
+| Four-owner sign-off | 4/4 on same SHA | **0/4 recorded for the resulting commit**; sheet is ready | **HOLD** |
 
-### 2.4 Environmental Stability
-- **Target:** System boots and runs regression suite cleanly.
-- **Current Status:**
-    - Local Dev (Vite + Node) starts with `npm run dev`.
-    - PostgreSQL Docker verified.
-    - Vitest execution completes in ~20-25s. (Note: The 8 failures in the canonical D5 run were isolated completely to stale mock data/fixtures causing foreign-key violations, not business logic regressions. The T4/T5 baseline `0bfef02` passed 162/162 on clean seed.)
-- **Result:** ✅ PASSED
+## 2. Outcome and rationale
 
----
+The earlier NO-GO reasons have been removed technically:
 
-## 3. Decision
+- Redeem now has a non-mutating check followed by an explicit atomic confirm.
+- Authentication now rotates refresh tokens, blocks replay, revokes on logout, and supports one-time password reset.
+- Auth/checkout/redeem rate limits return stable `429` errors and are tested.
+- Review eligibility, full catalog filters, Partner Branch management, Admin management, CMS, and audit context are implemented.
+- The placeholder CI workflow now runs PostgreSQL migrate/seed/test, frontend test/build, dependency audits, and evidence validation.
+- Documentation TODO stubs and the missing presentation have been replaced with code-aligned deliverables.
+- Zero-byte evidence was replaced by real browser captures across Customer, Partner, and Admin.
+- A QA review caught and removed client-visible stack traces from 4xx responses; a regression assertion prevents recurrence.
 
-Based on the evidence above, the project is stable, functional, and meets the criteria for the W5 sprint. All discovered blockers (P0/P1) were hotfixed. Remaining issues are correctly classified as P2/P3 limits and documented in the W6 Backlog.
+The remaining HOLD items are governance steps that require the repository owners or GitHub: create the immutable candidate commit, run its hosted checks, and sign that exact SHA. They do not reopen product P0/P1, but they do prohibit tagging.
 
-**Decision:** 🟢 **GO** — Proceed with the final release sign-off and move to W6.
+## 3. Commands, results, and retained evidence
 
----
+| Command/check | Pass / fail / skip | Evidence |
+|---|---:|---|
+| `npx prisma validate` | PASS | [backend canonical log](evidence/canonical-backend-20260721.log) |
+| `npx prisma generate` | PASS | [backend canonical log](evidence/canonical-backend-20260721.log) |
+| `npx prisma migrate status` | PASS — 10 migrations current | [backend canonical log](evidence/canonical-backend-20260721.log) |
+| `npm run prisma:seed` | PASS | [backend canonical log](evidence/canonical-backend-20260721.log) |
+| `npm test` in `backend/` | PASS — 20 files, 179 tests | [backend canonical log](evidence/canonical-backend-20260721.log) |
+| `npm audit --omit=dev` in `backend/` | PASS — 0 | [backend canonical log](evidence/canonical-backend-20260721.log) |
+| `npm test -- --run` in `frontend/` | PASS — 5 files, 20 tests | [frontend canonical log](evidence/canonical-frontend-20260721.log) |
+| `npm run build` in `frontend/` | PASS | [frontend canonical log](evidence/canonical-frontend-20260721.log) |
+| `npm audit --omit=dev` in `frontend/` | PASS — 0 | [frontend canonical log](evidence/canonical-frontend-20260721.log) |
+| Browser rehearsal on seeded PostgreSQL | PASS — 18 captures | [three-portal evidence index](W5D5_07_three_portal_evidence_index.md) |
+| `node scripts/verify-evidence.mjs` | PASS after final doc/evidence generation | [evidence manifest](evidence/W5D5_evidence_manifest.sha256) |
+| Presentation render + overflow check | PASS — 10 slides, no overflow | [release deck](../../docs/10_presentation/ViVouch_W5_Release_Deck.pptx) |
+| Hosted GitHub Actions on resulting commit | **SKIP/HOLD** — patch is not pushed | Must be supplied by a repo owner |
+| Four owner-authored signatures | **SKIP/HOLD** — human approval required | [sign-off sheet](W5D5_04_release_signoff.md) |
 
-## 4. Release Note Summary (v4.2.0 - W5 Final)
+## 4. Acceptance criteria
 
-### ✨ Features Delivered
-- **Role-Based Access Control:** Complete Auth service with JWT, refresh token, role middleware, and strict Admin/Partner/Customer boundaries.
-- **Partner Voucher Lifecycle:** End-to-end creation, submission, and redemption tracking with detailed status (DRAFT -> PENDING -> APPROVED -> ON_SALE). Ensure branch scope constraints during redemption verification.
-- **Customer Checkout Flow:** Robust cart management, transaction-coordinated order creation, unique code issuance (nanoid), and inventory checking.
-- **Admin Supervision:** Portal to inspect and manage all users and partners lock/unlock operations, evaluate holding actions, and comprehensive transaction Audit logging mechanisms.
+| Criterion | Status |
+|---|---:|
+| P0/P1 = 0 | **Met** |
+| Evidence links accessible | **Met locally and packaged** |
+| Known limitations honest | **Met** |
+| Do not tag if any gate fails | **Met — tag remains on HOLD** |
+| Canonical smoke rerun | **Met** |
+| Frozen SHA/test logs | **Partially met** — base SHA and logs are retained; final commit SHA must be created after patch apply |
+| Four sign-offs | **Not yet met** — 0/4; no signature fabricated |
 
-### 🛡️ Security / Fixes
-- Hardened checkout transaction to handle concurrent purchase stock conditions.
-- Strict UUID and Payload shape validation.
-- Normalized error messages suppressing internal DB error leaks.
+## 5. Release authorization
 
-### 🛑 Known Limitations (Moved to W6)
-- **Payment Interface:** Remains mocked simulating success immediately.
-- **Branch/Category CRUD:** Only exists as seed data, full admin capabilities slated for W6.
-- **Pagination:** BE supports partially, FE largely loads raw queries limit.
-- **Review Form Availability:** Currently permanently indicates `NOT_ELIGIBLE` due to data structure (B106)
+**Authorized now:** W6 engineering, review, and demo rehearsal.
 
----
-*Generated by ViVouch Team.*
+**Not authorized now:** release tag, production deployment, or a claim that four owners approved.
+
+The next authorized action is for a repository owner to apply the ZIP, review the [delivery manifest](W5D5_06_delivery_manifest.md), commit the complete patch, push it, wait for green CI, and then have Duy, Huy, Vinh, and Tùng sign the resulting SHA in the [sign-off sheet](W5D5_04_release_signoff.md).

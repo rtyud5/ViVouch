@@ -440,6 +440,66 @@ export async function toggleUserLock(adminId, userId) {
   });
 }
 
+export async function assignUserRole(adminId, userId, role) {
+  if (adminId === userId) {
+    throw new AppError('Cannot change your own role', 400, 'SELF_ACTION');
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({
+      where: { id: userId },
+      include: { partner: { select: { id: true, status: true } } },
+    });
+    if (!user) throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+    if (role === 'PARTNER' && user.partner?.status !== 'APPROVED') {
+      throw new AppError('User must have an approved partner profile before receiving PARTNER role', 409, 'PARTNER_PROFILE_REQUIRED');
+    }
+
+    const updated = await tx.user.update({
+      where: { id: userId },
+      data: { role },
+      select: { id: true, email: true, fullName: true, role: true, status: true },
+    });
+
+    await tx.refreshToken.updateMany({
+      where: { userId, isRevoked: false },
+      data: { isRevoked: true },
+    });
+    await auditLog.log(adminId, AUDIT_ACTIONS.ADMIN_ASSIGN_ROLE, 'User', userId, {
+      previousRole: user.role,
+      newRole: role,
+    }, tx);
+    return updated;
+  });
+}
+
+export async function setPartnerStatus(adminId, partnerId, status, reason) {
+  return prisma.$transaction(async (tx) => {
+    const partner = await tx.partner.findUnique({ where: { id: partnerId } });
+    if (!partner) throw new AppError('Partner not found', 404, 'PARTNER_NOT_FOUND');
+    if (!['APPROVED', 'SUSPENDED'].includes(partner.status) || partner.status === status) {
+      throw new AppError('Partner status transition is not allowed', 400, 'INVALID_STATUS');
+    }
+    if (status === 'SUSPENDED' && !reason?.trim()) {
+      throw new AppError('Reason is required when suspending a partner', 400, 'MISSING_REASON');
+    }
+
+    const updated = await tx.partner.update({
+      where: { id: partnerId },
+      data: { status, rejectReason: status === 'SUSPENDED' ? reason.trim() : null },
+    });
+    await auditLog.log(
+      adminId,
+      status === 'SUSPENDED' ? AUDIT_ACTIONS.ADMIN_SUSPEND_PARTNER : AUDIT_ACTIONS.ADMIN_REACTIVATE_PARTNER,
+      'Partner',
+      partnerId,
+      { previousStatus: partner.status, newStatus: status, reason: reason?.trim() || null },
+      tx,
+    );
+    return updated;
+  });
+}
+
 export async function findManyOrders(filters = {}, pagination = { page: 1, limit: 10 }) {
   const { page = 1, limit = 10 } = pagination;
   const { status, search } = filters;
@@ -506,14 +566,67 @@ export async function findOrderById(orderId) {
   return order;
 }
 
+export async function cancelOrder(adminId, orderId, reason) {
+  return prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${orderId} FOR UPDATE`;
+    const order = await tx.order.findUnique({
+      where: { id: orderId },
+      include: { items: true, payment: true, voucherCodes: true },
+    });
+    if (!order) throw new AppError('Order not found', 404, 'ORDER_NOT_FOUND');
+    if (order.status === 'CANCELLED') throw new AppError('Order is already cancelled', 409, 'ORDER_ALREADY_CANCELLED');
+    if (order.voucherCodes.some((code) => code.status === 'USED')) {
+      throw new AppError('Cannot cancel an order containing a used voucher', 409, 'ORDER_HAS_USED_VOUCHER');
+    }
+
+    await tx.voucherCode.updateMany({
+      where: { orderId, status: { in: ['ISSUED', 'LOCKED'] } },
+      data: { status: 'CANCELLED' },
+    });
+
+    for (const item of order.items) {
+      await tx.voucher.update({
+        where: { id: item.voucherId },
+        data: { soldQty: { decrement: item.qty } },
+      });
+    }
+
+    if (order.payment?.status === 'PAID') {
+      await tx.payment.update({
+        where: { orderId },
+        data: { status: 'REFUNDED' },
+      });
+    }
+
+    const updated = await tx.order.update({
+      where: { id: orderId },
+      data: { status: 'CANCELLED' },
+      include: { payment: true, voucherCodes: true },
+    });
+    await auditLog.log(adminId, AUDIT_ACTIONS.ADMIN_CANCEL_ORDER, 'Order', orderId, {
+      previousStatus: order.status,
+      reason,
+      refunded: order.payment?.status === 'PAID',
+    }, tx);
+    return updated;
+  });
+}
+
 export async function findManyAuditLogs(filters = {}, pagination = { page: 1, limit: 10 }) {
   const { page = 1, limit = 10 } = pagination;
-  const { action, targetType } = filters;
+  const { action, targetType, actorId, dateFrom, dateTo } = filters;
   const skip = (page - 1) * limit;
 
   const where = {};
   if (action) where.action = action;
   if (targetType) where.targetType = targetType;
+  if (actorId) where.actorId = actorId;
+  if (dateFrom || dateTo) {
+    where.createdAt = {
+      ...(dateFrom ? { gte: dateFrom } : {}),
+      ...(dateTo ? { lte: new Date(dateTo.getTime() + 86_399_999) } : {}),
+    };
+  }
 
   const [logs, total] = await Promise.all([
     prisma.auditLog.findMany({

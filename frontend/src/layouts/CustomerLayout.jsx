@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../stores/authStore';
 import { useCart } from '../features/cart/hooks/useCart';
 import { BottomNav } from '../components/common/BottomNav';
+import { logoutSession } from '../features/auth/api/auth.api';
 
 /**
  * CustomerLayout
@@ -27,6 +28,7 @@ export function CustomerLayout() {
   // ── Auth ────────────────────────────────────────────────────────────────────
   const user      = useAuthStore((state) => state.user);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
   const queryClient = useQueryClient();
 
   // ── Cart badge ──────────────────────────────────────────────────────────────
@@ -34,10 +36,14 @@ export function CustomerLayout() {
   const { cartCount } = useCart();
 
   // ── Handlers ────────────────────────────────────────────────────────────────
-  function handleLogout() {
-    clearAuth();                        // xoá token khỏi localStorage + state
-    queryClient.clear();
-    navigate('/login', { replace: true });
+  async function handleLogout() {
+    try {
+      await logoutSession(refreshToken);
+    } finally {
+      clearAuth();
+      queryClient.clear();
+      navigate('/login', { replace: true });
+    }
   }
 
   // ── Avatar ──────────────────────────────────────────────────────────────────

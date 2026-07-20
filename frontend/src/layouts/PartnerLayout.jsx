@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { DashboardLayout } from '../components/common/DashboardLayout';
+import { logoutSession } from '../features/auth/api/auth.api';
 
 /**
  * PartnerLayout — Layout dành cho Partner Portal
@@ -12,15 +13,21 @@ export function PartnerLayout() {
   const navigate = useNavigate();
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const user = useAuthStore((state) => state.user);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
 
-  const handleLogout = () => {
-    clearAuth();
-    navigate('/login', { replace: true });
+  const handleLogout = async () => {
+    try {
+      await logoutSession(refreshToken);
+    } finally {
+      clearAuth();
+      navigate('/login', { replace: true });
+    }
   };
 
   const navItems = [
     { label: 'Tổng quan',       path: '/partner/dashboard',  icon: 'dashboard' },
     { label: 'Voucher của tôi', path: '/partner/vouchers',   icon: 'confirmation_number' },
+    { label: 'Chi nhánh',       path: '/partner/branches',   icon: 'store' },
     { label: 'Xác thực',        path: '/partner/validation', icon: 'verified_user' },
     { label: 'Báo cáo',         path: '/partner/reports',    icon: 'bar_chart' },
     { label: 'Cài đặt',         path: '/partner/profile',    icon: 'settings' },

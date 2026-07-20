@@ -3,6 +3,34 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../../config/prisma.js";
 import { env } from "../../config/env.js";
 import { AppError } from "../../utils/appError.js";
+import { nanoid } from "nanoid";
+
+function signAccessToken(user) {
+  return jwt.sign(
+    { userId: user.id, role: user.role },
+    env.JWT_ACCESS_SECRET,
+    { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN },
+  );
+}
+
+async function issueRefreshToken(user, db = prisma) {
+  const refreshToken = jwt.sign(
+    { userId: user.id, type: "refresh", nonce: nanoid(24) },
+    env.JWT_REFRESH_SECRET,
+    { expiresIn: env.REFRESH_TOKEN_EXPIRES_IN },
+  );
+  const decoded = jwt.decode(refreshToken);
+
+  await db.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: new Date(decoded.exp * 1000),
+    },
+  });
+
+  return refreshToken;
+}
 
 /**
  * Đăng ký tài khoản mới (Customer)
@@ -48,7 +76,8 @@ export const register = async (data) => {
   });
 
   // Loại bỏ passwordHash trước khi trả về
-  const { passwordHash: _, ...userWithoutPassword } = newUser;
+  const userWithoutPassword = { ...newUser };
+  delete userWithoutPassword.passwordHash;
   return userWithoutPassword;
 };
 
@@ -79,19 +108,118 @@ export const login = async (email, password) => {
     throw new AppError("Tài khoản của bạn đã bị khóa", 403, "ACCOUNT_LOCKED");
   }
 
-  // Ký JWT
-  const accessToken = jwt.sign(
-    { userId: user.id, role: user.role },
-    env.JWT_ACCESS_SECRET,
-    { expiresIn: env.ACCESS_TOKEN_EXPIRES_IN }
-  );
+  const accessToken = signAccessToken(user);
+  const refreshToken = await issueRefreshToken(user);
 
-  const { passwordHash: _, ...userWithoutPassword } = user;
+  const userWithoutPassword = { ...user };
+  delete userWithoutPassword.passwordHash;
 
   return {
     accessToken,
+    refreshToken,
     user: userWithoutPassword
   };
+};
+
+export const refreshSession = async (refreshToken) => {
+  let payload;
+  try {
+    payload = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
+  } catch {
+    throw new AppError("Refresh token không hợp lệ hoặc đã hết hạn", 401, "INVALID_REFRESH_TOKEN");
+  }
+
+  if (!payload || typeof payload !== "object" || payload.type !== "refresh" || !payload.userId) {
+    throw new AppError("Refresh token không hợp lệ", 401, "INVALID_REFRESH_TOKEN");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const stored = await tx.refreshToken.findUnique({
+      where: { token: refreshToken },
+      include: { user: true },
+    });
+
+    if (!stored || stored.isRevoked || stored.expiresAt <= new Date()) {
+      throw new AppError("Refresh token không hợp lệ hoặc đã bị thu hồi", 401, "INVALID_REFRESH_TOKEN");
+    }
+
+    if (stored.user.status !== "ACTIVE") {
+      throw new AppError("Tài khoản của bạn đã bị khóa", 403, "ACCOUNT_LOCKED");
+    }
+
+    const revoked = await tx.refreshToken.updateMany({
+      where: { id: stored.id, isRevoked: false },
+      data: { isRevoked: true },
+    });
+    if (revoked.count !== 1) {
+      throw new AppError("Refresh token đã được sử dụng", 401, "INVALID_REFRESH_TOKEN");
+    }
+
+    const nextRefreshToken = await issueRefreshToken(stored.user, tx);
+    const accessToken = signAccessToken(stored.user);
+    const userWithoutPassword = { ...stored.user };
+    delete userWithoutPassword.passwordHash;
+
+    return { accessToken, refreshToken: nextRefreshToken, user: userWithoutPassword };
+  });
+};
+
+export const logout = async (userId, refreshToken) => {
+  if (refreshToken) {
+    await prisma.refreshToken.updateMany({
+      where: { userId, token: refreshToken, isRevoked: false },
+      data: { isRevoked: true },
+    });
+    return;
+  }
+
+  await prisma.refreshToken.updateMany({
+    where: { userId, isRevoked: false },
+    data: { isRevoked: true },
+  });
+};
+
+export const requestPasswordReset = async (email) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return { delivery: "SIMULATED", resetToken: null };
+
+  const resetToken = jwt.sign(
+    { userId: user.id, type: "password-reset", nonce: nanoid(24) },
+    env.JWT_REFRESH_SECRET,
+    { expiresIn: "15m" },
+  );
+  const decoded = jwt.decode(resetToken);
+  await prisma.refreshToken.create({
+    data: { token: resetToken, userId: user.id, expiresAt: new Date(decoded.exp * 1000) },
+  });
+
+  return {
+    delivery: "SIMULATED",
+    resetToken: env.NODE_ENV === "production" ? null : resetToken,
+  };
+};
+
+export const resetPassword = async (resetToken, password) => {
+  let payload;
+  try {
+    payload = jwt.verify(resetToken, env.JWT_REFRESH_SECRET);
+  } catch {
+    throw new AppError("Mã đặt lại mật khẩu không hợp lệ hoặc đã hết hạn", 401, "INVALID_RESET_TOKEN");
+  }
+  if (!payload || typeof payload !== "object" || payload.type !== "password-reset" || !payload.userId) {
+    throw new AppError("Mã đặt lại mật khẩu không hợp lệ", 401, "INVALID_RESET_TOKEN");
+  }
+
+  const passwordHash = await bcrypt.hash(password, Number(env.BCRYPT_SALT_ROUNDS));
+  await prisma.$transaction(async (tx) => {
+    const consumed = await tx.refreshToken.updateMany({
+      where: { token: resetToken, userId: payload.userId, isRevoked: false, expiresAt: { gt: new Date() } },
+      data: { isRevoked: true },
+    });
+    if (consumed.count !== 1) throw new AppError("Mã đặt lại mật khẩu đã được sử dụng", 401, "INVALID_RESET_TOKEN");
+    await tx.user.update({ where: { id: payload.userId }, data: { passwordHash } });
+    await tx.refreshToken.updateMany({ where: { userId: payload.userId, isRevoked: false }, data: { isRevoked: true } });
+  });
 };
 
 /**
@@ -108,6 +236,7 @@ export const getMe = async (userId) => {
     throw new AppError("Không tìm thấy người dùng", 404, "USER_NOT_FOUND");
   }
 
-  const { passwordHash: _, ...userWithoutPassword } = user;
+  const userWithoutPassword = { ...user };
+  delete userWithoutPassword.passwordHash;
   return userWithoutPassword;
 };

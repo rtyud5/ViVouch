@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { resolveActiveBranchId } from "../../utils/branchSelection";
-import { useRedeemVoucher } from "../../features/partner/hooks/useRedeemVoucher";
+import { useCheckVoucher, useRedeemVoucher } from "../../features/partner/hooks/useRedeemVoucher";
 import { usePartnerBranches } from "../../features/partner/hooks/usePartnerBranches";
 import { ApiErrorToast } from "../../components/common/ApiErrorToast";
 import { CheckCircle2, XCircle, AlertTriangle, Info } from "lucide-react";
@@ -8,11 +8,14 @@ import { CheckCircle2, XCircle, AlertTriangle, Info } from "lucide-react";
 export function RedeemVoucherPage() {
   const [code, setCode] = useState("");
   const [branchId, setBranchId] = useState("");
+  const [checkResult, setCheckResult] = useState(null);
   const [redeemResult, setRedeemResult] = useState(null);
   const [errorResult, setErrorResult] = useState(null);
   const [toastError, setToastError] = useState(null);
 
-  const { mutate, isPending } = useRedeemVoucher();
+  const { mutate: checkVoucher, isPending: isChecking } = useCheckVoucher();
+  const { mutate: confirmVoucher, isPending: isConfirming } = useRedeemVoucher();
+  const isPending = isChecking || isConfirming;
   const { data: branchesResponse, isLoading: isLoadingBranches } = usePartnerBranches();
   const activeBranches = useMemo(
     () => (branchesResponse?.data || []).filter((branch) => branch.isActive),
@@ -26,66 +29,133 @@ export function RedeemVoucherPage() {
     }
   }, [activeBranches, branchId]);
 
-  const handleRedeem = (e) => {
+  const handleApiError = (err) => {
+    const errCode = err?.response?.data?.code;
+    let errMessage = err?.response?.data?.message || "Đã xảy ra lỗi";
+
+    const cardErrorCodes = [
+      "VOUCHER_CODE_USED",
+      "VOUCHER_CODE_EXPIRED",
+      "VOUCHER_CODE_NOT_FOUND",
+      "INVALID_VOUCHER_CODE",
+      "FORBIDDEN",
+      "WRONG_PARTNER",
+      "VOUCHER_CODE_CANCELLED",
+      "VOUCHER_CODE_LOCKED",
+      "BRANCH_REQUIRED",
+      "INVALID_BRANCH_SCOPE",
+    ];
+
+    if (errCode === "VOUCHER_CODE_USED") {
+      errMessage = "Voucher này đã được sử dụng.";
+    } else if (errCode === "VOUCHER_CODE_EXPIRED") {
+      errMessage = "Voucher này đã hết hạn sử dụng.";
+    } else if (errCode === "WRONG_PARTNER" || errCode === "FORBIDDEN") {
+      errMessage = "Voucher này không thuộc về đối tác hiện tại.";
+    } else if (errCode === "VOUCHER_CODE_NOT_FOUND") {
+      errMessage = "Không tìm thấy mã voucher này trong hệ thống.";
+    } else if (errCode === "INVALID_BRANCH_SCOPE") {
+      errMessage = "Voucher này không áp dụng tại chi nhánh đã chọn.";
+    }
+
+    setCheckResult(null);
+    if (cardErrorCodes.includes(errCode)) {
+      setErrorResult({ code: errCode, message: errMessage });
+    } else {
+      setToastError(err);
+    }
+  };
+
+  const handleCheck = (e) => {
     e.preventDefault();
     if (!code || !branchId || isPending) return;
 
+    setCheckResult(null);
     setRedeemResult(null);
     setErrorResult(null);
     setToastError(null);
 
-    mutate(
+    checkVoucher(
       { code, branchId },
       {
         onSuccess: (data) => {
+          setCheckResult(data);
+        },
+        onError: handleApiError,
+      }
+    );
+  };
+
+  const handleConfirm = () => {
+    if (!checkResult || isPending) return;
+    setToastError(null);
+    confirmVoucher(
+      { code, branchId },
+      {
+        onSuccess: (data) => {
+          setCheckResult(null);
           setRedeemResult(data);
         },
-        onError: (err) => {
-          const errCode = err?.response?.data?.code;
-          let errMessage = err?.response?.data?.message || "Đã xảy ra lỗi";
-
-          const cardErrorCodes = [
-            "VOUCHER_CODE_USED",
-            "VOUCHER_CODE_EXPIRED",
-            "VOUCHER_CODE_NOT_FOUND",
-            "INVALID_VOUCHER_CODE",
-            "FORBIDDEN",
-            "WRONG_PARTNER",
-            "VOUCHER_CODE_CANCELLED",
-            "VOUCHER_CODE_LOCKED",
-            "BRANCH_REQUIRED",
-            "INVALID_BRANCH_SCOPE"
-          ];
-
-          if (errCode === 'VOUCHER_CODE_USED') {
-            errMessage = "Voucher này đã được sử dụng.";
-          } else if (errCode === 'VOUCHER_CODE_EXPIRED') {
-            errMessage = "Voucher này đã hết hạn sử dụng.";
-          } else if (errCode === 'WRONG_PARTNER' || errCode === 'FORBIDDEN') {
-            errMessage = "Voucher này không thuộc về đối tác hiện tại.";
-          } else if (errCode === 'VOUCHER_CODE_NOT_FOUND') {
-            errMessage = "Không tìm thấy mã voucher này trong hệ thống.";
-          } else if (errCode === 'INVALID_BRANCH_SCOPE') {
-            errMessage = "Voucher này không áp dụng tại chi nhánh đã chọn.";
-          }
-
-          if (cardErrorCodes.includes(errCode)) {
-            setErrorResult({ code: errCode, message: errMessage });
-          } else {
-            setToastError(err);
-          }
-        },
-      }
+        onError: handleApiError,
+      },
     );
   };
 
   const handleReset = () => {
     setCode("");
+    setCheckResult(null);
     setRedeemResult(null);
     setErrorResult(null);
     setToastError(null);
     // autoFocus on the input will handle focus naturally after re-render
   };
+
+  const renderCheckCard = () => (
+    <div className="card bg-info/10 border border-info text-base-content shadow-sm max-w-md mx-auto mt-8">
+      <div className="card-body">
+        <div className="flex items-center gap-3 text-info">
+          <Info className="w-10 h-10" />
+          <div>
+            <h2 className="card-title text-2xl">Mã voucher hợp lệ</h2>
+            <p className="text-sm text-base-content/70">Kiểm tra thông tin trước khi xác nhận sử dụng.</p>
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-3">
+          <div className="flex justify-between border-b pb-2">
+            <span className="text-base-content/70">Mã Voucher:</span>
+            <span className="font-mono font-bold">{checkResult.code}</span>
+          </div>
+          <div className="flex justify-between border-b pb-2 gap-4">
+            <span className="text-base-content/70">Tên Voucher:</span>
+            <span className="font-bold text-right">{checkResult.voucherTitle}</span>
+          </div>
+          <div className="flex justify-between border-b pb-2">
+            <span className="text-base-content/70">Khách hàng:</span>
+            <span className="font-medium">{checkResult.customerName}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-base-content/70">Chi nhánh:</span>
+            <span className="font-medium">{checkResult.branchName}</span>
+          </div>
+        </div>
+
+        <div className="alert alert-warning mt-4 text-sm">
+          <AlertTriangle className="w-5 h-5 shrink-0" />
+          <span>Sau khi xác nhận, mã sẽ chuyển sang USED và không thể sử dụng lại.</span>
+        </div>
+
+        <div className="card-actions mt-4 grid grid-cols-2 gap-3">
+          <button type="button" className="btn btn-outline" onClick={() => setCheckResult(null)} disabled={isPending}>
+            Quay lại
+          </button>
+          <button type="button" className="btn btn-primary" onClick={handleConfirm} disabled={isPending}>
+            {isConfirming ? <span className="loading loading-spinner" /> : "Xác nhận sử dụng"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   const renderSuccessCard = () => (
     <div className="card bg-success/10 border border-success text-base-content shadow-sm max-w-md mx-auto mt-8">
@@ -165,9 +235,9 @@ export function RedeemVoucherPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-center mb-8">Xác thực Voucher</h1>
 
-      {!redeemResult && !errorResult && (
+      {!checkResult && !redeemResult && !errorResult && (
         <div className="max-w-md mx-auto">
-          <form onSubmit={handleRedeem} className="card bg-base-100 shadow-md">
+          <form onSubmit={handleCheck} className="card bg-base-100 shadow-md">
             <div className="card-body">
               <div className="form-control w-full mb-4">
                 <label className="label">
@@ -176,7 +246,10 @@ export function RedeemVoucherPage() {
                 <select
                   className="select select-bordered select-lg w-full"
                   value={branchId}
-                  onChange={(event) => setBranchId(event.target.value)}
+                  onChange={(event) => {
+                    setBranchId(event.target.value);
+                    setCheckResult(null);
+                  }}
                   disabled={isPending || isLoadingBranches}
                 >
                   <option value="">
@@ -227,7 +300,7 @@ export function RedeemVoucherPage() {
                   {isPending ? (
                     <span className="loading loading-spinner"></span>
                   ) : (
-                    "Xác nhận đổi mã"
+                    "Kiểm tra mã"
                   )}
                 </button>
               </div>
@@ -243,6 +316,7 @@ export function RedeemVoucherPage() {
         </div>
       )}
 
+      {checkResult && renderCheckCard()}
       {redeemResult && renderSuccessCard()}
       {errorResult && renderErrorCard()}
 
