@@ -15,7 +15,7 @@ function walk(directory) {
 const files = walk(docsRoot);
 for (const file of files.filter((path) => extname(path).toLowerCase() === ".md")) {
   const markdown = readFileSync(file, "utf8");
-  for (const match of markdown.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
+  for (const match of markdown.matchAll(/(?<=\])\(([^)]+)\)/g)) {
     const target = match[1].split("#")[0].trim();
     if (!target || /^(https?:|mailto:)/i.test(target)) continue;
     const linkedPath = resolve(dirname(file), decodeURIComponent(target));

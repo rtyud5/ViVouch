@@ -45,18 +45,18 @@ export function buildVoucherQueryParams({
   if (typeof city === "string" && city.trim()) params.city = city.trim();
   if (typeof partner === "string" && partner.trim()) params.partner = partner.trim();
 
-  const normalizedMinPrice = Number(minPrice);
-  const normalizedMaxPrice = Number(maxPrice);
-  const normalizedDiscount = Number(minDiscount);
-  if (minPrice !== "" && minPrice != null && Number.isFinite(normalizedMinPrice) && normalizedMinPrice >= 0) {
-    params.minPrice = normalizedMinPrice;
-  }
-  if (maxPrice !== "" && maxPrice != null && Number.isFinite(normalizedMaxPrice) && normalizedMaxPrice >= 0) {
-    params.maxPrice = normalizedMaxPrice;
-  }
-  if (minDiscount !== "" && minDiscount != null && Number.isFinite(normalizedDiscount) && normalizedDiscount >= 0) {
-    params.minDiscount = Math.min(100, normalizedDiscount);
-  }
+  const addNumeric = (key, val, maxVal = null) => {
+    if (val !== "" && val != null) {
+      const num = Number(val);
+      if (Number.isFinite(num) && num >= 0) {
+        params[key] = maxVal != null ? Math.min(maxVal, num) : num;
+      }
+    }
+  };
+
+  addNumeric("minPrice", minPrice);
+  addNumeric("maxPrice", maxPrice);
+  addNumeric("minDiscount", minDiscount, 100);
 
   return params;
 }

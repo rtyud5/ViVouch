@@ -76,7 +76,8 @@ export const register = async (data) => {
   });
 
   // Loại bỏ passwordHash trước khi trả về
-  const { passwordHash: _, ...userWithoutPassword } = newUser;
+  const userWithoutPassword = { ...newUser };
+  delete userWithoutPassword.passwordHash;
   return userWithoutPassword;
 };
 
@@ -110,7 +111,8 @@ export const login = async (email, password) => {
   const accessToken = signAccessToken(user);
   const refreshToken = await issueRefreshToken(user);
 
-  const { passwordHash: _, ...userWithoutPassword } = user;
+  const userWithoutPassword = { ...user };
+  delete userWithoutPassword.passwordHash;
 
   return {
     accessToken,
@@ -155,9 +157,10 @@ export const refreshSession = async (refreshToken) => {
 
     const nextRefreshToken = await issueRefreshToken(stored.user, tx);
     const accessToken = signAccessToken(stored.user);
-    const { passwordHash: _, ...user } = stored.user;
+    const userWithoutPassword = { ...stored.user };
+    delete userWithoutPassword.passwordHash;
 
-    return { accessToken, refreshToken: nextRefreshToken, user };
+    return { accessToken, refreshToken: nextRefreshToken, user: userWithoutPassword };
   });
 };
 
@@ -233,6 +236,7 @@ export const getMe = async (userId) => {
     throw new AppError("Không tìm thấy người dùng", 404, "USER_NOT_FOUND");
   }
 
-  const { passwordHash: _, ...userWithoutPassword } = user;
+  const userWithoutPassword = { ...user };
+  delete userWithoutPassword.passwordHash;
   return userWithoutPassword;
 };

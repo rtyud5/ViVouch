@@ -48,13 +48,13 @@ export function ForgotPasswordPage() {
           {!resetToken ? (
             <form onSubmit={requestReset} className="space-y-4">
               <label className="form-control"><span className="label-text mb-1">Email</span><input type="email" className="input input-bordered" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
-              <button className="btn btn-primary w-full" disabled={loading}>{loading ? <span className="loading loading-spinner" /> : 'Tạo yêu cầu'}</button>
+              <button type="submit" className="btn btn-primary w-full" disabled={loading}>{loading ? <span className="loading loading-spinner" /> : 'Tạo yêu cầu'}</button>
             </form>
           ) : (
             <form onSubmit={submitPassword} className="space-y-4">
               <label className="form-control"><span className="label-text mb-1">Mật khẩu mới</span><input type="password" className="input input-bordered" value={password} onChange={(event) => setPassword(event.target.value)} minLength={8} required /></label>
               <p className="text-xs text-base-content/60">Tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và chữ số.</p>
-              <button className="btn btn-primary w-full" disabled={loading}>{loading ? <span className="loading loading-spinner" /> : 'Đặt lại mật khẩu'}</button>
+              <button type="submit" className="btn btn-primary w-full" disabled={loading}>{loading ? <span className="loading loading-spinner" /> : 'Đặt lại mật khẩu'}</button>
             </form>
           )}
 

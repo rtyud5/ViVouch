@@ -18,7 +18,7 @@ async function mapUniqueError(operation) {
   }
 }
 
-const snapshot = (value) => JSON.parse(JSON.stringify(value));
+const snapshot = (value) => structuredClone(value);
 
 async function createAudited(model, targetType, data, actorId) {
   return mapUniqueError(() => prisma.$transaction(async (tx) => {

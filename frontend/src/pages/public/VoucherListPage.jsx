@@ -33,16 +33,24 @@ function readFiltersFromParams(searchParams) {
 
 function buildSearchParams({ keyword, category, city, partner, minPrice, maxPrice, minDiscount, sort, page }) {
   const params = {};
-  if (keyword && typeof keyword === "string" && keyword.trim()) {
-    params.keyword = keyword.trim();
-  }
+
+  const addString = (key, val) => {
+    if (typeof val === "string" && val.trim()) params[key] = val.trim();
+  };
+  const addValue = (key, val, excludeVal = null) => {
+    if (val !== "" && val != null && val !== excludeVal) params[key] = String(val);
+  };
+
+  addString("keyword", keyword);
   if (category && category !== "all") params.category = category;
-  if (city?.trim()) params.city = city.trim();
-  if (partner?.trim()) params.partner = partner.trim();
-  if (minPrice !== "" && minPrice != null) params.minPrice = String(minPrice);
-  if (maxPrice !== "" && maxPrice != null) params.maxPrice = String(maxPrice);
-  if (minDiscount !== "" && minDiscount != null) params.minDiscount = String(minDiscount);
-  if (sort && sort !== "popular") params.sort = sort;
+  addString("city", city);
+  addString("partner", partner);
+  
+  addValue("minPrice", minPrice);
+  addValue("maxPrice", maxPrice);
+  addValue("minDiscount", minDiscount);
+  addValue("sort", sort, "popular");
+  
   if (page && page > 1) params.page = String(page);
   return params;
 }

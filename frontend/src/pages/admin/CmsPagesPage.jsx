@@ -115,22 +115,24 @@ export function CmsPagesPage() {
       <header><h1 className="text-3xl font-bold">Quản lý nội dung</h1><p className="text-base-content/60 mt-1">Quản lý danh mục, banner, popup, bài viết và chính sách.</p></header>
 
       <div role="tablist" className="tabs tabs-boxed w-fit">
-        {Object.entries(CONFIG).map(([key, value]) => <button key={key} role="tab" className={`tab ${type === key ? 'tab-active' : ''}`} onClick={() => setType(key)}>{value.label}</button>)}
+        {Object.entries(CONFIG).map(([key, value]) => <button key={key} type="button" role="tab" className={`tab ${type === key ? 'tab-active' : ''}`} onClick={() => setType(key)}>{value.label}</button>)}
       </div>
 
       <form onSubmit={submit} className="card bg-base-100 border border-base-300 shadow-sm">
         <div className="card-body">
           <div className="flex justify-between"><h2 className="card-title">{editingId ? 'Cập nhật' : 'Tạo mới'} {config.label.toLowerCase()}</h2>{editingId && <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setEditingId(null); setForm(config.empty); }}>Hủy sửa</button>}</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{config.fields.map((field) => <ContentField key={field[0]} field={field} value={form[field[0]]} onChange={(name, value) => setForm((current) => ({ ...current, [name]: value }))} />)}</div>
-          <div className="card-actions justify-end"><button className="btn btn-primary" disabled={isSaving}>{isSaving ? <span className="loading loading-spinner" /> : 'Lưu nội dung'}</button></div>
+          <div className="card-actions justify-end"><button type="submit" className="btn btn-primary" disabled={isSaving}>{isSaving ? <span className="loading loading-spinner" /> : 'Lưu nội dung'}</button></div>
         </div>
       </form>
 
       <section className="card bg-base-100 border border-base-300 shadow-sm">
         <div className="card-body">
           <h2 className="card-title">Danh sách {config.label.toLowerCase()} <span className="badge">{items.length}</span></h2>
-          {query.isLoading ? <div className="py-12 text-center"><span className="loading loading-spinner loading-lg" /></div> : items.length === 0 ? <p className="py-12 text-center text-base-content/60">Chưa có dữ liệu.</p> : (
-            <div className="overflow-x-auto"><table className="table"><thead><tr><th>Tên / tiêu đề</th><th>Slug / vị trí</th><th>Trạng thái</th><th className="text-right">Thao tác</th></tr></thead><tbody>{items.map((item) => <tr key={item.id}><td className="font-semibold">{item.title || item.name}</td><td className="font-mono text-xs">{item.slug || item.position}</td><td><span className="badge badge-ghost">{item.status || (item.isActive ? 'ACTIVE' : 'INACTIVE') || '—'}</span></td><td><div className="flex justify-end gap-2"><button className="btn btn-ghost btn-sm" onClick={() => edit(item)}>Sửa</button><button className="btn btn-error btn-outline btn-sm" onClick={() => remove(item)} disabled={deleteMutation.isPending}>Xóa</button></div></td></tr>)}</tbody></table></div>
+          {query.isLoading && <div className="py-12 text-center"><span className="loading loading-spinner loading-lg" /></div>}
+          {!query.isLoading && items.length === 0 && <p className="py-12 text-center text-base-content/60">Chưa có dữ liệu.</p>}
+          {!query.isLoading && items.length > 0 && (
+            <div className="overflow-x-auto"><table className="table"><thead><tr><th>Tên / tiêu đề</th><th>Slug / vị trí</th><th>Trạng thái</th><th className="text-right">Thao tác</th></tr></thead><tbody>{items.map((item) => <tr key={item.id}><td className="font-semibold">{item.title || item.name}</td><td className="font-mono text-xs">{item.slug || item.position}</td><td><span className="badge badge-ghost">{item.status || (item.isActive ? 'ACTIVE' : 'INACTIVE') || '—'}</span></td><td><div className="flex justify-end gap-2"><button type="button" className="btn btn-ghost btn-sm" onClick={() => edit(item)}>Sửa</button><button type="button" className="btn btn-error btn-outline btn-sm" onClick={() => remove(item)} disabled={deleteMutation.isPending}>Xóa</button></div></td></tr>)}</tbody></table></div>
           )}
         </div>
       </section>

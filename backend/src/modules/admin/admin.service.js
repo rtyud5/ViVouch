@@ -451,7 +451,7 @@ export async function assignUserRole(adminId, userId, role) {
       include: { partner: { select: { id: true, status: true } } },
     });
     if (!user) throw new AppError('User not found', 404, 'USER_NOT_FOUND');
-    if (role === 'PARTNER' && (!user.partner || user.partner.status !== 'APPROVED')) {
+    if (role === 'PARTNER' && user.partner?.status !== 'APPROVED') {
       throw new AppError('User must have an approved partner profile before receiving PARTNER role', 409, 'PARTNER_PROFILE_REQUIRED');
     }
 

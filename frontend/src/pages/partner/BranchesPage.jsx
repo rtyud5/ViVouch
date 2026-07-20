@@ -159,7 +159,7 @@ export function BranchesPage() {
           </label>
 
           <div className="card-actions justify-end">
-            <button className="btn btn-primary" disabled={isSaving || !form.name.trim() || !form.address.trim() || !form.city.trim()}>
+            <button type="submit" className="btn btn-primary" disabled={isSaving || !form.name.trim() || !form.address.trim() || !form.city.trim()}>
               {isSaving ? <span className="loading loading-spinner" /> : editingId ? "Lưu thay đổi" : "Tạo chi nhánh"}
             </button>
           </div>
@@ -173,11 +173,13 @@ export function BranchesPage() {
             <span className="badge badge-neutral">{branches.length} chi nhánh</span>
           </div>
 
-          {branchesQuery.isLoading ? (
+          {branchesQuery.isLoading && (
             <div className="py-12 text-center"><span className="loading loading-spinner loading-lg" /></div>
-          ) : branches.length === 0 ? (
+          )}
+          {!branchesQuery.isLoading && branches.length === 0 && (
             <div className="py-12 text-center text-base-content/60">Chưa có chi nhánh. Hãy tạo chi nhánh đầu tiên.</div>
-          ) : (
+          )}
+          {!branchesQuery.isLoading && branches.length > 0 && (
             <div className="overflow-x-auto">
               <table className="table">
                 <thead>
