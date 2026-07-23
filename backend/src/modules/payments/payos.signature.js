@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 
 function sortObject(value) {
   return Object.keys(value)
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .reduce((result, key) => {
       result[key] = value[key];
       return result;
@@ -23,7 +23,7 @@ function normalizeValue(value) {
 export function buildPayOsSignatureData(data) {
   return Object.keys(data || {})
     .filter((key) => data[key] !== undefined)
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .map((key) => `${key}=${normalizeValue(data[key])}`)
     .join('&');
 }

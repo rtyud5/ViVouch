@@ -27,7 +27,7 @@ for (const file of [...backendFiles, ...walk(join(root, 'frontend', 'src'), new 
     const specifier = match[1].split('?')[0];
     const base = resolve(dirname(file), specifier);
     const candidates = [base, `${base}.js`, `${base}.jsx`, join(base, 'index.js'), join(base, 'index.jsx')];
-    if (!candidates.some(existsSync)) failures.push(`Missing relative import: ${file} -> ${specifier}`);
+    if (!candidates.some((candidate) => existsSync(candidate))) failures.push(`Missing relative import: ${file} -> ${specifier}`);
   }
 }
 
