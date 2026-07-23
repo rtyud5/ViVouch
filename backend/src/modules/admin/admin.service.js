@@ -3,6 +3,7 @@ import { AppError } from '../../utils/appError.js';
 import { canTransition } from '../../utils/stateMachine.js';
 import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
 import * as auditLog from '../auditLogs/auditLog.service.js';
+import { notify } from '../notifications/notifications.service.js';
 
 const VOUCHER_TRANSITIONS = {
   PENDING_APPROVAL: ['APPROVED', 'REJECTED'],
@@ -31,7 +32,10 @@ function assertPartnerActionAllowed(partner, adminId) {
 }
 
 export async function approvePartner(adminId, partnerId) {
-  const partner = await prisma.partner.findUnique({ where: { id: partnerId } });
+  const partner = await prisma.partner.findUnique({
+    where: { id: partnerId },
+    include: { user: { select: { email: true } } },
+  });
   assertPartnerActionAllowed(partner, adminId);
 
   try {
@@ -54,6 +58,17 @@ export async function approvePartner(adminId, partnerId) {
         {},
         tx,
       );
+      await notify({
+        userId: partner.userId,
+        type: 'PARTNER_APPROVED',
+        title: 'Hồ sơ đối tác đã được duyệt',
+        message: 'Bạn có thể sử dụng đầy đủ Partner Portal.',
+        referenceType: 'PARTNER',
+        referenceId: partnerId,
+        email: partner.user.email,
+        emailTemplate: 'PARTNER_RESULT',
+        emailPayload: { status: 'APPROVED' },
+      }, tx);
 
       return updatedPartner;
     });
@@ -74,7 +89,10 @@ export async function rejectPartner(adminId, partnerId, reason) {
     throw new AppError('Reason is required', 400, 'MISSING_REASON');
   }
 
-  const partner = await prisma.partner.findUnique({ where: { id: partnerId } });
+  const partner = await prisma.partner.findUnique({
+    where: { id: partnerId },
+    include: { user: { select: { email: true } } },
+  });
   assertPartnerActionAllowed(partner, adminId);
 
   const trimmedReason = reason.trim();
@@ -94,6 +112,17 @@ export async function rejectPartner(adminId, partnerId, reason) {
         { reason: trimmedReason },
         tx,
       );
+      await notify({
+        userId: partner.userId,
+        type: 'PARTNER_REJECTED',
+        title: 'Hồ sơ đối tác chưa được duyệt',
+        message: trimmedReason,
+        referenceType: 'PARTNER',
+        referenceId: partnerId,
+        email: partner.user.email,
+        emailTemplate: 'PARTNER_RESULT',
+        emailPayload: { status: 'REJECTED', reason: trimmedReason },
+      }, tx);
 
       return updatedPartner;
     });
@@ -110,7 +139,10 @@ export async function rejectPartner(adminId, partnerId, reason) {
 }
 
 export async function approveVoucher(adminId, voucherId) {
-  const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } });
+  const voucher = await prisma.voucher.findUnique({
+    where: { id: voucherId },
+    include: { partner: { include: { user: { select: { id: true, email: true } } } } },
+  });
 
   if (!voucher) {
     throw new AppError('Voucher not found', 404, 'VOUCHER_NOT_FOUND');
@@ -154,6 +186,17 @@ export async function approveVoucher(adminId, voucherId) {
         { published: canGoOnSale },
         tx,
       );
+      await notify({
+        userId: voucher.partner.user.id,
+        type: 'VOUCHER_APPROVED',
+        title: 'Voucher đã được duyệt',
+        message: `Voucher ${voucher.title} đã được duyệt.`,
+        referenceType: 'VOUCHER',
+        referenceId: voucherId,
+        email: voucher.partner.user.email,
+        emailTemplate: 'VOUCHER_RESULT',
+        emailPayload: { status: 'APPROVED', title: voucher.title },
+      }, tx);
 
       return updatedVoucher;
     });
@@ -231,7 +274,10 @@ export async function rejectVoucher(adminId, voucherId, reason) {
     throw new AppError('Reason is required', 400, 'MISSING_REASON');
   }
 
-  const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } });
+  const voucher = await prisma.voucher.findUnique({
+    where: { id: voucherId },
+    include: { partner: { include: { user: { select: { id: true, email: true } } } } },
+  });
 
   if (!voucher) {
     throw new AppError('Voucher not found', 404, 'VOUCHER_NOT_FOUND');
@@ -261,6 +307,17 @@ export async function rejectVoucher(adminId, voucherId, reason) {
         { reason: trimmedReason },
         tx,
       );
+      await notify({
+        userId: voucher.partner.user.id,
+        type: 'VOUCHER_REJECTED',
+        title: 'Voucher bị từ chối',
+        message: trimmedReason,
+        referenceType: 'VOUCHER',
+        referenceId: voucherId,
+        email: voucher.partner.user.email,
+        emailTemplate: 'VOUCHER_RESULT',
+        emailPayload: { status: 'REJECTED', title: voucher.title, reason: trimmedReason },
+      }, tx);
 
       return updatedVoucher;
     });
@@ -381,6 +438,7 @@ export async function findManyUsers(filters = {}, pagination = { page: 1, limit:
         phone: true,
         status: true,
         createdAt: true,
+        wallet: { select: { balance: true } },
         _count: {
           select: { orders: true },
         },
@@ -437,6 +495,32 @@ export async function toggleUserLock(adminId, userId) {
     );
 
     return { id: updatedUser.id, email: updatedUser.email, isLocked: newLockedState };
+  });
+}
+
+
+export async function adjustWallet(adminId, userId, { amount, note }) {
+  return prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({ where: { id: userId }, select: { id: true, role: true } });
+    if (!user) throw new AppError('User not found', 404, 'USER_NOT_FOUND');
+    if (user.role !== 'CUSTOMER') throw new AppError('Ví demo chỉ áp dụng cho Customer', 409, 'WALLET_CUSTOMER_ONLY');
+
+    let wallet = await tx.wallet.findUnique({ where: { userId } });
+    if (!wallet) wallet = await tx.wallet.create({ data: { userId, balance: 0 } });
+    await tx.$queryRaw`SELECT id FROM "Wallet" WHERE id = ${wallet.id} FOR UPDATE`;
+    wallet = await tx.wallet.findUnique({ where: { id: wallet.id } });
+    const before = Number(wallet.balance);
+    const after = before + amount;
+    if (after < 0) throw new AppError('Số dư sau điều chỉnh không được âm', 409, 'WALLET_NEGATIVE_BALANCE');
+
+    const updated = await tx.wallet.update({ where: { id: wallet.id }, data: { balance: after } });
+    await tx.walletTransaction.create({
+      data: { walletId: wallet.id, type: 'ADMIN_ADJUSTMENT', amount: Math.abs(amount), balanceBefore: before, balanceAfter: after, note },
+    });
+    await auditLog.log(adminId, AUDIT_ACTIONS.ADMIN_ADJUST_WALLET, 'Wallet', wallet.id, {
+      userId, amount, note, oldValues: { balance: before }, newValues: { balance: after },
+    }, tx);
+    return { userId, balance: Number(updated.balance) };
   });
 }
 
@@ -569,14 +653,63 @@ export async function findOrderById(orderId) {
 export async function cancelOrder(adminId, orderId, reason) {
   return prisma.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${orderId} FOR UPDATE`;
+    await tx.$queryRaw`
+      SELECT id FROM "VoucherCode"
+      WHERE "orderId" = ${orderId}
+      ORDER BY id
+      FOR UPDATE
+    `;
     const order = await tx.order.findUnique({
       where: { id: orderId },
-      include: { items: true, payment: true, voucherCodes: true },
+      include: {
+        items: true,
+        payment: true,
+        voucherCodes: true,
+        user: { select: { id: true, email: true } },
+      },
     });
     if (!order) throw new AppError('Order not found', 404, 'ORDER_NOT_FOUND');
     if (order.status === 'CANCELLED') throw new AppError('Order is already cancelled', 409, 'ORDER_ALREADY_CANCELLED');
+    if (order.status === 'REFUND_PENDING' || order.status === 'REFUNDED') {
+      throw new AppError('Order is already in the refund workflow', 409, 'ORDER_REFUND_IN_PROGRESS');
+    }
     if (order.voucherCodes.some((code) => code.status === 'USED')) {
       throw new AppError('Cannot cancel an order containing a used voucher', 409, 'ORDER_HAS_USED_VOUCHER');
+    }
+    if (order.payment?.status === 'PAID' && order.payment.method === 'PAYOS') {
+      throw new AppError(
+        'Đơn payOS đã thanh toán phải được xử lý qua quy trình hoàn tiền thủ công',
+        409,
+        'USE_REFUND_WORKFLOW',
+      );
+    }
+
+    let refundedAmount = 0;
+    if (order.payment?.status === 'PAID' && order.payment.method === 'VIVOUCH_WALLET') {
+      await tx.$queryRaw`SELECT id FROM "Wallet" WHERE "userId" = ${order.userId} FOR UPDATE`;
+      const wallet = await tx.wallet.findUnique({ where: { userId: order.userId } });
+      if (!wallet) throw new AppError('Không tìm thấy Ví ViVouch', 404, 'WALLET_NOT_FOUND');
+      refundedAmount = Number(order.payment.amount);
+      const balanceBefore = Number(wallet.balance);
+      const balanceAfter = balanceBefore + refundedAmount;
+      await tx.wallet.update({ where: { id: wallet.id }, data: { balance: balanceAfter } });
+      await tx.walletTransaction.create({
+        data: {
+          walletId: wallet.id,
+          orderId,
+          type: 'REFUND',
+          amount: refundedAmount,
+          balanceBefore,
+          balanceAfter,
+          note: `Admin hủy và hoàn tiền đơn ${orderId}`,
+        },
+      });
+      await tx.payment.update({ where: { orderId }, data: { status: 'REFUNDED' } });
+    } else if (order.payment?.status === 'PENDING') {
+      await tx.payment.update({
+        where: { orderId },
+        data: { status: 'CANCELLED', cancelledAt: new Date() },
+      });
     }
 
     await tx.voucherCode.updateMany({
@@ -585,17 +718,12 @@ export async function cancelOrder(adminId, orderId, reason) {
     });
 
     for (const item of order.items) {
-      await tx.voucher.update({
-        where: { id: item.voucherId },
-        data: { soldQty: { decrement: item.qty } },
-      });
-    }
-
-    if (order.payment?.status === 'PAID') {
-      await tx.payment.update({
-        where: { orderId },
-        data: { status: 'REFUNDED' },
-      });
+      await tx.$executeRaw`
+        UPDATE "Voucher"
+        SET "soldQty" = GREATEST(0, "soldQty" - ${item.qty}),
+            "updatedAt" = NOW()
+        WHERE id = ${item.voucherId}
+      `;
     }
 
     const updated = await tx.order.update({
@@ -606,10 +734,29 @@ export async function cancelOrder(adminId, orderId, reason) {
     await auditLog.log(adminId, AUDIT_ACTIONS.ADMIN_CANCEL_ORDER, 'Order', orderId, {
       previousStatus: order.status,
       reason,
-      refunded: order.payment?.status === 'PAID',
+      refunded: refundedAmount > 0,
+      refundedAmount,
+      paymentMethod: order.payment?.method || null,
+    }, tx);
+    await notify({
+      userId: order.userId,
+      type: 'REFUND_RESOLVED',
+      title: 'Đơn hàng đã được hủy',
+      message: refundedAmount > 0
+        ? `Đơn ${orderId} đã được hủy và ${refundedAmount.toLocaleString('vi-VN')}đ đã hoàn về Ví ViVouch.`
+        : `Đơn ${orderId} đã được hủy.`,
+      referenceType: 'ORDER',
+      referenceId: orderId,
+      email: order.user.email,
+      emailTemplate: 'REFUND_RESOLVED',
+      emailPayload: {
+        orderId,
+        status: refundedAmount > 0 ? 'ĐÃ HỦY VÀ HOÀN VÍ' : 'ĐÃ HỦY',
+        adminNote: reason,
+      },
     }, tx);
     return updated;
-  });
+  }, { timeout: 10000 });
 }
 
 export async function findManyAuditLogs(filters = {}, pagination = { page: 1, limit: 10 }) {

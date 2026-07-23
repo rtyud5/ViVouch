@@ -25,12 +25,16 @@ describe('Partner branches API', () => {
     await cleanup();
     const passwordHash = await bcrypt.hash(password, 10);
     const [user, other] = await Promise.all([
-      prisma.user.create({ data: { email, fullName: 'Branch Partner', passwordHash, role: 'PARTNER' } }),
-      prisma.user.create({ data: { email: otherEmail, fullName: 'Other Partner', passwordHash, role: 'PARTNER' } }),
+      prisma.user.create({ data: { email, fullName: 'Branch Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' } }),
+      prisma.user.create({ data: { email: otherEmail, fullName: 'Other Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' } }),
     ]);
-    await Promise.all([
+    const [p1, p2] = await Promise.all([
       prisma.partner.create({ data: { userId: user.id, businessName: 'Branch Partner', taxCode: 'BRANCH-TEST-1', representativeName: 'Rep', status: 'APPROVED' } }),
       prisma.partner.create({ data: { userId: other.id, businessName: 'Other Partner', taxCode: 'BRANCH-TEST-2', representativeName: 'Rep', status: 'APPROVED' } }),
+    ]);
+    await Promise.all([
+      prisma.partnerMember.create({ data: { partnerId: p1.id, userId: user.id, role: 'OWNER', status: 'ACTIVE' } }),
+      prisma.partnerMember.create({ data: { partnerId: p2.id, userId: other.id, role: 'OWNER', status: 'ACTIVE' } }),
     ]);
     token = (await request(app).post('/api/auth/login').send({ email, password })).body.data.accessToken;
     otherToken = (await request(app).post('/api/auth/login').send({ email: otherEmail, password })).body.data.accessToken;

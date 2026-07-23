@@ -65,7 +65,12 @@ describe('Cart Checkout API Tests', () => {
         fullName: 'Checkout API Customer',
         passwordHash,
         role: 'CUSTOMER',
+        status: 'ACTIVE',
       },
+    });
+
+    await prisma.wallet.create({
+      data: { userId: customer.id, balance: 1000000 },
     });
 
     const partnerUser = await prisma.user.create({
@@ -74,6 +79,7 @@ describe('Cart Checkout API Tests', () => {
         fullName: 'Checkout API Partner',
         passwordHash,
         role: 'PARTNER',
+        status: 'ACTIVE',
       },
     });
 
@@ -211,8 +217,9 @@ describe('Cart Checkout API Tests', () => {
         paymentMethod: 'VIVOUCH_WALLET'
       });
 
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(409);
     expect(res.body.success).toBe(false);
+    expect(res.body.code).toBe('VOUCHER_OUT_OF_STOCK');
   });
 
   it('returns 400 when buying an expired sale voucher via buyNow', async () => {

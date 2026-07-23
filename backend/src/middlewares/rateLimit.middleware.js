@@ -13,6 +13,7 @@ export function createRateLimiter({ windowMs, max, message, skipInTest = true })
         success: false,
         code: 'RATE_LIMITED',
         message,
+        requestId: req.requestId,
       });
     },
   });
@@ -40,4 +41,10 @@ export const redeemConfirmRateLimiter = createRateLimiter({
   windowMs: 60 * 1000,
   max: 20,
   message: 'Bạn đã xác nhận quá nhiều mã voucher. Vui lòng thử lại sau.',
+});
+
+export const otpRateLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Bạn đã gửi quá nhiều yêu cầu OTP. Vui lòng thử lại sau.',
 });

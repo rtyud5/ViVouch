@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AdminLayout } from '../../layouts/AdminLayout';
 import { AdminTable, AdminStatusBadge } from '../../features/admin/components';
 import { useUsers, useToggleUserLock, useAssignUserRole } from '../../features/admin/hooks/useUsers';
+import { adjustWallet } from '../../features/admin/api/adminApi';
 import { useAuthStore } from '../../stores/authStore';
 import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
 import { ApiErrorToast } from '../../components/common/ApiErrorToast';
@@ -22,7 +23,7 @@ export default function UsersPage() {
   const [toastError, setToastError] = useState(null);
   const currentUser = useAuthStore((state) => state.user);
 
-  const { data, isLoading } = useUsers(params);
+  const { data, isLoading, refetch } = useUsers(params);
   const { mutate: toggleUserLock, isPending: isTogglePending } = useToggleUserLock();
   const { mutate: assignUserRole, isPending: isRolePending } = useAssignUserRole();
 
@@ -73,6 +74,28 @@ export default function UsersPage() {
       },
       onError: setToastError,
     });
+  };
+
+
+  const handleWalletAdjust = async () => {
+    if (!selectedUser || selectedUser.role !== 'CUSTOMER') return;
+    const rawAmount = window.prompt('Nhập số tiền điều chỉnh (dương để cộng, âm để trừ):', '100000');
+    if (rawAmount === null) return;
+    const amount = Number(rawAmount);
+    if (!Number.isInteger(amount) || amount === 0) {
+      setToastError(new Error('Số tiền phải là số nguyên khác 0.'));
+      return;
+    }
+    const note = window.prompt('Lý do điều chỉnh:', 'Cộng số dư demo');
+    if (!note?.trim()) return;
+    try {
+      const response = await adjustWallet(selectedUser.id, amount, note.trim());
+      setToastSuccess(`Số dư mới: ${Number(response.data.balance).toLocaleString('vi-VN')}₫`);
+      setSelectedUser((current) => ({ ...current, wallet: { balance: response.data.balance } }));
+      await refetch();
+    } catch (error) {
+      setToastError(error);
+    }
   };
 
   const columns = [
@@ -242,6 +265,13 @@ export default function UsersPage() {
               </div>
               <h2 className="text-lg font-semibold text-gray-900 mb-1">{selectedUser.fullName}</h2>
               <p className="text-sm text-gray-500 mb-2">{selectedUser.email}</p>
+              {selectedUser.role === 'CUSTOMER' && (
+                <div className="mt-4 w-full rounded-lg border border-amber-200 bg-amber-50 p-3 text-left">
+                  <div className="text-xs text-gray-500">Số dư Ví ViVouch</div>
+                  <div className="text-lg font-bold text-amber-700">{Number(selectedUser.wallet?.balance || 0).toLocaleString('vi-VN')}₫</div>
+                  <button type="button" className="btn btn-warning btn-sm mt-2 w-full" onClick={handleWalletAdjust}>Điều chỉnh số dư demo</button>
+                </div>
+              )}
             </div>
           </div>
         </aside>

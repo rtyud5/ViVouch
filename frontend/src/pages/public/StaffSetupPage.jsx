@@ -1,0 +1,12 @@
+import { useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { completeStaffSetup, resendStaffSetup } from '../../features/auth/api/auth.api';
+
+export function StaffSetupPage() {
+  const [params] = useSearchParams(); const navigate = useNavigate();
+  const [email, setEmail] = useState(params.get('email') || ''); const [otp, setOtp] = useState(''); const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); const [message, setMessage] = useState(''); const [loading, setLoading] = useState(false);
+  async function submit(e) { e.preventDefault(); setLoading(true); setError(''); try { await completeStaffSetup(email, otp, password); navigate('/login', { state: { message: 'Thiết lập tài khoản Staff thành công.' } }); } catch (err) { setError(err?.response?.data?.message || 'Không thể thiết lập tài khoản.'); } finally { setLoading(false); } }
+  async function resend() { setLoading(true); setError(''); setMessage(''); try { const result = await resendStaffSetup(email); setMessage(result.message); } catch (err) { setError(err?.response?.data?.message || 'Không thể gửi lại OTP.'); } finally { setLoading(false); } }
+  return <main className="min-h-screen bg-base-200 grid place-items-center p-4"><div className="card bg-base-100 shadow-xl w-full max-w-md"><div className="card-body"><h1 className="card-title text-2xl">Thiết lập tài khoản Staff</h1>{message && <div className="alert alert-success text-sm">{message}</div>}{error && <div className="alert alert-error text-sm">{error}</div>}<form onSubmit={submit} className="space-y-4"><input type="email" className="input input-bordered w-full" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email" required/><input className="input input-bordered w-full" value={otp} onChange={(e)=>setOtp(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="OTP 6 số" pattern="[0-9]{6}" required/><input type="password" className="input input-bordered w-full" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Mật khẩu mới" minLength="8" required/><button className="btn btn-primary w-full" disabled={loading}>Hoàn tất</button></form><button type="button" className="btn btn-ghost btn-sm" onClick={resend} disabled={loading || !email}>Gửi lại OTP</button><Link to="/login" className="btn btn-ghost btn-sm">Quay lại</Link></div></div></main>;
+}

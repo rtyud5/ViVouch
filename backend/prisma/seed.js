@@ -15,6 +15,14 @@ async function main() {
   // 2. Wipe database tables in order
   console.log('Wiping existing data...')
 
+  await prisma.paymentWebhook.deleteMany()
+  await prisma.emailDelivery.deleteMany()
+  await prisma.notification.deleteMany()
+  await prisma.supportTicket.deleteMany()
+  await prisma.refundRequest.deleteMany()
+  await prisma.walletTransaction.deleteMany()
+  await prisma.emailOtp.deleteMany()
+
   console.log('Clearing VoucherUsageLog...')
   await prisma.voucherUsageLog.deleteMany()
 
@@ -45,6 +53,9 @@ async function main() {
   console.log('Clearing Voucher...')
   await prisma.voucher.deleteMany()
 
+  console.log('Clearing PartnerMember...')
+  await prisma.partnerMember.deleteMany()
+
   console.log('Clearing Branch...')
   await prisma.branch.deleteMany()
 
@@ -56,6 +67,9 @@ async function main() {
 
   console.log('Clearing AuditLog...')
   await prisma.auditLog.deleteMany()
+
+  console.log('Clearing Wallet...')
+  await prisma.wallet.deleteMany()
 
   console.log('Clearing User...')
   await prisma.user.deleteMany()
@@ -80,37 +94,37 @@ async function main() {
 
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@vivouch.com' }, update: {},
-    create: { email: 'admin@vivouch.com', fullName: 'Admin ViVouch', passwordHash: await hash('Admin@123'), role: 'ADMIN' }
+    create: { email: 'admin@vivouch.com', fullName: 'Admin ViVouch', passwordHash: await hash('Admin@123'), role: 'ADMIN' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
 
   const haiDiLaoUser = await prisma.user.upsert({
     where: { email: 'haidilao@vivouch.com' }, update: {},
-    create: { email: 'haidilao@vivouch.com', fullName: 'Haidilao Vietnam', passwordHash: await hash('Partner@123'), role: 'PARTNER' }
+    create: { email: 'haidilao@vivouch.com', fullName: 'Haidilao Vietnam', passwordHash: await hash('Partner@123'), role: 'PARTNER' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
   const zenSpaUser = await prisma.user.upsert({
     where: { email: 'zenspa@vivouch.com' }, update: {},
-    create: { email: 'zenspa@vivouch.com', fullName: 'Zen Spa & Wellness', passwordHash: await hash('Partner@123'), role: 'PARTNER' }
+    create: { email: 'zenspa@vivouch.com', fullName: 'Zen Spa & Wellness', passwordHash: await hash('Partner@123'), role: 'PARTNER' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
   const goTravelUser = await prisma.user.upsert({
     where: { email: 'gotravel@vivouch.com' }, update: {},
-    create: { email: 'gotravel@vivouch.com', fullName: 'GoTravel', passwordHash: await hash('Partner@123'), role: 'PARTNER' }
+    create: { email: 'gotravel@vivouch.com', fullName: 'GoTravel', passwordHash: await hash('Partner@123'), role: 'PARTNER' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
   const pendingUser = await prisma.user.upsert({
     where: { email: 'biendong@vivouch.com' }, update: {},
-    create: { email: 'biendong@vivouch.com', fullName: 'Nhà hàng Biển Đông', passwordHash: await hash('Partner@123'), role: 'PARTNER' }
+    create: { email: 'biendong@vivouch.com', fullName: 'Nhà hàng Biển Đông', passwordHash: await hash('Partner@123'), role: 'PARTNER' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
 
   const customer1 = await prisma.user.upsert({
     where: { email: 'customer1@test.com' }, update: {},
-    create: { email: 'customer1@test.com', fullName: 'Nguyễn Văn A', phone: '0901000001', passwordHash: await hash('Test@123'), role: 'CUSTOMER' }
+    create: { email: 'customer1@test.com', fullName: 'Nguyễn Văn A', phone: '0901000001', passwordHash: await hash('Test@123'), role: 'CUSTOMER' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
   const customer2 = await prisma.user.upsert({
     where: { email: 'customer2@test.com' }, update: {},
-    create: { email: 'customer2@test.com', fullName: 'Trần Thị B', phone: '0901000002', passwordHash: await hash('Test@123'), role: 'CUSTOMER' }
+    create: { email: 'customer2@test.com', fullName: 'Trần Thị B', phone: '0901000002', passwordHash: await hash('Test@123'), role: 'CUSTOMER' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
   const customer3 = await prisma.user.upsert({
     where: { email: 'customer3@test.com' }, update: {},
-    create: { email: 'customer3@test.com', fullName: 'Lê Văn C', phone: '0901000003', passwordHash: await hash('Test@123'), role: 'CUSTOMER' }
+    create: { email: 'customer3@test.com', fullName: 'Lê Văn C', phone: '0901000003', passwordHash: await hash('Test@123'), role: 'CUSTOMER' , status: 'ACTIVE', emailVerifiedAt: new Date() }
   })
   console.log('Users seeded: 8')
 
@@ -132,6 +146,21 @@ async function main() {
     create: { userId: pendingUser.id, businessName: 'Nhà hàng Biển Đông', taxCode: '0456789012', representativeName: 'Lê Thị Mai', status: 'PENDING' }
   })
   console.log('Partners seeded: 4')
+
+  for (const [partner, owner] of [[haiDiLao, haiDiLaoUser], [zenSpa, zenSpaUser], [goTravel, goTravelUser]]) {
+    await prisma.partnerMember.create({
+      data: { partnerId: partner.id, userId: owner.id, role: 'OWNER', status: 'ACTIVE' }
+    })
+  }
+  const pendingPartner = await prisma.partner.findUnique({ where: { taxCode: '0456789012' } })
+  await prisma.partnerMember.create({
+    data: { partnerId: pendingPartner.id, userId: pendingUser.id, role: 'OWNER', status: 'ACTIVE' }
+  })
+
+  for (const customer of [customer1, customer2, customer3]) {
+    await prisma.wallet.create({ data: { userId: customer.id, balance: 1000000 } })
+  }
+  console.log('Partner memberships and demo wallets seeded')
 
   // ── Branches ──────────────────────────────────────────────────────────────
   const hdl_q1 = await prisma.branch.upsert({
@@ -156,6 +185,21 @@ async function main() {
   })
   console.log('Branches seeded: 5')
 
+  const staffUser = await prisma.user.create({
+    data: {
+      email: 'staff.haidilao@vivouch.com',
+      fullName: 'Nhân viên Haidilao Q1',
+      passwordHash: await hash('Staff@123'),
+      role: 'PARTNER',
+      status: 'ACTIVE',
+      emailVerifiedAt: new Date(),
+    }
+  })
+  await prisma.partnerMember.create({
+    data: { partnerId: haiDiLao.id, userId: staffUser.id, branchId: hdl_q1.id, role: 'STAFF', status: 'ACTIVE' }
+  })
+  console.log('Branch staff seeded')
+
   // ── Vouchers ──────────────────────────────────────────────────────────────
   const now = new Date()
   const future = (days) => new Date(now.getTime() + days * 86400000)
@@ -167,13 +211,13 @@ async function main() {
       title: 'Buffet Lẩu 2 người — Haidilao', originalPrice: 325000, salePrice: 179000,
       totalQty: 200, soldQty: 142, status: 'ON_SALE',
       description: 'Trải nghiệm buffet lẩu cao cấp cho 2 người tại Haidilao.',
-      conditions: 'Áp dụng cho menu buffet 325k. Đặt bàn trước qua hotline.',
+      conditions: 'Áp dụng cho menu buffet 325k. Đặt bàn trước qua hotline.', allowRefund: true, refundWindowHours: 24,
       imageUrl: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400' },
     { partnerId: haiDiLao.id, categoryId: categories[0].id, key: 'hdl_2',
       title: 'Set lẩu 1 người — Haidilao', originalPrice: 180000, salePrice: 120000,
       totalQty: 150, soldQty: 89, status: 'ON_SALE',
       description: 'Set lẩu cá nhân đầy đủ topping cho 1 người.',
-      conditions: 'Áp dụng các ngày trong tuần. Không áp dụng cuối tuần.',
+      conditions: 'Áp dụng các ngày trong tuần. Không áp dụng cuối tuần.', allowRefund: true, refundWindowHours: 24,
       imageUrl: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400' },
     // Expired Haidilao Voucher
     { partnerId: haiDiLao.id, categoryId: categories[0].id, key: 'hdl_expired',
@@ -291,7 +335,7 @@ async function main() {
         status: 'COMPLETED',
         totalAmount: voucher.salePrice,
         items: { create: { voucherId: voucher.id, qty: 1, unitPrice: voucher.salePrice } },
-        payment: { create: { method: 'WALLET', status: 'PAID', amount: voucher.salePrice } },
+        payment: { create: { method: 'VIVOUCH_WALLET', status: 'PAID', amount: voucher.salePrice } },
       }
     })
 
@@ -327,7 +371,7 @@ async function main() {
       status: 'COMPLETED',
       totalAmount: 0,
       items: { create: { voucherId: v.zen_1.id, qty: 2, unitPrice: 0 } },
-      payment: { create: { method: 'WALLET', status: 'PAID', amount: 0 } },
+      payment: { create: { method: 'VIVOUCH_WALLET', status: 'PAID', amount: 0 } },
     }
   })
   await prisma.voucherCode.create({
@@ -357,7 +401,7 @@ async function main() {
       status: 'COMPLETED',
       totalAmount: v.hdl_2.salePrice,
       items: { create: { voucherId: v.hdl_2.id, qty: 1, unitPrice: v.hdl_2.salePrice } },
-      payment: { create: { method: 'WALLET', status: 'PAID', amount: v.hdl_2.salePrice } },
+      payment: { create: { method: 'VIVOUCH_WALLET', status: 'PAID', amount: v.hdl_2.salePrice } },
     }
   })
   await prisma.voucherCode.create({
@@ -397,6 +441,7 @@ async function main() {
   console.log('  Partner:   haidilao@vivouch.com  / Partner@123')
   console.log('  Partner:   zenspa@vivouch.com    / Partner@123')
   console.log('  Partner:   gotravel@vivouch.com  / Partner@123')
+  console.log('  Staff:     staff.haidilao@vivouch.com / Staff@123')
   console.log('  Customer:  customer1@test.com    / Test@123')
   console.log('  Customer:  customer2@test.com    / Test@123')
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { prisma } from '../src/config/prisma.js';
 import * as redeemService from '../src/modules/redeem/redeem.service.js';
+import { getPartnerAccessByUserId } from '../src/modules/partners/partners.service.js';
 import { VOUCHER_CODE_STATUS, VOUCHER_STATUS } from '../src/constants/statuses.js';
 
 describe('Redeem Service Tests', () => {
@@ -12,6 +13,7 @@ describe('Redeem Service Tests', () => {
   let voucherId, wrongVoucherId;
   let issuedCode, checkOnlyCode, usedCode, expiredCode, wrongPartnerCode, cancelledCode, lockedCode;
   let branchId, unlinkedBranchId;
+  let partnerAccess, wrongPartnerAccess;
 
   const cleanup = async () => {
     const emails = [customerEmail, partnerEmail, wrongPartnerEmail];
@@ -59,17 +61,17 @@ describe('Redeem Service Tests', () => {
 
     // Setup Users
     const customer = await prisma.user.create({
-      data: { email: customerEmail, fullName: 'Redeem Customer', passwordHash: 'hash', role: 'CUSTOMER' }
+      data: { email: customerEmail, fullName: 'Redeem Customer', passwordHash: 'hash', role: 'CUSTOMER', status: 'ACTIVE' }
     });
     customerId = customer.id;
 
     const partnerUser = await prisma.user.create({
-      data: { email: partnerEmail, fullName: 'Redeem Partner User', passwordHash: 'hash', role: 'PARTNER' }
+      data: { email: partnerEmail, fullName: 'Redeem Partner User', passwordHash: 'hash', role: 'PARTNER', status: 'ACTIVE' }
     });
     partnerUserId = partnerUser.id;
 
     const wrongPartnerUser = await prisma.user.create({
-      data: { email: wrongPartnerEmail, fullName: 'Wrong Partner User', passwordHash: 'hash', role: 'PARTNER' }
+      data: { email: wrongPartnerEmail, fullName: 'Wrong Partner User', passwordHash: 'hash', role: 'PARTNER', status: 'ACTIVE' }
     });
     wrongPartnerUserId = wrongPartnerUser.id;
 
@@ -79,10 +81,21 @@ describe('Redeem Service Tests', () => {
     });
     partnerId = partner.id;
 
+    await prisma.partnerMember.create({
+      data: { partnerId: partner.id, userId: partnerUser.id, role: 'OWNER', status: 'ACTIVE' }
+    });
+
     const wrongPartner = await prisma.partner.create({
       data: { userId: wrongPartnerUser.id, businessName: 'Wrong Partner', taxCode: 'REDEEM-TAX-02', representativeName: 'Rep2', status: 'APPROVED' }
     });
     wrongPartnerId = wrongPartner.id;
+
+    await prisma.partnerMember.create({
+      data: { partnerId: wrongPartner.id, userId: wrongPartnerUser.id, role: 'OWNER', status: 'ACTIVE' }
+    });
+
+    partnerAccess = await getPartnerAccessByUserId(partnerUserId, { includeInactive: true });
+    wrongPartnerAccess = await getPartnerAccessByUserId(wrongPartnerUserId, { includeInactive: true });
 
     // Setup Branch
     const branch = await prisma.branch.create({
@@ -137,7 +150,7 @@ describe('Redeem Service Tests', () => {
   });
 
   it('checks an ISSUED code without consuming it', async () => {
-    const res = await redeemService.checkCode(partnerUserId, checkOnlyCode.code, branchId);
+    const res = await redeemService.checkCode(partnerUserId, partnerAccess, checkOnlyCode.code, branchId);
     expect(res.voucherTitle).toBe('Right Voucher');
     expect(res.customerName).toBe('Redeem Customer');
     expect(res.branchId).toBe(branchId);
@@ -149,7 +162,7 @@ describe('Redeem Service Tests', () => {
   });
 
   it('successfully redeems an ISSUED valid code', async () => {
-    const res = await redeemService.redeemCode(partnerUserId, issuedCode.code, branchId);
+    const res = await redeemService.redeemCode(partnerUserId, partnerAccess, issuedCode.code, branchId);
     expect(res.voucherTitle).toBe('Right Voucher');
     expect(res.customerName).toBe('Redeem Customer');
     expect(res.branchId).toBe(branchId);
@@ -161,36 +174,36 @@ describe('Redeem Service Tests', () => {
   });
 
   it('rejects a code that is already USED', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, usedCode.code, branchId))
+    await expect(redeemService.redeemCode(partnerUserId, partnerAccess, usedCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400, code: 'VOUCHER_CODE_USED' });
   });
 
   it('rejects an EXPIRED code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, expiredCode.code, branchId))
+    await expect(redeemService.redeemCode(partnerUserId, partnerAccess, expiredCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400, code: 'VOUCHER_CODE_EXPIRED' });
   });
 
   it('rejects a code belonging to a different partner', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, wrongPartnerCode.code, branchId))
+    await expect(redeemService.redeemCode(partnerUserId, partnerAccess, wrongPartnerCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
     
     // Also test reverse: wrong partner trying to redeem right code
-    await expect(redeemService.redeemCode(wrongPartnerUserId, issuedCode.code, branchId))
+    await expect(redeemService.redeemCode(wrongPartnerUserId, wrongPartnerAccess, issuedCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
   });
 
   it('rejects a CANCELLED code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, cancelledCode.code, branchId))
+    await expect(redeemService.redeemCode(partnerUserId, partnerAccess, cancelledCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400 });
   });
 
   it('rejects a LOCKED code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, lockedCode.code, branchId))
+    await expect(redeemService.redeemCode(partnerUserId, partnerAccess, lockedCode.code, branchId))
       .rejects.toMatchObject({ statusCode: 400 });
   });
 
   it('rejects a non-existent code', async () => {
-    await expect(redeemService.redeemCode(partnerUserId, 'DOES-NOT-EXIST-CODE', branchId))
+    await expect(redeemService.redeemCode(partnerUserId, partnerAccess, 'DOES-NOT-EXIST-CODE', branchId))
       .rejects.toMatchObject({ statusCode: 404, code: 'VOUCHER_CODE_NOT_FOUND' });
   });
 
@@ -205,7 +218,7 @@ describe('Redeem Service Tests', () => {
       },
     });
 
-    await expect(redeemService.redeemCode(partnerUserId, scopedCode.code, unlinkedBranchId))
+    await expect(redeemService.redeemCode(partnerUserId, partnerAccess, scopedCode.code, unlinkedBranchId))
       .rejects.toMatchObject({ statusCode: 403, code: 'INVALID_BRANCH_SCOPE' });
 
     const unchanged = await prisma.voucherCode.findUnique({ where: { id: scopedCode.id } });

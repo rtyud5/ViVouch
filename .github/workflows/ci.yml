@@ -33,6 +33,12 @@ jobs:
       JWT_ACCESS_SECRET: ci_access_secret_at_least_32_characters
       JWT_REFRESH_SECRET: ci_refresh_secret_at_least_32_characters
       CLIENT_URL: http://localhost:5173
+      PUBLIC_API_URL: http://localhost:5000
+      EMAIL_VERIFICATION_REQUIRED: "false"
+      EMAIL_DELIVERY_MODE: TEST
+      OTP_PEPPER: ci_otp_pepper_at_least_32_characters
+      ENABLE_VOUCHER_RECONCILIATION_JOB: "false"
+      ENABLE_EMAIL_WORKER: "false"
     defaults:
       run:
         working-directory: backend
@@ -47,6 +53,7 @@ jobs:
       - run: npx --no-install prisma generate
       - run: npx --no-install prisma migrate deploy
       - run: npm run prisma:seed
+      - run: npm run test:unit:node
       - run: npm test
       - run: npm audit --omit=dev --audit-level=high
 
@@ -66,6 +73,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --ignore-scripts
+      - run: npm run test:unit:node
       - run: npm test -- --run
       - run: npm run build
       - run: npm audit --omit=dev --audit-level=high
@@ -78,4 +86,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: node scripts/static-quality.mjs
       - run: node scripts/verify-evidence.mjs

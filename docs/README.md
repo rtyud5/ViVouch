@@ -27,6 +27,7 @@ This folder is the code-aligned project report for the voucher e-commerce platfo
 | Deployment | [Deployment plan](08_deployment/01_deployment_plan.md) | Environment, migration, rollback |
 | Demonstration | [Demo script](09_demo/01_demo_script.md) | Ten-step defense flow |
 | Presentation | [W5 release deck](10_presentation/ViVouch_W5_Release_Deck.pptx) | Acceptance, security, evidence, and release decision |
+| W6-W7 extension | [Marketplace Demo+](11_w6_w7_marketplace/README.md) | OTP, Owner/Staff, wallet, payOS, refund, notifications, hardening and release runbook |
 
 ## Evidence policy
 
@@ -34,4 +35,4 @@ Every release claim must identify the candidate commit or patch manifest, comman
 
 ## Known assignment limitations
 
-Real payment gateways and real email/SMS delivery are intentionally outside the basic scope. Payment, QR entry, and password-reset delivery are clearly marked as simulations. The system is a student demonstration candidate, not a production financial platform.
+Real payment and email remain outside the basic assignment requirement, but the W6-W7 extension includes optional real SMTP delivery and a payOS hosted VietQR integration for demonstration. ViVouch Wallet, partner settlement, and payOS refund handling remain explicitly simulated or manual. The system is a student demonstration candidate, not a production financial platform.

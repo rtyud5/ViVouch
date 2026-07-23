@@ -1,314 +1,357 @@
-import { prisma } from '../../config/prisma.js';
 import { customAlphabet } from 'nanoid';
-import { log as auditLog } from '../auditLogs/auditLog.service.js';
+import { prisma } from '../../config/prisma.js';
 import { AppError } from '../../utils/appError.js';
-import { createSimulatedPayment } from '../payments/payment.service.js';
+import { log as auditLog } from '../auditLogs/auditLog.service.js';
+import { notify } from '../notifications/notifications.service.js';
+import { createPayOsPaymentLink } from '../payments/payos.service.js';
+import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
+import {
+  aggregateAndSortItems,
+  createCheckoutFingerprint,
+  createNumericProviderOrderCode,
+} from './orders.utils.js';
 
-const generateVoucherCode = customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 10);
+const generateVoucherCode = customAlphabet('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', 12);
 
-const mapExistingOrder = (order) => ({
-  orderId: order.id,
-  idempotentReplay: true,
-  voucherCodes: order.voucherCodes.map((voucherCode) => ({
-    code: voucherCode.code,
-    voucherId: voucherCode.voucherId,
-    voucherTitle: voucherCode.voucher.title,
-    imageUrl: voucherCode.voucher.imageUrl,
-    expiresAt: voucherCode.expiresAt,
-  })),
-});
-
-const findIdempotentOrder = async (tx, userId, idempotencyKey) => {
-  if (!idempotencyKey) return null;
-
-  const order = await tx.order.findFirst({
-    where: {
-      userId,
-      idempotencyKey,
-    },
-    include: {
-      voucherCodes: {
-        include: {
-          voucher: { select: { title: true, imageUrl: true } },
-        },
-      },
-    },
-  });
-
-  return order ? mapExistingOrder(order) : null;
-};
-
-/**
- * Helper xử lý lõi của luồng Checkout (gồm khóa dòng, kiểm tra tồn kho, tạo Order, tạo Payment)
- * Chạy bên trong một Prisma Transaction đã được khởi tạo.
- * 
- * @param {Object} tx - Prisma Transaction Client
- * @param {string} userId - ID của người dùng
- * @param {Array<{id: string, qty: number}>} sortedItems - Danh sách voucher đã được sắp xếp để tránh deadlock
- * @param {Object} checkoutData - Thông tin thanh toán và quà tặng/ghi chú
- * @returns {Promise<Object>} Kết quả checkout
- */
-const processCheckout = async (tx, userId, sortedItems, checkoutData = {}) => {
-  // Tuần tự hóa checkout của cùng một user để check idempotency và trừ kho là atomic.
-  await tx.$executeRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
-
-  const existingOrder = await findIdempotentOrder(tx, userId, checkoutData.idempotencyKey);
-  if (existingOrder) return existingOrder;
-
-  const paymentMethod = checkoutData.paymentMethod || 'MOCK_GATEWAY';
-  const recipientName = checkoutData.recipientName || null;
-  const recipientPhone = checkoutData.recipientPhone || null;
-  const note = checkoutData.note || null;
-
-  let totalAmount = 0;
-  const orderItemsData = [];
-  const returnVoucherCodes = [];
-
-  for (const item of sortedItems) {
-    const voucherId = item.id;
-    const qty = item.qty;
-
-    // Row-level lock: Lock row của voucher để đảm bảo an toàn đồng thời
-    await tx.$executeRaw`SELECT id FROM "Voucher" WHERE id = ${voucherId} FOR UPDATE`;
-
-    const voucher = await tx.voucher.findUnique({
-      where: { id: voucherId },
-      include: { partner: { select: { status: true } } },
-    });
-
-    if (!voucher) {
-      throw new AppError('Không tìm thấy voucher hoặc voucher không tồn tại.', 404, 'VOUCHER_NOT_FOUND');
-    }
-
-    if (voucher.status !== 'ON_SALE' || voucher.partner.status !== 'APPROVED') {
-      throw new AppError(`Voucher "${voucher.title}" hiện không còn được bán.`, 400, 'VOUCHER_UNAVAILABLE');
-    }
-
-    // Check saleStart/saleEnd cơ bản khi checkout
-    const now = new Date();
-    if (voucher.saleStart && now < new Date(voucher.saleStart)) {
-      throw new AppError(`Voucher "${voucher.title}" chưa đến thời gian mở bán.`, 400, 'VOUCHER_NOT_YET_ON_SALE');
-    }
-    if (voucher.saleEnd && now > new Date(voucher.saleEnd)) {
-      throw new AppError(`Voucher "${voucher.title}" đã hết hạn bán.`, 400, 'VOUCHER_SALE_EXPIRED');
-    }
-
-    // Kiểm tra tồn kho
-    const remainingQty = voucher.totalQty - voucher.soldQty;
-    if (remainingQty <= 0) {
-      throw new AppError(`Voucher "${voucher.title}" đã hết số lượng phát hành.`, 400, 'VOUCHER_OUT_OF_STOCK');
-    }
-    if (remainingQty < qty) {
-      throw new AppError(`Voucher "${voucher.title}" không đủ số lượng yêu cầu (Còn lại: ${remainingQty}).`, 400, 'VOUCHER_OUT_OF_STOCK');
-    }
-
-    // Cập nhật số lượng đã bán (soldQty)
-    await tx.voucher.update({
-      where: { id: voucherId },
-      data: { soldQty: { increment: qty } }
-    });
-
-    const unitPrice = Number(voucher.salePrice);
-    totalAmount += unitPrice * qty;
-
-    orderItemsData.push({
-      voucherId,
-      title: voucher.title,
-      imageUrl: voucher.imageUrl,
-      qty,
-      unitPrice: voucher.salePrice,
-      useEnd: voucher.useEnd
-    });
-  }
-
-  // Chuẩn bị dữ liệu VoucherCode trước
-  const voucherCodesData = [];
-  for (const item of orderItemsData) {
-    for (let i = 0; i < item.qty; i++) {
-      const code = `VC-2026-${generateVoucherCode()}`;
-      voucherCodesData.push({
-        code,
-        voucherId: item.voucherId,
-        ownerId: userId,
-        status: 'ISSUED',
-        expiresAt: item.useEnd || null
-      });
-
-      returnVoucherCodes.push({
-        code,
-        voucherId: item.voucherId,
-        voucherTitle: item.title,
-        imageUrl: item.imageUrl,
-        expiresAt: item.useEnd || null
-      });
-    }
-  }
-
-  // Tạo Order(COMPLETED), OrderItems và VoucherCodes bằng Nested Writes
-  const order = await tx.order.create({
-    data: {
-      userId,
-      idempotencyKey: checkoutData.idempotencyKey || null,
-      status: 'COMPLETED',
-      totalAmount,
-      recipientName,
-      recipientPhone,
-      note,
-      items: {
-        create: orderItemsData.map(({ voucherId, qty, unitPrice }) => ({
-          voucherId, qty, unitPrice
-        }))
-      },
-      voucherCodes: {
-        create: voucherCodesData
-      }
-    }
-  });
-
-  // Tạo Payment(PAID/mock)
-  await createSimulatedPayment(tx, { orderId: order.id, method: paymentMethod, amount: totalAmount });
-
-  // Ghi audit log
-  await auditLog(userId, 'CHECKOUT', 'Order', order.id, {
-    totalAmount,
-    recipientName,
-    recipientPhone,
-    note
-  }, tx);
-
+function mapOrderResult(order, idempotentReplay = false) {
   return {
     orderId: order.id,
-    voucherCodes: returnVoucherCodes
+    orderStatus: order.status,
+    paymentMethod: order.payment?.method || null,
+    paymentStatus: order.payment?.status || null,
+    checkoutUrl: order.payment?.checkoutUrl || null,
+    idempotentReplay,
+    voucherCodes: (order.voucherCodes || []).map((item) => ({
+      code: item.code,
+      voucherId: item.voucherId,
+      voucherTitle: item.voucher.title,
+      imageUrl: item.voucher.imageUrl,
+      expiresAt: item.expiresAt,
+    })),
   };
-};
+}
 
-/**
- * Luồng Mua Ngay (Buy Now)
- * @param {string} userId - ID của người dùng
- * @param {Array<{id: string, qty: number}>} items - Danh sách voucher cần mua
- * @param {Object} checkoutData - Thông tin thanh toán và quà tặng/ghi chú
- * @returns {Promise<Object>} Order đã tạo
- */
-export const buyNow = async (userId, items, checkoutData = {}) => {
-  if (!items || items.length === 0) {
-    throw new AppError('Danh sách sản phẩm không được rỗng', 400, 'EMPTY_ITEMS');
-  }
-
-  // Gộp các item trùng ID và cộng dồn số lượng
-  const aggregatedMap = new Map();
-  for (const item of items) {
-    const currentQty = aggregatedMap.get(item.id) || 0;
-    aggregatedMap.set(item.id, currentQty + item.qty);
-  }
-  const aggregatedItems = Array.from(aggregatedMap.entries()).map(([id, qty]) => ({ id, qty }));
-
-  // Sắp xếp items theo id để tránh deadlock khi lock nhiều row
-  const sortedItems = aggregatedItems.sort((a, b) => a.id.localeCompare(b.id));
-
-  return await prisma.$transaction(async (tx) => {
-    return await processCheckout(tx, userId, sortedItems, checkoutData);
-  }, {
-    timeout: 10000
+async function findExistingOrder(tx, userId, idempotencyKey, fingerprint) {
+  if (!idempotencyKey) return null;
+  const order = await tx.order.findFirst({
+    where: { userId, idempotencyKey },
+    include: {
+      payment: true,
+      voucherCodes: { include: { voucher: { select: { title: true, imageUrl: true } } } },
+    },
   });
-};
+  if (!order) return null;
+  if (order.requestFingerprint && order.requestFingerprint !== fingerprint) {
+    throw new AppError(
+      'Idempotency-Key đã được dùng cho một nội dung checkout khác',
+      409,
+      'IDEMPOTENCY_PAYLOAD_CONFLICT',
+    );
+  }
+  return mapOrderResult(order, true);
+}
 
-/**
- * Luồng Thanh Toán từ Giỏ hàng (Checkout from Cart)
- * @param {string} userId - ID của người dùng
- * @param {Object} checkoutData - Thông tin thanh toán và quà tặng/ghi chú
- * @returns {Promise<Object>} Order đã tạo
- */
-export const checkoutFromCart = async (userId, checkoutData = {}) => {
-  return await prisma.$transaction(async (tx) => {
-    // 0. Lock User trước để đảm bảo thứ tự lock nhất quán: User -> Cart -> Voucher
+
+async function findCartCheckoutReplay(userId, checkoutData) {
+  if (!checkoutData.idempotencyKey) return null;
+  const order = await prisma.order.findFirst({
+    where: { userId, idempotencyKey: checkoutData.idempotencyKey },
+    include: {
+      items: { select: { voucherId: true, qty: true } },
+      payment: true,
+      voucherCodes: { include: { voucher: { select: { title: true, imageUrl: true } } } },
+    },
+  });
+  if (!order) return null;
+  const items = order.items
+    .map((item) => ({ id: item.voucherId, qty: item.qty }))
+    .sort((left, right) => left.id.localeCompare(right.id));
+  const fingerprint = createCheckoutFingerprint(items, checkoutData);
+  if (order.requestFingerprint && order.requestFingerprint !== fingerprint) {
+    throw new AppError(
+      'Idempotency-Key đã được dùng cho một nội dung checkout khác',
+      409,
+      'IDEMPOTENCY_PAYLOAD_CONFLICT',
+    );
+  }
+  return mapOrderResult(order, true);
+}
+
+async function reserveVoucherInventory(tx, sortedItems) {
+  const prepared = [];
+  let totalAmount = 0;
+  for (const item of sortedItems) {
+    await tx.$executeRaw`SELECT id FROM "Voucher" WHERE id = ${item.id} FOR UPDATE`;
+    const voucher = await tx.voucher.findUnique({
+      where: { id: item.id },
+      include: { partner: { select: { status: true } } },
+    });
+    if (!voucher) throw new AppError('Không tìm thấy voucher', 404, 'VOUCHER_NOT_FOUND');
+    const now = new Date();
+    if (voucher.status !== 'ON_SALE' || voucher.partner.status !== 'APPROVED') {
+      throw new AppError(`Voucher "${voucher.title}" không còn được bán`, 400, 'VOUCHER_UNAVAILABLE');
+    }
+    if (voucher.saleStart && voucher.saleStart > now) {
+      throw new AppError(`Voucher "${voucher.title}" chưa mở bán`, 400, 'VOUCHER_NOT_YET_ON_SALE');
+    }
+    if (voucher.saleEnd && voucher.saleEnd < now) {
+      throw new AppError(`Voucher "${voucher.title}" đã hết thời gian bán`, 400, 'VOUCHER_SALE_EXPIRED');
+    }
+    const remaining = voucher.totalQty - voucher.soldQty;
+    if (remaining < item.qty) {
+      throw new AppError(`Voucher "${voucher.title}" chỉ còn ${remaining}`, 409, 'VOUCHER_OUT_OF_STOCK');
+    }
+    await tx.voucher.update({ where: { id: voucher.id }, data: { soldQty: { increment: item.qty } } });
+    totalAmount += Number(voucher.salePrice) * item.qty;
+    prepared.push({
+      voucherId: voucher.id,
+      qty: item.qty,
+      unitPrice: voucher.salePrice,
+      useEnd: voucher.useEnd,
+      title: voucher.title,
+      imageUrl: voucher.imageUrl,
+    });
+  }
+  return { prepared, totalAmount };
+}
+
+export async function issueVoucherCodesForOrder(tx, orderId, ownerId) {
+  const existing = await tx.voucherCode.findMany({
+    where: { orderId },
+    include: { voucher: { select: { title: true, imageUrl: true } } },
+  });
+  if (existing.length > 0) return existing;
+
+  const items = await tx.orderItem.findMany({
+    where: { orderId },
+    include: { voucher: { select: { title: true, imageUrl: true, useEnd: true } } },
+  });
+  const result = [];
+  for (const item of items) {
+    for (let index = 0; index < item.qty; index += 1) {
+      const created = await tx.voucherCode.create({
+        data: {
+          code: `VC-${generateVoucherCode()}`,
+          orderId,
+          voucherId: item.voucherId,
+          ownerId,
+          status: 'ISSUED',
+          expiresAt: item.voucher.useEnd || null,
+        },
+        include: { voucher: { select: { title: true, imageUrl: true } } },
+      });
+      result.push(created);
+    }
+  }
+  return result;
+}
+
+async function payWithWallet(tx, order, user) {
+  await tx.$executeRaw`SELECT id FROM "Wallet" WHERE "userId" = ${user.id} FOR UPDATE`;
+  const wallet = await tx.wallet.findUnique({ where: { userId: user.id } });
+  if (!wallet) throw new AppError('Không tìm thấy Ví ViVouch', 404, 'WALLET_NOT_FOUND');
+  const amount = Number(order.totalAmount);
+  const before = Number(wallet.balance);
+  if (before < amount) throw new AppError('Số dư Ví ViVouch không đủ', 409, 'INSUFFICIENT_WALLET_BALANCE');
+  const after = before - amount;
+  await tx.wallet.update({ where: { id: wallet.id }, data: { balance: after } });
+  await tx.walletTransaction.create({
+    data: {
+      walletId: wallet.id,
+      orderId: order.id,
+      type: 'PAYMENT',
+      amount,
+      balanceBefore: before,
+      balanceAfter: after,
+      note: `Thanh toán đơn ${order.id}`,
+    },
+  });
+  const paidAt = new Date();
+  await tx.payment.update({ where: { orderId: order.id }, data: { status: 'PAID', paidAt } });
+  await tx.order.update({ where: { id: order.id }, data: { status: 'COMPLETED' } });
+  const codes = await issueVoucherCodesForOrder(tx, order.id, user.id);
+
+  await notify({
+    userId: user.id,
+    type: 'PAYMENT_SUCCESS',
+    title: 'Thanh toán thành công',
+    message: `Đơn ${order.id} đã thanh toán bằng Ví ViVouch.`,
+    referenceType: 'ORDER',
+    referenceId: order.id,
+    email: user.email,
+    emailTemplate: 'PAYMENT_SUCCESS',
+    emailPayload: { orderId: order.id, amount, method: 'Ví ViVouch' },
+  }, tx);
+  await notify({
+    userId: user.id,
+    type: 'VOUCHER_ISSUED',
+    title: 'Voucher đã được phát hành',
+    message: `${codes.length} voucher đã sẵn sàng sử dụng.`,
+    referenceType: 'ORDER',
+    referenceId: order.id,
+    email: user.email,
+    emailTemplate: 'VOUCHER_ISSUED',
+    emailPayload: { orderId: order.id, quantity: codes.length },
+  }, tx);
+  return codes;
+}
+
+async function createReservation({ userId, sortedItems, checkoutData, cartItemIds = [] }) {
+  const fingerprint = createCheckoutFingerprint(sortedItems, checkoutData);
+  return prisma.$transaction(async (tx) => {
     await tx.$executeRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+    const existing = await findExistingOrder(tx, userId, checkoutData.idempotencyKey, fingerprint);
+    if (existing) return { result: existing, existing: true };
 
-    const existingOrder = await findIdempotentOrder(tx, userId, checkoutData.idempotencyKey);
-    if (existingOrder) return existingOrder;
-
-    // 1. Lock Cart trước khi đọc để đảm bảo atomic cho luồng giỏ hàng
-    // Lưu ý: Các API thêm/sửa/xóa CartItem khác hiện chưa được bọc transaction chung với lock này,
-    // nên lock này chủ yếu để chặn double-submit trên chính đường checkout này.
-    await tx.$executeRaw`SELECT id FROM "Cart" WHERE "userId" = ${userId} FOR UPDATE`;
-
-    // 2. Lấy giỏ hàng
-    const cart = await tx.cart.findUnique({
-      where: { userId },
-      include: {
-        items: true
-      }
+    const user = await tx.user.findUnique({ where: { id: userId }, select: { id: true, email: true, fullName: true } });
+    if (!user) throw new AppError('Không tìm thấy người dùng', 404, 'USER_NOT_FOUND');
+    const { prepared, totalAmount } = await reserveVoucherInventory(tx, sortedItems);
+    const method = checkoutData.paymentMethod;
+    const providerOrderCode = method === 'PAYOS' ? createNumericProviderOrderCode() : null;
+    const order = await tx.order.create({
+      data: {
+        userId,
+        idempotencyKey: checkoutData.idempotencyKey || null,
+        requestFingerprint: fingerprint,
+        status: 'PENDING_PAYMENT',
+        totalAmount,
+        recipientName: checkoutData.recipientName || null,
+        recipientPhone: checkoutData.recipientPhone || null,
+        note: checkoutData.note || null,
+        items: { create: prepared.map(({ voucherId, qty, unitPrice }) => ({ voucherId, qty, unitPrice })) },
+        payment: {
+          create: { method, status: 'PENDING', amount: totalAmount, providerOrderCode },
+        },
+      },
+      include: { payment: true },
     });
 
-    if (!cart || !cart.items || cart.items.length === 0) {
-      throw new AppError('Giỏ hàng trống', 400, 'EMPTY_CART');
+    let codes = [];
+    if (method === 'VIVOUCH_WALLET') {
+      codes = await payWithWallet(tx, order, user);
+      if (cartItemIds.length > 0) await tx.cartItem.deleteMany({ where: { id: { in: cartItemIds } } });
     }
+    await auditLog(userId, AUDIT_ACTIONS.CUSTOMER_CHECKOUT, 'Order', order.id, {
+      paymentMethod: method,
+      totalAmount,
+      idempotencyKey: checkoutData.idempotencyKey || null,
+    }, tx);
 
-    const checkoutItems = cart.items.map(item => ({
-      id: item.voucherId,
-      qty: item.qty
-    }));
+    return {
+      existing: false,
+      result: {
+        orderId: order.id,
+        orderStatus: method === 'VIVOUCH_WALLET' ? 'COMPLETED' : 'PENDING_PAYMENT',
+        paymentMethod: method,
+        paymentStatus: method === 'VIVOUCH_WALLET' ? 'PAID' : 'PENDING',
+        checkoutUrl: null,
+        idempotentReplay: false,
+        voucherCodes: codes.map((item) => ({
+          code: item.code,
+          voucherId: item.voucherId,
+          voucherTitle: item.voucher.title,
+          imageUrl: item.voucher.imageUrl,
+          expiresAt: item.expiresAt,
+        })),
+      },
+      providerOrderCode,
+      amount: totalAmount,
+      cartItemIds,
+    };
+  }, { timeout: 10000 });
+}
 
-    // Sắp xếp items theo id để tránh deadlock khi lock nhiều row
-    const sortedItems = [...checkoutItems].sort((a, b) => a.id.localeCompare(b.id));
+async function compensatePayOsFailure(orderId) {
+  await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${orderId} FOR UPDATE`;
+    const paymentLocator = await tx.payment.findUnique({ where: { orderId }, select: { id: true } });
+    if (paymentLocator) {
+      await tx.$queryRaw`SELECT id FROM "Payment" WHERE id = ${paymentLocator.id} FOR UPDATE`;
+    }
+    const order = await tx.order.findUnique({ where: { id: orderId }, include: { items: true, payment: true } });
+    if (!order || order.status !== 'PENDING_PAYMENT' || order.payment?.status !== 'PENDING') return;
+    for (const item of order.items) {
+      await tx.voucher.update({ where: { id: item.voucherId }, data: { soldQty: { decrement: item.qty } } });
+    }
+    await tx.payment.update({ where: { orderId }, data: { status: 'FAILED' } });
+    await tx.order.update({ where: { id: orderId }, data: { status: 'CANCELLED' } });
+  }, { timeout: 10000 });
+}
 
-    const cartItemIdsToDelete = cart.items.map(item => item.id);
-
-    // 3. Thực thi xử lý Checkout lõi (Sẽ thực hiện lock User và trừ tồn kho)
-    const result = await processCheckout(tx, userId, sortedItems, checkoutData);
-
-    // 4. Xóa các cart items đã mua ngay BÊN TRONG transaction để đảm bảo tính nhất quán (Clear fallback: rollback if fails)
-    if (cartItemIdsToDelete.length > 0) {
-      await tx.cartItem.deleteMany({
-        where: { id: { in: cartItemIdsToDelete } }
+async function completePayOsLink(reservation) {
+  try {
+    const link = await createPayOsPaymentLink({
+      orderCode: reservation.providerOrderCode,
+      amount: reservation.amount,
+      description: `ViVouch ${reservation.result.orderId.slice(0, 8)}`,
+    });
+    await prisma.$transaction(async (tx) => {
+      await tx.payment.update({
+        where: { orderId: reservation.result.orderId },
+        data: {
+          providerPaymentLinkId: link.paymentLinkId || link.id || null,
+          checkoutUrl: link.checkoutUrl,
+        },
       });
-      // Nếu có lỗi lúc xóa, toàn bộ transaction sẽ tự rollback
-    }
+      if (reservation.cartItemIds.length > 0) {
+        await tx.cartItem.deleteMany({ where: { id: { in: reservation.cartItemIds } } });
+      }
+    });
+    return { ...reservation.result, checkoutUrl: link.checkoutUrl };
+  } catch (error) {
+    await compensatePayOsFailure(reservation.result.orderId);
+    throw error;
+  }
+}
 
-    return result;
-  }, {
-    timeout: 10000
+async function executeCheckout({ userId, items, checkoutData, cartItemIds = [] }) {
+  const sortedItems = aggregateAndSortItems(items);
+  if (sortedItems.length === 0) throw new AppError('Danh sách sản phẩm không được rỗng', 400, 'EMPTY_ITEMS');
+  const reservation = await createReservation({ userId, sortedItems, checkoutData, cartItemIds });
+  if (reservation.existing) return reservation.result;
+  return checkoutData.paymentMethod === 'PAYOS' ? completePayOsLink(reservation) : reservation.result;
+}
+
+export function buyNow(userId, items, checkoutData) {
+  return executeCheckout({ userId, items, checkoutData });
+}
+
+export async function checkoutFromCart(userId, checkoutData) {
+  const replay = await findCartCheckoutReplay(userId, checkoutData);
+  if (replay) return replay;
+
+  const cartSnapshot = await prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT id FROM "Cart" WHERE "userId" = ${userId} FOR UPDATE`;
+    const cart = await tx.cart.findUnique({ where: { userId }, include: { items: true } });
+    if (!cart || cart.items.length === 0) throw new AppError('Giỏ hàng trống', 400, 'EMPTY_CART');
+    return {
+      items: cart.items.map((item) => ({ id: item.voucherId, qty: item.qty })),
+      cartItemIds: cart.items.map((item) => item.id),
+    };
   });
-};
+  return executeCheckout({ userId, checkoutData, ...cartSnapshot });
+}
 
-/**
- * Lấy danh sách đơn hàng của user
- */
-export const getUserOrders = async (userId) => {
-  return await prisma.order.findMany({
+export async function getUserOrders(userId) {
+  const orders = await prisma.order.findMany({
     where: { userId },
     include: {
-      items: {
-        include: {
-          voucher: {
-            select: {
-              title: true,
-              imageUrl: true
-            }
-          }
-        }
-      },
-      payment: true
+      items: { include: { voucher: { select: { title: true, imageUrl: true, allowRefund: true, refundWindowHours: true } } } },
+      payment: true,
+      refundRequest: true,
+      voucherCodes: { select: { id: true, status: true, expiresAt: true } },
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
   });
-};
+  return orders.map((order) => ({ ...order, totalAmount: Number(order.totalAmount) }));
+}
 
-/**
- * Lấy danh sách mã voucher đã mua của user
- */
-export const getUserVoucherCodes = async (userId) => {
-  return await prisma.voucherCode.findMany({
+export function getUserVoucherCodes(userId) {
+  return prisma.voucherCode.findMany({
     where: { ownerId: userId },
-    include: {
-      voucher: {
-        select: {
-          title: true,
-          imageUrl: true
-        }
-      }
-    },
-    orderBy: { issuedAt: 'desc' }
+    include: { voucher: { select: { title: true, imageUrl: true } } },
+    orderBy: { issuedAt: 'desc' },
   });
-};
+}
 
 export default { buyNow, checkoutFromCart, getUserOrders, getUserVoucherCodes };

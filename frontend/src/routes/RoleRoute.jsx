@@ -1,11 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
-
-const rolePortalRoutes = {
-  CUSTOMER: "/customer/home",
-  PARTNER: "/partner/dashboard",
-  ADMIN: "/admin/dashboard"
-};
+import { getRoleLandingPath } from "../utils/roleLanding";
 
 export function RoleRoute({ allowedRoles = [], children }) {
   const user = useAuthStore((state) => state.user);
@@ -17,7 +12,7 @@ export function RoleRoute({ allowedRoles = [], children }) {
   if (!allowedRoles.includes(user.role)) {
     return (
       <Navigate
-        to={rolePortalRoutes[user.role] || "/"}
+        to={getRoleLandingPath(user)}
         replace
       />
     );

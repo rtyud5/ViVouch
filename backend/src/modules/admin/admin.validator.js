@@ -50,3 +50,8 @@ export const auditLogsQuerySchema = z.object({
   dateFrom: z.coerce.date().optional(),
   dateTo: z.coerce.date().optional(),
 });
+
+export const walletAdjustmentSchema = z.object({
+  amount: z.number().int().min(-100000000).max(100000000).refine((value) => value !== 0, 'Số tiền phải khác 0'),
+  note: z.string().trim().min(3).max(300),
+});

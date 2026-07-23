@@ -1,0 +1,44 @@
+name: SonarQube
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sonar:
+    name: Sonar quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Static quality checks
+        run: node scripts/static-quality.mjs
+      - name: Require Sonar configuration
+        shell: bash
+        run: |
+          test -n "$SONAR_TOKEN" || { echo "Missing SONAR_TOKEN secret" >&2; exit 1; }
+          test -n "$SONAR_HOST_URL" || { echo "Missing SONAR_HOST_URL secret" >&2; exit 1; }
+      - name: SonarQube scan and quality gate
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
+        with:
+          args: >
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }}
+            -Dsonar.token=${{ env.SONAR_TOKEN }}
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY || 'vivouch' }}
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300

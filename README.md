@@ -13,10 +13,11 @@ Final project for E-Commerce course · FIT HCMUS · 2026
 | State / Data fetching | Zustand + TanStack Query |
 | Backend | Node.js + Express.js + JavaScript |
 | Database | PostgreSQL + Prisma ORM |
-| Auth | JWT + bcrypt |
+| Auth | JWT + bcrypt + email OTP (SMTP) |
 | Validation | Zod |
 | Voucher code | nanoid |
-| Logging | Pino + `audit_logs` table |
+| Payment | ViVouch demo wallet + payOS hosted VietQR |
+| Logging | Pino + request correlation + `audit_logs` table |
 | Testing | Vitest + Supertest |
 | API Docs | Swagger / OpenAPI |
 | Deploy | Vercel (FE) + Render (BE) + Supabase (DB) |
@@ -61,7 +62,7 @@ docker compose ps
 cd backend
 copy .env.example .env      # Windows
 # cp .env.example .env      # macOS / Linux
-npm install
+npm ci
 ```
 
 ### 4. Set up Frontend
@@ -70,14 +71,14 @@ npm install
 cd ../frontend
 copy .env.example .env      # Windows
 # cp .env.example .env      # macOS / Linux
-npm install
+npm ci
 ```
 
 ### 5. Migrate database & Seed data
 
 ```bash
 cd ../backend
-npx prisma migrate dev
+npx prisma migrate deploy
 npm run prisma:seed
 ```
 
@@ -112,7 +113,8 @@ npm run dev
 
 | URL | Expected result |
 |---|---|
-| http://localhost:5000/health | `{"success":true,"message":"OK"}` |
+| http://localhost:5000/health/live | `{"success":true,"status":"live"}` |
+| http://localhost:5000/health/ready | readiness including PostgreSQL |
 | http://localhost:5173 | React app is running |
 | http://localhost:5555 | Prisma Studio (run `npx prisma studio`) |
 
@@ -128,10 +130,26 @@ PORT=5000
 CLIENT_URL=http://localhost:5173
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/voucher_platform
 JWT_ACCESS_SECRET=vivouch_access_secret_2026
-JWT_REFRESH_SECRET=vivouch_refresh_secret_2026
+JWT_REFRESH_SECRET=replace_with_a_long_random_refresh_secret
 ACCESS_TOKEN_EXPIRES_IN=15m
 REFRESH_TOKEN_EXPIRES_IN=7d
 BCRYPT_SALT_ROUNDS=10
+
+EMAIL_VERIFICATION_REQUIRED=true
+EMAIL_DELIVERY_MODE=SMTP
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_REQUIRE_TLS=true
+SMTP_USER=your-user
+SMTP_PASSWORD=your-app-password
+MAIL_FROM_ADDRESS=no-reply@example.com
+OTP_PEPPER=replace_with_a_long_random_otp_pepper
+
+# Optional real demo payment: set all three together
+PAYOS_CLIENT_ID=
+PAYOS_API_KEY=
+PAYOS_CHECKSUM_KEY=
 ```
 
 ### `frontend/.env`
@@ -139,6 +157,18 @@ BCRYPT_SALT_ROUNDS=10
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
+
+---
+
+## W6-W7 Marketplace Demo+ Features
+
+- Customer and Partner registration with real SMTP OTP.
+- Partner Owner and branch-scoped Staff accounts.
+- ViVouch demo wallet and payOS VietQR hosted checkout.
+- Full-order refund workflow, support tickets, in-app notifications, and transactional email outbox.
+- Idempotent checkout, duplicate-webhook protection, branch-scoped redeem, request IDs, reconciliation jobs, CI, Sonar workflow, and backup/restore runbooks.
+
+Detailed setup and state rules: [docs/11_w6_w7_marketplace](docs/11_w6_w7_marketplace/README.md).
 
 ---
 

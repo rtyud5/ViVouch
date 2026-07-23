@@ -5,6 +5,7 @@ import { formatCurrency } from "../../utils/formatCurrency";
 import { useOrders } from "../../features/orders/hooks";
 import { OrderItemCard } from "../../components/voucher/OrderItemCard";
 import { OrderStatusBadge, CustomerEmptyState, LoadingSpinner, ErrorRetryPanel } from "../../components/common";
+import { getRefundEligibility } from "../../utils/refundEligibility";
 
 export function OrdersPage() {
   const { orders, isLoading, error, refetch } = useOrders();
@@ -14,6 +15,8 @@ export function OrdersPage() {
   const tabs = [
     { id: "ALL", label: "Tất cả" },
     { id: "COMPLETED", label: "Thành công" },
+    { id: "REFUND_PENDING", label: "Chờ hoàn" },
+    { id: "REFUNDED", label: "Đã hoàn" },
     { id: "CANCELLED", label: "Đã huỷ" },
   ];
 
@@ -96,7 +99,8 @@ export function OrdersPage() {
         ) : (
           filteredOrders.map((order) => {
             const normalizedStatus = String(order.status || "").toUpperCase();
-            const isExpanded = expandedOrders.has(order.code);
+            const orderCode = order.code || order.id;
+            const isExpanded = expandedOrders.has(orderCode);
             const totalVouchers = (order.items || []).reduce(
               (sum, item) => sum + (item.quantity ?? item.qty ?? 0),
               0
@@ -104,19 +108,19 @@ export function OrdersPage() {
 
             return (
               <div
-                key={order.code}
+                key={orderCode}
                 className={`bg-surface-container-lowest rounded-xl shadow-sm p-6 border border-surface-variant transition-all hover:shadow-md ${
                   normalizedStatus === "CANCELLED" ? "opacity-75" : ""
                 }`}
               >
                 <button
                   className="flex justify-between items-start cursor-pointer group w-full text-left focus:outline-none"
-                  onClick={() => toggleExpand(order.code)}
+                  onClick={() => toggleExpand(orderCode)}
                 >
                   <div>
                     <div className="flex items-center gap-3 mb-2">
                       <span className="font-label-md text-label-md text-on-surface font-semibold">
-                        #{order.code}
+                        #{String(orderCode).slice(0, 8)}
                       </span>
                       <span className="font-body-md text-body-md text-on-surface-variant text-sm">
                         {formatDate(order.date || order.createdAt)}
@@ -151,19 +155,19 @@ export function OrdersPage() {
                       <div className="flex justify-between flex-wrap gap-2">
                         <span className="text-base-content/70 font-medium">Phương thức thanh toán:</span>
                         <span className="font-semibold text-base-content">
-                          {order.payment?.method === "VIVOUCH_WALLET" && "Ví ViVouch (Mô phỏng)"}
-                          {order.payment?.method === "BANK_TRANSFER" && "Chuyển khoản ngân hàng (Mô phỏng)"}
-                          {order.payment?.method === "COD" && "Thanh toán khi nhận hàng (Mô phỏng)"}
-                          {!["VIVOUCH_WALLET", "BANK_TRANSFER", "COD"].includes(order.payment?.method) && `${order.payment?.method || "Không rõ"} (Mô phỏng)`}
+                          {order.payment?.method === "VIVOUCH_WALLET" && "Ví ViVouch (Mock)"}
+                          {order.payment?.method === "PAYOS" && "payOS VietQR (Real)"}
+                          {!["VIVOUCH_WALLET", "PAYOS"].includes(order.payment?.method) && (order.payment?.method || "Không rõ")}
                         </span>
                       </div>
                       <div className="flex justify-between flex-wrap gap-2">
                         <span className="text-base-content/70 font-medium">Trạng thái thanh toán:</span>
                         <span className={`font-semibold ${order.payment?.status === "PAID" ? "text-success" : "text-warning"}`}>
-                          {order.payment?.status === "PAID" && "Đã thanh toán (Mô phỏng)"}
-                          {order.payment?.status === "PENDING" && "Chờ thanh toán (Mô phỏng)"}
-                          {order.payment?.status === "REFUNDED" && "Đã hoàn tiền (Mô phỏng)"}
-                          {order.payment?.status === "FAILED" && "Thất bại (Mô phỏng)"}
+                          {order.payment?.status === "PAID" && "Đã thanh toán"}
+                          {order.payment?.status === "PENDING" && "Chờ thanh toán"}
+                          {order.payment?.status === "REFUNDED" && "Đã hoàn tiền"}
+                          {order.payment?.status === "CANCELLED" && "Đã hủy"}
+                          {order.payment?.status === "FAILED" && "Thất bại"}
                         </span>
                       </div>
 
@@ -191,6 +195,12 @@ export function OrdersPage() {
                         </div>
                       )}
                     </div>
+                    {getRefundEligibility(order).eligible && (
+                      <div className="flex justify-end">
+                        <Link to={`/customer/refunds?orderId=${order.id}`} className="btn btn-outline btn-sm">Yêu cầu hoàn tiền</Link>
+                      </div>
+                    )}
+                    {order.refundRequest && <div className="alert alert-info text-sm">Trạng thái hoàn tiền: {order.refundRequest.status}</div>}
                   </div>
                 )}
               </div>

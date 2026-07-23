@@ -24,14 +24,37 @@ export function PartnerLayout() {
     }
   };
 
-  const navItems = [
-    { label: 'Tổng quan',       path: '/partner/dashboard',  icon: 'dashboard' },
-    { label: 'Voucher của tôi', path: '/partner/vouchers',   icon: 'confirmation_number' },
-    { label: 'Chi nhánh',       path: '/partner/branches',   icon: 'store' },
-    { label: 'Xác thực',        path: '/partner/validation', icon: 'verified_user' },
-    { label: 'Báo cáo',         path: '/partner/reports',    icon: 'bar_chart' },
-    { label: 'Cài đặt',         path: '/partner/profile',    icon: 'settings' },
-  ];
+  const membership = user?.partnerMemberships?.[0];
+  const isOwner = membership?.role === 'OWNER';
+  const isStaff = membership?.role === 'STAFF';
+  const partnerApproved = membership?.partner?.status === 'APPROVED';
+
+  let navItems;
+  if (!partnerApproved) {
+    navItems = [
+      { label: 'Trạng thái hồ sơ', path: '/partner/profile', icon: 'hourglass_top' },
+      { label: 'Thông báo', path: '/partner/notifications', icon: 'notifications' },
+    ];
+  } else if (isStaff) {
+    navItems = [
+      { label: 'Xác thực voucher', path: '/partner/validation', icon: 'verified_user' },
+      { label: 'Lịch sử đổi mã', path: '/partner/redeem-history', icon: 'history' },
+      { label: 'Thông báo', path: '/partner/notifications', icon: 'notifications' },
+      { label: 'Hồ sơ', path: '/partner/profile', icon: 'settings' },
+    ];
+  } else {
+    navItems = [
+      { label: 'Tổng quan', path: '/partner/dashboard', icon: 'dashboard' },
+      { label: 'Voucher của tôi', path: '/partner/vouchers', icon: 'confirmation_number' },
+      { label: 'Chi nhánh', path: '/partner/branches', icon: 'store' },
+      { label: 'Nhân viên', path: '/partner/staff', icon: 'badge' },
+      { label: 'Xác thực', path: '/partner/validation', icon: 'verified_user' },
+      { label: 'Báo cáo', path: '/partner/reports', icon: 'bar_chart' },
+      { label: 'Thông báo', path: '/partner/notifications', icon: 'notifications' },
+      { label: 'Cài đặt', path: '/partner/profile', icon: 'settings' },
+    ];
+  }
+
 
   const partnerTheme = {
     contentBg: 'bg-[#F5F3FF]',

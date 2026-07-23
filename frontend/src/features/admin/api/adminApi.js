@@ -72,6 +72,11 @@ export const assignUserRole = async (userId, role) => {
   return response.data;
 };
 
+export const adjustWallet = async (userId, amount, note) => {
+  const response = await apiClient.post(`/admin/users/${userId}/wallet-adjust`, { amount, note });
+  return response.data;
+};
+
 export const getOrders = async (params) => {
   const response = await apiClient.get('/admin/orders', { params: cleanParams(params) });
   return response.data;

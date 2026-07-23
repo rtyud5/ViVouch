@@ -81,7 +81,8 @@ describe("Cart API Tests", () => {
         email: userAEmail,
         fullName: "User A",
         passwordHash: hashedPassword,
-        role: "CUSTOMER"
+        role: "CUSTOMER",
+        status: "ACTIVE",
       }
     });
     userIdA = userA.id;
@@ -92,7 +93,8 @@ describe("Cart API Tests", () => {
         email: userBEmail,
         fullName: "User B",
         passwordHash: hashedPassword,
-        role: "CUSTOMER"
+        role: "CUSTOMER",
+        status: "ACTIVE",
       }
     });
     userIdB = userB.id;
@@ -103,7 +105,8 @@ describe("Cart API Tests", () => {
         email: partnerEmail,
         fullName: "Partner User",
         passwordHash: hashedPassword,
-        role: "PARTNER"
+        role: "PARTNER",
+        status: "ACTIVE",
       }
     });
 
