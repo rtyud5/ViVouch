@@ -1,5 +1,6 @@
 import net from 'node:net';
 import tls from 'node:tls';
+import crypto from 'node:crypto';
 import { once } from 'node:events';
 import { env } from '../../config/env.js';
 
@@ -92,7 +93,8 @@ async function upgradeTls(connection) {
 function buildMessage({ to, subject, text, html }) {
   const boundary = `vivouch-${Date.now().toString(36)}`;
   const from = `${encodeHeader(env.MAIL_FROM_NAME)} <${sanitizeHeader(env.MAIL_FROM_ADDRESS)}>`;
-  const messageId = `<${Date.now()}.${Math.random().toString(36).substring(2, 9)}@vivouch.local>`;
+  const randomSuffix = crypto.randomBytes(4).toString('hex');
+  const messageId = `<${Date.now()}.${randomSuffix}@vivouch.local>`;
   const headers = [
     `From: ${from}`,
     `To: ${sanitizeHeader(to)}`,
