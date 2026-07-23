@@ -4,6 +4,7 @@ import app from "../src/app.js";
 import { prisma } from "../src/config/prisma.js";
 import jwt from "jsonwebtoken";
 import { env } from "../src/config/env.js";
+import { clearTestMailbox, getTestMailbox } from "../src/modules/email/email.service.js";
 
 describe("Authentication & Authorization API Tests", () => {
   const customerEmail = "test_customer@example.com";
@@ -34,6 +35,11 @@ describe("Authentication & Authorization API Tests", () => {
         phone: "0900000001"
       });
 
+    await prisma.user.updateMany({
+      where: { email: customerEmail },
+      data: { status: "ACTIVE", emailVerifiedAt: new Date() },
+    });
+
     // Đăng nhập Customer để lấy Token
     const resCustomerLogin = await request(app)
       .post("/api/auth/login")
@@ -59,7 +65,7 @@ describe("Authentication & Authorization API Tests", () => {
     // Nâng cấp role lên ADMIN trong DB
     await prisma.user.update({
       where: { id: adminId },
-      data: { role: "ADMIN" }
+      data: { role: "ADMIN", status: "ACTIVE", emailVerifiedAt: new Date() }
     });
 
     // Đăng nhập Admin để lấy Token
@@ -162,25 +168,38 @@ describe("Authentication & Authorization API Tests", () => {
     });
   });
 
-  describe("Simulated forgot/reset password", () => {
-    it("issues a one-time reset token and accepts the new password", async () => {
+  describe("Email OTP forgot/reset password", () => {
+    it("issues a one-time OTP and accepts the new password", async () => {
+      clearTestMailbox();
       const requested = await request(app)
         .post("/api/auth/forgot-password")
         .send({ email: customerEmail });
       expect(requested.status).toBe(200);
-      expect(requested.body.data.delivery).toBe("SIMULATED");
-      expect(requested.body.data.resetToken).toBeTruthy();
+      expect(requested.body.message).toContain("Nếu email tồn tại");
+      expect(requested.body).not.toHaveProperty("data");
 
-      const resetToken = requested.body.data.resetToken;
+      let otp;
+      const message = getTestMailbox().find((item) => item.to === customerEmail);
+      if (message) {
+        otp = message.text.match(/\b\d{6}\b/)?.[0];
+      } else {
+        const otpRecord = await prisma.emailOtp.findFirst({
+          where: { email: customerEmail, purpose: "RESET_PASSWORD" },
+          orderBy: { createdAt: "desc" },
+        });
+        otp = otpRecord?.otp;
+      }
+      expect(otp).toBeTruthy();
+
       const reset = await request(app)
         .post("/api/auth/reset-password")
-        .send({ resetToken, password: "NewPassword456" });
+        .send({ email: customerEmail, otp, password: "NewPassword456" });
       expect(reset.status).toBe(200);
 
       const replay = await request(app)
         .post("/api/auth/reset-password")
-        .send({ resetToken, password: "OtherPassword789" });
-      expect(replay.status).toBe(401);
+        .send({ email: customerEmail, otp, password: "OtherPassword789" });
+      expect([400, 409]).toContain(replay.status);
 
       const loginWithNewPassword = await request(app)
         .post("/api/auth/login")
@@ -189,11 +208,14 @@ describe("Authentication & Authorization API Tests", () => {
     });
 
     it("does not disclose whether an email exists", async () => {
+      clearTestMailbox();
       const res = await request(app)
         .post("/api/auth/forgot-password")
         .send({ email: "unknown-user@example.com" });
       expect(res.status).toBe(200);
-      expect(res.body.data.resetToken).toBeNull();
+      expect(res.body.message).toContain("Nếu email tồn tại");
+      expect(res.body).not.toHaveProperty("data");
+      expect(getTestMailbox()).toHaveLength(0);
     });
   });
 
@@ -264,6 +286,11 @@ describe("Authentication & Authorization API Tests", () => {
           fullName: "Original User",
           phone: duplicatePhone
         });
+
+      await prisma.user.updateMany({
+        where: { email: duplicateEmail },
+        data: { status: "ACTIVE", emailVerifiedAt: new Date() },
+      });
     });
 
     afterAll(async () => {

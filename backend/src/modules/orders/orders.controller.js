@@ -66,7 +66,7 @@ export const checkoutFromCart = asyncHandler(async (req, res) => {
 
   return res.status(result.idempotentReplay ? 200 : 201).json({
     success: true,
-    message: "Thanh toán từ giỏ hàng thành công",
+    message: result.paymentStatus === "PAID" ? "Thanh toán thành công" : "Đã tạo yêu cầu thanh toán",
     data: result
   });
 });

@@ -1,4 +1,5 @@
 import { logger } from "../config/logger.js";
+import { getRequestContext } from "./requestContext.middleware.js";
 
 const prismaErrorMap = {
   P2002: {
@@ -22,6 +23,7 @@ const prismaErrorMap = {
 };
 
 export function errorMiddleware(err, req, res, next) {
+  const { requestId } = getRequestContext();
   const statusCode = err.statusCode || 500;
   const log = statusCode >= 500 ? logger.error.bind(logger) : logger.warn.bind(logger);
 
@@ -30,6 +32,7 @@ export function errorMiddleware(err, req, res, next) {
       err,
       method: req.method,
       path: req.originalUrl,
+      requestId,
     },
     "Request failed"
   );
@@ -40,6 +43,7 @@ export function errorMiddleware(err, req, res, next) {
       success: false,
       message: prismaError.message(err),
       code: prismaError.code,
+      requestId,
     });
   }
 
@@ -77,14 +81,16 @@ export function errorMiddleware(err, req, res, next) {
       message: msg,
       code: "VALIDATION_ERROR",
       details: details || [],
+      requestId,
     });
   }
   
   const isServerError = statusCode >= 500;
   const payload = {
     success: false,
-    message: isServerError ? "Internal Server Error" : (err.message || "Request failed"),
+    message: isServerError ? (err.message || "Internal Server Error") : (err.message || "Request failed"),
     code: err.code || (isServerError ? "INTERNAL_ERROR" : "REQUEST_ERROR"),
+    requestId,
   };
 
   if (!isServerError && err.details) {

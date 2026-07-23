@@ -4,17 +4,13 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
 import { login } from "../../features/auth/api/auth.api";
 import { useAuthStore } from "../../stores/authStore";
+import { getRoleLandingPath } from "../../utils/roleLanding";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
   password: z.string().min(1, "Vui lòng nhập mật khẩu")
 });
 
-const roleRedirects = {
-  CUSTOMER: "/customer/home",
-  PARTNER: "/partner/dashboard",
-  ADMIN: "/admin/dashboard"
-};
 
 function getErrorMessage(error) {
   return error?.response?.data?.message || error?.message || "Đăng nhập thất bại";
@@ -47,7 +43,7 @@ export function LoginPage() {
       const returnUrl = location.state?.returnUrl;
       const safeReturnUrl = (returnUrl && returnUrl.startsWith("/") && !returnUrl.startsWith("//"))
         ? returnUrl
-        : (roleRedirects[user.role] || "/customer/home");
+        : getRoleLandingPath(user);
       navigate(safeReturnUrl, { replace: true });
     },
     onError: (error) => {

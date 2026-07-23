@@ -90,7 +90,7 @@ async function createTestOrder(customerId, voucherId) {
   await prisma.payment.create({
     data: {
       orderId: order.id,
-      method: "MOMO",
+      method: "VIVOUCH_WALLET",
       status: "PAID",
       amount: 90
     }
@@ -135,6 +135,7 @@ describe("Admin Orders & Audit Logs API Tests", () => {
         passwordHash: "dummyhash",
         fullName: "Partner",
         role: "PARTNER",
+        status: "ACTIVE",
         phone: "0900000303"
       }
     });

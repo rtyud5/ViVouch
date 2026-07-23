@@ -14,6 +14,7 @@ enum Role {
 }
 
 enum UserStatus {
+  PENDING_VERIFICATION
   ACTIVE
   LOCKED
 }
@@ -23,6 +24,23 @@ enum PartnerStatus {
   APPROVED
   REJECTED
   SUSPENDED
+}
+
+enum PartnerMemberRole {
+  OWNER
+  STAFF
+}
+
+enum PartnerMemberStatus {
+  INVITED
+  ACTIVE
+  INACTIVE
+}
+
+enum OtpPurpose {
+  REGISTER
+  RESET_PASSWORD
+  STAFF_SETUP
 }
 
 enum VoucherStatus {
@@ -42,18 +60,76 @@ enum VoucherCodeStatus {
   EXPIRED
   CANCELLED
   LOCKED
+  REFUND_PENDING
+  REFUNDED
 }
 
 enum OrderStatus {
   PENDING_PAYMENT
   COMPLETED
+  REFUND_PENDING
+  REFUNDED
   CANCELLED
+}
+
+enum PaymentMethod {
+  VIVOUCH_WALLET
+  PAYOS
 }
 
 enum PaymentStatus {
   PENDING
   PAID
+  CANCELLED
   REFUNDED
+  FAILED
+}
+
+enum WalletTransactionType {
+  PAYMENT
+  REFUND
+  ADMIN_ADJUSTMENT
+}
+
+enum RefundStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  MANUAL_REFUND_REQUIRED
+  REFUNDED
+}
+
+enum SupportTicketType {
+  PAYMENT_PROBLEM
+  VOUCHER_NOT_ACCEPTED
+  REFUND_REQUEST
+  CODE_PROBLEM
+  OTHER
+}
+
+enum SupportTicketStatus {
+  OPEN
+  PROCESSING
+  RESOLVED
+  REJECTED
+}
+
+enum NotificationType {
+  PAYMENT_SUCCESS
+  VOUCHER_ISSUED
+  REFUND_RESOLVED
+  TICKET_RESPONDED
+  PARTNER_APPROVED
+  PARTNER_REJECTED
+  VOUCHER_APPROVED
+  VOUCHER_REJECTED
+  STAFF_ACCOUNT_CREATED
+}
+
+enum EmailDeliveryStatus {
+  PENDING
+  PROCESSING
+  SENT
   FAILED
 }
 
@@ -63,23 +139,49 @@ enum CmsPageStatus {
 }
 
 model User {
-  id           String     @id @default(uuid())
-  email        String     @unique
-  phone        String?    @unique
-  passwordHash String
-  fullName     String
-  role         Role       @default(CUSTOMER)
-  status       UserStatus @default(ACTIVE)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  phone              String?    @unique
+  passwordHash       String
+  fullName           String
+  role               Role       @default(CUSTOMER)
+  status             UserStatus @default(PENDING_VERIFICATION)
+  emailVerifiedAt    DateTime?
+  mustChangePassword Boolean    @default(false)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
-  partner       Partner?
-  cart          Cart?
-  orders        Order[]
-  voucherCodes  VoucherCode[]
-  reviews       Review[]
-  auditLogs     AuditLog[]
-  refreshTokens RefreshToken[]
+  partner            Partner?
+  partnerMemberships PartnerMember[]
+  cart               Cart?
+  orders              Order[]
+  voucherCodes        VoucherCode[]
+  reviews             Review[]
+  auditLogs           AuditLog[]
+  refreshTokens       RefreshToken[]
+  emailOtps           EmailOtp[]
+  wallet              Wallet?
+  notifications       Notification[]
+  refundRequests      RefundRequest[]
+  supportTickets      SupportTicket[]
+  emailDeliveries     EmailDelivery[]
+}
+
+model EmailOtp {
+  id         String     @id @default(uuid())
+  userId     String?
+  email      String
+  purpose    OtpPurpose
+  codeHash   String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  attempts   Int        @default(0)
+  createdAt  DateTime   @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([email, purpose, expiresAt])
+  @@index([userId, purpose])
 }
 
 model Partner {
@@ -88,14 +190,40 @@ model Partner {
   businessName       String
   taxCode            String        @unique
   representativeName String
+  contactEmail       String?
+  contactPhone       String?
+  address            String?
+  bankName           String?
+  bankAccountNumber  String?
   status             PartnerStatus @default(PENDING)
   rejectReason       String?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
-  user     User      @relation(fields: [userId], references: [id])
+  user     User            @relation(fields: [userId], references: [id])
+  members  PartnerMember[]
   branches Branch[]
   vouchers Voucher[]
+}
+
+model PartnerMember {
+  id        String              @id @default(uuid())
+  partnerId String
+  userId    String
+  branchId  String?
+  role      PartnerMemberRole
+  status    PartnerMemberStatus @default(INVITED)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  partner Partner @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  branch  Branch? @relation(fields: [branchId], references: [id])
+
+  @@unique([partnerId, userId])
+  @@index([userId, status])
+  @@index([partnerId, role, status])
+  @@index([branchId])
 }
 
 model Branch {
@@ -110,6 +238,7 @@ model Branch {
   partner         Partner           @relation(fields: [partnerId], references: [id])
   voucherBranches VoucherBranch[]
   usageLogs       VoucherUsageLog[]
+  members         PartnerMember[]
 
   @@unique([partnerId, name])
 }
@@ -151,28 +280,30 @@ model CmsPage {
 }
 
 model Voucher {
-  id            String        @id @default(uuid())
-  partnerId     String
-  categoryId    String
-  title         String
-  description   String?
-  imageUrl      String?
-  originalPrice Decimal       @db.Decimal(12, 0)
-  salePrice     Decimal       @db.Decimal(12, 0)
-  totalQty      Int
-  soldQty       Int           @default(0)
-  status        VoucherStatus @default(DRAFT)
-  saleStart     DateTime?
-  saleEnd       DateTime?
-  useStart      DateTime?
-  useEnd        DateTime?
-  conditions    String?
-  cancelPolicy  String?
-  rejectReason  String?
-  approvedAt    DateTime?
-  approvedBy    String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id                String        @id @default(uuid())
+  partnerId         String
+  categoryId        String
+  title             String
+  description       String?
+  imageUrl          String?
+  originalPrice     Decimal       @db.Decimal(12, 0)
+  salePrice         Decimal       @db.Decimal(12, 0)
+  totalQty          Int
+  soldQty           Int           @default(0)
+  status            VoucherStatus @default(DRAFT)
+  saleStart         DateTime?
+  saleEnd           DateTime?
+  useStart          DateTime?
+  useEnd            DateTime?
+  conditions        String?
+  cancelPolicy      String?
+  allowRefund       Boolean       @default(false)
+  refundWindowHours Int           @default(24)
+  rejectReason      String?
+  approvedAt        DateTime?
+  approvedBy        String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   partner         Partner         @relation(fields: [partnerId], references: [id])
   category        Category        @relation(fields: [categoryId], references: [id])
@@ -223,21 +354,24 @@ model CartItem {
 }
 
 model Order {
-  id             String      @id @default(uuid())
-  userId         String
-  idempotencyKey String?
-  status         OrderStatus @default(PENDING_PAYMENT)
-  totalAmount    Decimal     @db.Decimal(12, 0)
-  recipientName  String?
-  recipientPhone String?
-  note           String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  id                 String      @id @default(uuid())
+  userId             String
+  idempotencyKey     String?
+  requestFingerprint String?
+  status             OrderStatus @default(PENDING_PAYMENT)
+  totalAmount        Decimal     @db.Decimal(12, 0)
+  recipientName      String?
+  recipientPhone     String?
+  note               String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 
-  user         User          @relation(fields: [userId], references: [id])
-  items        OrderItem[]
-  payment      Payment?
-  voucherCodes VoucherCode[]
+  user          User           @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  payment       Payment?
+  voucherCodes  VoucherCode[]
+  refundRequest RefundRequest?
+  supportTickets SupportTicket[]
 
   @@unique([userId, idempotencyKey])
   @@index([status])
@@ -259,15 +393,62 @@ model OrderItem {
 }
 
 model Payment {
-  id        String        @id @default(uuid())
-  orderId   String        @unique
-  method    String
-  status    PaymentStatus @default(PENDING)
-  amount    Decimal       @db.Decimal(12, 0)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id                    String        @id @default(uuid())
+  orderId               String        @unique
+  method                PaymentMethod
+  status                PaymentStatus @default(PENDING)
+  amount                Decimal       @db.Decimal(12, 0)
+  providerOrderCode     String?       @unique
+  providerPaymentLinkId String?       @unique
+  providerReference     String?
+  checkoutUrl           String?
+  paidAt                DateTime?
+  cancelledAt           DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
-  order Order @relation(fields: [orderId], references: [id])
+  order   Order           @relation(fields: [orderId], references: [id])
+  events  PaymentWebhook[]
+}
+
+model PaymentWebhook {
+  id        String   @id @default(uuid())
+  paymentId String
+  eventKey String   @unique
+  payload   Json
+  createdAt DateTime @default(now())
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId, createdAt])
+}
+
+model Wallet {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  balance   Decimal  @default(0) @db.Decimal(12, 0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+}
+
+model WalletTransaction {
+  id            String                @id @default(uuid())
+  walletId      String
+  orderId       String?
+  type          WalletTransactionType
+  amount        Decimal               @db.Decimal(12, 0)
+  balanceBefore Decimal               @db.Decimal(12, 0)
+  balanceAfter  Decimal               @db.Decimal(12, 0)
+  note          String?
+  createdAt     DateTime              @default(now())
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId, createdAt])
+  @@index([orderId])
 }
 
 model VoucherCode {
@@ -302,6 +483,83 @@ model VoucherUsageLog {
   branch      Branch      @relation(fields: [branchId], references: [id])
 }
 
+model RefundRequest {
+  id             String       @id @default(uuid())
+  orderId        String       @unique
+  userId         String
+  reason         String
+  status         RefundStatus @default(REQUESTED)
+  adminNote      String?
+  providerRefundReference String?
+  resolvedBy     String?
+  resolvedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
+}
+
+model SupportTicket {
+  id            String              @id @default(uuid())
+  userId        String
+  orderId       String?
+  type          SupportTicketType
+  subject       String
+  description   String
+  status        SupportTicketStatus @default(OPEN)
+  adminResponse String?
+  resolvedBy    String?
+  resolvedAt    DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model Notification {
+  id            String           @id @default(uuid())
+  userId        String
+  type          NotificationType
+  title         String
+  message       String
+  referenceType String?
+  referenceId   String?
+  isRead        Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+}
+
+model EmailDelivery {
+  id         String              @id @default(uuid())
+  userId     String?
+  recipient  String
+  subject    String
+  template   String
+  payload    Json
+  status     EmailDeliveryStatus @default(PENDING)
+  attempts   Int                 @default(0)
+  lastError  String?
+  sentAt     DateTime?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
+}
+
 model Review {
   id        String   @id @default(uuid())
   userId    String
@@ -322,6 +580,7 @@ model AuditLog {
   action     String
   targetType String
   targetId   String
+  requestId  String?
   metadata   Json?
   oldValues  Json?
   newValues  Json?
@@ -333,6 +592,7 @@ model AuditLog {
 
   @@index([actorId])
   @@index([action])
+  @@index([requestId])
   @@index([createdAt])
 }
 

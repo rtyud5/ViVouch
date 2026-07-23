@@ -9,7 +9,8 @@
     "test": "vitest run --fileParallelism=false",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "node prisma/seed.js"
+    "prisma:seed": "node prisma/seed.js",
+    "test:unit:node": "node --test tests-node/*.test.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

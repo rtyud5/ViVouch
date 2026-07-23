@@ -45,7 +45,8 @@ describe("Partner Vouchers Service Unit Tests", () => {
         email: partnerEmail,
         fullName: "Test Partner Voucher",
         passwordHash: hashedPassword,
-        role: "PARTNER"
+        role: "PARTNER",
+        status: "ACTIVE"
       }
     });
     partnerUserId = partnerUser.id;
@@ -60,6 +61,15 @@ describe("Partner Vouchers Service Unit Tests", () => {
       }
     });
     partnerId = partner.id;
+
+    await prisma.partnerMember.create({
+      data: {
+        partnerId,
+        userId: partnerUserId,
+        role: "OWNER",
+        status: "ACTIVE"
+      }
+    });
 
     const branch = await prisma.branch.create({
       data: {

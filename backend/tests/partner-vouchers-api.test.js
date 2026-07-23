@@ -44,7 +44,7 @@ describe('Partner Vouchers API Contract Tests', () => {
     categoryId = category.id;
 
     const user = await prisma.user.create({
-      data: { email: partnerEmail, fullName: 'Voucher API Partner', passwordHash, role: 'PARTNER' }
+      data: { email: partnerEmail, fullName: 'Voucher API Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' }
     });
 
     const partner = await prisma.partner.create({
@@ -53,6 +53,15 @@ describe('Partner Vouchers API Contract Tests', () => {
       }
     });
     partnerId = partner.id;
+
+    await prisma.partnerMember.create({
+      data: {
+        partnerId: partner.id,
+        userId: user.id,
+        role: 'OWNER',
+        status: 'ACTIVE',
+      }
+    });
 
     const branch = await prisma.branch.create({
       data: { partnerId: partner.id, name: 'Main Branch', address: '123 Street' }

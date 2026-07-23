@@ -57,6 +57,7 @@ describe('Partner Reports API Tests', () => {
         fullName: 'Reports Partner',
         passwordHash,
         role: 'PARTNER',
+        status: 'ACTIVE',
       },
     });
 
@@ -67,6 +68,15 @@ describe('Partner Reports API Tests', () => {
         taxCode: 'REPORTS-TAX-01',
         representativeName: 'Rep',
         status: 'APPROVED',
+      },
+    });
+
+    await prisma.partnerMember.create({
+      data: {
+        partnerId: partner.id,
+        userId: partnerUser.id,
+        role: 'OWNER',
+        status: 'ACTIVE',
       },
     });
 
@@ -97,7 +107,7 @@ describe('Partner Reports API Tests', () => {
         status: 'COMPLETED',
         totalAmount: 160000,
         items: { create: { voucherId: voucher.id, qty: 2, unitPrice: 80000 } },
-        payment: { create: { method: 'WALLET', status: 'PAID', amount: 160000 } },
+        payment: { create: { method: 'VIVOUCH_WALLET', status: 'PAID', amount: 160000 } },
         voucherCodes: {
           create: [
             { voucherId: voucher.id, ownerId: customer.id, code: 'VC-REPORTS-USED', status: 'USED', usedAt: new Date() },

@@ -3,64 +3,32 @@ import * as partnersController from './partners.controller.js';
 import * as redeemController from '../redeem/redeem.controller.js';
 import { verifyToken } from '../../middlewares/auth.middleware.js';
 import { requireRole } from '../../middlewares/role.middleware.js';
+import { requirePartnerMember, requirePartnerOwner } from '../../middlewares/partnerAccess.middleware.js';
 import reportsRouter from '../reports/reports.routes.js';
+import staffRouter from '../partnerMembers/partnerMembers.routes.js';
 import { redeemCheckRateLimiter, redeemConfirmRateLimiter } from '../../middlewares/rateLimit.middleware.js';
 
 const router = Router();
-
 router.use(verifyToken, requireRole('PARTNER'));
 
-router.get('/profile', partnersController.getProfile);
-router.put('/profile', partnersController.updateProfile);
+router.get('/profile', requirePartnerMember({ requireApproved: false }), partnersController.getProfile);
+router.put('/profile', requirePartnerOwner({ requireApproved: false }), partnersController.updateProfile);
 
-router.get('/branches', partnersController.getBranches);
-router.post('/branches', partnersController.createBranch);
-router.put('/branches/:id', partnersController.updateBranch);
-router.delete('/branches/:id', partnersController.deleteBranch);
+router.get('/branches', requirePartnerMember(), partnersController.getBranches);
+router.post('/branches', requirePartnerOwner(), partnersController.createBranch);
+router.put('/branches/:id', requirePartnerOwner(), partnersController.updateBranch);
+router.delete('/branches/:id', requirePartnerOwner(), partnersController.deleteBranch);
 
-router.get('/vouchers', partnersController.getPartnerVouchers);
-router.post('/vouchers', partnersController.createVoucher);
-router.put('/vouchers/:id', partnersController.updateVoucher);
-router.post('/vouchers/:id/submit', partnersController.submitVoucher);
+router.get('/vouchers', requirePartnerOwner(), partnersController.getPartnerVouchers);
+router.post('/vouchers', requirePartnerOwner(), partnersController.createVoucher);
+router.put('/vouchers/:id', requirePartnerOwner(), partnersController.updateVoucher);
+router.post('/vouchers/:id/submit', requirePartnerOwner(), partnersController.submitVoucher);
 
-/**
- * @swagger
- * /api/partner/redeem/check:
- *   post:
- *     summary: Kiểm tra mã voucher, không thay đổi trạng thái
- *     tags:
- *       - Partners
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [code, branchId]
- *             properties:
- *               code:
- *                 type: string
- *               branchId:
- *                 type: string
- *                 description: Chi nhánh hoạt động và được gắn với voucher
- *     responses:
- *       200:
- *         description: Mã hợp lệ và vẫn ở trạng thái ISSUED
- *       400:
- *         description: Mã đã dùng, hết hạn, bị huỷ hoặc bị khoá
- *       403:
- *         description: Sai partner hoặc chi nhánh nằm ngoài phạm vi voucher
- *       404:
- *         description: Không tìm thấy mã voucher
- */
-router.post('/redeem/check', redeemCheckRateLimiter, redeemController.checkVoucherCode);
-router.post('/redeem/confirm', redeemConfirmRateLimiter, redeemController.confirmVoucherCode);
+router.post('/redeem/check', requirePartnerMember(), redeemCheckRateLimiter, redeemController.checkVoucherCode);
+router.post('/redeem/confirm', requirePartnerMember(), redeemConfirmRateLimiter, redeemController.confirmVoucherCode);
+router.post('/redeem', requirePartnerMember(), redeemConfirmRateLimiter, redeemController.redeemVoucherCode);
 
-// Compatibility route for clients released before the two-step contract.
-router.post('/redeem', redeemConfirmRateLimiter, redeemController.redeemVoucherCode);
-
-router.use('/reports', reportsRouter);
+router.use('/staff', staffRouter);
+router.use('/reports', requirePartnerOwner(), reportsRouter);
 
 export default router;

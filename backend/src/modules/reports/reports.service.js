@@ -1,18 +1,14 @@
 import { prisma } from '../../config/prisma.js';
 import { AppError } from '../../utils/appError.js';
 import { VOUCHER_CODE_STATUS } from '../../constants/statuses.js';
+import { getPartnerByUserId } from '../partners/partners.service.js';
+import { env } from '../../config/env.js';
 
 const pad = (n) => n.toString().padStart(2, '0');
 const formatDate = (date) => `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
 
 export const getPartnerReports = async (userId, rangeDays = 30) => {
-  const partner = await prisma.partner.findUnique({
-    where: { userId },
-  });
-
-  if (!partner) {
-    throw new AppError('Partner không tồn tại', 404, 'PARTNER_NOT_FOUND');
-  }
+  const partner = await getPartnerByUserId(userId);
 
   const now = new Date();
   const endDate = new Date(now);
@@ -30,7 +26,7 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
 
   if (voucherIds.length === 0) {
     return {
-      summary: { revenue: 0, orders: 0, customers: 0, conversion: 0 },
+      summary: { revenue: 0, platformFee: 0, estimatedPartnerRevenue: 0, commissionRate: env.PLATFORM_COMMISSION_RATE, orders: 0, customers: 0, conversion: 0 },
       revenueByDay: [],
       topVouchers: [],
     };
@@ -142,6 +138,9 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
   return {
     summary: {
       revenue: totalRevenue,
+      platformFee: Math.round(totalRevenue * env.PLATFORM_COMMISSION_RATE / 100),
+      estimatedPartnerRevenue: Math.round(totalRevenue * (100 - env.PLATFORM_COMMISSION_RATE) / 100),
+      commissionRate: env.PLATFORM_COMMISSION_RATE,
       orders: totalOrdersSet.size,
       customers: totalCustomersSet.size,
       conversion,

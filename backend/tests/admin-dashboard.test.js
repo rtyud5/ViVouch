@@ -114,7 +114,7 @@ describe("GET /api/admin/dashboard", () => {
     await prisma.payment.create({
       data: {
         orderId,
-        method: "WALLET",
+        method: "VIVOUCH_WALLET",
         status: "PAID",
         amount: 500000,
         createdAt: now,

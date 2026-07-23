@@ -14,7 +14,9 @@ export const VOUCHER_CODE_STATUS = {
   USED: "USED",
   EXPIRED: "EXPIRED",
   CANCELLED: "CANCELLED",
-  LOCKED: "LOCKED"
+  LOCKED: "LOCKED",
+  REFUND_PENDING: "REFUND_PENDING",
+  REFUNDED: "REFUNDED"
 };
 
 export const voucherTransitions = {

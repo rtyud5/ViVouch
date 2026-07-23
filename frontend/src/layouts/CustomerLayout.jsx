@@ -124,6 +124,19 @@ export function CustomerLayout() {
               <span>My Vouchers</span>
             </Link>
 
+            <Link to="/customer/refunds" className={navLinkClass('/customer/refunds')}>
+              <span className="material-symbols-outlined text-[20px]">currency_exchange</span>
+              <span>Hoàn tiền</span>
+            </Link>
+            <Link to="/customer/support" className={navLinkClass('/customer/support')}>
+              <span className="material-symbols-outlined text-[20px]">support_agent</span>
+              <span>Hỗ trợ</span>
+            </Link>
+            <Link to="/customer/notifications" className={navLinkClass('/customer/notifications')}>
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
+              <span>Thông báo</span>
+            </Link>
+
             {/* Profile */}
             <Link
               to="/customer/profile"

@@ -76,7 +76,8 @@ describe("Cart Service Unit Tests", () => {
         email: userAEmail,
         fullName: "Service User A",
         passwordHash: hashedPassword,
-        role: "CUSTOMER"
+        role: "CUSTOMER",
+        status: "ACTIVE"
       }
     });
     userIdA = userA.id;
@@ -87,7 +88,8 @@ describe("Cart Service Unit Tests", () => {
         email: userBEmail,
         fullName: "Service User B",
         passwordHash: hashedPassword,
-        role: "CUSTOMER"
+        role: "CUSTOMER",
+        status: "ACTIVE"
       }
     });
     userIdB = userB.id;
@@ -98,7 +100,8 @@ describe("Cart Service Unit Tests", () => {
         email: partnerEmail,
         fullName: "Service Partner User",
         passwordHash: hashedPassword,
-        role: "PARTNER"
+        role: "PARTNER",
+        status: "ACTIVE"
       }
     });
 

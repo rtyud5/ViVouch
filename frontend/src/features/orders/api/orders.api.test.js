@@ -15,7 +15,7 @@ describe("orders.api", () => {
 
     const result = await checkout(
       [{ id: "v1", qty: 2 }],
-      "MOMO",
+      "VIVOUCH_WALLET",
       undefined,
       undefined,
       undefined,
@@ -26,7 +26,7 @@ describe("orders.api", () => {
       "/customer/orders/cart/checkout",
       {
         items: [{ id: "v1", qty: 2 }],
-        paymentMethod: "MOMO",
+        paymentMethod: "VIVOUCH_WALLET",
       },
       { headers: { "Idempotency-Key": "checkout-key-123" } },
     );

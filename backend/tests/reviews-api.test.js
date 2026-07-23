@@ -78,6 +78,7 @@ describe('Reviews API Tests', () => {
           fullName: 'Reviews Used Customer',
           passwordHash,
           role: 'CUSTOMER',
+          status: 'ACTIVE',
         },
       }),
       prisma.user.create({
@@ -86,6 +87,7 @@ describe('Reviews API Tests', () => {
           fullName: 'Reviews Unused Customer',
           passwordHash,
           role: 'CUSTOMER',
+          status: 'ACTIVE',
         },
       }),
       prisma.user.create({
@@ -94,6 +96,7 @@ describe('Reviews API Tests', () => {
           fullName: 'Reviews Duplicate Customer',
           passwordHash,
           role: 'CUSTOMER',
+          status: 'ACTIVE',
         },
       }),
       prisma.user.create({
@@ -102,6 +105,7 @@ describe('Reviews API Tests', () => {
           fullName: 'Reviews API Partner',
           passwordHash,
           role: 'PARTNER',
+          status: 'ACTIVE',
         },
       }),
     ]);

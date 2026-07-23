@@ -1,5 +1,5 @@
 import * as adminService from './admin.service.js';
-import { rejectSchema, roleSchema, partnerStatusSchema, cancelOrderSchema, idParamSchema, ordersQuerySchema, partnersQuerySchema, vouchersQuerySchema, auditLogsQuerySchema } from './admin.validator.js';
+import { rejectSchema, roleSchema, partnerStatusSchema, cancelOrderSchema, idParamSchema, ordersQuerySchema, partnersQuerySchema, vouchersQuerySchema, auditLogsQuerySchema, walletAdjustmentSchema } from './admin.validator.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 
 export const getDashboardStats = asyncHandler(async (req, res) => {
@@ -119,4 +119,10 @@ export const getAuditLogs = asyncHandler(async (req, res) => {
     { page: pageNum, limit: limitNum }
   );
   res.json({ success: true, data });
+});
+
+export const adjustWallet = asyncHandler(async (req, res) => {
+  const { id } = idParamSchema.parse(req.params);
+  const data = walletAdjustmentSchema.parse(req.body);
+  res.json({ success: true, message: 'Đã điều chỉnh số dư Ví ViVouch', data: await adminService.adjustWallet(req.user.userId, id, data) });
 });

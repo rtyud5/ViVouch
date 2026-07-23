@@ -64,15 +64,15 @@ describe('Partner Redeem API Tests', () => {
     });
 
     const customer = await prisma.user.create({
-      data: { email: customerEmail, fullName: 'Redeem API Customer', passwordHash, role: 'CUSTOMER' },
+      data: { email: customerEmail, fullName: 'Redeem API Customer', passwordHash, role: 'CUSTOMER', status: 'ACTIVE' },
     });
 
     const partnerUser = await prisma.user.create({
-      data: { email: partnerEmail, fullName: 'Redeem API Partner', passwordHash, role: 'PARTNER' },
+      data: { email: partnerEmail, fullName: 'Redeem API Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' },
     });
 
     const wrongPartnerUser = await prisma.user.create({
-      data: { email: 'redeem_api_wrong_partner@test.com', fullName: 'Wrong API Partner', passwordHash, role: 'PARTNER' },
+      data: { email: 'redeem_api_wrong_partner@test.com', fullName: 'Wrong API Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' },
     });
 
     const partner = await prisma.partner.create({
@@ -82,6 +82,15 @@ describe('Partner Redeem API Tests', () => {
         taxCode: 'REDEEM-API-01',
         representativeName: 'Rep',
         status: 'APPROVED',
+      },
+    });
+
+    await prisma.partnerMember.create({
+      data: {
+        partnerId: partner.id,
+        userId: partnerUser.id,
+        role: 'OWNER',
+        status: 'ACTIVE',
       },
     });
 
