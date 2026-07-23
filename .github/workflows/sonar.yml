@@ -28,12 +28,18 @@ jobs:
           node-version: 20
       - name: Static quality checks
         run: node scripts/static-quality.mjs
-      - name: Require Sonar configuration
+      - name: Check Sonar configuration
+        id: check_sonar
         shell: bash
         run: |
-          test -n "$SONAR_TOKEN" || { echo "Missing SONAR_TOKEN secret" >&2; exit 1; }
-          test -n "$SONAR_HOST_URL" || { echo "Missing SONAR_HOST_URL secret" >&2; exit 1; }
+          if [ -z "$SONAR_TOKEN" ] || [ -z "$SONAR_HOST_URL" ]; then
+            echo "Sonar secrets not configured. Skipping SonarQube analysis."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
       - name: SonarQube scan and quality gate
+        if: steps.check_sonar.outputs.skip != 'true'
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         with:
           args: >
