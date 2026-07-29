@@ -1,4 +1,5 @@
 import { prisma } from '../../config/prisma.js';
+import { logger } from '../../config/logger.js';
 import { AppError } from '../../utils/appError.js';
 
 export async function getPartnerAccessByUserId(userId, { includeInactive = false } = {}) {
@@ -17,6 +18,11 @@ export async function getPartnerAccessByUserId(userId, { includeInactive = false
   const partner = await prisma.partner.findUnique({ where: { userId } });
   if (!partner) {
     throw new AppError('Không tìm thấy hồ sơ Partner', 404, 'PARTNER_NOT_FOUND');
+  }
+
+  logger.warn({ userId, partnerId: partner.id }, 'Partner access resolved via legacy fallback — missing PartnerMember record');
+  if (partner.status !== 'APPROVED') {
+    throw new AppError('Đối tác chưa được duyệt hoặc đang bị tạm ngưng', 403, 'PARTNER_NOT_ACTIVE');
   }
 
   return {
