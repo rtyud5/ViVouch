@@ -39,6 +39,13 @@ export function requirePartnerMember({ requireApproved = true } = {}) {
         );
       }
       assertActivePartner(access, requireApproved);
+      if (access.role === 'STAFF' && !access.branchId) {
+        throw new AppError(
+          'Nhân viên chưa được phân công chi nhánh',
+          403,
+          'STAFF_BRANCH_REQUIRED',
+        );
+      }
       req.partnerAccess = access;
       return next();
     } catch (error) {
