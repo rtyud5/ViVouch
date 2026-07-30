@@ -1,6 +1,6 @@
 # W6-V1 Outcome Report
 
-- **SHA / Branch**: TBD (current working tree on integration/w6-w7)
+- **SHA / Branch**: 62574a509cefbc9a9891b05e2d11d60fca8b15d1 (Customer-route-and-API-compatibility-pass)
 - **Mục tiêu**: Đảm bảo tương thích route/API, mapping error codes 401/403/409/429 cho Customer UI. Không hardcode localhost hay sai URL provider.
 - **Root cause**: 
   - Thiếu mapping custom cho HTTP 409 (Conflict) và 429 (Too Many Requests) trong `apiClient.js` khiến người dùng nhận thông báo chung chung.
@@ -19,5 +19,5 @@
   - [x] 401/403/409/429 map đúng
   - [x] Không hardcode localhost/provider state
   - **Kết luận**: Đạt (Passed)
-- **Remaining risk**: Một số luồng có thể phụ thuộc backend chưa trả đúng 409/429 khi timeout, cần H1 xác nhận ở tầng backend.
+- **Remaining risk**: Timeout handling is an unresolved fallback gap (apiClient.js only maps error.response statuses). Explicit timeout handling and corresponding tests are needed to cover network fallback behaviors distinct from backend HTTP 409/429 responses.
 - **Handoff**: Handoff cho QA / Duy để merge.

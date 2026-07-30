@@ -92,7 +92,10 @@ apiClient.interceptors.response.use(
       if (error.response.status === 429) {
         error.message = "Thao tác quá nhanh (Too Many Requests). Vui lòng thử lại sau.";
       } else if (error.response.status === 409) {
-        error.message = error.response.data?.message || "Xung đột dữ liệu (Conflict). Vui lòng tải lại và thử lại.";
+        const msg = error.response.data?.message;
+        error.message = (typeof msg === 'string' && msg.trim() !== '')
+          ? msg
+          : "Xung đột dữ liệu (Conflict). Vui lòng tải lại và thử lại.";
       }
     }
 
