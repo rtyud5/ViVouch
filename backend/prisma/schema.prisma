@@ -154,17 +154,17 @@ model User {
   partner            Partner?
   partnerMemberships PartnerMember[]
   cart               Cart?
-  orders              Order[]
-  voucherCodes        VoucherCode[]
-  reviews             Review[]
-  auditLogs           AuditLog[]
-  refreshTokens       RefreshToken[]
-  emailOtps           EmailOtp[]
-  wallet              Wallet?
-  notifications       Notification[]
-  refundRequests      RefundRequest[]
-  supportTickets      SupportTicket[]
-  emailDeliveries     EmailDelivery[]
+  orders             Order[]
+  voucherCodes       VoucherCode[]
+  reviews            Review[]
+  auditLogs          AuditLog[]
+  refreshTokens      RefreshToken[]
+  emailOtps          EmailOtp[]
+  wallet             Wallet?
+  notifications      Notification[]
+  refundRequests     RefundRequest[]
+  supportTickets     SupportTicket[]
+  emailDeliveries    EmailDelivery[]
 }
 
 model EmailOtp {
@@ -366,11 +366,11 @@ model Order {
   createdAt          DateTime    @default(now())
   updatedAt          DateTime    @updatedAt
 
-  user          User           @relation(fields: [userId], references: [id])
-  items         OrderItem[]
-  payment       Payment?
-  voucherCodes  VoucherCode[]
-  refundRequest RefundRequest?
+  user           User            @relation(fields: [userId], references: [id])
+  items          OrderItem[]
+  payment        Payment?
+  voucherCodes   VoucherCode[]
+  refundRequest  RefundRequest?
   supportTickets SupportTicket[]
 
   @@unique([userId, idempotencyKey])
@@ -407,14 +407,14 @@ model Payment {
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
 
-  order   Order           @relation(fields: [orderId], references: [id])
-  events  PaymentWebhook[]
+  order  Order            @relation(fields: [orderId], references: [id])
+  events PaymentWebhook[]
 }
 
 model PaymentWebhook {
   id        String   @id @default(uuid())
   paymentId String
-  eventKey String   @unique
+  eventKey  String   @unique
   payload   Json
   createdAt DateTime @default(now())
 
@@ -484,17 +484,17 @@ model VoucherUsageLog {
 }
 
 model RefundRequest {
-  id             String       @id @default(uuid())
-  orderId        String       @unique
-  userId         String
-  reason         String
-  status         RefundStatus @default(REQUESTED)
-  adminNote      String?
+  id                      String       @id @default(uuid())
+  orderId                 String       @unique
+  userId                  String
+  reason                  String
+  status                  RefundStatus @default(REQUESTED)
+  adminNote               String?
   providerRefundReference String?
-  resolvedBy     String?
-  resolvedAt     DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  resolvedBy              String?
+  resolvedAt              DateTime?
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
 
   order Order @relation(fields: [orderId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
@@ -541,18 +541,18 @@ model Notification {
 }
 
 model EmailDelivery {
-  id         String              @id @default(uuid())
-  userId     String?
-  recipient  String
-  subject    String
-  template   String
-  payload    Json
-  status     EmailDeliveryStatus @default(PENDING)
-  attempts   Int                 @default(0)
-  lastError  String?
-  sentAt     DateTime?
-  createdAt  DateTime            @default(now())
-  updatedAt  DateTime            @updatedAt
+  id        String              @id @default(uuid())
+  userId    String?
+  recipient String
+  subject   String
+  template  String
+  payload   Json
+  status    EmailDeliveryStatus @default(PENDING)
+  attempts  Int                 @default(0)
+  lastError String?
+  sentAt    DateTime?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
