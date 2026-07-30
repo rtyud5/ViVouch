@@ -88,6 +88,12 @@ apiClient.interceptors.response.use(
           isRedirecting = false;
         }, 5000);
       }
+    } else if (error.response) {
+      if (error.response.status === 429) {
+        error.message = "Thao tác quá nhanh (Too Many Requests). Vui lòng thử lại sau.";
+      } else if (error.response.status === 409) {
+        error.message = error.response.data?.message || "Xung đột dữ liệu (Conflict). Vui lòng tải lại và thử lại.";
+      }
     }
 
     return Promise.reject(error);

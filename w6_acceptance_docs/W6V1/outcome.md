@@ -1,0 +1,23 @@
+# W6-V1 Outcome Report
+
+- **SHA / Branch**: TBD (current working tree on integration/w6-w7)
+- **Mục tiêu**: Đảm bảo tương thích route/API, mapping error codes 401/403/409/429 cho Customer UI. Không hardcode localhost hay sai URL provider.
+- **Root cause**: 
+  - Thiếu mapping custom cho HTTP 409 (Conflict) và 429 (Too Many Requests) trong `apiClient.js` khiến người dùng nhận thông báo chung chung.
+  - Cần xác nhận không còn localhost hardcoded trong toàn bộ codebase.
+- **File thay đổi**: 
+  - `frontend/src/services/apiClient.js`
+- **Commands đã chạy**:
+  - `npm run build`
+  - `npm run test`
+- **Pass/Fail/Skip**:
+  - **Pass**: Build frontend thành công. Test vitest pass. Mapping 401/403/409/429 đã hợp lệ.
+  - **Pass**: Kiểm tra hardcode (localhost) sạch sẽ.
+- **DB side effects**: Không có. Chỉ chỉnh sửa API client của frontend.
+- **Acceptance đạt/chưa đạt**:
+  - [x] Không blank page/import error
+  - [x] 401/403/409/429 map đúng
+  - [x] Không hardcode localhost/provider state
+  - **Kết luận**: Đạt (Passed)
+- **Remaining risk**: Một số luồng có thể phụ thuộc backend chưa trả đúng 409/429 khi timeout, cần H1 xác nhận ở tầng backend.
+- **Handoff**: Handoff cho QA / Duy để merge.
