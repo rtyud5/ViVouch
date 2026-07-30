@@ -5,5 +5,8 @@ export default defineConfig({
     environment: 'node',
     exclude: ['**/node_modules/**', '**/dist/**', 'tests-node/**'],
     fileParallelism: false,
+    env: {
+      EMAIL_DELIVERY_MODE: 'TEST'
+    }
   },
 });
