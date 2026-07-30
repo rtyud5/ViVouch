@@ -53,11 +53,6 @@ export async function createRefundRequest(userId, { orderId, reason }) {
     if (order.voucherCodes.length === 0 || order.voucherCodes.some((code) => code.status !== 'ISSUED')) {
       throw new AppError('Voucher đã dùng, bị khóa hoặc không còn hợp lệ để hoàn', 409, 'VOUCHER_NOT_REFUNDABLE');
     }
-    const now = Date.now();
-    for (const item of order.items) {
-      if (!item.voucher.allowRefund) {
-        throw new AppError(`Voucher "${item.voucher.title}" không hỗ trợ hoàn tiền`, 409, 'REFUND_NOT_ALLOWED');
-      }
     if (!order.payment?.paidAt) {
       throw new AppError('Không thể xác định thời điểm thanh toán', 409, 'MISSING_PAID_AT');
     }
