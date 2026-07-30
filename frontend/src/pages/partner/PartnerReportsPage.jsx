@@ -10,6 +10,7 @@ import {
   YAxis
 } from "recharts";
 import { usePartnerReports } from "../../features/partner/hooks/usePartnerReports";
+import { CommissionSummaryCards } from "../../features/partner/components/CommissionSummaryCards";
 
 const RANGE_OPTIONS = [
   { value: 7, label: "7 ngày" },
@@ -122,6 +123,19 @@ export function PartnerReportsPage() {
           </div>
         </div>
       </div>
+
+      <section aria-labelledby="commission-summary-heading">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 id="commission-summary-heading" className="text-xl font-bold">Tóm tắt hoa hồng</h2>
+            <p className="mt-1 text-sm text-base-content/60">Các số tiền chỉ là ước tính/mô phỏng, không phải payout thực tế.</p>
+          </div>
+          <span className="badge badge-outline">Theo dữ liệu báo cáo API</span>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <CommissionSummaryCards summary={summary} isLoading={isLoading || isFetching} />
+        </div>
+      </section>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {(isLoading || isFetching)
