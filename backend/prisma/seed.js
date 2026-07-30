@@ -321,7 +321,6 @@ async function main() {
   console.log('Carts seeded')
 
   // ── Orders + VoucherCodes + Reviews ───────────────────────────────────────
-  const { nanoid } = await import('nanoid')
   const customers = [customer1, customer2, customer3]
   const onSaleVouchers = [v.hdl_1, v.hdl_2, v.zen_1, v.zen_2, v.gt_1]
 
@@ -342,7 +341,7 @@ async function main() {
     const codeStatus = i < 8 ? 'USED' : 'ISSUED'
     const vc = await prisma.voucherCode.create({
       data: {
-        code: `VC-2026-${nanoid(10).toUpperCase()}`,
+        code: `VC-2026-TEST${i.toString().padStart(6, '0')}`,
         orderId: order.id,
         voucherId: voucher.id,
         ownerId: customer.id,
