@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { DashboardLayout } from '../components/common/DashboardLayout';
-import { logoutSession } from '../features/auth/api/auth.api';
+import { getMe, logoutSession } from '../features/auth/api/auth.api';
 
 /**
  * PartnerLayout — Layout dành cho Partner Portal
@@ -12,8 +13,22 @@ import { logoutSession } from '../features/auth/api/auth.api';
 export function PartnerLayout() {
   const navigate = useNavigate();
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const setAuth = useAuthStore((state) => state.setAuth);
   const user = useAuthStore((state) => state.user);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const refreshToken = useAuthStore((state) => state.refreshToken);
+
+  useEffect(() => {
+    let mounted = true;
+    getMe().then((meData) => {
+      if (mounted && meData) {
+        setAuth({ user: meData, accessToken, refreshToken });
+      }
+    }).catch(() => {
+      // apiClient interceptor handles auth errors
+    });
+    return () => { mounted = false; };
+  }, [accessToken, refreshToken, setAuth]);
 
   const handleLogout = async () => {
     try {

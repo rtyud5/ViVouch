@@ -5,7 +5,7 @@ export function getRoleLandingPath(user) {
   if (user.role !== 'PARTNER') return '/';
 
   const membership = user.partnerMemberships?.[0];
-  if (!membership || membership.partner?.status !== 'APPROVED') return '/partner/profile';
+  if (!membership || membership.status !== 'ACTIVE' || membership.partner?.status !== 'APPROVED') return '/partner/profile';
   return membership.role === 'STAFF' ? '/partner/validation' : '/partner/dashboard';
 }
 
@@ -16,3 +16,11 @@ export function isApprovedPartnerOwner(user) {
     && membership?.status === 'ACTIVE'
     && membership?.partner?.status === 'APPROVED';
 }
+
+export function isApprovedPartnerMember(user) {
+  const membership = user?.partnerMemberships?.[0];
+  return user?.role === 'PARTNER'
+    && membership?.status === 'ACTIVE'
+    && membership?.partner?.status === 'APPROVED';
+}
+

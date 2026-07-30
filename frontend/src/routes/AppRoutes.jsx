@@ -4,6 +4,7 @@ import { GlobalErrorBoundary } from '../components/common/GlobalErrorBoundary';
 import { ProtectedRoute } from './ProtectedRoute';
 import { RoleRoute } from './RoleRoute';
 import { PartnerOwnerRoute } from './PartnerOwnerRoute';
+import { PartnerApprovedMemberRoute } from './PartnerApprovedMemberRoute';
 import { PublicLayout } from '../layouts/PublicLayout';
 import { CustomerLayout } from '../layouts/CustomerLayout';
 import { PartnerLayout } from '../layouts/PartnerLayout';
@@ -127,8 +128,10 @@ export function AppRoutes() {
                 <Route path="staff" element={<StaffManagementPage />} />
                 <Route path="reports" element={<PartnerReportsPage />} />
               </Route>
-              <Route path="validation" element={<RedeemVoucherPage />} />
-              <Route path="redeem-history" element={<StaffRedeemHistoryPage />} />
+              <Route element={<PartnerApprovedMemberRoute />}>
+                <Route path="validation" element={<RedeemVoucherPage />} />
+                <Route path="redeem-history" element={<StaffRedeemHistoryPage />} />
+              </Route>
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="profile" element={<PartnerProfilePage />} />
             </Route>
