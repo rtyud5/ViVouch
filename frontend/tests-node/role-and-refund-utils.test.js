@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { getRoleLandingPath, isApprovedPartnerOwner } from '../src/utils/roleLanding.js';
+import { getRoleLandingPath, isApprovedPartnerOwner, isApprovedPartnerMember } from '../src/utils/roleLanding.js';
 import { getRefundEligibility } from '../src/utils/refundEligibility.js';
 
 test('role landing separates customer, pending owner, approved owner and staff', () => {
@@ -8,11 +8,26 @@ test('role landing separates customer, pending owner, approved owner and staff',
   assert.equal(getRoleLandingPath({ role: 'ADMIN' }), '/admin/dashboard');
   assert.equal(getRoleLandingPath({ role: 'PARTNER', partnerMemberships: [] }), '/partner/profile');
   const owner = { role: 'PARTNER', partnerMemberships: [{ role: 'OWNER', status: 'ACTIVE', partner: { status: 'APPROVED' } }] };
+  const pendingOwner = { role: 'PARTNER', partnerMemberships: [{ role: 'OWNER', status: 'ACTIVE', partner: { status: 'PENDING' } }] };
+  const rejectedOwner = { role: 'PARTNER', partnerMemberships: [{ role: 'OWNER', status: 'ACTIVE', partner: { status: 'REJECTED' } }] };
   const staff = { role: 'PARTNER', partnerMemberships: [{ role: 'STAFF', status: 'ACTIVE', partner: { status: 'APPROVED' } }] };
+  const deactivatedStaff = { role: 'PARTNER', partnerMemberships: [{ role: 'STAFF', status: 'INACTIVE', partner: { status: 'APPROVED' } }] };
+
   assert.equal(getRoleLandingPath(owner), '/partner/dashboard');
+  assert.equal(getRoleLandingPath(pendingOwner), '/partner/profile');
+  assert.equal(getRoleLandingPath(rejectedOwner), '/partner/profile');
   assert.equal(getRoleLandingPath(staff), '/partner/validation');
+  assert.equal(getRoleLandingPath(deactivatedStaff), '/partner/profile');
+
   assert.equal(isApprovedPartnerOwner(owner), true);
+  assert.equal(isApprovedPartnerOwner(pendingOwner), false);
   assert.equal(isApprovedPartnerOwner(staff), false);
+
+  assert.equal(isApprovedPartnerMember(owner), true);
+  assert.equal(isApprovedPartnerMember(staff), true);
+  assert.equal(isApprovedPartnerMember(pendingOwner), false);
+  assert.equal(isApprovedPartnerMember(rejectedOwner), false);
+  assert.equal(isApprovedPartnerMember(deactivatedStaff), false);
 });
 
 test('refund eligibility requires paid order, issued codes, policy and active window', () => {
