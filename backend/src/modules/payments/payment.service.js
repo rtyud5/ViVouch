@@ -97,6 +97,10 @@ export async function processPayOsWebhook(payload) {
     }
     if (payment.status === 'PAID') return { duplicate: true, orderId: payment.orderId };
     if (payment.status !== 'PENDING' || payment.order.status !== 'PENDING_PAYMENT') {
+      if (paid && payment.status === 'CANCELLED') {
+        logger.warn({ orderId: payment.orderId, providerOrderCode }, 'Late PAID webhook received for cancelled order');
+        return { duplicate: false, ignored: true, reason: 'LATE_WEBHOOK_ALREADY_CANCELLED', orderId: payment.orderId };
+      }
       throw new AppError('Đơn hàng không còn chờ thanh toán', 409, 'ORDER_NOT_PAYABLE');
     }
 

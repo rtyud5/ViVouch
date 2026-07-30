@@ -58,7 +58,16 @@ export async function createRefundRequest(userId, { orderId, reason }) {
       if (!item.voucher.allowRefund) {
         throw new AppError(`Voucher "${item.voucher.title}" không hỗ trợ hoàn tiền`, 409, 'REFUND_NOT_ALLOWED');
       }
-      const deadline = order.createdAt.getTime() + item.voucher.refundWindowHours * 60 * 60 * 1000;
+    if (!order.payment?.paidAt) {
+      throw new AppError('Không thể xác định thời điểm thanh toán', 409, 'MISSING_PAID_AT');
+    }
+
+    const now = Date.now();
+    for (const item of order.items) {
+      if (!item.voucher.allowRefund) {
+        throw new AppError(`Voucher "${item.voucher.title}" không hỗ trợ hoàn tiền`, 409, 'REFUND_NOT_ALLOWED');
+      }
+      const deadline = order.payment.paidAt.getTime() + item.voucher.refundWindowHours * 60 * 60 * 1000;
       if (now > deadline) throw new AppError('Đã quá thời hạn yêu cầu hoàn tiền', 409, 'REFUND_WINDOW_EXPIRED');
     }
 
