@@ -200,6 +200,7 @@ describe('Partner Redeem API Tests', () => {
     const res = await request(app)
       .post('/api/partner/redeem/confirm')
       .set('Authorization', `Bearer ${partnerToken}`)
+      .set('X-Request-Id', 'w6d4-redeem-audit-001')
       .send({ code: issuedCode, branchId });
 
     expect(res.status).toBe(200);
@@ -217,6 +218,17 @@ describe('Partner Redeem API Tests', () => {
     expect(usageLog).not.toBeNull();
     expect(usageLog.branchId).toBe(branchId);
     expect(usageLog.redeemedAt).toBeInstanceOf(Date);
+
+    const auditLog = await prisma.auditLog.findFirst({
+      where: { action: 'PARTNER_REDEEM_VOUCHER', targetId: redeemedCode.id },
+      orderBy: { createdAt: 'desc' },
+    });
+    expect(auditLog).toMatchObject({
+      actorId: expect.any(String),
+      targetType: 'VoucherCode',
+      targetId: redeemedCode.id,
+      requestId: 'w6d4-redeem-audit-001',
+    });
   });
 
   it('rejects USED code via HTTP', async () => {
