@@ -17,7 +17,19 @@ const AUDIT_ACTIONS = {
   ADMIN_SUSPEND_PARTNER: "ADMIN_SUSPEND_PARTNER",
   ADMIN_REACTIVATE_PARTNER: "ADMIN_REACTIVATE_PARTNER",
   ADMIN_CANCEL_ORDER: "ADMIN_CANCEL_ORDER",
-  ADMIN_MANAGE_CONTENT: "ADMIN_MANAGE_CONTENT"
+  ADMIN_MANAGE_CONTENT: "ADMIN_MANAGE_CONTENT",
+  CUSTOMER_REQUEST_REFUND: "CUSTOMER_REQUEST_REFUND",
+  ADMIN_APPROVE_REFUND: "ADMIN_APPROVE_REFUND",
+  ADMIN_REJECT_REFUND: "ADMIN_REJECT_REFUND",
+  ADMIN_COMPLETE_MANUAL_REFUND: "ADMIN_COMPLETE_MANUAL_REFUND",
+  CUSTOMER_CREATE_TICKET: "CUSTOMER_CREATE_TICKET",
+  ADMIN_RESPOND_TICKET: "ADMIN_RESPOND_TICKET",
+  CUSTOMER_CREATE_REVIEW: "CUSTOMER_CREATE_REVIEW",
+  PAYMENT_PAYOS_WEBHOOK: "PAYMENT_PAYOS_WEBHOOK",
+  SYSTEM_RECONCILE_VOUCHER: "SYSTEM_RECONCILE_VOUCHER",
+  PARTNER_CREATE_STAFF: "PARTNER_CREATE_STAFF",
+  PARTNER_UPDATE_STAFF: "PARTNER_UPDATE_STAFF",
+  ADMIN_ADJUST_WALLET: "ADMIN_ADJUST_WALLET"
 };
 
 const ACTION_LABELS = {
@@ -30,12 +42,25 @@ const ACTION_LABELS = {
   [AUDIT_ACTIONS.PARTNER_CREATE_VOUCHER]: "Tạo voucher",
   [AUDIT_ACTIONS.PARTNER_SUBMIT_VOUCHER]: "Gửi duyệt voucher",
   [AUDIT_ACTIONS.CUSTOMER_CHECKOUT]: "Đặt hàng",
+  [AUDIT_ACTIONS.SYSTEM_ISSUE_VOUCHER_CODE]: "Phát mã voucher",
   [AUDIT_ACTIONS.PARTNER_REDEEM_VOUCHER]: "Đổi mã voucher",
   [AUDIT_ACTIONS.ADMIN_ASSIGN_ROLE]: "Gán vai trò",
   [AUDIT_ACTIONS.ADMIN_SUSPEND_PARTNER]: "Tạm ngưng đối tác",
   [AUDIT_ACTIONS.ADMIN_REACTIVATE_PARTNER]: "Kích hoạt lại đối tác",
   [AUDIT_ACTIONS.ADMIN_CANCEL_ORDER]: "Hủy/hoàn tiền đơn",
-  [AUDIT_ACTIONS.ADMIN_MANAGE_CONTENT]: "Quản trị nội dung"
+  [AUDIT_ACTIONS.ADMIN_MANAGE_CONTENT]: "Quản trị nội dung",
+  [AUDIT_ACTIONS.CUSTOMER_REQUEST_REFUND]: "Yêu cầu hoàn tiền",
+  [AUDIT_ACTIONS.ADMIN_APPROVE_REFUND]: "Duyệt hoàn tiền",
+  [AUDIT_ACTIONS.ADMIN_REJECT_REFUND]: "Từ chối hoàn tiền",
+  [AUDIT_ACTIONS.ADMIN_COMPLETE_MANUAL_REFUND]: "Xác nhận hoàn thủ công payOS",
+  [AUDIT_ACTIONS.CUSTOMER_CREATE_TICKET]: "Tạo ticket hỗ trợ",
+  [AUDIT_ACTIONS.ADMIN_RESPOND_TICKET]: "Phản hồi ticket hỗ trợ",
+  [AUDIT_ACTIONS.CUSTOMER_CREATE_REVIEW]: "Đánh giá voucher",
+  [AUDIT_ACTIONS.PAYMENT_PAYOS_WEBHOOK]: "Webhook payOS",
+  [AUDIT_ACTIONS.SYSTEM_RECONCILE_VOUCHER]: "Đối soát voucher",
+  [AUDIT_ACTIONS.PARTNER_CREATE_STAFF]: "Tạo nhân viên",
+  [AUDIT_ACTIONS.PARTNER_UPDATE_STAFF]: "Cập nhật nhân viên",
+  [AUDIT_ACTIONS.ADMIN_ADJUST_WALLET]: "Điều chỉnh ví"
 };
 
 const ACTION_COLORS = {
@@ -46,7 +71,10 @@ const ACTION_COLORS = {
   "Tạo": "bg-blue-100 text-blue-800",
   "Gửi duyệt": "bg-yellow-100 text-yellow-800",
   "Đặt hàng": "bg-purple-100 text-purple-800",
-  "Đổi mã": "bg-emerald-100 text-emerald-800"
+  "Đổi mã": "bg-emerald-100 text-emerald-800",
+  "Hoàn tiền": "bg-amber-100 text-amber-800",
+  "Webhook": "bg-sky-100 text-sky-800",
+  "Xác nhận": "bg-teal-100 text-teal-800"
 };
 
 const getBadgeStyle = (action) => {
@@ -72,13 +100,14 @@ export default function AuditLogsPage() {
   return (
     <div className="p-6 h-full flex flex-col relative bg-[#f8f9ff]">
       <div className="mb-6 flex flex-col gap-4">
-        <h1 className="text-2xl font-bold text-[#0b1c30]">Nhật ký hệ thống</h1>
+        <h1 className="text-2xl font-bold text-[#0b1c30]">Nhật ký hệ thống (Audit Logs)</h1>
         
-        <div className="flex flex-wrap gap-3 bg-white p-3 rounded border border-gray-200 shadow-sm">
+        <div className="flex flex-wrap gap-3 bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
           <select
             value={params.action}
             onChange={(e) => setParams(p => ({ ...p, action: e.target.value, page: 1 }))}
             className="pl-3 pr-8 py-1.5 bg-white border border-gray-200 rounded text-sm focus:outline-none focus:border-amber-500 min-w-[200px]"
+            aria-label="Lọc theo thao tác"
           >
             <option value="">Tất cả thao tác</option>
             {Object.values(AUDIT_ACTIONS).map(action => (
@@ -101,44 +130,55 @@ export default function AuditLogsPage() {
               <thead className="bg-[#f1efea] border-b border-[#dce9ff] sticky top-0">
                 <tr>
                   <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Thời gian</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Người thực hiện</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Thao tác</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Mục tiêu</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Người thực hiện (Actor)</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Thao tác (Action)</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Mục tiêu (Target)</th>
                   <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Chi tiết thay đổi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm">
-                {logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
-                      {new Date(log.createdAt).toLocaleString('vi-VN')}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-[10px]">
-                          {log.actor?.email ? log.actor.email[0].toUpperCase() : 'U'}
+                {logs.map((log) => {
+                  const actorEmail = log.actor?.email || 'Hệ thống (SYSTEM)';
+                  const actorRole = log.actor?.role || 'SYSTEM';
+                  const initialChar = log.actor?.email ? log.actor.email[0].toUpperCase() : 'S';
+
+                  return (
+                    <tr key={log.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap text-xs">
+                        {new Date(log.createdAt).toLocaleString('vi-VN')}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-[10px]">
+                            {initialChar}
+                          </div>
+                          <span className="font-medium text-gray-900 text-xs">{actorEmail}</span>
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-600">
+                            {actorRole}
+                          </span>
                         </div>
-                        <span className="font-medium text-gray-900">{log.actor?.email}</span>
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-600">
-                          {log.actor?.role}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2 py-1 rounded text-[11px] font-bold uppercase ${getBadgeStyle(log.action)}`}>
+                          {ACTION_LABELS[log.action] || log.action}
                         </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2 py-1 rounded text-[11px] font-bold uppercase ${getBadgeStyle(log.action)}`}>
-                        {ACTION_LABELS[log.action] || log.action}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-gray-600 font-mono text-xs">
-                      {log.targetType} <span className="text-gray-400">|</span> {log.targetId?.split('-')[0] || 'N/A'}
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">
-                      <pre className="max-w-xs truncate overflow-hidden bg-gray-50 p-1 rounded border border-gray-100" title={JSON.stringify({ old: log.oldValues, new: log.newValues, metadata: log.metadata, ip: log.ipAddress })}>
-                        {JSON.stringify({ old: log.oldValues, new: log.newValues, ip: log.ipAddress })}
-                      </pre>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-700 font-mono text-xs">
+                        <span className="font-semibold text-gray-900">{log.targetType}</span>
+                        {log.targetId && (
+                          <span className="text-gray-500 font-normal ml-1" title={log.targetId}>
+                            | {log.targetId.length > 12 ? `${log.targetId.slice(0, 8)}...` : log.targetId}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 text-xs">
+                        <pre className="max-w-xs truncate overflow-hidden bg-gray-50 p-1.5 rounded border border-gray-200 font-mono text-[11px]" title={JSON.stringify({ oldValues: log.oldValues, newValues: log.newValues, metadata: log.metadata, ipAddress: log.ipAddress }, null, 2)}>
+                          {JSON.stringify({ old: log.oldValues, new: log.newValues, ip: log.ipAddress })}
+                        </pre>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}

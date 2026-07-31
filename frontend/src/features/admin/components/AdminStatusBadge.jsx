@@ -27,6 +27,15 @@ export const AdminStatusBadge = ({ status }) => {
     EXPIRED:           { label: 'Hết hạn',          bg: '#f1efea', text: '#534434' },
     PAUSED:            { label: 'Tạm dừng',         bg: '#fef9c3', text: '#854d0e' },
     
+    // Refund request statuses
+    REQUESTED:              { label: 'Chờ duyệt hoàn',   bg: '#fef9c3', text: '#854d0e' },
+    MANUAL_REFUND_REQUIRED: { label: 'Chờ hoàn thủ công payOS', bg: '#ffedd5', text: '#9a3412' },
+
+    // Ticket statuses
+    OPEN:                   { label: 'Mới',              bg: '#dbeafe', text: '#1e40af' },
+    PROCESSING:             { label: 'Đang xử lý',       bg: '#fef9c3', text: '#854d0e' },
+    RESOLVED:               { label: 'Đã giải quyết',    bg: '#dcfce7', text: '#166534' },
+
     // Order / UserVoucher statuses
     ISSUED:            { label: 'Đã phát',          bg: '#dbeafe', text: '#1e40af' },
     USED:              { label: 'Đã dùng',           bg: '#dcfce7', text: '#166534' },
@@ -47,6 +56,7 @@ export const AdminStatusBadge = ({ status }) => {
     CUSTOMER:          { label: 'Khách hàng',       bg: '#dbeafe', text: '#1e40af' },
     PARTNER:           { label: 'Đối tác',          bg: '#ede9fe', text: '#5b21b6' },
     ADMIN:             { label: 'Admin',            bg: '#fef9c3', text: '#854d0e' },
+    PENDING_VERIFICATION: { label: 'Chờ xác minh', bg: '#fef9c3', text: '#854d0e' },
   };
 
   const current = config[status] || { label: status, bg: '#f1efea', text: '#534434' };
