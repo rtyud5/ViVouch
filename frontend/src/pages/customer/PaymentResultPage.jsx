@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { getPaymentStatus } from '../../features/orders/api/orders.api';
-
+import { useQueryClient } from '@tanstack/react-query';
+import { invalidateCheckoutQueries } from '../../features/orders/hooks/useCheckout';
 const MAX_POLL_ATTEMPTS = 15;
 const POLL_INTERVAL_MS = 2000;
 
@@ -9,19 +10,16 @@ export function PaymentResultPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const orderId = params.get('orderId') || params.get('orderCode') || '';
-  const cancelledByReturnUrl = params.get('cancel') === 'true' || params.get('status') === 'CANCELLED';
   const resumeCheckout = params.get('resume') === 'true';
   const [state, setState] = useState({ loading: true, error: '' });
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!orderId) {
       setState({ loading: false, error: 'Thiếu mã đơn hàng.' });
       return undefined;
     }
-    if (cancelledByReturnUrl) {
-      setState({ loading: false, error: 'Bạn đã hủy thanh toán payOS. Đơn sẽ được giải phóng tồn kho sau khi hết thời gian chờ.' });
-      return undefined;
-    }
+
 
     let stopped = false;
     let attempt = 0;
@@ -32,6 +30,8 @@ export function PaymentResultPage() {
         if (stopped) return;
         const paymentStatus = data.payment?.status;
         if (paymentStatus === 'PAID') {
+          sessionStorage.removeItem('checkoutIdempotencyKey');
+          await invalidateCheckoutQueries(queryClient);
           navigate('/customer/order-success', {
             replace: true,
             state: { orderId: data.id, voucherCodes: data.voucherCodes },
@@ -43,6 +43,7 @@ export function PaymentResultPage() {
           return;
         }
         if (['CANCELLED', 'FAILED', 'REFUNDED'].includes(paymentStatus)) {
+          sessionStorage.removeItem('checkoutIdempotencyKey');
           setState({ loading: false, error: `Giao dịch hiện ở trạng thái ${paymentStatus}.` });
           return;
         }
@@ -63,7 +64,7 @@ export function PaymentResultPage() {
       stopped = true;
       if (timeoutId) window.clearTimeout(timeoutId);
     };
-  }, [cancelledByReturnUrl, navigate, orderId, resumeCheckout]);
+  }, [navigate, orderId, resumeCheckout, queryClient]);
 
   return (
     <main className="min-h-[70vh] grid place-items-center p-4">
