@@ -37,12 +37,19 @@ async function createTestCustomer() {
     .post("/api/auth/register")
     .send({ email: CUSTOMER_EMAIL, password: PASSWORD, fullName: "Customer", phone: "0900000301" });
 
+  const customerId = resReg.body.data?.user?.id || resReg.body.data?.id;
+
+  await prisma.user.update({
+    where: { id: customerId },
+    data: { status: "ACTIVE", emailVerifiedAt: new Date() }
+  });
+
   const resLogin = await request(app)
     .post("/api/auth/login")
     .send({ email: CUSTOMER_EMAIL, password: PASSWORD });
   
   return {
-    id: resReg.body.data.id,
+    id: customerId,
     token: resLogin.body.data.accessToken
   };
 }
@@ -52,11 +59,11 @@ async function createTestAdmin() {
     .post("/api/auth/register")
     .send({ email: ADMIN_EMAIL, password: PASSWORD, fullName: "Admin", phone: "0900000302" });
   
-  const adminId = resReg.body.data.id;
+  const adminId = resReg.body.data?.user?.id || resReg.body.data?.id;
 
   await prisma.user.update({
     where: { id: adminId },
-    data: { role: "ADMIN" }
+    data: { role: "ADMIN", status: "ACTIVE", emailVerifiedAt: new Date() }
   });
 
   const resLogin = await request(app)
