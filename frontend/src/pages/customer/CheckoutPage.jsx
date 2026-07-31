@@ -15,7 +15,7 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading: isCartLoading, error: cartError } = useCart();
   const checkoutMutation = useCheckout();
-  const idempotencyKeyRef = useRef(null);
+  const idempotencyKeyRef = useRef(sessionStorage.getItem('checkoutIdempotencyKey'));
   const user = useAuthStore((state) => state.user);
   const [paymentMethod, setPaymentMethod] = useState('VIVOUCH_WALLET');
   const [localError, setLocalError] = useState(null);
@@ -38,7 +38,10 @@ export function CheckoutPage() {
     if (walletInsufficient) return setLocalError(new Error('Số dư Ví ViVouch không đủ. Hãy chọn payOS hoặc nhờ Admin cộng số dư demo.'));
 
     try {
-      if (!idempotencyKeyRef.current) idempotencyKeyRef.current = createCheckoutIdempotencyKey();
+      if (!idempotencyKeyRef.current) {
+        idempotencyKeyRef.current = createCheckoutIdempotencyKey();
+        sessionStorage.setItem('checkoutIdempotencyKey', idempotencyKeyRef.current);
+      }
       const result = await checkoutMutation.mutateAsync({
         items,
         paymentMethod,
@@ -49,7 +52,6 @@ export function CheckoutPage() {
       });
       if (!result?.orderId) throw new Error('Thiếu mã đơn hàng trong phản hồi thanh toán.');
       if (result.paymentMethod === 'PAYOS') {
-        idempotencyKeyRef.current = null;
         if (result.checkoutUrl) {
           window.location.assign(result.checkoutUrl);
           return;
@@ -57,6 +59,7 @@ export function CheckoutPage() {
         navigate(`/customer/payment-result?orderId=${encodeURIComponent(result.orderId)}&resume=true`, { replace: true });
         return;
       }
+      sessionStorage.removeItem('checkoutIdempotencyKey');
       idempotencyKeyRef.current = null;
       navigate('/customer/order-success', {
         replace: true,

@@ -6,6 +6,7 @@ export async function invalidateCheckoutQueries(queryClient) {
     queryClient.invalidateQueries({ queryKey: ["cart"] }),
     queryClient.invalidateQueries({ queryKey: ["orders"] }),
     queryClient.invalidateQueries({ queryKey: ["voucher-codes"] }),
+    queryClient.invalidateQueries({ queryKey: ["users", "me"] }),
   ]);
 }
 

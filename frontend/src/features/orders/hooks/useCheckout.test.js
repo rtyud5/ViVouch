@@ -12,5 +12,6 @@ describe("invalidateCheckoutQueries", () => {
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({ queryKey: ["cart"] });
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({ queryKey: ["orders"] });
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({ queryKey: ["voucher-codes"] });
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith({ queryKey: ["users", "me"] });
   });
 });
