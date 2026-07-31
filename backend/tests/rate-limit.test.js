@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import express from 'express';
 import request from 'supertest';
 import { createRateLimiter } from '../src/middlewares/rateLimit.middleware.js';
+import { requestContextMiddleware } from '../src/middlewares/requestContext.middleware.js';
 
 describe('Rate limit middleware', () => {
   it('returns a stable 429 contract after the configured limit', async () => {
     const app = express();
+    app.use(requestContextMiddleware);
     app.use(createRateLimiter({
       windowMs: 60_000,
       max: 2,
@@ -16,12 +18,14 @@ describe('Rate limit middleware', () => {
 
     expect((await request(app).get('/limited')).status).toBe(200);
     expect((await request(app).get('/limited')).status).toBe(200);
-    const blocked = await request(app).get('/limited');
+    const blocked = await request(app).get('/limited').set('X-Request-Id', 'rate-limit-test-001');
     expect(blocked.status).toBe(429);
+    expect(blocked.headers['x-request-id']).toBe('rate-limit-test-001');
     expect(blocked.body).toEqual({
       success: false,
       code: 'RATE_LIMITED',
       message: 'Too many demo requests',
+      requestId: 'rate-limit-test-001',
     });
   });
 });
