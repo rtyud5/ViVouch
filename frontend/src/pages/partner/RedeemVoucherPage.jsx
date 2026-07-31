@@ -42,6 +42,8 @@ export function RedeemVoucherPage() {
       "WRONG_PARTNER",
       "VOUCHER_CODE_CANCELLED",
       "VOUCHER_CODE_LOCKED",
+      "VOUCHER_CODE_REFUND_PENDING",
+      "VOUCHER_CODE_REFUNDED",
       "BRANCH_REQUIRED",
       "INVALID_BRANCH_SCOPE",
     ];
@@ -50,6 +52,10 @@ export function RedeemVoucherPage() {
       errMessage = "Voucher này đã được sử dụng.";
     } else if (errCode === "VOUCHER_CODE_EXPIRED") {
       errMessage = "Voucher này đã hết hạn sử dụng.";
+    } else if (errCode === "VOUCHER_CODE_REFUND_PENDING") {
+      errMessage = "Voucher này đang trong quá trình xử lý hoàn tiền.";
+    } else if (errCode === "VOUCHER_CODE_REFUNDED") {
+      errMessage = "Voucher này đã được hoàn tiền thành công.";
     } else if (errCode === "WRONG_PARTNER" || errCode === "FORBIDDEN") {
       errMessage = "Voucher này không thuộc về đối tác hiện tại.";
     } else if (errCode === "VOUCHER_CODE_NOT_FOUND") {
