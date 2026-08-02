@@ -43,7 +43,8 @@ export async function expirePendingPayOsOrders(now = new Date()) {
   let cancelled = 0;
   for (const candidate of candidates) {
     const changed = await prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${candidate.id} FOR UPDATE`;
+      const lockedOrders = await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${candidate.id} FOR UPDATE SKIP LOCKED`;
+      if (!lockedOrders || lockedOrders.length === 0) return false;
       const paymentLocator = await tx.payment.findUnique({ where: { orderId: candidate.id }, select: { id: true } });
       if (paymentLocator) {
         await tx.$queryRaw`SELECT id FROM "Payment" WHERE id = ${paymentLocator.id} FOR UPDATE`;
