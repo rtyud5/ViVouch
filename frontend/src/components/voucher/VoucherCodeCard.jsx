@@ -40,10 +40,10 @@ const STATUS_CONFIG = {
     stripColor: 'bg-warning'
   },
   REFUNDED: {
-    colorClass: 'bg-error',
-    badgeClass: 'bg-error-container text-error border-error-container/30',
+    colorClass: 'bg-info',
+    badgeClass: 'bg-info/20 text-info border-info/30',
     text: 'Đã hoàn tiền',
-    stripColor: 'bg-error'
+    stripColor: 'bg-info'
   }
 };
 
