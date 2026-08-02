@@ -2,8 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getOrders } from '../../features/orders/api/orders.api';
 import { listMyRefunds, requestRefund } from '../../features/marketplace/api/marketplace.api';
-import { getRefundEligibility } from '../../utils/refundEligibility';
-
 const statusLabel = {
   REQUESTED: 'Chờ Admin xử lý',
   REJECTED: 'Đã từ chối',
@@ -37,7 +35,7 @@ export function RefundsPage() {
   useEffect(() => { load(); }, [load]);
 
   const refundableOrders = useMemo(
-    () => orders.filter((order) => getRefundEligibility(order).eligible),
+    () => orders.filter((order) => order.refundEligibility?.eligible),
     [orders],
   );
 

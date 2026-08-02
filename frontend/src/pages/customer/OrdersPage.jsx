@@ -5,7 +5,6 @@ import { formatCurrency } from "../../utils/formatCurrency";
 import { useOrders } from "../../features/orders/hooks";
 import { OrderItemCard } from "../../components/voucher/OrderItemCard";
 import { OrderStatusBadge, CustomerEmptyState, LoadingSpinner, ErrorRetryPanel } from "../../components/common";
-import { getRefundEligibility } from "../../utils/refundEligibility";
 
 export function OrdersPage() {
   const { orders, isLoading, error, refetch } = useOrders();
@@ -195,7 +194,7 @@ export function OrdersPage() {
                         </div>
                       )}
                     </div>
-                    {getRefundEligibility(order).eligible && (
+                    {order.refundEligibility?.eligible && (
                       <div className="flex justify-end">
                         <Link to={`/customer/refunds?orderId=${order.id}`} className="btn btn-outline btn-sm">Yêu cầu hoàn tiền</Link>
                       </div>
