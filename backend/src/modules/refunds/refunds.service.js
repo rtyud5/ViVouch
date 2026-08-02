@@ -143,6 +143,10 @@ export async function approveRefund(adminId, refundId, { adminNote }) {
       return updated;
     }
 
+    // Lock and cancel codes first
+    const codeIds = await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE "orderId" = ${refund.orderId} AND status = 'REFUND_PENDING' FOR UPDATE`;
+    await tx.voucherCode.updateMany({ where: { orderId: refund.orderId, status: 'REFUND_PENDING' }, data: { status: 'REFUNDED' } });
+
     await tx.$executeRaw`SELECT id FROM "Wallet" WHERE "userId" = ${refund.userId} FOR UPDATE`;
     const wallet = await tx.wallet.findUnique({ where: { userId: refund.userId } });
     if (!wallet) throw new AppError('Không tìm thấy Ví ViVouch', 404, 'WALLET_NOT_FOUND');
@@ -164,7 +168,7 @@ export async function approveRefund(adminId, refundId, { adminNote }) {
     await tx.payment.update({ where: { orderId: refund.orderId }, data: { status: 'REFUNDED' } });
     await restoreReservedInventory(tx, refund.orderId);
     await tx.order.update({ where: { id: refund.orderId }, data: { status: 'REFUNDED' } });
-    await tx.voucherCode.updateMany({ where: { orderId: refund.orderId, status: 'REFUND_PENDING' }, data: { status: 'REFUNDED' } });
+
     const updated = await tx.refundRequest.update({
       where: { id: refundId },
       data: { status: 'REFUNDED', adminNote, resolvedBy: adminId, resolvedAt: new Date() },
@@ -205,10 +209,13 @@ export async function completeManualRefund(adminId, refundId, { adminNote, provi
     if (refund.status !== 'MANUAL_REFUND_REQUIRED') {
       throw new AppError('Yêu cầu không ở trạng thái chờ hoàn thủ công', 409, 'MANUAL_REFUND_NOT_REQUIRED');
     }
+    // Lock and cancel codes first
+    await tx.$queryRaw`SELECT id FROM "VoucherCode" WHERE "orderId" = ${refund.orderId} AND status = 'REFUND_PENDING' FOR UPDATE`;
+    await tx.voucherCode.updateMany({ where: { orderId: refund.orderId, status: 'REFUND_PENDING' }, data: { status: 'REFUNDED' } });
+
     await tx.payment.update({ where: { orderId: refund.orderId }, data: { status: 'REFUNDED', providerReference: providerRefundReference } });
     await restoreReservedInventory(tx, refund.orderId);
     await tx.order.update({ where: { id: refund.orderId }, data: { status: 'REFUNDED' } });
-    await tx.voucherCode.updateMany({ where: { orderId: refund.orderId, status: 'REFUND_PENDING' }, data: { status: 'REFUNDED' } });
     const updated = await tx.refundRequest.update({
       where: { id: refundId },
       data: {
