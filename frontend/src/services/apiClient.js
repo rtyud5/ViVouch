@@ -91,6 +91,11 @@ apiClient.interceptors.response.use(
     } else if (error.response) {
       if (error.response.status === 429) {
         error.message = "Thao tác quá nhanh (Too Many Requests). Vui lòng thử lại sau.";
+      } else if (error.response.status >= 500) {
+        const reqId = error.response.data?.requestId;
+        error.message = reqId 
+          ? `Hệ thống gặp sự cố. Vui lòng cung cấp mã ${reqId} cho bộ phận hỗ trợ.`
+          : "Hệ thống gặp sự cố. Vui lòng thử lại sau.";
       } else if (error.response.status === 409) {
         const msg = error.response.data?.message;
         error.message = (typeof msg === 'string' && msg.trim() !== '')

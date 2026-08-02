@@ -32,6 +32,18 @@ const STATUS_CONFIG = {
     badgeClass: 'bg-error-container text-error border-error-container/30',
     text: 'Đã bị khóa',
     stripColor: 'bg-error'
+  },
+  REFUND_PENDING: {
+    colorClass: 'bg-warning',
+    badgeClass: 'bg-warning-container text-warning border-warning-container/30',
+    text: 'Đang chờ hoàn tiền',
+    stripColor: 'bg-warning'
+  },
+  REFUNDED: {
+    colorClass: 'bg-error',
+    badgeClass: 'bg-error-container text-error border-error-container/30',
+    text: 'Đã hoàn tiền',
+    stripColor: 'bg-error'
   }
 };
 
