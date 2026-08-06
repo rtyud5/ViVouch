@@ -10,17 +10,17 @@
 ## 1. Technical Audit & Status Mapping Summary
 
 ### 1.1. Admin Refund Operations & payOS Manual Refund Integrity
-- Updated [RefundsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/RefundsPage.jsx) to distinguish between automated wallet refunds (`Ví ViVouch (Hoàn tự động)`) and payOS manual refunds (`payOS VietQR (Hoàn thủ công)`).
+- Updated [RefundsPage.jsx](../../frontend/src/pages/admin/RefundsPage.jsx) to distinguish between automated wallet refunds (`Ví ViVouch (Hoàn tự động)`) and payOS manual refunds (`payOS VietQR (Hoàn thủ công)`).
 - Enforced manual refund workflow: approving a payOS refund transitions status to `MANUAL_REFUND_REQUIRED`. The UI requires Admin to perform banking payout manually, enter the required transaction reference code (`providerRefundReference`), and click *"Xác nhận đã chuyển khoản payOS"*.
 - Guaranteed **payOS manual refund does NOT pretend to be auto-refund** ("payOS manual refund không giả auto-refund").
 - Displayed `Mã GD hoàn` on completed manual refunds.
 
 ### 1.2. Support Ticket Operations
-- Updated [SupportTicketsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/SupportTicketsPage.jsx) to render support ticket status badges via [AdminStatusBadge.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/admin/components/AdminStatusBadge.jsx) (`OPEN`, `PROCESSING`, `RESOLVED`, `REJECTED`).
+- Updated [SupportTicketsPage.jsx](../../frontend/src/pages/admin/SupportTicketsPage.jsx) to render support ticket status badges via [AdminStatusBadge.jsx](../../frontend/src/features/admin/components/AdminStatusBadge.jsx) (`OPEN`, `PROCESSING`, `RESOLVED`, `REJECTED`).
 - Enhanced customer identity display (`fullName`, `email`), ticket description box, and Admin response timeline formatting.
 
 ### 1.3. Audit Log Mapping & Actor/Target Clarity
-- Expanded action constants and labels in [AuditLogsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/AuditLogsPage.jsx) to cover all system actions:
+- Expanded action constants and labels in [AuditLogsPage.jsx](../../frontend/src/pages/admin/AuditLogsPage.jsx) to cover all system actions:
   - `CUSTOMER_REQUEST_REFUND` (*Yêu cầu hoàn tiền*)
   - `ADMIN_APPROVE_REFUND` (*Duyệt hoàn tiền*)
   - `ADMIN_REJECT_REFUND` (*Từ chối hoàn tiền*)
@@ -35,7 +35,7 @@
 - **Changes Clarity:** Pretty-formatted JSON preview containing `oldValues`, `newValues`, and `ipAddress`.
 
 ### 1.4. Commission Report Reconciliation
-- Verified [PartnerReportsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/partner/PartnerReportsPage.jsx) and [CommissionSummaryCards.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/partner/components/CommissionSummaryCards.jsx):
+- Verified [PartnerReportsPage.jsx](../../frontend/src/pages/partner/PartnerReportsPage.jsx) and [CommissionSummaryCards.jsx](../../frontend/src/features/partner/components/CommissionSummaryCards.jsx):
   1. Gross revenue (*Tổng doanh thu*): Formatted in VND (`1.000.000 ₫`).
   2. Platform commission rate (*Tỷ lệ phí nền tảng*): Formatted in % (`15%`).
   3. Platform fee (*Phí nền tảng ước tính*): Formatted in VND (`150.000 ₫`).

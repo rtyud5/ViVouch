@@ -40,7 +40,7 @@ The earlier NO-GO reasons have been removed technically:
 - Auth/checkout/redeem rate limits return stable `429` errors and are tested.
 - Review eligibility, full catalog filters, Partner Branch management, Admin management, CMS, and audit context are implemented.
 - The placeholder CI workflow now runs PostgreSQL migrate/seed/test, frontend test/build, dependency audits, and evidence validation.
-- Documentation TODO stubs and the missing presentation have been replaced with code-aligned deliverables.
+- Documentation 0000000000000000000000000000000000000000 stubs and the missing presentation have been replaced with code-aligned deliverables.
 - Zero-byte evidence was replaced by real browser captures across Customer, Partner, and Admin.
 - A QA review caught and removed client-visible stack traces from 4xx responses; a regression assertion prevents recurrence.
 

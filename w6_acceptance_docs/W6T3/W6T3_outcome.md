@@ -33,10 +33,10 @@ Task W6-T3 has successfully integrated and verified **Branch redeem & payment op
 
 | Action | File Path | Description |
 |---|---|---|
-| `[MODIFY]` | [RedeemVoucherPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/partner/RedeemVoucherPage.jsx) | Added refund status error handling (`VOUCHER_CODE_REFUND_PENDING`, `VOUCHER_CODE_REFUNDED`) |
-| `[MODIFY]` | [AdminStatusBadge.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/admin/components/AdminStatusBadge.jsx) | Added `REFUND_PENDING` and `REFUNDED` badge design mappings |
-| `[NEW]` | [w6_t3_branch_redeem_payment_evidence.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T3/w6_t3_branch_redeem_payment_evidence.md) | Technical evidence document covering cross-role cases & DB assertions |
-| `[NEW]` | [W6T3_outcome.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T3/W6T3_outcome.md) | Master outcome report for W6-T3 |
+| `[MODIFY]` | [RedeemVoucherPage.jsx](../../frontend/src/pages/partner/RedeemVoucherPage.jsx) | Added refund status error handling (`VOUCHER_CODE_REFUND_PENDING`, `VOUCHER_CODE_REFUNDED`) |
+| `[MODIFY]` | [AdminStatusBadge.jsx](../../frontend/src/features/admin/components/AdminStatusBadge.jsx) | Added `REFUND_PENDING` and `REFUNDED` badge design mappings |
+| `[NEW]` | [w6_t3_branch_redeem_payment_evidence.md](../../w6_acceptance_docs/W6T3/w6_t3_branch_redeem_payment_evidence.md) | Technical evidence document covering cross-role cases & DB assertions |
+| `[NEW]` | [W6T3_outcome.md](../../w6_acceptance_docs/W6T3/W6T3_outcome.md) | Master outcome report for W6-T3 |
 
 ---
 

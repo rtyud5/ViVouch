@@ -36,7 +36,13 @@ describe("orders.api", () => {
   it("reads orders from customer orders endpoint", async () => {
     apiClient.get.mockResolvedValue({ data: { data: [{ id: "o1" }] } });
 
-    await expect(getOrders()).resolves.toEqual([{ id: "o1" }]);
+    await expect(getOrders()).resolves.toEqual([{ 
+      id: "o1",
+      refundEligibility: {
+        eligible: false,
+        reason: "UNPAID",
+      }
+    }]);
     expect(apiClient.get).toHaveBeenCalledWith("/customer/orders");
   });
 

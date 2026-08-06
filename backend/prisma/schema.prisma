@@ -449,6 +449,7 @@ model WalletTransaction {
 
   @@index([walletId, createdAt])
   @@index([orderId])
+  @@unique([orderId, type])
 }
 
 model VoucherCode {
@@ -470,6 +471,8 @@ model VoucherCode {
   @@index([code])
   @@index([ownerId])
   @@index([status])
+  @@index([orderId])
+  @@index([voucherId])
 }
 
 model VoucherUsageLog {
@@ -481,6 +484,10 @@ model VoucherUsageLog {
 
   voucherCode VoucherCode @relation(fields: [voucherCodeId], references: [id])
   branch      Branch      @relation(fields: [branchId], references: [id])
+
+  @@index([voucherCodeId])
+  @@index([branchId])
+  @@index([redeemedBy])
 }
 
 model RefundRequest {
@@ -522,6 +529,7 @@ model SupportTicket {
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
+  @@index([orderId])
 }
 
 model Notification {
@@ -572,6 +580,7 @@ model Review {
   voucher Voucher @relation(fields: [voucherId], references: [id])
 
   @@unique([userId, voucherId])
+  @@index([voucherId])
 }
 
 model AuditLog {

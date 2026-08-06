@@ -1,0 +1,27 @@
+{
+  "counts": {
+    "users": 9,
+    "partners": 4,
+    "branches": 5,
+    "vouchers": 8,
+    "voucherCodes": 18,
+    "orders": 17,
+    "payments": 17,
+    "wallets": 3,
+    "walletTransactions": 0,
+    "refundRequests": 0,
+    "supportTickets": 0,
+    "notifications": 0,
+    "auditLogs": 0
+  },
+  "invariants": {
+    "totalOrphans": 0,
+    "staffWithoutBranch": 0,
+    "details": {
+      "orderItemsWithoutOrder": 0,
+      "paymentsWithoutOrder": 0,
+      "voucherCodesWithoutOrder": 0
+    }
+  },
+  "timestamp": "2026-08-06T13:44:35.355Z"
+}

@@ -1,4 +1,5 @@
 import { apiClient } from '../../../services/apiClient';
+import { getRefundEligibility } from '../../../utils/refundEligibility';
 const BASE = '/customer/orders';
 
 export async function checkout(items, paymentMethod, recipientName, recipientPhone, note, idempotencyKey) {
@@ -6,6 +7,9 @@ export async function checkout(items, paymentMethod, recipientName, recipientPho
   const { data } = await apiClient.post(`${BASE}/cart/checkout`, payload, { headers: { 'Idempotency-Key': idempotencyKey } });
   return data.data;
 }
-export async function getOrders() { return (await apiClient.get(BASE)).data.data; }
+export async function getOrders() { 
+  const orders = (await apiClient.get(BASE)).data.data; 
+  return orders.map(order => ({ ...order, refundEligibility: getRefundEligibility(order) }));
+}
 export async function getVoucherCodes() { return (await apiClient.get(`${BASE}/voucher-codes`)).data.data; }
 export async function getPaymentStatus(orderId) { return (await apiClient.get(`/payments/${orderId}/status`)).data.data; }
