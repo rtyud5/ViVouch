@@ -24,12 +24,12 @@ EXIT_CODE=0 (All targeted backend/frontend unit tests & production build passed)
 
 Task W6-T4 has successfully integrated and verified **Admin operations, audit logging, and partner report validation**:
 1. **Admin Refund & Ticket Fixes:**
-   - Standardized payOS manual refund workflow in [RefundsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/RefundsPage.jsx). payOS refunds transition to `MANUAL_REFUND_REQUIRED` and require manual reference input (`providerRefundReference`) upon banking transfer confirmation. Ensured **payOS manual refund does not pretend to be auto-refund**.
-   - Integrated [AdminStatusBadge.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/admin/components/AdminStatusBadge.jsx) into [SupportTicketsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/SupportTicketsPage.jsx) and enhanced ticket history and response visualization.
+   - Standardized payOS manual refund workflow in [RefundsPage.jsx](../../frontend/src/pages/admin/RefundsPage.jsx). payOS refunds transition to `MANUAL_REFUND_REQUIRED` and require manual reference input (`providerRefundReference`) upon banking transfer confirmation. Ensured **payOS manual refund does not pretend to be auto-refund**.
+   - Integrated [AdminStatusBadge.jsx](../../frontend/src/features/admin/components/AdminStatusBadge.jsx) into [SupportTicketsPage.jsx](../../frontend/src/pages/admin/SupportTicketsPage.jsx) and enhanced ticket history and response visualization.
 2. **Audit & Status Mapping:**
-   - Extended [AuditLogsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/AuditLogsPage.jsx) with complete Vietnamese action translations (`ACTION_LABELS`), explicit actor identification (`actor.email` + `role` or `Hệ thống (SYSTEM)`), unambiguous target details (`targetType` + `targetId`), and structured old/new values.
+   - Extended [AuditLogsPage.jsx](../../frontend/src/pages/admin/AuditLogsPage.jsx) with complete Vietnamese action translations (`ACTION_LABELS`), explicit actor identification (`actor.email` + `role` or `Hệ thống (SYSTEM)`), unambiguous target details (`targetType` + `targetId`), and structured old/new values.
 3. **Commission Report Validation:**
-   - Verified [CommissionSummaryCards.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/partner/components/CommissionSummaryCards.jsx) and [PartnerReportsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/partner/PartnerReportsPage.jsx) display correct units (`₫`, `%`), clear metric labels (Gross Revenue, Commission Rate, Platform Fee, Estimated Partner Revenue), and explicit disclaimer (*"Số liệu mô phỏng, chưa phải khoản payout thực tế"*), avoiding confusion between gross revenue and actual partner payout.
+   - Verified [CommissionSummaryCards.jsx](../../frontend/src/features/partner/components/CommissionSummaryCards.jsx) and [PartnerReportsPage.jsx](../../frontend/src/pages/partner/PartnerReportsPage.jsx) display correct units (`₫`, `%`), clear metric labels (Gross Revenue, Commission Rate, Platform Fee, Estimated Partner Revenue), and explicit disclaimer (*"Số liệu mô phỏng, chưa phải khoản payout thực tế"*), avoiding confusion between gross revenue and actual partner payout.
 
 ---
 
@@ -37,14 +37,14 @@ Task W6-T4 has successfully integrated and verified **Admin operations, audit lo
 
 | Action | File Path | Description |
 |---|---|---|
-| `[MODIFY]` | [AdminStatusBadge.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/admin/components/AdminStatusBadge.jsx) | Added refund request (`REQUESTED`, `MANUAL_REFUND_REQUIRED`), support ticket (`OPEN`, `PROCESSING`, `RESOLVED`), and verification status mappings |
-| `[MODIFY]` | [RefundsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/RefundsPage.jsx) | Enforced payOS manual refund flow with explicit banking reference input and AdminStatusBadge |
-| `[MODIFY]` | [SupportTicketsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/SupportTicketsPage.jsx) | Integrated AdminStatusBadge and clean ticket response timeline |
-| `[MODIFY]` | [AuditLogsPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/admin/AuditLogsPage.jsx) | Expanded action labels, explicit actor/target, and formatted JSON change details |
-| `[NEW]` | [AdminStatusBadgeAndAudit.test.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/admin/components/AdminStatusBadgeAndAudit.test.jsx) | Frontend unit test for status badges and audit mappings |
-| `[MODIFY]` | [admin-orders-audit.test.js](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/backend/tests/admin-orders-audit.test.js) | Fixed test user status and ID extraction for backend audit integration test |
-| `[NEW]` | [w6_t4_admin_ops_audit_evidence.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T4/w6_t4_admin_ops_audit_evidence.md) | Technical evidence document covering refund, audit, and report reconciliation |
-| `[NEW]` | [W6T4_outcome.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T4/W6T4_outcome.md) | Master outcome report for W6-T4 |
+| `[MODIFY]` | [AdminStatusBadge.jsx](../../frontend/src/features/admin/components/AdminStatusBadge.jsx) | Added refund request (`REQUESTED`, `MANUAL_REFUND_REQUIRED`), support ticket (`OPEN`, `PROCESSING`, `RESOLVED`), and verification status mappings |
+| `[MODIFY]` | [RefundsPage.jsx](../../frontend/src/pages/admin/RefundsPage.jsx) | Enforced payOS manual refund flow with explicit banking reference input and AdminStatusBadge |
+| `[MODIFY]` | [SupportTicketsPage.jsx](../../frontend/src/pages/admin/SupportTicketsPage.jsx) | Integrated AdminStatusBadge and clean ticket response timeline |
+| `[MODIFY]` | [AuditLogsPage.jsx](../../frontend/src/pages/admin/AuditLogsPage.jsx) | Expanded action labels, explicit actor/target, and formatted JSON change details |
+| `[NEW]` | [AdminStatusBadgeAndAudit.test.jsx](../../frontend/src/features/admin/components/AdminStatusBadgeAndAudit.test.jsx) | Frontend unit test for status badges and audit mappings |
+| `[MODIFY]` | [admin-orders-audit.test.js](../../backend/tests/admin-orders-audit.test.js) | Fixed test user status and ID extraction for backend audit integration test |
+| `[NEW]` | [w6_t4_admin_ops_audit_evidence.md](../../w6_acceptance_docs/W6T4/w6_t4_admin_ops_audit_evidence.md) | Technical evidence document covering refund, audit, and report reconciliation |
+| `[NEW]` | [W6T4_outcome.md](../../w6_acceptance_docs/W6T4/W6T4_outcome.md) | Master outcome report for W6-T4 |
 
 ---
 

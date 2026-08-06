@@ -39,9 +39,9 @@ Kết quả:
 
 | Deliverable | File |
 |---|---|
-| Ops Regression Matrix | [W6T5_ops_regression_matrix.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T5/W6T5_ops_regression_matrix.md) |
-| Role / Branch / Audit Evidence | [W6T5_role_branch_audit_evidence.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T5/W6T5_role_branch_audit_evidence.md) |
-| W7 Ops E2E Backlog | [W7_ops_e2e_backlog.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T5/W7_ops_e2e_backlog.md) |
+| Ops Regression Matrix | [W6T5_ops_regression_matrix.md](../../w6_acceptance_docs/W6T5/W6T5_ops_regression_matrix.md) |
+| Role / Branch / Audit Evidence | [W6T5_role_branch_audit_evidence.md](../../w6_acceptance_docs/W6T5/W6T5_role_branch_audit_evidence.md) |
+| W7 Ops E2E Backlog | [W7_ops_e2e_backlog.md](../../w6_acceptance_docs/W6T5/W7_ops_e2e_backlog.md) |
 
 ---
 
@@ -91,4 +91,4 @@ Kết quả:
 
 - W6 candidate SHA `48cbb1145f47573a9028e85fae1ef18a6f2249ef` **đã được ký xác nhận** bởi W6-T5 QA gate.
 - W7 bootstrap từ branch này: `git checkout -b w7-baseline` tại HEAD trên.
-- W7 Ops E2E Backlog: xem [W7_ops_e2e_backlog.md](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/w6_acceptance_docs/W6T5/W7_ops_e2e_backlog.md) — 7 categories, 35 test scenarios.
+- W7 Ops E2E Backlog: xem [W7_ops_e2e_backlog.md](../../w6_acceptance_docs/W6T5/W7_ops_e2e_backlog.md) — 7 categories, 35 test scenarios.

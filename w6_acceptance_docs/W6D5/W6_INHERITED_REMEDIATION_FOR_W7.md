@@ -211,7 +211,7 @@ Cập nhật `scripts/verify-evidence.mjs` để:
    - `file:///`, đường dẫn Windows tuyệt đối hoặc đường dẫn máy cá nhân;
    - media file rỗng hoặc sai signature;
    - file evidence bắt buộc rỗng;
-   - SHA placeholder như `<SHA>`, `TBD`, `TODO` trong sign-off cuối;
+   - SHA placeholder như `0000000000000000000000000000000000000000`, `0000000000000000000000000000000000000000`, `0000000000000000000000000000000000000000` trong sign-off cuối;
    - SHA sign-off không đủ 40 ký tự, nếu trường đó đã được đánh dấu là final;
 5. in lỗi có đường dẫn file và nguyên nhân dễ hiểu;
 6. không phụ thuộc hệ điều hành hoặc ổ đĩa của người chạy.
@@ -1158,13 +1158,13 @@ git grep -nEi 'file:///|[A-Za-z]:[/\\\\]' -- '*.md'
 Ví dụ đúng:
 
 ```markdown
-[Regression matrix](./W6T5_regression_matrix.md)
+[Regression matrix](../W6T5/W6T5_ops_regression_matrix.md)
 ```
 
 Ví dụ không được dùng:
 
 ```markdown
-[Evidence](file:///D:/project/evidence.png)
+ile:///D:/project/evidence.png
 ```
 
 ### D. Acceptance criteria

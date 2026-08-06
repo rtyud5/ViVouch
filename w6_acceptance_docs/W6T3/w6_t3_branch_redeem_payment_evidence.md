@@ -9,16 +9,16 @@
 ## 1. Technical Audit Summary
 
 ### 1.1. Redeem UX & Error Mapping
-- Expanded [RedeemVoucherPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/partner/RedeemVoucherPage.jsx) error handling card to catch `VOUCHER_CODE_REFUND_PENDING` and `VOUCHER_CODE_REFUNDED` API response codes with appropriate Vietnamese user-facing warnings:
+- Expanded [RedeemVoucherPage.jsx](../../frontend/src/pages/partner/RedeemVoucherPage.jsx) error handling card to catch `VOUCHER_CODE_REFUND_PENDING` and `VOUCHER_CODE_REFUNDED` API response codes with appropriate Vietnamese user-facing warnings:
   - `VOUCHER_CODE_REFUND_PENDING`: *"Voucher này đang trong quá trình xử lý hoàn tiền."*
   - `VOUCHER_CODE_REFUNDED`: *"Voucher này đã được hoàn tiền thành công."*
 
 ### 1.2. Payment & Status Badges
-- Updated [AdminStatusBadge.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/features/admin/components/AdminStatusBadge.jsx) to support `REFUND_PENDING` and `REFUNDED` status visualization across Admin Order/Voucher management pages.
-- Verified [OrdersPage.jsx](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/frontend/src/pages/customer/OrdersPage.jsx) and Admin Orders details avoid exposing raw payment provider webhook responses or sensitive gateway parameters.
+- Updated [AdminStatusBadge.jsx](../../frontend/src/features/admin/components/AdminStatusBadge.jsx) to support `REFUND_PENDING` and `REFUNDED` status visualization across Admin Order/Voucher management pages.
+- Verified [OrdersPage.jsx](../../frontend/src/pages/customer/OrdersPage.jsx) and Admin Orders details avoid exposing raw payment provider webhook responses or sensitive gateway parameters.
 
 ### 1.3. Concurrency & Row Locking Safety
-- Verified backend service in [redeem.service.js](file:///d:/01_InformationSystem/07_E_Commerce/03_Project/ViVouch/backend/src/modules/redeem/redeem.service.js) uses `$queryRaw` with `SELECT ... FOR UPDATE` within a PostgreSQL transaction.
+- Verified backend service in [redeem.service.js](../../backend/src/modules/redeem/redeem.service.js) uses `$queryRaw` with `SELECT ... FOR UPDATE` within a PostgreSQL transaction.
 - Wrong branch scope check (`INVALID_BRANCH_SCOPE`) returns 403 HTTP status before executing any update query, guaranteeing the voucher code status remains `ISSUED`.
 
 ---
