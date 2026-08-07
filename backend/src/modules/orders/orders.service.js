@@ -5,6 +5,7 @@ import { log as auditLog } from '../auditLogs/auditLog.service.js';
 import { notify } from '../notifications/notifications.service.js';
 import { createPayOsPaymentLink } from '../payments/payos.service.js';
 import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
+import { getRefundEligibility } from './refundEligibility.js';
 import {
   aggregateAndSortItems,
   createCheckoutFingerprint,
@@ -343,7 +344,11 @@ export async function getUserOrders(userId) {
     },
     orderBy: { createdAt: 'desc' },
   });
-  return orders.map((order) => ({ ...order, totalAmount: Number(order.totalAmount) }));
+  return orders.map((order) => ({
+    ...order,
+    totalAmount: Number(order.totalAmount),
+    refundEligibility: getRefundEligibility(order),
+  }));
 }
 
 export function getUserVoucherCodes(userId) {

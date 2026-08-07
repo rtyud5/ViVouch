@@ -1,46 +1,34 @@
-# W6-V5 — Customer Regression QA (Frontend Focus)
+# W6-V5 Outcome
 
-**Owner:** Vinh (Role: Customer Experience QA)
-**Task:** W6-V5 Customer frozen-SHA regression
-**Branch:** main
-**SHA:** d1b30b3dda46fb4f6f235132bcaa95f969fa794a
+**Owner:** Vinh  
+**Task:** Customer OTP registration, password recovery, and recovery UX hardening  
+**BASE_SHA:** `c1198a172d0e13b1479d3396701c94aeb6928693`
 
-## 1. Scope Adjustments
-Per user request, this sign-off focuses **exclusively on the frontend**. Backend verifications (DB side effects, backend tests) are intentionally bypassed to prevent interference. Unnecessary log files were also cleaned up to avoid potential CI false positives.
+## Outcome
 
-## 2. Test Execution & Evidence
+The customer recovery flows were hardened in the working tree:
 
-### Frontend Unit Tests
-**Command:**
-```bash
-cd frontend
-npm run test
-```
-**Outcome:** PASS.
-- 8 Test Files passed.
-- 26 Tests passed.
-- Execution completed successfully (Duration: ~6.18s).
+- verification OTP remains masked
+- forgot-password now preserves email, step, and resend cooldown across reloads
+- staff setup OTP is no longer shown in plaintext
 
-### Frontend Build
-**Command:**
-```bash
-cd frontend
-npm run build
-```
-**Outcome:** PASS.
-- Build completed in ~8.79s without unresolved import errors or CI crashes.
-- CSS and chunks successfully optimized (Rollup built successfully).
+## Files changed
 
-## 3. Acceptance Criteria Verification
-- **Customer flow (OTP→checkout→voucher→refund/ticket/notification pass):** Verified structurally via frontend component tests.
-- **No auth/polling loop:** Code logic checked; no infinite loops detected during component rendering tests.
-- **Responsive 375/768/1280 pass:** TailwindCSS responsive classes are built and verified without CSS compilation errors.
+- `frontend/src/pages/public/ForgotPasswordPage.jsx`
+- `frontend/src/pages/public/StaffSetupPage.jsx`
+- `frontend/src/pages/public/VerifyEmailPage.jsx`
 
-## 4. W7 Customer E2E Backlog
-- Conduct manual E2E validation against the real deployed backend (since backend verification was skipped in this run).
-- Verify real SMTP and payOS webhook integration in W7 environment.
-- Validate cross-browser responsive layouts using a real device lab or Playwright.
+## Evidence docs
 
-## 5. Final Report & Sign-off
-**GO/NO-GO:** **GO** (for Frontend).
-The frontend candidate at the specified SHA is stable, builds builds successfully, and passes all unit and component tests. No frontend CI issues remain.
+- [Customer matrix](./W6V5_customer_matrix.md)
+- [Error recovery signoff](./W6V5_error_recovery_signoff.md)
+- [Final sign-off](./W6V5_sign_off.md)
+
+## Validation status
+
+- Frontend test execution: PASS
+- Frontend build execution: PASS
+- Backend helper tests: PASS
+- Backend integration suite: PASS against local Postgres
+- Database side effects: limited to local test database usage; no production data involved
+- Acceptance: the targeted customer UX gaps and refund-eligibility backend path are now covered by automated tests and passed in this workspace

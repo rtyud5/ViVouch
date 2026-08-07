@@ -1,27 +1,41 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { resendVerification, verifyEmail } from '../../features/auth/api/auth.api';
+import { getInitialCooldownSeconds, readStoredFlow, writeStoredFlow } from './recoveryFlowStorage';
+
+const STORAGE_KEY = 'vivouch.verify-email-flow';
+const RESEND_COOLDOWN_SECONDS = 60;
 
 export function VerifyEmailPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const [email, setEmail] = useState(params.get('email') || '');
+  const storedFlow = readStoredFlow();
+  const [email, setEmail] = useState(params.get('email') || storedFlow.email || '');
   const [otp, setOtp] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
+  const [cooldown, setCooldown] = useState(() => getInitialCooldownSeconds(Number(storedFlow.cooldownUntil || 0)));
 
   useEffect(() => {
     if (cooldown > 0) {
-      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      const timer = setTimeout(() => setCooldown((value) => Math.max(0, value - 1)), 1000);
       return () => clearTimeout(timer);
     }
   }, [cooldown]);
+
+  useEffect(() => {
+    writeStoredFlow(STORAGE_KEY, {
+      email,
+      cooldownUntil: cooldown > 0 ? Date.now() + cooldown * 1000 : 0,
+    });
+  }, [email, cooldown]);
+
   async function submit(event) {
     event.preventDefault(); setLoading(true); setError('');
     try {
       await verifyEmail(email, otp);
+      writeStoredFlow(STORAGE_KEY, { email: '', cooldownUntil: 0 });
       navigate('/login', { replace: true, state: { message: 'Xác minh email thành công. Hãy đăng nhập.' } });
     } catch (requestError) { setError(requestError?.response?.data?.message || 'OTP không hợp lệ.'); }
     finally { setLoading(false); }
@@ -31,11 +45,11 @@ export function VerifyEmailPage() {
     try { 
       const response = await resendVerification(email); 
       setMessage(response.message); 
-      setCooldown(60); 
+      setCooldown(RESEND_COOLDOWN_SECONDS); 
     }
     catch (requestError) { 
       setError(requestError?.response?.data?.message || 'Không thể gửi lại OTP.'); 
-      if (requestError?.response?.status === 429) setCooldown(60);
+      if (requestError?.response?.status === 429) setCooldown(RESEND_COOLDOWN_SECONDS);
     }
     finally { setLoading(false); }
   }
