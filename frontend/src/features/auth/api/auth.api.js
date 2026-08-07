@@ -4,7 +4,7 @@ export async function login(email, password) {
   return (await apiClient.post('/auth/login', { email, password })).data.data;
 }
 export async function register(data) {
-  return (await apiClient.post('/auth/register', data)).data.data;
+  return (await apiClient.post('/auth/register', data)).data;
 }
 export async function registerPartner(data) {
   return (await apiClient.post('/auth/partner-register', data)).data.data;

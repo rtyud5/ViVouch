@@ -1,47 +1,231 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { register } from '../../features/auth/api/auth.api';
+
+function FieldError({ message }) {
+  if (!message) return null;
+  return <p className="mt-2 text-sm text-error">{message}</p>;
+}
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   async function submit(event) {
     event.preventDefault();
     setError('');
+    setFieldErrors({});
+
     const form = new FormData(event.currentTarget);
-    const password = String(form.get('password'));
-    if (password !== form.get('confirmPassword')) return setError('Mật khẩu xác nhận không khớp.');
+    const password = String(form.get('password') || '');
+    const confirmPassword = String(form.get('confirmPassword') || '');
+
+    if (password !== confirmPassword) {
+      setFieldErrors({ confirmPassword: 'Mật khẩu xác nhận không khớp.' });
+      return;
+    }
+
     setLoading(true);
     try {
-      const data = await register({
-        fullName: form.get('fullName'), email: form.get('email'), phone: form.get('phone') || null, password,
+      const response = await register({
+        fullName: String(form.get('fullName') || '').trim(),
+        email: String(form.get('email') || '').trim(),
+        phone: String(form.get('phone') || '').trim() || null,
+        password,
       });
-      if (data.verificationRequired) navigate(`/verify-email?email=${encodeURIComponent(data.user.email)}`);
-      else navigate('/login', { state: { message: 'Đăng ký thành công. Hãy đăng nhập.' } });
+
+      const email = response.data?.user?.email || String(form.get('email') || '').trim();
+      const deliveryMessage = response.message;
+
+      if (response.data?.verificationRequired) {
+        navigate(`/verify-email?email=${encodeURIComponent(email)}`, {
+          state: { message: deliveryMessage },
+        });
+        return;
+      }
+
+      navigate('/login', { state: { message: deliveryMessage || 'Đăng ký thành công. Hãy đăng nhập.' } });
     } catch (requestError) {
       setError(requestError?.response?.data?.message || 'Không thể đăng ký tài khoản.');
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   }
 
-  return <main className="min-h-screen bg-base-200 grid place-items-center p-4">
-    <div className="card bg-base-100 shadow-xl w-full max-w-lg"><div className="card-body">
-      <h1 className="card-title text-2xl">Đăng ký khách hàng</h1>
-      <p className="text-sm text-base-content/60">Tài khoản sẽ được xác minh bằng OTP gửi qua email.</p>
-      {error && <div className="alert alert-error text-sm">{error}</div>}
-      <form onSubmit={submit} className="grid gap-4">
-        <label className="form-control"><span className="label-text mb-1">Họ tên</span><input name="fullName" className="input input-bordered" minLength="2" required /></label>
-        <label className="form-control"><span className="label-text mb-1">Email</span><input name="email" type="email" className="input input-bordered" required /></label>
-        <label className="form-control"><span className="label-text mb-1">Số điện thoại</span><input name="phone" className="input input-bordered" /></label>
-        <label className="form-control"><span className="label-text mb-1">Mật khẩu</span><input name="password" type="password" className="input input-bordered" minLength="8" required /></label>
-        <p className="text-xs text-base-content/60">Tối thiểu 8 ký tự, có chữ hoa, chữ thường và số.</p>
-        <label className="form-control"><span className="label-text mb-1">Xác nhận mật khẩu</span><input name="confirmPassword" type="password" className="input input-bordered" minLength="8" required /></label>
-        <button className="btn btn-primary" disabled={loading}>{loading ? <span className="loading loading-spinner" /> : 'Đăng ký'}</button>
-      </form>
-      <div className="divider">hoặc</div>
-      <Link to="/partner/apply" className="btn btn-outline">Đăng ký trở thành đối tác</Link>
-      <Link to="/login" className="btn btn-ghost btn-sm">Đã có tài khoản? Đăng nhập</Link>
-    </div></div>
-  </main>;
+  return (
+    <div className="min-h-screen bg-surface-container-low flex items-center justify-center p-4 antialiased relative overflow-hidden">
+      <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary-container opacity-20 blur-3xl pointer-events-none" />
+      <div className="absolute top-[60%] -right-[10%] w-[30%] h-[30%] rounded-full bg-secondary-container opacity-10 blur-3xl pointer-events-none" />
+
+      <main className="w-full max-w-[440px] flex flex-col items-center relative z-10 py-8">
+        <header className="text-center mb-8 w-full">
+          <h1 className="font-display-lg text-display-lg text-primary mb-2 tracking-tight">
+            ViVouch
+          </h1>
+          <p className="font-body-lg text-body-lg text-on-surface-variant">
+            Tạo tài khoản để nhận ưu đãi mỗi ngày
+          </p>
+        </header>
+
+        <div className="bg-surface-container-lowest w-full rounded-xl shadow-lg border border-surface-variant/50 p-8 md:p-10">
+          {location.state?.message && (
+            <div className="mb-6 p-4 bg-success/10 border border-success/20 rounded-lg flex items-center gap-3 text-success">
+              <span className="material-symbols-outlined text-[20px]">info</span>
+              <p className="font-body-md text-body-md">{location.state.message}</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="mb-6 p-4 bg-error/10 border border-error/20 rounded-lg flex items-center gap-3 text-error">
+              <span className="material-symbols-outlined text-[20px]">error</span>
+              <p className="font-body-md text-body-md">{error}</p>
+            </div>
+          )}
+
+          <form className="space-y-5" onSubmit={submit}>
+            <div>
+              <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="fullName">
+                Họ và tên
+              </label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                minLength={2}
+                required
+                placeholder="Nhập họ và tên của bạn"
+                className="w-full px-4 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+              />
+              <FieldError message={fieldErrors.fullName} />
+            </div>
+
+            <div>
+              <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="email@example.com"
+                className="w-full px-4 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+              />
+              <FieldError message={fieldErrors.email} />
+            </div>
+
+            <div>
+              <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="phone">
+                Số điện thoại
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                placeholder="Nhập số điện thoại"
+                className="w-full px-4 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+              />
+              <FieldError message={fieldErrors.phone} />
+            </div>
+
+            <div>
+              <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="password">
+                Mật khẩu
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  minLength={8}
+                  required
+                  placeholder="Tạo mật khẩu"
+                  className="w-full px-4 py-3 pr-12 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+                />
+                <button
+                  aria-label="Toggle password visibility"
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-outline hover:text-primary transition-colors"
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-base-content/60">
+                Tối thiểu 8 ký tự, có chữ hoa, chữ thường và số.
+              </p>
+              <FieldError message={fieldErrors.password} />
+            </div>
+
+            <div>
+              <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="confirmPassword">
+                Xác nhận mật khẩu
+              </label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  minLength={8}
+                  required
+                  placeholder="Nhập lại mật khẩu"
+                  className="w-full px-4 py-3 pr-12 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
+                />
+                <button
+                  aria-label="Toggle confirm password visibility"
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-outline hover:text-primary transition-colors"
+                  type="button"
+                  onClick={() => setShowConfirmPassword((value) => !value)}
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
+              </div>
+              <FieldError message={fieldErrors.confirmPassword} />
+            </div>
+
+            <button
+              className="w-full bg-primary hover:bg-surface-tint disabled:bg-outline-variant disabled:cursor-not-allowed text-on-primary font-label-md text-label-md py-3.5 rounded-lg transition-colors duration-200 shadow-sm flex justify-center items-center gap-2"
+              disabled={loading}
+              type="submit"
+            >
+              {loading ? <span className="loading loading-spinner loading-sm" /> : 'Đăng ký'}
+            </button>
+          </form>
+
+          <div className="flex items-center my-6">
+            <div className="grow border-t border-surface-variant" />
+            <span className="px-4 font-label-md text-label-md text-outline">hoặc</span>
+            <div className="grow border-t border-surface-variant" />
+          </div>
+
+          <div className="space-y-3">
+            <Link
+              to="/partner/apply"
+              className="btn btn-outline btn-block"
+            >
+              Đăng ký trở thành đối tác
+            </Link>
+            <p className="text-center font-body-md text-body-md text-on-surface-variant">
+              Đã có tài khoản?{' '}
+              <Link
+                to="/login"
+                className="font-label-md text-label-md text-primary hover:text-surface-tint transition-colors ml-1"
+              >
+                Đăng nhập
+              </Link>
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
