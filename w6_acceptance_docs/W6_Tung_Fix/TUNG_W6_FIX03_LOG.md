@@ -1,6 +1,6 @@
 # TASK=TUNG-W6-FIX-03
 
-PR_URL=https://github.com/rtyud5/ViVouch/pull/TODO_UPDATE  
+PR_URL=https://github.com/rtyud5/ViVouch/pull/165
 TESTED_SHA=bf2681de58925f772d55afcbf1f54817bdaa0abc
 TEST_FILE=backend/tests/refund-concurrency-dedicated.test.js  
 POSTGRES_VERSION=16  
