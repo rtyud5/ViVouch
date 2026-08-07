@@ -1,6 +1,6 @@
 # TASK=TUNG-W6-FIX-04 — Master Retained Evidence Log
 
-**TESTED_SHA:** `3f60c1d61bf503aef75d65b73361fca432573eb6`  
+**TESTED_SHA:** `1797f5c907a012cf109c95d97fefdfca5a7bb2e7`  
 **BRANCH:** `tung/w6-fix-04-retained-evidence`  
 **DATE:** `2026-08-07`  
 
@@ -10,7 +10,7 @@
 
 ```text
 TASK=TUNG-W6-FIX-04
-TESTED_SHA=3f60c1d61bf503aef75d65b73361fca432573eb6
+TESTED_SHA=1797f5c907a012cf109c95d97fefdfca5a7bb2e7
 OPS_01=w6_acceptance_docs/W6_Tung_Fix/OPS_01_PARTNER_APPLY_ADMIN_APPROVAL.md
 OPS_02=w6_acceptance_docs/W6_Tung_Fix/OPS_02_STAFF_BRANCH_SCOPE.md
 OPS_03=w6_acceptance_docs/W6_Tung_Fix/OPS_03_REDEEM_INTEGRITY.md
