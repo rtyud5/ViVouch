@@ -129,19 +129,23 @@ describe('Redeem Service Tests', () => {
     });
 
     // Create codes directly
+    const runId = Date.now().toString(36);
     const createCode = async (code, vId, status, extra = {}) => {
        return await prisma.voucherCode.create({
-         data: { code, orderId: order.id, voucherId: vId, ownerId: customerId, status, ...extra }
+         data: { code: `${code}-${runId}`, orderId: order.id, voucherId: vId, ownerId: customerId, status, ...extra }
        });
     };
 
     issuedCode = await createCode('TEST-ISSUED', voucherId, VOUCHER_CODE_STATUS.ISSUED);
+    const issuedCodeForWrongPartner = await createCode('TEST-ISSUED-WP', voucherId, VOUCHER_CODE_STATUS.ISSUED);
     checkOnlyCode = await createCode('TEST-CHECK-ONLY', voucherId, VOUCHER_CODE_STATUS.ISSUED);
     usedCode = await createCode('TEST-USED', voucherId, VOUCHER_CODE_STATUS.USED, { usedAt: new Date() });
     expiredCode = await createCode('TEST-EXPIRED', voucherId, VOUCHER_CODE_STATUS.EXPIRED, { expiresAt: new Date(Date.now() - 100000) });
     wrongPartnerCode = await createCode('TEST-WRONG-PARTNER', wrongVoucherId, VOUCHER_CODE_STATUS.ISSUED);
     cancelledCode = await createCode('TEST-CANCELLED', voucherId, VOUCHER_CODE_STATUS.CANCELLED);
     lockedCode = await createCode('TEST-LOCKED', voucherId, VOUCHER_CODE_STATUS.LOCKED);
+
+    this.issuedCodeForWrongPartner = issuedCodeForWrongPartner;
   });
 
   afterAll(async () => {
@@ -188,7 +192,7 @@ describe('Redeem Service Tests', () => {
       .rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
     
     // Also test reverse: wrong partner trying to redeem right code
-    await expect(redeemService.redeemCode(wrongPartnerUserId, wrongPartnerAccess, issuedCode.code, branchId))
+    await expect(redeemService.redeemCode(wrongPartnerUserId, wrongPartnerAccess, this.issuedCodeForWrongPartner.code, branchId))
       .rejects.toMatchObject({ statusCode: 403, code: 'FORBIDDEN' });
   });
 

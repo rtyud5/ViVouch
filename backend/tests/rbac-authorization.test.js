@@ -72,7 +72,7 @@ describe('RBAC & Branch Authorization Negative Tests', () => {
     }
 
     await prisma.user.deleteMany({ where: { id: { in: userIds } } });
-    await prisma.category.deleteMany({ where: { slug: 'rbac-test-cat' } });
+    await prisma.category.deleteMany({ where: { OR: [{ slug: 'rbac-test-cat' }, { name: 'RBAC Test Cat' }] } });
   };
 
   beforeAll(async () => {
@@ -80,8 +80,10 @@ describe('RBAC & Branch Authorization Negative Tests', () => {
     passwordHash = await bcrypt.hash(password, 10);
 
     // 1. Setup Category
-    const category = await prisma.category.create({
-      data: { name: 'RBAC Test Cat', slug: 'rbac-test-cat' },
+    const category = await prisma.category.upsert({
+      where: { slug: 'rbac-test-cat' },
+      update: {},
+      create: { name: 'RBAC Test Cat', slug: 'rbac-test-cat' },
     });
 
     // 2. Setup Customer & Admin

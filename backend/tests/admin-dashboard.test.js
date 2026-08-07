@@ -64,6 +64,11 @@ describe("GET /api/admin/dashboard", () => {
       });
     customer2Id = resCustomer2Reg.body.data.id;
 
+    await prisma.user.updateMany({
+      where: { email: { in: testEmails } },
+      data: { status: "ACTIVE", emailVerifiedAt: new Date() },
+    });
+
     const resCustomerLogin = await request(app)
       .post("/api/auth/login")
       .send({ email: customer1Email, password });
@@ -81,7 +86,7 @@ describe("GET /api/admin/dashboard", () => {
 
     await prisma.user.update({
       where: { id: adminId },
-      data: { role: "ADMIN" },
+      data: { role: "ADMIN", status: "ACTIVE", emailVerifiedAt: new Date() },
     });
 
     const resAdminLogin = await request(app)

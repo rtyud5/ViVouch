@@ -46,7 +46,8 @@ describe("Partner Vouchers Service Unit Tests", () => {
         fullName: "Test Partner Voucher",
         passwordHash: hashedPassword,
         role: "PARTNER",
-        status: "ACTIVE"
+        status: "ACTIVE",
+        emailVerifiedAt: new Date()
       }
     });
     partnerUserId = partnerUser.id;

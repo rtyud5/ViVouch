@@ -43,6 +43,11 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
       });
     customerId = resCustomerReg.body.data.id;
 
+    await prisma.user.update({
+      where: { id: customerId },
+      data: { status: "ACTIVE", emailVerifiedAt: new Date() },
+    });
+
     const resCustomerLogin = await request(app)
       .post("/api/auth/login")
       .send({ email: customerEmail, password });
@@ -60,7 +65,7 @@ describe("Admin Approve/Reject API (T3.5a)", () => {
 
     await prisma.user.update({
       where: { id: adminId },
-      data: { role: "ADMIN" },
+      data: { role: "ADMIN", status: "ACTIVE", emailVerifiedAt: new Date() },
     });
 
     const resAdminLogin = await request(app)

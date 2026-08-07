@@ -33,6 +33,11 @@ describe("Users /me API Tests", () => {
 
     customerId = registerRes.body.data.id;
 
+    await prisma.user.update({
+      where: { id: customerId },
+      data: { status: "ACTIVE", emailVerifiedAt: new Date() },
+    });
+
     const loginRes = await request(app)
       .post("/api/auth/login")
       .send({ email: customerEmail, password });

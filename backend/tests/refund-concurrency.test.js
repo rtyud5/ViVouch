@@ -53,14 +53,14 @@ describe('Refund Concurrency & State Tests', () => {
     categoryId = category.id;
     
     const user1 = await prisma.user.create({
-      data: { email: 'refund_customer@test.com', fullName: 'Refund Customer', passwordHash: 'dummy', role: 'CUSTOMER', status: 'ACTIVE' },
+      data: { email: 'refund_customer@test.com', fullName: 'Refund Customer', passwordHash: 'dummy', role: 'CUSTOMER', status: 'ACTIVE', emailVerifiedAt: new Date() },
     });
     userId = user1.id;
     const wallet = await prisma.wallet.create({ data: { userId: userId, balance: 1000000 } });
     walletId = wallet.id;
 
     const user2 = await prisma.user.create({
-      data: { email: 'refund_partner@test.com', fullName: 'Refund Partner', passwordHash: 'dummy', role: 'PARTNER', status: 'ACTIVE' },
+      data: { email: 'refund_partner@test.com', fullName: 'Refund Partner', passwordHash: 'dummy', role: 'PARTNER', status: 'ACTIVE', emailVerifiedAt: new Date() },
     });
     
     const partner = await prisma.partner.create({
