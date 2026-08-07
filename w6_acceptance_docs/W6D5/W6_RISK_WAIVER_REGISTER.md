@@ -17,10 +17,10 @@
 
 ## Authorized process exceptions
 
-| ID | Scope | Owner decision | Required W7 follow-up |
-|---|---|---|---|
-| W6-EXC-002 | Individual four-owner sign-off omitted | Replaced by owner-authorized Codex technical gate validation | Define release sign-off policy before W7 release candidate. |
-| W6-EXC-003 | Full manual browser E2E not retained for frozen candidate | Accepted because automated coverage and build are green | Run Customer and cross-role browser E2E in W7. |
+| ID | Waives Blocker | Scope | Approver | Approval Date | Approval Reference | Required W7 follow-up |
+|---|---|---|---|---|---|---|
+| W6-EXC-002 | W6-SIGNOFF-001 | Individual four-owner sign-off omitted | Repository owner | 2026-08-07 | Gate authority recorded in W6_D5_GATE_REPORT.md and W6_D5_GO_CLOSURE_LOG_2026-08-07.md | Define release sign-off policy before W7 release candidate. |
+| W6-EXC-003 | W6-SMOKE-001 | Full manual browser E2E not retained for frozen candidate | Repository owner | 2026-08-07 | Gate authority recorded in W6_D5_GATE_REPORT.md and W6_D5_GO_CLOSURE_LOG_2026-08-07.md | Run Customer and cross-role browser E2E in W7. |
 
 ## Deferred W7 quality work
 

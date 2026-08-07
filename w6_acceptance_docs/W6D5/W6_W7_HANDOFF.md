@@ -6,7 +6,7 @@
 
 ## W7 entry authorization
 
-W7 may start. The W6 gate was approved by the repository owner after Codex completed clean-PostgreSQL migration/seed validation, backend and frontend regression, build, static quality, evidence validation, and production dependency audit.
+W7 may start. The W6 gate was approved by the repository owner after Codex completed clean-PostgreSQL migration/seed validation, backend and frontend regression, build, static quality, evidence validation, and backend production dependency audit.
 
 ## Required W7 carry-over
 
@@ -14,7 +14,9 @@ W7 may start. The W6 gate was approved by the repository owner after Codex compl
 2. Run retained Customer and Partner/Admin/Staff browser E2E on the release SHA.
 3. Publish coverage and Sonar evidence.
 4. Update the frontend router dependency line to resolve its remaining moderate production audit findings.
-5. Keep the release claim limited to demonstrated capabilities.
+5. Define release sign-off policy work for W6-EXC-002.
+6. Complete GitHub Actions runtime work for W7-RUNTIME-001.
+7. Keep the release claim limited to demonstrated capabilities.
 
 ## Boundary
 

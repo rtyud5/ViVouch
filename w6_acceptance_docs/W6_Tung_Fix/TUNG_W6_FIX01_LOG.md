@@ -8,7 +8,7 @@
 
 The original repair log embedded a raw diff containing obsolete absolute local Markdown links. Although those links were shown as historical removed lines, the repository evidence validator correctly parses Markdown syntax inside that diff and therefore failed the CI evidence job.
 
-This revised log retains the audit conclusion without reproducing invalid link syntax. All actual documentation links must be repository-relative or HTTPS links. The validator is the source of truth for this rule.
+This revised log retains the audit conclusion without reproducing invalid link syntax. All actual documentation links must be repository-relative targets only. The validator is the source of truth for this rule.
 
 ## Verification
 
@@ -16,6 +16,10 @@ This revised log retains the audit conclusion without reproducing invalid link s
 Command: node scripts/verify-evidence.mjs
 Expected: exit code 0; no local-path or broken-link finding
 Scope: w5_acceptance_docs/W5D5 and w6_acceptance_docs
+Observed exit code: 0
+Observed stdout: Evidence validation passed: 78 files checked.
+Observed stderr: (none)
+Frozen candidate SHA: 6c542363d1beeebf6173988ef9cac15c3dae40cb
 ```
 
 ## Corrective action assessment
