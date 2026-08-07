@@ -25,8 +25,8 @@ describe('Partner branches API', () => {
     await cleanup();
     const passwordHash = await bcrypt.hash(password, 10);
     const [user, other] = await Promise.all([
-      prisma.user.create({ data: { email, fullName: 'Branch Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' } }),
-      prisma.user.create({ data: { email: otherEmail, fullName: 'Other Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' } }),
+      prisma.user.create({ data: { email, fullName: 'Branch Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE', emailVerifiedAt: new Date() } }),
+      prisma.user.create({ data: { email: otherEmail, fullName: 'Other Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE', emailVerifiedAt: new Date() } }),
     ]);
     const [p1, p2] = await Promise.all([
       prisma.partner.create({ data: { userId: user.id, businessName: 'Branch Partner', taxCode: 'BRANCH-TEST-1', representativeName: 'Rep', status: 'APPROVED' } }),

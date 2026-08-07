@@ -31,20 +31,22 @@ describe('Partner Vouchers API Contract Tests', () => {
     }
 
     await prisma.user.delete({ where: { id: user.id } });
-    await prisma.category.deleteMany({ where: { slug: 'voucher-api-test-cat' } });
+    await prisma.category.deleteMany({ where: { OR: [{ slug: 'voucher-api-test-cat' }, { name: 'Voucher API Test Cat' }] } });
   };
 
   beforeAll(async () => {
     await cleanup();
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const category = await prisma.category.create({
-      data: { name: 'Voucher API Test Cat', slug: 'voucher-api-test-cat', icon: '🎫' }
+    const category = await prisma.category.upsert({
+      where: { slug: 'voucher-api-test-cat' },
+      update: {},
+      create: { name: 'Voucher API Test Cat', slug: 'voucher-api-test-cat', icon: '🎫' }
     });
     categoryId = category.id;
 
     const user = await prisma.user.create({
-      data: { email: partnerEmail, fullName: 'Voucher API Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE' }
+      data: { email: partnerEmail, fullName: 'Voucher API Partner', passwordHash, role: 'PARTNER', status: 'ACTIVE', emailVerifiedAt: new Date() }
     });
 
     const partner = await prisma.partner.create({

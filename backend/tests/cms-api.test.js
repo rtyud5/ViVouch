@@ -25,7 +25,7 @@ describe('CMS content API', () => {
       fullName: 'CMS Admin',
       phone: '0900099900',
     });
-    await prisma.user.update({ where: { id: registered.body.data.id }, data: { role: 'ADMIN' } });
+    await prisma.user.update({ where: { id: registered.body.data.id }, data: { role: 'ADMIN', status: 'ACTIVE', emailVerifiedAt: new Date() } });
     token = (await request(app).post('/api/auth/login').send({ email, password })).body.data.accessToken;
   });
 

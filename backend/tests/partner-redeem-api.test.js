@@ -151,9 +151,10 @@ describe('Partner Redeem API Tests', () => {
       },
     });
 
+    const runId = Date.now().toString(36);
     const createCode = async (code, voucherId, status, extra = {}) => {
       const record = await prisma.voucherCode.create({
-        data: { code, orderId: order.id, voucherId, ownerId: customer.id, status, ...extra },
+        data: { code: `${code}-${runId}`, orderId: order.id, voucherId, ownerId: customer.id, status, ...extra },
       });
       return record.code;
     };
@@ -197,11 +198,21 @@ describe('Partner Redeem API Tests', () => {
   });
 
   it('redeems an ISSUED code via HTTP', async () => {
+    const codeToRedeem = await prisma.voucherCode.create({
+      data: {
+        code: `API-REDEEM-NOW-${Date.now()}`,
+        orderId: (await prisma.voucherCode.findUnique({ where: { code: issuedCode } })).orderId,
+        voucherId: (await prisma.voucherCode.findUnique({ where: { code: issuedCode } })).voucherId,
+        ownerId: (await prisma.voucherCode.findUnique({ where: { code: issuedCode } })).ownerId,
+        status: VOUCHER_CODE_STATUS.ISSUED,
+      },
+    });
+
     const res = await request(app)
       .post('/api/partner/redeem/confirm')
       .set('Authorization', `Bearer ${partnerToken}`)
       .set('X-Request-Id', 'w6d4-redeem-audit-001')
-      .send({ code: issuedCode, branchId });
+      .send({ code: codeToRedeem.code, branchId });
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
@@ -210,7 +221,7 @@ describe('Partner Redeem API Tests', () => {
     expect(res.body.data.branchId).toBe(branchId);
 
     // Direct evidence: voucherUsageLog record created in same transaction
-    const redeemedCode = await prisma.voucherCode.findUnique({ where: { code: issuedCode } });
+    const redeemedCode = await prisma.voucherCode.findUnique({ where: { code: codeToRedeem.code } });
     expect(redeemedCode).not.toBeNull();
     const usageLog = await prisma.voucherUsageLog.findFirst({
       where: { voucherCodeId: redeemedCode.id },

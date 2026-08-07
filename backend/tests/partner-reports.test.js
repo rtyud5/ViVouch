@@ -58,6 +58,7 @@ describe('Partner Reports API Tests', () => {
         passwordHash,
         role: 'PARTNER',
         status: 'ACTIVE',
+        emailVerifiedAt: new Date(),
       },
     });
 
@@ -98,9 +99,12 @@ describe('Partner Reports API Tests', () => {
         fullName: 'Reports Customer',
         passwordHash: await bcrypt.hash(password, 10),
         role: 'CUSTOMER',
+        status: 'ACTIVE',
+        emailVerifiedAt: new Date(),
       },
     });
 
+    const runId = Date.now().toString(36);
     const order = await prisma.order.create({
       data: {
         userId: customer.id,
@@ -110,8 +114,8 @@ describe('Partner Reports API Tests', () => {
         payment: { create: { method: 'VIVOUCH_WALLET', status: 'PAID', amount: 160000 } },
         voucherCodes: {
           create: [
-            { voucherId: voucher.id, ownerId: customer.id, code: 'VC-REPORTS-USED', status: 'USED', usedAt: new Date() },
-            { voucherId: voucher.id, ownerId: customer.id, code: 'VC-REPORTS-ISSUED', status: 'ISSUED' },
+            { voucherId: voucher.id, ownerId: customer.id, code: `VC-REPORTS-USED-${runId}`, status: 'USED', usedAt: new Date() },
+            { voucherId: voucher.id, ownerId: customer.id, code: `VC-REPORTS-ISSUED-${runId}`, status: 'ISSUED' },
           ],
         },
       },

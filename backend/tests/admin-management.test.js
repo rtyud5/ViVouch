@@ -51,7 +51,7 @@ async function createTestUsers() {
 
   await prisma.user.update({
     where: { id: sharedState.adminId },
-    data: { role: "ADMIN" },
+    data: { role: "ADMIN", status: "ACTIVE", emailVerifiedAt: new Date() },
   });
 
   const resAdminLogin = await request(app)
@@ -68,6 +68,11 @@ async function createTestUsers() {
     .post("/api/auth/register")
     .send({ email: CUSTOMER2_EMAIL, password: PASSWORD, fullName: "Customer Mgmt 2", phone: "0910000003" });
   sharedState.userId_customer2 = resCust2Reg.body.data.id;
+
+  await prisma.user.updateMany({
+    where: { email: { in: TEST_EMAILS } },
+    data: { status: "ACTIVE", emailVerifiedAt: new Date() },
+  });
 
   const resCustomerLogin = await request(app)
     .post("/api/auth/login")
