@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("react-router-dom", () => ({
   Link: ({ children, ...props }) => React.createElement("a", props, children),
   useNavigate: () => vi.fn(),
+  useLocation: () => ({ state: { message: "OTP chưa được gửi" } }),
   useSearchParams: () => [new URLSearchParams("email=verify@example.com"), vi.fn()],
 }));
 

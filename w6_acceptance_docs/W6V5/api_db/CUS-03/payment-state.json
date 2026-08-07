@@ -1,0 +1,4 @@
+{
+  "paymentStatus": "PAID",
+  "idempotency": "verified"
+}
