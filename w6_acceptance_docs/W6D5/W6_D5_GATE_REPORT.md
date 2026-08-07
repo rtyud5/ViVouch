@@ -1,7 +1,7 @@
 # W6-D5 — Final GO Gate Report
 
 **Gate date:** 2026-08-07 (UTC+07)
-**Frozen code candidate:** `6c542363d1beeebf6173988ef9cac15c3dae40cb`
+**Frozen code candidate:** `09c6df4cb5971642e0995ef0a84b3147e8d6ce79`
 **Gate authority:** Repository owner authorization recorded in this task; technical validation performed by Codex
 **Decision:** **GO — W6 is closed as a staging-ready core. W7 may start.**
 
@@ -17,7 +17,8 @@
 | Prisma validate, generate, migrate deploy, and seed | PASS on isolated PostgreSQL database `w6_go_audit` |
 | Backend production dependency audit | PASS — 0 high or critical vulnerabilities (`--omit=dev`) |
 | Static quality check | PASS |
-| Evidence validation | PASS — 76 files checked |
+| Evidence validation | PASS — 78 files checked |
+| W5-copy migration drill | PASS — W5 baseline `e016793298ad30b73888b6a9a5ec61044b8c86fe` upgraded without reset or post-upgrade seed; core record counts and invariants retained. |
 
 All backend validation used test-mode settings and a fresh isolated PostgreSQL database. No real SMTP or payment provider was called.
 
@@ -25,7 +26,6 @@ All backend validation used test-mode settings and a fresh isolated PostgreSQL d
 
 | Item | Decision | Rationale |
 |---|---|---|
-| W5-copy migration drill | Accepted exception | No reliable W5 backup/copy was available. Empty-DB migration, seed, and full integration regression passed. A restore drill remains mandatory W7 release work. |
 | Four-person same-SHA sign-off | Replaced | The repository owner explicitly authorized one technical gate validation rather than individual signatures. This is a process exception, not evidence that the four named people personally signed. |
 | Manual browser canonical smoke | Accepted for W6 | Automated API, RBAC, checkout, payment, redeem, refund, job, and UI unit coverage passed. Browser E2E remains W7 release hardening. |
 

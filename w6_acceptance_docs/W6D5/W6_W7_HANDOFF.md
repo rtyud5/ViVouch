@@ -1,6 +1,6 @@
 # W6 → W7 Handoff
 
-**W6 frozen code candidate:** `6c542363d1beeebf6173988ef9cac15c3dae40cb`
+**W6 frozen code candidate:** `09c6df4cb5971642e0995ef0a84b3147e8d6ce79`
 **W6 gate:** **GO — staging-ready core**
 **Effective date:** 2026-08-07 (UTC+07)
 
@@ -10,7 +10,7 @@ W7 may start. The W6 gate was approved by the repository owner after Codex compl
 
 ## Required W7 carry-over
 
-1. Perform a genuine backup/restore and W5-copy-style migration drill before the release candidate.
+1. Repeat backup/restore into a new database as a release-candidate operational rehearsal; the W5-to-W6 migration drill is already complete.
 2. Run retained Customer and Partner/Admin/Staff browser E2E on the release SHA.
 3. Publish coverage and Sonar evidence.
 4. Update the frontend router dependency line to resolve its remaining moderate production audit findings.

@@ -1,7 +1,7 @@
 # W6-D5 GO Closure Log
 
 **Decision:** GO — staging-ready core  
-**Frozen code candidate:** `6c542363d1beeebf6173988ef9cac15c3dae40cb`  
+**Frozen code candidate:** `09c6df4cb5971642e0995ef0a84b3147e8d6ce79`
 **Authority:** Repository owner authorization; technical validation by Codex
 
 ## Final checks
@@ -17,7 +17,8 @@ frontend Node tests                                     PASS (2/2)
 frontend Vitest                                         PASS (12 files, 32/32)
 frontend production build                               PASS
 static quality                                          PASS
-evidence validator                                      PASS (76 files)
+evidence validator                                      PASS (78 files)
+W5 baseline copy migration                              PASS (W5 `e016793...` → all 13 W6 migrations)
 ```
 
 The backend migration and regression suite ran against an isolated fresh PostgreSQL database named `w6_go_audit`. Test mode disabled real email and external payment calls.
@@ -35,4 +36,4 @@ These notes concern deliverables and evidence, not personal performance.
 
 ## Authorized exceptions
 
-W5-copy migration proof, individual four-owner signatures, and retained full browser E2E were explicitly waived by the repository owner for this W6 closure. They remain tracked W7 release work; this document does not claim they were executed.
+Individual four-owner signatures and retained full browser E2E were explicitly waived by the repository owner for this W6 closure. They remain tracked W7 release work. The W5-copy migration is no longer an exception; the exact drill is recorded in `W6H5_W5_COPY_MIGRATION_2026-08-07.md`.
