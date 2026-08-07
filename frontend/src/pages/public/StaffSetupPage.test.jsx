@@ -19,7 +19,9 @@ describe("StaffSetupPage", () => {
   it("masks the OTP input for staff setup", () => {
     const markup = renderToStaticMarkup(React.createElement(StaffSetupPage));
 
-    expect(markup).toContain('type="password"');
+    expect(markup).toMatch(
+      /<input[^>]*type="password"[^>]*autoComplete="one-time-code"/,
+    );
     expect(markup).toContain('autoComplete="one-time-code"');
   });
 });

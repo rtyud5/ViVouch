@@ -16,7 +16,12 @@ I fixed the main customer recovery gaps in the working tree:
 
 - `frontend/src/pages/public/ForgotPasswordPage.jsx`
 - `frontend/src/pages/public/StaffSetupPage.jsx`
+- `frontend/src/pages/public/recoveryFlowStorage.js`
 - `frontend/src/pages/public/VerifyEmailPage.jsx`
+- `frontend/src/pages/public/ForgotPasswordPage.test.jsx`
+- `frontend/src/pages/public/StaffSetupPage.test.jsx`
+- `frontend/src/pages/public/VerifyEmailPage.test.jsx`
+- `frontend/src/pages/public/recoveryFlowStorage.test.js`
 
 ## Validation status
 

@@ -9,7 +9,7 @@ const RESEND_COOLDOWN_SECONDS = 60;
 export function VerifyEmailPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const storedFlow = readStoredFlow();
+  const storedFlow = readStoredFlow(STORAGE_KEY);
   const [email, setEmail] = useState(params.get('email') || storedFlow.email || '');
   const [otp, setOtp] = useState('');
   const [message, setMessage] = useState('');

@@ -2,7 +2,8 @@ export function readStoredFlow(storageKey) {
   try {
     const raw = sessionStorage.getItem(storageKey);
     if (!raw) return {};
-    return JSON.parse(raw);
+    const flow = JSON.parse(raw);
+    return flow && typeof flow === 'object' && !Array.isArray(flow) ? flow : {};
   } catch {
     return {};
   }

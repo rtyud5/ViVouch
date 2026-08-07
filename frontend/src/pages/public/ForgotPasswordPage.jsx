@@ -9,7 +9,7 @@ const RESEND_COOLDOWN_SECONDS = 60;
 export function ForgotPasswordPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const storedFlow = readStoredFlow();
+  const storedFlow = readStoredFlow(STORAGE_KEY);
   const [step, setStep] = useState(() => (params.get('step') === 'RESET' || storedFlow.step === 'RESET' ? 'RESET' : 'REQUEST'));
   const [email, setEmail] = useState(params.get('email') || storedFlow.email || '');
   const [otp, setOtp] = useState('');

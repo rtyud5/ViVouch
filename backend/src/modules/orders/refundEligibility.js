@@ -16,7 +16,7 @@ export function getRefundEligibility(order, now = Date.now()) {
   }
 
   const refundWindowHours = items.length
-    ? Math.max(...items.map((item) => Number(item?.voucher?.refundWindowHours || 0)))
+    ? Math.min(...items.map((item) => Number(item?.voucher?.refundWindowHours || 0)))
     : 0;
 
   const paidAt = order.payment?.paidAt ? new Date(order.payment.paidAt).getTime() : Number.NaN;
