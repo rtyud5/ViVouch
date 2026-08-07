@@ -4,7 +4,9 @@
 **Auditor:** Codex, acting for the W6-D5 gate  
 **Repository:** `rtyud5/ViVouch`  
 **Audited commit:** `bf2681de58925f772d55afcbf1f54817bdaa0abc`  
-**Decision:** **NO-GO — W6 remains open; do not formally start W7.**
+**Original decision:** **NO-GO — W6 remained open at the time of this re-check.**
+
+> **Superseded for gate status:** The evidence-link and dependency blockers were subsequently fixed and re-tested under repository-owner authorization. See `W6_D5_GATE_REPORT.md` and `W6_D5_GO_CLOSURE_LOG_2026-08-07.md` for the final GO decision. This audit remains a factual record of the initial re-check findings.
 
 ## Scope and method
 
