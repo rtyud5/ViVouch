@@ -51,7 +51,11 @@ export async function issueOtp({ userId = null, email, fullName, purpose }) {
       ...renderOtpEmail({ fullName, otp, purpose, expiresMinutes: env.OTP_EXPIRES_MINUTES }),
     });
   } catch (error) {
-    // Keep the OTP row so the user can still retry/resend once delivery recovers.
+    // Mark the failed delivery as inactive so a later resend is not throttled by this row.
+    await prisma.emailOtp.update({
+      where: { id: record.id },
+      data: { consumedAt: new Date() },
+    });
     throw new AppError('Không thể gửi email OTP. Vui lòng thử lại sau.', 503, 'EMAIL_DELIVERY_FAILED');
   }
 
