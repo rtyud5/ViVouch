@@ -1,30 +1,16 @@
-# TUNG-W6-FIX-01 — Evidence Link Repair Log
+# Báo cáo TASK=TUNG-W6-FIX-01 (Bản bổ sung sau review)
 
-**Task:** Repair portable evidence links  
-**Scope:** W6 documentation only  
-**Status:** Closed by re-check on 2026-08-07
+## Tóm tắt
 
-## Change made
-
-The original repair log embedded a raw diff containing obsolete absolute local Markdown links. Although those links were shown as historical removed lines, the repository evidence validator correctly parses Markdown syntax inside that diff and therefore failed the CI evidence job.
-
-This revised log retains the audit conclusion without reproducing invalid link syntax. All actual documentation links must be repository-relative or HTTPS links. The validator is the source of truth for this rule.
-
-## Verification
-
-```text
-Command: node scripts/verify-evidence.mjs
-Expected: exit code 0; no local-path or broken-link finding
-Scope: w5_acceptance_docs/W5D5 and w6_acceptance_docs
-```
-
-## Corrective action assessment
-
-| Finding | Cause | Corrective action | Result |
-|---|---|---|---|
-| Evidence validation failed | Historical diff used parsable obsolete local Markdown links | Remove the raw diff and retain a text-only explanation | Resolved |
-| Evidence links were machine-specific | Links previously used an author-machine path | Use repository-relative targets only | Enforced by validator |
-
-## Remaining rule
-
-Do not paste raw invalid Markdown links into evidence logs, including inside a diff example. If an invalid format must be discussed, describe it in plain language rather than using link syntax.
+| Trường | Giá trị |
+| :--- | :--- |
+| **TASK** | `TUNG-W6-FIX-01` |
+| **Branch** | `tung/w6-fix-01-evidence-links` |
+| **FILES_CHANGED** | `walkthrough.md (1 file)` |
+| **FILES_SCANNED** | `170 (kết quả git ls-files '*.md' | Measure-Object -Line)` |
+| **LOCAL_LINKS_BEFORE** | `31` |
+| **LOCAL_LINKS_AFTER** | `0 (real Markdown links)` |
+| **BROKEN_LINKS** | `0` |
+| **VALIDATOR** | `PASS (node scripts/verify-evidence.mjs → "Evidence validation passed: 71 files checked.")` |
+| **TESTED_SHA** | `c1198a172d0e13b1479d3396701c94aeb6928693` |
+| **REMAINING_RISK** | `Xem Mục 5 — SHA là HEAD trước commit, thay đổi đang uncommitted` |
