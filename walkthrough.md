@@ -1,4 +1,4 @@
-# W6–W7 Integration: Test Suite Fix Walkthrough
+﻿# W6–W7 Integration: Test Suite Fix Walkthrough
 
 > **Branch:** `integration/w6-w7`  
 > **Date:** 2026-07-24  
@@ -18,7 +18,7 @@ Two root causes were identified, plus a third category of **service API signatur
 
 ### 2.1 Missing `status: 'ACTIVE'` on User Creation
 
-W6–W7 introduced stricter enforcement in [auth.middleware.js](file:///d:/ViVouch/ViVouch/backend/src/middlewares/auth.middleware.js#L45-L47):
+W6–W7 introduced stricter enforcement in [auth.middleware.js](backend/src/middlewares/auth.middleware.js#L45-L47):
 
 ```javascript
 if (user.status !== "ACTIVE") {
@@ -30,7 +30,7 @@ The Prisma schema's `User.status` field defaults to `PENDING_VERIFICATION` (not 
 
 ### 2.2 Missing `PartnerMember` Records
 
-W6–W7 introduced the `PartnerMember` model to support multi-member partner organizations (OWNER / STAFF). The [partnerAccess.middleware.js](file:///d:/ViVouch/ViVouch/backend/src/middlewares/partnerAccess.middleware.js) and [redeem.service.js](file:///d:/ViVouch/ViVouch/backend/src/modules/redeem/redeem.service.js#L26-L33) `assertAccess()` function now require an **ACTIVE PartnerMember** record linked to an **APPROVED Partner**:
+W6–W7 introduced the `PartnerMember` model to support multi-member partner organizations (OWNER / STAFF). The [partnerAccess.middleware.js](backend/src/middlewares/partnerAccess.middleware.js) and [redeem.service.js](backend/src/modules/redeem/redeem.service.js#L26-L33) `assertAccess()` function now require an **ACTIVE PartnerMember** record linked to an **APPROVED Partner**:
 
 ```javascript
 function assertAccess(access, branchId) {
@@ -54,18 +54,18 @@ The `redeemService.checkCode()` and `redeemService.redeemCode()` functions chang
 
 | Test File | Changes | Result |
 |-----------|---------|--------|
-| [partner-redeem-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-redeem-api.test.js) | Added `status: 'ACTIVE'` to 3 user creates + added `PartnerMember` for partner user | ✅ 12/12 |
-| [cart.test.js](file:///d:/ViVouch/ViVouch/backend/tests/cart.test.js) | Added `status: 'ACTIVE'` to 3 user creates (UserA, UserB, PartnerUser) | ✅ 11/11 |
-| [partner-vouchers-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-vouchers-api.test.js) | Added `status: 'ACTIVE'` to user create + added `PartnerMember` | ✅ 5/5 |
-| [partner-reports.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-reports.test.js) | Added `status: 'ACTIVE'` to user create + added `PartnerMember` | ✅ 4/4 |
-| [partner-branches-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-branches-api.test.js) | Added `status: 'ACTIVE'` to 2 user creates + added 2 `PartnerMember` records | ✅ 1/1 |
-| [checkout-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/checkout-api.test.js) | Added `status: 'ACTIVE'` to 2 user creates | ✅ 4/5 (1 unrelated) |
+| [partner-redeem-api.test.js](backend/tests/partner-redeem-api.test.js) | Added `status: 'ACTIVE'` to 3 user creates + added `PartnerMember` for partner user | ✅ 12/12 |
+| [cart.test.js](backend/tests/cart.test.js) | Added `status: 'ACTIVE'` to 3 user creates (UserA, UserB, PartnerUser) | ✅ 11/11 |
+| [partner-vouchers-api.test.js](backend/tests/partner-vouchers-api.test.js) | Added `status: 'ACTIVE'` to user create + added `PartnerMember` | ✅ 5/5 |
+| [partner-reports.test.js](backend/tests/partner-reports.test.js) | Added `status: 'ACTIVE'` to user create + added `PartnerMember` | ✅ 4/4 |
+| [partner-branches-api.test.js](backend/tests/partner-branches-api.test.js) | Added `status: 'ACTIVE'` to 2 user creates + added 2 `PartnerMember` records | ✅ 1/1 |
+| [checkout-api.test.js](backend/tests/checkout-api.test.js) | Added `status: 'ACTIVE'` to 2 user creates | ✅ 4/5 (1 unrelated) |
 
 ### 3.2 In-Progress Fix (1 file — partially done)
 
 | Test File | Changes | Status |
 |-----------|---------|--------|
-| [partner-redeem.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-redeem.test.js) | Added `status: 'ACTIVE'` + `PartnerMember`. Still needs service call signature update (3-arg → 4-arg with `access` param) | 🔧 In Progress |
+| [partner-redeem.test.js](backend/tests/partner-redeem.test.js) | Added `status: 'ACTIVE'` + `PartnerMember`. Still needs service call signature update (3-arg → 4-arg with `access` param) | 🔧 In Progress |
 
 ### 3.3 Pattern of Fix (Applied to API-level tests)
 
@@ -105,11 +105,11 @@ Every fix follows the same two-step pattern:
 
 | File | Users Created | Partners Created | Fix Required |
 |------|--------------|-----------------|--------------|
-| [partner-vouchers.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-vouchers.test.js) | 1 partner user | 1 partner | `status: 'ACTIVE'` + `PartnerMember` |
-| [reviews-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/reviews-api.test.js) | 4 users (3 customers, 1 partner) | 1 partner | `status: 'ACTIVE'` on all 4 users |
-| [reviews-service.test.js](file:///d:/ViVouch/ViVouch/backend/tests/reviews-service.test.js) | 3 users (2 customers, 1 partner) | 1 partner | `status: 'ACTIVE'` on all (service-level, no login) |
-| [cart-service.test.js](file:///d:/ViVouch/ViVouch/backend/tests/cart-service.test.js) | 3 users (2 customers, 1 partner) | 1 partner | `status: 'ACTIVE'` on users (service-level, no login) |
-| [admin-orders-audit.test.js](file:///d:/ViVouch/ViVouch/backend/tests/admin-orders-audit.test.js) | 1 partner user via `prisma.user.create` (not API register) | 1 partner | `status: 'ACTIVE'` on partner user |
+| [partner-vouchers.test.js](backend/tests/partner-vouchers.test.js) | 1 partner user | 1 partner | `status: 'ACTIVE'` + `PartnerMember` |
+| [reviews-api.test.js](backend/tests/reviews-api.test.js) | 4 users (3 customers, 1 partner) | 1 partner | `status: 'ACTIVE'` on all 4 users |
+| [reviews-service.test.js](backend/tests/reviews-service.test.js) | 3 users (2 customers, 1 partner) | 1 partner | `status: 'ACTIVE'` on all (service-level, no login) |
+| [cart-service.test.js](backend/tests/cart-service.test.js) | 3 users (2 customers, 1 partner) | 1 partner | `status: 'ACTIVE'` on users (service-level, no login) |
+| [admin-orders-audit.test.js](backend/tests/admin-orders-audit.test.js) | 1 partner user via `prisma.user.create` (not API register) | 1 partner | `status: 'ACTIVE'` on partner user |
 
 ### Category B: Tests using `/api/auth/register` (should be OK already)
 
@@ -117,29 +117,29 @@ These tests use the registration API which auto-sets `status: 'ACTIVE'` in test 
 
 | File | Expected Status |
 |------|----------------|
-| [admin-approval.test.js](file:///d:/ViVouch/ViVouch/backend/tests/admin-approval.test.js) | Should pass ✅ |
-| [admin-management.test.js](file:///d:/ViVouch/ViVouch/backend/tests/admin-management.test.js) | Should pass ✅ |
-| [admin-dashboard.test.js](file:///d:/ViVouch/ViVouch/backend/tests/admin-dashboard.test.js) | Should pass ✅ |
-| [users.test.js](file:///d:/ViVouch/ViVouch/backend/tests/users.test.js) | Should pass ✅ |
-| [cms-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/cms-api.test.js) | Should pass ✅ |
+| [admin-approval.test.js](backend/tests/admin-approval.test.js) | Should pass ✅ |
+| [admin-management.test.js](backend/tests/admin-management.test.js) | Should pass ✅ |
+| [admin-dashboard.test.js](backend/tests/admin-dashboard.test.js) | Should pass ✅ |
+| [users.test.js](backend/tests/users.test.js) | Should pass ✅ |
+| [cms-api.test.js](backend/tests/cms-api.test.js) | Should pass ✅ |
 
 ### Category C: Service signature mismatch
 
 | File | Issue |
 |------|-------|
-| [partner-redeem.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-redeem.test.js) | `checkCode/redeemCode` now take `(actorId, access, code, branchId)` — 4 args. Test calls with 3 args. Must load `access` via `getPartnerAccessByUserId()` and pass it. |
+| [partner-redeem.test.js](backend/tests/partner-redeem.test.js) | `checkCode/redeemCode` now take `(actorId, access, code, branchId)` — 4 args. Test calls with 3 args. Must load `access` via `getPartnerAccessByUserId()` and pass it. |
 
 ### Category D: Prisma `$queryRaw` deserialization issue
 
 | File | Issue |
 |------|-------|
-| [auth.test.js](file:///d:/ViVouch/ViVouch/backend/tests/auth.test.js) | OTP reset-password test: `pg_advisory_xact_lock()` returns void, Prisma `$queryRaw` cannot deserialize. Need to use `$executeRaw` instead of `$queryRaw` in [otp.service.js](file:///d:/ViVouch/ViVouch/backend/src/modules/otp/otp.service.js#L23). |
+| [auth.test.js](backend/tests/auth.test.js) | OTP reset-password test: `pg_advisory_xact_lock()` returns void, Prisma `$queryRaw` cannot deserialize. Need to use `$executeRaw` instead of `$queryRaw` in [otp.service.js](backend/src/modules/otp/otp.service.js#L23). |
 
 ### Category E: Minor assertion mismatch
 
 | File | Issue |
 |------|-------|
-| [checkout-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/checkout-api.test.js) | `buyNow` out-of-stock test — expected `400` got `400` but response body assertion doesn't match (likely assertion on code or message) |
+| [checkout-api.test.js](backend/tests/checkout-api.test.js) | `buyNow` out-of-stock test — expected `400` got `400` but response body assertion doesn't match (likely assertion on code or message) |
 
 ---
 
@@ -164,7 +164,7 @@ These tests use the registration API which auto-sets `status: 'ACTIVE'` in test 
 > 2. **PartnerMember requirement** — Partner operations now require a `PartnerMember` record with `status = 'ACTIVE'` linked to an `APPROVED` Partner.
 > 3. **Service API signature change** — `redeemService.checkCode/redeemCode` now require an `access` object as the 2nd parameter (loaded via `getPartnerAccessByUserId()`).
 
-The [seed.js](file:///d:/ViVouch/ViVouch/backend/prisma/seed.js) was already updated correctly for all three patterns, but the integration tests were written against the pre-W6 schema.
+The [seed.js](backend/prisma/seed.js) was already updated correctly for all three patterns, but the integration tests were written against the pre-W6 schema.
 
 ---
 
@@ -172,10 +172,10 @@ The [seed.js](file:///d:/ViVouch/ViVouch/backend/prisma/seed.js) was already upd
 
 | File | Type | Change |
 |------|------|--------|
-| [partner-redeem-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-redeem-api.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` |
-| [cart.test.js](file:///d:/ViVouch/ViVouch/backend/tests/cart.test.js) | Test | `status: 'ACTIVE'` |
-| [partner-vouchers-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-vouchers-api.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` |
-| [partner-reports.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-reports.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` |
-| [partner-branches-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-branches-api.test.js) | Test | `status: 'ACTIVE'` + 2× `PartnerMember` |
-| [checkout-api.test.js](file:///d:/ViVouch/ViVouch/backend/tests/checkout-api.test.js) | Test | `status: 'ACTIVE'` |
-| [partner-redeem.test.js](file:///d:/ViVouch/ViVouch/backend/tests/partner-redeem.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` (partial — still needs 4-arg signature fix) |
+| [partner-redeem-api.test.js](backend/tests/partner-redeem-api.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` |
+| [cart.test.js](backend/tests/cart.test.js) | Test | `status: 'ACTIVE'` |
+| [partner-vouchers-api.test.js](backend/tests/partner-vouchers-api.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` |
+| [partner-reports.test.js](backend/tests/partner-reports.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` |
+| [partner-branches-api.test.js](backend/tests/partner-branches-api.test.js) | Test | `status: 'ACTIVE'` + 2× `PartnerMember` |
+| [checkout-api.test.js](backend/tests/checkout-api.test.js) | Test | `status: 'ACTIVE'` |
+| [partner-redeem.test.js](backend/tests/partner-redeem.test.js) | Test | `status: 'ACTIVE'` + `PartnerMember` (partial — still needs 4-arg signature fix) |
