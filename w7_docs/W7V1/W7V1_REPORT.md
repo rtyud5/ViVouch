@@ -4,7 +4,7 @@
 **Sprint:** Week 7  
 **Task:** W7-V1 - Customer test stabilization  
 **Owner:** Vinh - Customer E2E Lead  
-**Status:** PASS
+**Status:** W7-V1 validation: PASS
 
 ## Outcome
 
@@ -35,13 +35,15 @@ node node_modules/vite/bin/vite.js build
 
 ## Notes
 
-- `npm` wrapper trong environment nay co loi `EPERM` khi resolve `C:\Users\nguye`, nen da bypass bang binary truc tiep trong `node_modules`.
+- `npm` wrapper trong environment nay co loi `EPERM` khi resolve `C:\Users\<user>`, nen da bypass bang binary truc tiep trong `node_modules`.
 - Day la van de moi truong, khong phai failure cua code repo.
 - Khong co file code nao duoc thay doi cho W7-V1.
 
 ## Final Result
 
+- PR acceptance: PENDING
 - Stable customer tests: PASS
 - Small fixture fixes: not needed
-- Build/import/route pass: PASS
-
+- Build pass: PASS
+- Import validation: not separately evidenced
+- Route validation: not separately evidenced
