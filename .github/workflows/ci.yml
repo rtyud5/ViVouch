@@ -19,26 +19,16 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: voucher_platform
+          POSTGRES_DB: voucher_platform_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres -d voucher_platform"
+          --health-cmd "pg_isready -U postgres -d voucher_platform_test"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
     env:
       NODE_ENV: test
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/voucher_platform?schema=public
-      JWT_ACCESS_SECRET: ci_access_secret_at_least_32_characters
-      JWT_REFRESH_SECRET: ci_refresh_secret_at_least_32_characters
-      CLIENT_URL: http://localhost:5173
-      PUBLIC_API_URL: http://localhost:5000
-      EMAIL_VERIFICATION_REQUIRED: "false"
-      EMAIL_DELIVERY_MODE: TEST
-      OTP_PEPPER: ci_otp_pepper_at_least_32_characters
-      ENABLE_VOUCHER_RECONCILIATION_JOB: "false"
-      ENABLE_EMAIL_WORKER: "false"
     defaults:
       run:
         working-directory: backend
@@ -50,6 +40,7 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
       - run: npm ci --ignore-scripts
+      - run: cp .env.test .env
       - run: npx --no-install prisma generate
       - run: npx --no-install prisma migrate deploy
       - run: npm run prisma:seed

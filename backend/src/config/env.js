@@ -3,7 +3,11 @@ import dotenv from 'dotenv';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProduction = NODE_ENV === 'production';
 
-if (!isProduction) dotenv.config();
+if (NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test' });
+} else if (!isProduction) {
+  dotenv.config();
+}
 
 const getEnv = (name, fallback) => {
   const value = process.env[name];
