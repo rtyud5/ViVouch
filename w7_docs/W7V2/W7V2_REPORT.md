@@ -18,14 +18,14 @@
 
 ## Tài liệu đã đọc
 
-- [README.md](/E:/ViVouch/README.md)
-- [docs/11_w6_w7_marketplace/README.md](/E:/ViVouch/docs/11_w6_w7_marketplace/README.md)
-- [docs/11_w6_w7_marketplace/01_architecture_and_flows.md](/E:/ViVouch/docs/11_w6_w7_marketplace/01_architecture_and_flows.md)
-- [docs/11_w6_w7_marketplace/02_permissions_and_states.md](/E:/ViVouch/docs/11_w6_w7_marketplace/02_permissions_and_states.md)
-- [docs/11_w6_w7_marketplace/05_test_release_runbook.md](/E:/ViVouch/docs/11_w6_w7_marketplace/05_test_release_runbook.md)
-- [w7_docs/W7D1/W7_D1_RELEASE_POLICY.md](/E:/ViVouch/w7_docs/W7D1/W7_D1_RELEASE_POLICY.md)
-- [w7_docs/W7D2/W7_D2_BRD_CLOSURE.md](/E:/ViVouch/w7_docs/W7D2/W7_D2_BRD_CLOSURE.md)
-- [w7_docs/W7V1/W7V1_REPORT.md](/E:/ViVouch/w7_docs/W7V1/W7V1_REPORT.md)
+- [README.md](/../../README.md)
+- [docs/11_w6_w7_marketplace/README.md](/../../docs/11_w6_w7_marketplace/README.md)
+- [docs/11_w6_w7_marketplace/01_architecture_and_flows.md](/../../docs/11_w6_w7_marketplace/01_architecture_and_flows.md)
+- [docs/11_w6_w7_marketplace/02_permissions_and_states.md](/../../docs/11_w6_w7_marketplace/02_permissions_and_states.md)
+- [docs/11_w6_w7_marketplace/05_test_release_runbook.md](/../../docs/11_w6_w7_marketplace/05_test_release_runbook.md)
+- [w7_docs/W7D1/W7_D1_RELEASE_POLICY.md](/../../w7_docs/W7D1/W7_D1_RELEASE_POLICY.md)
+- [w7_docs/W7D2/W7_D2_BRD_CLOSURE.md](/../../w7_docs/W7D2/W7_D2_BRD_CLOSURE.md)
+- [w7_docs/W7V1/W7V1_REPORT.md](/../../w7_docs/W7V1/W7V1_REPORT.md)
 
 ## Evidence đã xác nhận
 
@@ -63,7 +63,7 @@ node node_modules/vite/bin/vite.js build
 
 ### Backend isolated runner
 
-```bash
+```powershell
 $env:PAYOS_CLIENT_ID='test-client'
 $env:PAYOS_API_KEY='test-api-key'
 $env:PAYOS_CHECKSUM_KEY='test-checksum-key'
