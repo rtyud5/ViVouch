@@ -2,6 +2,7 @@ import { spawn, execSync } from 'node:child_process';
 import net from 'node:net';
 import path from 'node:path';
 import fs from 'node:fs';
+import { platform } from 'node:os';
 
 const root = path.resolve(import.meta.dirname, '..');
 const DB_CONTAINER_NAME = 'vivouch_e2e_db_' + Date.now();
@@ -13,7 +14,8 @@ const DATABASE_URL = `postgresql://postgres:postgres@localhost:${DB_PORT}/vouche
 let backendProcess, frontendProcess;
 let isCleaningUp = false;
 
-// Store logs to dump on failure
+// Store logs to dump on failure (Max 2000 lines ring buffer)
+const MAX_LOG_LINES = 2000;
 const backendLogs = [];
 const frontendLogs = [];
 
@@ -53,10 +55,50 @@ async function waitForPort(port, host = 'localhost', timeout = 30000) {
   });
 }
 
+async function waitForPostgresReady(containerName, maxAttempts = 30) {
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      execSync(`docker exec ${containerName} pg_isready -U postgres`, { stdio: 'ignore' });
+      return; // Ready
+    } catch (e) {
+      // Not ready yet, wait 1 second
+      await new Promise(res => setTimeout(res, 1000));
+    }
+  }
+  throw new Error(`Postgres container ${containerName} failed to become ready after ${maxAttempts} attempts.`);
+}
+
 function captureLog(logsArray, prefix, data) {
   const str = data.toString();
   process.stdout.write(`[${prefix}] ${str}`);
+  
+  // Split by lines to manage count properly, though appending raw strings is okay for simple buffers
   logsArray.push(str);
+  if (logsArray.length > MAX_LOG_LINES) {
+    logsArray.shift();
+  }
+}
+
+function killProcessTree(proc) {
+  if (!proc || proc.killed) return;
+  const pid = proc.pid;
+  try {
+    if (platform() === 'win32') {
+      execSync(`taskkill /pid ${pid} /T /F`, { stdio: 'ignore' });
+    } else {
+      // A robust fallback for unix if tree-kill is not available (killing the process group)
+      // Note: This requires the process to be spawned with detached: true to have its own pgid
+      // For simplicity without detached: true, we just kill the direct child.
+      // To properly kill the tree on Unix without packages, pkill -P is often used.
+      try {
+        execSync(`pkill -P ${pid}`, { stdio: 'ignore' });
+      } catch (e) {} // ignore if pkill fails
+      proc.kill('SIGKILL');
+    }
+  } catch (e) {
+    // Fallback if taskkill fails
+    proc.kill('SIGKILL');
+  }
 }
 
 async function cleanup(exitCode = 0) {
@@ -70,13 +112,13 @@ async function cleanup(exitCode = 0) {
     fs.writeFileSync(path.join(root, 'e2e-failure-log.txt'), logContent, 'utf-8');
   }
   
-  if (frontendProcess && !frontendProcess.killed) {
-    log('Killing frontend process...');
-    frontendProcess.kill('SIGINT');
+  if (frontendProcess) {
+    log('Killing frontend process tree...');
+    killProcessTree(frontendProcess);
   }
-  if (backendProcess && !backendProcess.killed) {
-    log('Killing backend process...');
-    backendProcess.kill('SIGINT');
+  if (backendProcess) {
+    log('Killing backend process tree...');
+    killProcessTree(backendProcess);
   }
 
   try {
@@ -97,6 +139,13 @@ process.on('uncaughtException', (e) => {
   cleanup(1);
 });
 
+function handleProcessExit(procName, code) {
+  if (!isCleaningUp && code !== 0 && code !== null) {
+    err(`${procName} exited unexpectedly with code ${code}. Aborting E2E run.`);
+    cleanup(1);
+  }
+}
+
 async function main() {
   const e2eCommand = process.argv.slice(2).join(' ');
 
@@ -108,9 +157,8 @@ async function main() {
       { stdio: 'inherit' }
     );
     
-    log(`Waiting for DB on port ${DB_PORT}...`);
-    await waitForPort(DB_PORT, 'localhost', 60000);
-    await new Promise(res => setTimeout(res, 3000));
+    log(`Waiting for DB to be ready...`);
+    await waitForPostgresReady(DB_CONTAINER_NAME, 30);
 
     // 2. Run Migrations & Seeding
     log('Running Prisma migrations and seeding...');
@@ -142,6 +190,7 @@ async function main() {
     
     backendProcess.stdout.on('data', d => captureLog(backendLogs, 'BACKEND', d));
     backendProcess.stderr.on('data', d => captureLog(backendLogs, 'BACKEND', d));
+    backendProcess.on('exit', (code) => handleProcessExit('Backend', code));
 
     log(`Waiting for Backend on port ${BACKEND_PORT}...`);
     await waitForPort(BACKEND_PORT, 'localhost', 30000);
@@ -162,6 +211,7 @@ async function main() {
     
     frontendProcess.stdout.on('data', d => captureLog(frontendLogs, 'FRONTEND', d));
     frontendProcess.stderr.on('data', d => captureLog(frontendLogs, 'FRONTEND', d));
+    frontendProcess.on('exit', (code) => handleProcessExit('Frontend', code));
 
     log(`Waiting for Frontend on port ${FRONTEND_PORT}...`);
     await waitForPort(FRONTEND_PORT, 'localhost', 30000);
