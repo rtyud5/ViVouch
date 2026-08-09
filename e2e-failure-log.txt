@@ -1,0 +1,27 @@
+
+
+--- BACKEND LOGS ---
+
+> voucher-platform-backend@0.1.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+◇ injected env (4) from .env.test // tip: ⌘ override existing { override: true }
+{"level":30,"time":1786283707014,"pid":440,"hostname":"DESKTOP-8IKSQKD","port":5001,"msg":"API server started"}
+
+
+--- FRONTEND LOGS ---
+
+> voucher-platform-frontend@0.1.0 dev
+> vite --port 5174
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m249[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5174[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+
