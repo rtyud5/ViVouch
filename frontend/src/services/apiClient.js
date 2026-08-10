@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/authStore";
+import { createSupportReference, getRequestReference } from "../utils/errorReference";
 
 if (!import.meta.env.VITE_API_BASE_URL) {
   throw new Error(
@@ -76,8 +77,8 @@ apiClient.interceptors.response.use(
           sessionStorage.setItem(
             "authMessage",
             isAccountLocked
-              ? "Tài khoản đã bị khoá. Vui lòng liên hệ quản trị viên."
-              : "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+              ? "TÃ i khoáº£n Ä‘Ã£ bá»‹ khoÃ¡. Vui lÃ²ng liÃªn há»‡ quáº£n trá»‹ viÃªn."
+              : "PhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ háº¿t háº¡n. Vui lÃ²ng Ä‘Äƒng nháº­p láº¡i.",
           );
         }
         catch (e) {
@@ -90,18 +91,21 @@ apiClient.interceptors.response.use(
       }
     } else if (error.response) {
       if (error.response.status === 429) {
-        error.message = "Thao tác quá nhanh (Too Many Requests). Vui lòng thử lại sau.";
+        error.message = "Thao tÃ¡c quÃ¡ nhanh (Too Many Requests). Vui lÃ²ng thá»­ láº¡i sau.";
       } else if (error.response.status >= 500) {
-        const reqId = error.response.data?.requestId;
-        error.message = reqId 
-          ? `Hệ thống gặp sự cố. Vui lòng cung cấp mã ${reqId} cho bộ phận hỗ trợ.`
-          : "Hệ thống gặp sự cố. Vui lòng thử lại sau.";
+        const reqId = getRequestReference(error) || createSupportReference("SRV");
+        error.requestReference = reqId;
+        error.message = `Há»‡ thá»‘ng gáº·p sá»± cá»‘. Vui lÃ²ng cung cáº¥p mÃ£ ${reqId} cho bá»™ pháº­n há»— trá»£.`;
       } else if (error.response.status === 409) {
         const msg = error.response.data?.message;
         error.message = (typeof msg === 'string' && msg.trim() !== '')
           ? msg
-          : "Xung đột dữ liệu (Conflict). Vui lòng tải lại và thử lại.";
+          : "Xung Ä‘á»™t dá»¯ liá»‡u (Conflict). Vui lÃ²ng táº£i láº¡i vÃ  thá»­ láº¡i.";
       }
+    } else {
+      const reqId = createSupportReference("NET");
+      error.requestReference = reqId;
+      error.message = `KhÃ´ng thá»ƒ káº¿t ná»‘i tá»›i máº¡ng hoáº·c mÃ¡y chá»§. MÃ£ há»— trá»£: ${reqId}.`;
     }
 
     return Promise.reject(error);

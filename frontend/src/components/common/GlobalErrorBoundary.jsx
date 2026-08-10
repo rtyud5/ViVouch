@@ -1,15 +1,20 @@
 import React from "react";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
 import { Link } from "react-router-dom";
+import { createSupportReference } from "../../utils/errorReference";
 
 export class GlobalErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, supportReference: "" };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+    return {
+      hasError: true,
+      error,
+      supportReference: createSupportReference("UI"),
+    };
   }
 
   componentDidCatch(error, errorInfo) {
@@ -31,9 +36,16 @@ export class GlobalErrorBoundary extends React.Component {
 
             <h1 className="text-2xl font-bold text-base-content mb-3">Đã xảy ra sự cố</h1>
 
-            <p className="text-base-content/60 mb-8">
+            <p className="text-base-content/60 mb-4">
               Rất xin lỗi, ứng dụng vừa gặp lỗi không mong muốn. Đội ngũ kỹ thuật đã được thông báo. Bạn có thể thử tải lại trang hoặc quay về trang chủ.
             </p>
+
+            {this.state.supportReference && (
+              <div className="mb-8 rounded-2xl border border-base-200 bg-base-200/60 px-4 py-3 text-sm text-base-content/70">
+                <p className="font-semibold text-base-content">Mã tham chiếu an toàn</p>
+                <p className="font-mono text-xs mt-1 break-all">{this.state.supportReference}</p>
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
@@ -52,7 +64,6 @@ export class GlobalErrorBoundary extends React.Component {
               </Link>
             </div>
 
-            {/* Hiển thị chi tiết lỗi nếu ở môi trường dev (tùy chọn) */}
             {import.meta.env.DEV && this.state.error && (
               <div className="mt-8 text-left bg-base-200 p-4 rounded-xl overflow-x-auto text-xs text-base-content/70">
                 <p className="font-bold mb-1 text-error">{this.state.error.toString()}</p>

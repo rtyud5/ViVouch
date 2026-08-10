@@ -9,7 +9,7 @@ function getApiErrorMessage(error, fallback) {
 }
 
 export function ProfilePage() {
-  const { data: user, isLoading, isError, refetch } = useMe();
+  const { data: user, isLoading, isError, error, refetch } = useMe();
   const updateProfileMutation = useUpdateProfile();
   const changePasswordMutation = useChangePassword();
 
@@ -119,6 +119,7 @@ export function ProfilePage() {
         <ErrorRetryPanel
           title="Không thể tải thông tin cá nhân"
           description="Dữ liệu hồ sơ tạm thời không truy cập được. Vui lòng thử lại."
+          error={error}
           onRetry={refetch}
         />
       </div>

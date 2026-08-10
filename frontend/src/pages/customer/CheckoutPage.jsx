@@ -71,7 +71,7 @@ export function CheckoutPage() {
   }
 
   if (isCartLoading && !cart) return <div className="min-h-[60vh] grid place-items-center"><span className="loading loading-spinner loading-lg" /></div>;
-  if (cartError) return <div className="max-w-4xl mx-auto px-4 py-16"><ErrorRetryPanel title="Không thể tải thông tin thanh toán" description="Dữ liệu giỏ hàng tạm thời không truy cập được." onRetry={() => window.location.reload()} /></div>;
+  if (cartError) return <div className="max-w-4xl mx-auto px-4 py-16"><ErrorRetryPanel title="Không thể tải thông tin thanh toán" description="Dữ liệu giỏ hàng tạm thời không truy cập được." error={cartError} onRetry={() => window.location.reload()} /></div>;
   if (!isCartLoading && totalQty === 0) return <div className="max-w-4xl mx-auto px-4 py-8"><CustomerEmptyState type="cart" title="Chưa có gì để thanh toán" description="Hãy chọn voucher trước khi quay lại bước thanh toán." action={<Link to="/vouchers" className="btn btn-primary">Khám phá voucher</Link>} /></div>;
 
   return (
