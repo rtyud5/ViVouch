@@ -1,5 +1,6 @@
 const SUPPORT_REFERENCE_PREFIX = "WEB";
 const SAFE_REFERENCE_PATTERN = /^[A-Za-z0-9._:-]{8,128}$/;
+const normalizedErrorCache = new WeakMap();
 
 function readReferenceCandidate(value) {
   if (typeof value !== "string") return "";
@@ -27,21 +28,44 @@ export function getRequestReference(error) {
     || readReferenceCandidate(error?.supportReference);
 }
 
-export function getCustomerFacingError(error, fallbackMessage) {
-  const statusCode = error?.response?.status;
-  const responseMessage = error?.response?.data?.message;
-  const specificMessage = typeof responseMessage === "string" && responseMessage.trim() ? responseMessage.trim() : "";
-
-  if (statusCode >= 500 || (!error?.response && error?.request)) {
-    const reference = getRequestReference(error) || createSupportReference("NET");
-    return {
-      message: fallbackMessage,
-      reference,
-    };
+function makeCachedErrorResult(error, fallbackMessage) {
+  if (error && typeof error === "object") {
+    const cached = normalizedErrorCache.get(error);
+    if (cached) return cached;
   }
 
-  return {
-    message: specificMessage || error?.message || fallbackMessage,
-    reference: getRequestReference(error),
+  const response = error?.response;
+  const responseMessage = typeof response?.data?.message === "string" ? response.data.message.trim() : "";
+  const requestReference = getRequestReference(error);
+
+  let message = fallbackMessage;
+  let supportReference = readReferenceCandidate(error?.supportReference);
+  let reference = requestReference || supportReference || "";
+
+  if (!response && error?.request) {
+    supportReference = supportReference || createSupportReference("NET");
+    reference = supportReference;
+  } else if (response?.status >= 500) {
+    supportReference = supportReference || createSupportReference(requestReference ? "SRV" : "NET");
+    reference = requestReference || supportReference;
+  } else if (responseMessage) {
+    message = responseMessage;
+  }
+
+  const normalized = {
+    message,
+    reference,
+    requestReference,
+    supportReference,
   };
+
+  if (error && typeof error === "object") {
+    normalizedErrorCache.set(error, normalized);
+  }
+
+  return normalized;
+}
+
+export function getCustomerFacingError(error, fallbackMessage) {
+  return makeCachedErrorResult(error, fallbackMessage);
 }

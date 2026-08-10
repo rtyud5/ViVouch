@@ -14,6 +14,8 @@ describe("errorReference", () => {
 
     expect(next.message).toBe("Đã xảy ra lỗi. Vui lòng thử lại.");
     expect(next.reference).toBe("REQ-12345");
+    expect(next.requestReference).toBe("REQ-12345");
+    expect(next.supportReference).toMatch(/^SRV-/);
   });
 
   it("creates a safe local reference for network failures", () => {
@@ -30,8 +32,21 @@ describe("errorReference", () => {
     expect(next.message).toBe("Không thể kết nối đến máy chủ.");
     expect(next.reference).toMatch(/^NET-/);
     expect(next.reference).toBe(createSupportReference("NET"));
+    expect(next.supportReference).toBe(next.reference);
+
+    const repeat = getCustomerFacingError(error, "Không thể kết nối đến máy chủ.");
+    expect(repeat.reference).toBe(next.reference);
+    expect(repeat.supportReference).toBe(next.supportReference);
 
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+  });
+
+  it("does not leak raw non-Axios exception messages", () => {
+    const error = new Error("Cannot read property secretToken of undefined");
+    const next = getCustomerFacingError(error, "Đã xảy ra lỗi. Vui lòng thử lại.");
+
+    expect(next.message).toBe("Đã xảy ra lỗi. Vui lòng thử lại.");
+    expect(next.reference).toBe("");
   });
 });

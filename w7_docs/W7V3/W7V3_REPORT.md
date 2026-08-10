@@ -11,6 +11,8 @@
 - Unexpected 5xx / network failures now surface a safe request reference for support.
 - Business errors still keep specific messages.
 - No PII, token, or response dump is shown to the client.
+- Sonar feedback on `Math.random` was resolved by switching support-reference generation to `crypto.randomUUID()` / `crypto.getRandomValues()`.
+- Raw exception text is no longer shown for non-Axios / unknown errors.
 
 ## Files changed
 
@@ -42,8 +44,10 @@ npm run build
 
 - Frontend Vitest: PASS (`16` files, `37` tests)
 - Frontend production build: PASS
+- Re-validated after Sonar-related follow-up fix: PASS (`38` tests total in full suite)
 
 ## Remaining notes
 
 - No additional scope added beyond customer recovery UX and safe reference surfacing.
 - Simulated 5xx and network cases are covered by unit tests in `frontend/src/utils/errorReference.test.js`.
+- `requestReference` and `supportReference` are now preserved on the normalized error object for downstream support/debug use.
