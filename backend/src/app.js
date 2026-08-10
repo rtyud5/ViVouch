@@ -20,6 +20,8 @@ import paymentsRouter from './modules/payments/payment.routes.js';
 import { customerRefundRouter } from './modules/refunds/refunds.routes.js';
 import { customerTicketRouter } from './modules/supportTickets/supportTickets.routes.js';
 import { requestContextMiddleware } from './middlewares/requestContext.middleware.js';
+import pinoHttp from 'pino-http';
+import { logger } from './config/logger.js';
 
 const app = express();
 const allowedOrigins = [env.CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'].filter(Boolean);
@@ -41,6 +43,18 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '1mb' }));
 app.use(requestContextMiddleware);
+app.use(
+  pinoHttp({
+    logger,
+    genReqId: (req) => req.requestId,
+    customLogLevel: (req, res, err) => {
+      if (res.statusCode >= 500 || err) return 'error';
+      if (res.statusCode >= 400) return 'warn';
+      if (req.url.startsWith('/health')) return 'silent';
+      return 'info';
+    },
+  })
+);
 
 app.get('/health', (req, res) => res.json({ success: true, message: 'Voucher API is running' }));
 app.get('/health/live', (req, res) => res.json({ success: true, status: 'live' }));
