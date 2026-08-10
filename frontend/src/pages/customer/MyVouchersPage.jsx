@@ -76,7 +76,7 @@ export function MyVouchersPage() {
           ))}
         </div>
       ) : error ? (
-        <ErrorRetryPanel title={errorTitle} description={errorDescription} onRetry={refetch} />
+        <ErrorRetryPanel title={errorTitle} description={errorDescription} error={error} onRetry={refetch} />
       ) : filteredVouchers.length === 0 ? (
         <CustomerEmptyState 
           type="vouchers" 

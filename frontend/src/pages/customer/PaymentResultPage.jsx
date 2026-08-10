@@ -3,6 +3,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { getPaymentStatus } from '../../features/orders/api/orders.api';
 import { useQueryClient } from '@tanstack/react-query';
 import { invalidateCheckoutQueries } from '../../features/orders/hooks/useCheckout';
+import { getCustomerFacingError } from '../../utils/errorReference';
+
 const MAX_POLL_ATTEMPTS = 15;
 const POLL_INTERVAL_MS = 2000;
 
@@ -11,12 +13,12 @@ export function PaymentResultPage() {
   const navigate = useNavigate();
   const orderId = params.get('orderId') || params.get('orderCode') || '';
   const resumeCheckout = params.get('resume') === 'true';
-  const [state, setState] = useState({ loading: true, error: '' });
+  const [state, setState] = useState({ loading: true, error: '', reference: '' });
   const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!orderId) {
-      setState({ loading: false, error: 'Thiếu mã đơn hàng.' });
+      setState({ loading: false, error: 'Thiếu mã đơn hàng.', reference: '' });
       return undefined;
     }
 
@@ -44,18 +46,19 @@ export function PaymentResultPage() {
         }
         if (['CANCELLED', 'FAILED', 'REFUNDED'].includes(paymentStatus)) {
           sessionStorage.removeItem('checkoutIdempotencyKey');
-          setState({ loading: false, error: `Giao dịch hiện ở trạng thái ${paymentStatus}.` });
+          setState({ loading: false, error: `Giao dịch hiện ở trạng thái ${paymentStatus}.`, reference: '' });
           return;
         }
         attempt += 1;
         if (attempt >= MAX_POLL_ATTEMPTS) {
-          setState({ loading: false, error: 'Thanh toán chưa được xác nhận. Bạn có thể kiểm tra lại trong Đơn hàng của tôi.' });
+          setState({ loading: false, error: 'Thanh toán chưa được xác nhận. Bạn có thể kiểm tra lại trong Đơn hàng của tôi.', reference: '' });
           return;
         }
         timeoutId = window.setTimeout(poll, POLL_INTERVAL_MS);
       } catch (error) {
         if (!stopped) {
-          setState({ loading: false, error: error?.response?.data?.message || 'Không thể kiểm tra trạng thái thanh toán.' });
+          const next = getCustomerFacingError(error, 'Không thể kiểm tra trạng thái thanh toán.');
+          setState({ loading: false, error: next.message, reference: next.reference });
         }
       }
     };
@@ -74,7 +77,17 @@ export function PaymentResultPage() {
           {state.loading ? (
             <><span className="loading loading-spinner loading-lg text-primary" /><p>Đang chờ webhook xác nhận giao dịch...</p></>
           ) : (
-            <><div className="alert alert-warning">{state.error}</div><Link className="btn btn-primary" to="/customer/orders">Xem đơn hàng</Link></>
+            <>
+              <div className="alert alert-warning flex-col items-start text-left">
+                <span>{state.error}</span>
+                {state.reference && (
+                  <span className="text-xs opacity-80">
+                    Mã tham chiếu an toàn: <span className="font-mono">{state.reference}</span>
+                  </span>
+                )}
+              </div>
+              <Link className="btn btn-primary" to="/customer/orders">Xem đơn hàng</Link>
+            </>
           )}
         </div>
       </div>

@@ -220,6 +220,7 @@ export function VoucherListPage() {
           <ErrorRetryPanel 
             title="Không thể tải danh sách voucher" 
             description="Dữ liệu voucher tạm thời không truy cập được. Vui lòng thử lại." 
+            error={error || categoriesError}
             onRetry={() => window.location.reload()} 
           />
         ) : vouchers.length === 0 ? (

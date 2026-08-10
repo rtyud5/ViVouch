@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/authStore";
+import { createSupportReference, getRequestReference } from "../utils/errorReference";
 
 if (!import.meta.env.VITE_API_BASE_URL) {
   throw new Error(
@@ -76,11 +77,10 @@ apiClient.interceptors.response.use(
           sessionStorage.setItem(
             "authMessage",
             isAccountLocked
-              ? "Tài khoản đã bị khoá. Vui lòng liên hệ quản trị viên."
+              ? "Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên."
               : "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
           );
-        }
-        catch (e) {
+        } catch (e) {
           console.warn("sessionStorage is not available:", e);
         }
         window.location.assign("/login");
@@ -92,16 +92,22 @@ apiClient.interceptors.response.use(
       if (error.response.status === 429) {
         error.message = "Thao tác quá nhanh (Too Many Requests). Vui lòng thử lại sau.";
       } else if (error.response.status >= 500) {
-        const reqId = error.response.data?.requestId;
-        error.message = reqId 
-          ? `Hệ thống gặp sự cố. Vui lòng cung cấp mã ${reqId} cho bộ phận hỗ trợ.`
-          : "Hệ thống gặp sự cố. Vui lòng thử lại sau.";
+        const requestReference = getRequestReference(error);
+        const supportReference = error.supportReference || createSupportReference(requestReference ? "SRV" : "NET");
+        error.requestReference = requestReference || null;
+        error.supportReference = supportReference;
+        error.message = `Hệ thống gặp sự cố. Vui lòng cung cấp mã ${requestReference || supportReference} cho bộ phận hỗ trợ.`;
       } else if (error.response.status === 409) {
         const msg = error.response.data?.message;
-        error.message = (typeof msg === 'string' && msg.trim() !== '')
+        error.message = (typeof msg === "string" && msg.trim() !== "")
           ? msg
           : "Xung đột dữ liệu (Conflict). Vui lòng tải lại và thử lại.";
       }
+    } else {
+      const supportReference = error.supportReference || createSupportReference("NET");
+      error.requestReference = error.requestReference || null;
+      error.supportReference = supportReference;
+      error.message = `Không thể kết nối tới mạng hoặc máy chủ. Mã hỗ trợ: ${supportReference}.`;
     }
 
     return Promise.reject(error);

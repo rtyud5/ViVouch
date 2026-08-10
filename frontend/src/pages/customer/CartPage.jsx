@@ -83,6 +83,7 @@ export function CartPage() {
         <ErrorRetryPanel 
           title="Không thể tải giỏ hàng" 
           description="Dữ liệu giỏ hàng tạm thời không truy cập được. Vui lòng thử lại." 
+          error={error}
           onRetry={() => window.location.reload()} 
         />
       </div>
