@@ -10,7 +10,12 @@ function readReferenceCandidate(value) {
 export function createSupportReference(prefix = SUPPORT_REFERENCE_PREFIX) {
   const safePrefix = typeof prefix === "string" && prefix.trim() ? prefix.trim().toUpperCase() : SUPPORT_REFERENCE_PREFIX;
   const timePart = Date.now().toString(36).toUpperCase();
-  const randomPart = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const cryptoApi = globalThis.crypto;
+  const randomPart = typeof cryptoApi?.randomUUID === "function"
+    ? cryptoApi.randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase()
+    : typeof cryptoApi?.getRandomValues === "function"
+      ? Array.from(cryptoApi.getRandomValues(new Uint8Array(6)), (byte) => byte.toString(16).padStart(2, "0")).join("").toUpperCase()
+      : "000000000000";
   return `${safePrefix}-${timePart}-${randomPart}`;
 }
 

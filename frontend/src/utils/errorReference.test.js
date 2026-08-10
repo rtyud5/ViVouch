@@ -17,8 +17,12 @@ describe("errorReference", () => {
   });
 
   it("creates a safe local reference for network failures", () => {
-    vi.spyOn(Math, "random").mockReturnValue(0.123456);
     vi.spyOn(Date, "now").mockReturnValue(1723262400000);
+    const cryptoMock = {
+      randomUUID: vi.fn(() => "12345678-1234-1234-1234-123456789abc"),
+      getRandomValues: vi.fn(),
+    };
+    vi.stubGlobal("crypto", cryptoMock);
 
     const error = { request: {} };
     const next = getCustomerFacingError(error, "Không thể kết nối đến máy chủ.");
@@ -28,5 +32,6 @@ describe("errorReference", () => {
     expect(next.reference).toBe(createSupportReference("NET"));
 
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 });
