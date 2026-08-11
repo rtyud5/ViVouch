@@ -135,6 +135,32 @@ export function PartnerReportsPage() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <CommissionSummaryCards summary={summary} isLoading={isLoading || isFetching} />
         </div>
+
+        {/* Voucher code utilization breakdown */}
+        <div className="mt-4 flex flex-wrap gap-3">
+          {(isLoading || isFetching) ? (
+            <div className="h-8 w-64 bg-base-200 rounded animate-pulse" />
+          ) : (
+            <>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-base-300 bg-base-100 px-3 py-1.5 text-sm">
+                <span className="font-semibold text-base-content">{(summary?.soldCount ?? 0).toLocaleString("vi-VN")}</span>
+                <span className="text-base-content/60">mã đã bán</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-base-300 bg-base-100 px-3 py-1.5 text-sm">
+                <span className="font-semibold text-emerald-600">{(summary?.usedCount ?? 0).toLocaleString("vi-VN")}</span>
+                <span className="text-base-content/60">đã đổi (USED)</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-base-300 bg-base-100 px-3 py-1.5 text-sm">
+                <span className="font-semibold text-amber-600">{(summary?.issuedCount ?? 0).toLocaleString("vi-VN")}</span>
+                <span className="text-base-content/60">chưa dùng (ISSUED)</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm">
+                <span className="font-bold text-emerald-700">{Number(summary?.conversion ?? 0).toFixed(1)}%</span>
+                <span className="text-emerald-600">utilization</span>
+              </div>
+            </>
+          )}
+        </div>
       </section>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">

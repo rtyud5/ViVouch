@@ -343,22 +343,22 @@ export default function AdminDashboardPage() {
                 trendType="up"
               />
               <KpiCard
-                label="Đối tác"
+                label="Đối tác hoạt động"
                 value={stats?.activePartners?.toLocaleString('vi-VN') ?? '—'}
                 trend="+2"
                 trendType="up"
               />
               <KpiCard
-                label="Doanh thu tháng"
-                value={stats ? formatCompact(stats.revenueThisMonth) : '—'}
-                trend="+8.4%"
-                trendType="up"
+                label="Voucher (tổng)"
+                value={stats?.totalVouchers?.toLocaleString('vi-VN') ?? '—'}
+                trend={`${stats?.totalOrders ?? 0} đơn`}
+                trendType="neutral"
               />
               <KpiCard
-                label="Đơn hàng hôm nay"
-                value={stats?.ordersToday?.toLocaleString('vi-VN') ?? '—'}
-                trend="-3%"
-                trendType="down"
+                label="Doanh thu tháng"
+                value={stats ? formatCompact(stats.revenueThisMonth) : '—'}
+                trend={`${stats?.ordersToday ?? 0} đơn hôm nay`}
+                trendType="up"
               />
             </>
           )}
