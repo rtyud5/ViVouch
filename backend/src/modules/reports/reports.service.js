@@ -56,10 +56,10 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
         },
       },
     }),
+    // All codes for this partner's vouchers (not date-filtered) for total issued/sold/used counts
     prisma.voucherCode.findMany({
       where: {
         voucherId: { in: voucherIds },
-        order: orderFilter,
       },
       select: { status: true },
     }),
@@ -129,10 +129,11 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, 5);
 
-  const soldCount = voucherCodes.length;
-  const redeemedCount = voucherCodes.filter((code) => code.status === VOUCHER_CODE_STATUS.USED).length;
+  const issuedCount = voucherCodes.filter((code) => code.status === VOUCHER_CODE_STATUS.ISSUED).length;
+  const soldCount = voucherCodes.filter((code) => [VOUCHER_CODE_STATUS.ISSUED, VOUCHER_CODE_STATUS.USED].includes(code.status)).length;
+  const usedCount = voucherCodes.filter((code) => code.status === VOUCHER_CODE_STATUS.USED).length;
   const conversion = soldCount > 0
-    ? Number(((redeemedCount / soldCount) * 100).toFixed(1))
+    ? Number(((usedCount / soldCount) * 100).toFixed(1))
     : 0;
 
   return {
@@ -143,6 +144,10 @@ export const getPartnerReports = async (userId, rangeDays = 30) => {
       commissionRate: env.PLATFORM_COMMISSION_RATE,
       orders: totalOrdersSet.size,
       customers: totalCustomersSet.size,
+      // Voucher code breakdown
+      issuedCount,
+      soldCount,
+      usedCount,
       conversion,
     },
     revenueByDay,

@@ -218,7 +218,7 @@ export async function getDashboardStats() {
   const rangeDays = 30;
   const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - rangeDays + 1, 0, 0, 0);
 
-  const [totalUsers, activePartners, revenueResult, ordersToday, paymentsLast30Days] = await prisma.$transaction([
+  const [totalUsers, activePartners, revenueResult, ordersToday, totalVouchers, totalOrders, paymentsLast30Days] = await prisma.$transaction([
     prisma.user.count({ where: { role: 'CUSTOMER' } }),
     prisma.partner.count({ where: { status: 'APPROVED' } }),
     prisma.payment.aggregate({
@@ -233,6 +233,8 @@ export async function getDashboardStats() {
         createdAt: { gte: startOfToday, lt: endOfToday },
       },
     }),
+    prisma.voucher.count(),
+    prisma.order.count(),
     prisma.payment.findMany({
       where: {
         createdAt: { gte: startDate },
@@ -266,7 +268,7 @@ export async function getDashboardStats() {
     revenue,
   }));
 
-  return { totalUsers, activePartners, revenueThisMonth, ordersToday, revenueByDay };
+  return { totalUsers, activePartners, revenueThisMonth, ordersToday, totalVouchers, totalOrders, revenueByDay };
 }
 
 export async function rejectVoucher(adminId, voucherId, reason) {

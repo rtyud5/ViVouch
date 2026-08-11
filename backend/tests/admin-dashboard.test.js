@@ -162,10 +162,14 @@ describe("GET /api/admin/dashboard", () => {
     expect(res.body.data).toHaveProperty("activePartners");
     expect(res.body.data).toHaveProperty("revenueThisMonth");
     expect(res.body.data).toHaveProperty("ordersToday");
+    expect(res.body.data).toHaveProperty("totalVouchers");
+    expect(res.body.data).toHaveProperty("totalOrders");
     expect(typeof res.body.data.totalUsers).toBe("number");
     expect(typeof res.body.data.activePartners).toBe("number");
     expect(typeof res.body.data.revenueThisMonth).toBe("number");
     expect(typeof res.body.data.ordersToday).toBe("number");
+    expect(typeof res.body.data.totalVouchers).toBe("number");
+    expect(typeof res.body.data.totalOrders).toBe("number");
   });
 
   it("200 totalUsers chỉ đếm CUSTOMER, không đếm ADMIN", async () => {
