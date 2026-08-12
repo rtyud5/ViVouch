@@ -53,13 +53,13 @@ Result:
 
 ### Responsive code review refs
 
-- [frontend/src/layouts/CustomerLayout.jsx](/E:/ViVouch/frontend/src/layouts/CustomerLayout.jsx)
-- [frontend/src/layouts/PublicLayout.jsx](/E:/ViVouch/frontend/src/layouts/PublicLayout.jsx)
-- [frontend/src/components/common/BottomNav.jsx](/E:/ViVouch/frontend/src/components/common/BottomNav.jsx)
-- [frontend/src/pages/public/HomePage.jsx](/E:/ViVouch/frontend/src/pages/public/HomePage.jsx)
-- [frontend/src/pages/public/VoucherListPage.jsx](/E:/ViVouch/frontend/src/pages/public/VoucherListPage.jsx)
-- [frontend/src/pages/customer/CartPage.jsx](/E:/ViVouch/frontend/src/pages/customer/CartPage.jsx)
-- [frontend/src/pages/customer/CheckoutPage.jsx](/E:/ViVouch/frontend/src/pages/customer/CheckoutPage.jsx)
+- [frontend/src/layouts/CustomerLayout.jsx](/../../frontend/src/layouts/CustomerLayout.jsx)
+- [frontend/src/layouts/PublicLayout.jsx](/../../frontend/src/layouts/PublicLayout.jsx)
+- [frontend/src/components/common/BottomNav.jsx](/../../frontend/src/components/common/BottomNav.jsx)
+- [frontend/src/pages/public/HomePage.jsx](/../../frontend/src/pages/public/HomePage.jsx)
+- [frontend/src/pages/public/VoucherListPage.jsx](/../../frontend/src/pages/public/VoucherListPage.jsx)
+- [frontend/src/pages/customer/CartPage.jsx](/../../frontend/src/pages/customer/CartPage.jsx)
+- [frontend/src/pages/customer/CheckoutPage.jsx](/../../frontend/src/pages/customer/CheckoutPage.jsx)
 
 Observed responsive patterns:
 
