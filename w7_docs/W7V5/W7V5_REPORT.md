@@ -6,7 +6,7 @@
 **Role:** Customer E2E Lead  
 **Date:** 2026-08-12  
 **Exact SHA:** `dbb2f74302aeb54512b8b1822267345276b75ed7`  
-**Status:** PASS for regression + isolated CI/E2E, viewport rehearsal blocked by browser availability in this session
+**Status:** PASS for regression + isolated CI/E2E; customer demo flow NOT EXECUTED because browser runtime was unavailable in this session
 
 ## Outcome
 
@@ -118,15 +118,16 @@ Result:
   - `frontend/src/pages/customer/CartPage.jsx`
   - `frontend/src/pages/customer/CheckoutPage.jsx`
 
-## Files changed
+## Files changed and evidence
 
 - `w7_docs/W7V5/W7V5_REPORT.md`
+- `e2e-failure-log.txt`
 
 ## Customer sign-off
 
 - Regression: PASS
 - CI/E2E: PASS
-- Demo flow: READY
+- Demo flow: NOT EXECUTED
 - Clean-session 3 viewport rehearsal: BLOCKED in this session by unavailable browser runtime
 
 ## Next step
