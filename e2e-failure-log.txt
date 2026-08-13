@@ -10,8 +10,8 @@
 [33m[nodemon] watching path(s): *.*[39m
 [33m[nodemon] watching extensions: js,mjs,cjs,json[39m
 [32m[nodemon] starting `node src/server.js`[39m
-◇ injected env (4) from .env.test // tip: ◈ secrets for agents [www.dotenvx.com]
-{"level":30,"time":1786521557874,"pid":"[REDACTED]","hostname":"[REDACTED]","port":5001,"msg":"API server started"}
+◇ injected env (4) from .env.test // tip: ⌘ enable debugging { debug: true }
+{"level":30,"time":1786582376086,"pid":6176,"hostname":"DESKTOP-SQVQ5CC","port":5001,"msg":"API server started"}
 
 
 --- FRONTEND LOGS ---
@@ -20,7 +20,8 @@
 > vite --port 5174
 
 
-  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m323[22m[2m[0m ms[22m
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m369[22m[2m[0m ms[22m
 
   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5174[22m/[39m
 [2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+
