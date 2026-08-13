@@ -1,11 +1,11 @@
 # W7-V4 — Customer Staging Smoke Report
 
-**Project:** ViVouch Marketplace-Lite  
-**Sprint:** Week 7  
-**Task:** W7-V4 - Customer staging smoke  
-**Role:** Customer E2E Lead  
-**Date:** 2026-08-13  
-**Status:** ✅ PASS — All Acceptance Criteria met
+**Project:** ViVouch Marketplace-Lite
+**Sprint:** Week 7
+**Task:** W7-V4 - Customer staging smoke
+**Role:** Customer E2E Lead
+**Date:** 2026-08-13
+**Status:** ⚠️ LOCAL ONLY — All acceptance criteria met on localhost; staging environment testing pending
 
 ## Acceptance Criteria
 
@@ -68,7 +68,7 @@
 
 **Command:** `node scratch/cors-check.cjs` — **Exit code: 0**
 
-```
+```text
 GET /api/vouchers with Origin: http://localhost:5173
   Status: 200
   Access-Control-Allow-Origin: http://localhost:5173
@@ -82,7 +82,7 @@ No CORS violations. `credentials: true` configured correctly in `app.js`.
 
 **Command:** `npm run build` (from `frontend/`)
 
-```
+```text
 vite v5.4.21 building for production...
 ✓ 2664 modules transformed.
 ✓ built in 13.63s
@@ -105,7 +105,7 @@ Breakpoints:
 
 ## Database / Seed
 
-```
+```text
 npx prisma migrate deploy → 13 migrations applied (no pending)
 npm run prisma:seed → Categories:5, Users:8, Partners:4,
   Vouchers:8, Orders+VoucherCodes:18, Reviews:5
@@ -124,13 +124,13 @@ npm run prisma:seed → Categories:5, Users:8, Partners:4,
 ## Commands Run
 
 ```bash
-npx prisma migrate deploy         # 13 migrations, all applied
-npm run prisma:seed               # Seeded successfully
-npm run dev (backend)             # Backend :5000
-npm run dev (frontend)            # Frontend :5173
-node scratch/customer-smoke.mjs  # exit 0 ✓
-node scratch/cors-check.cjs       # exit 0 ✓
-npm run build (frontend)          # 2664 modules, 13.63s ✓
+npx prisma migrate deploy                # 13 migrations, all applied
+npm run prisma:seed                      # Seeded successfully
+(cd backend && npm run dev)              # Backend :5000
+(cd frontend && npm run dev)             # Frontend :5173
+node scratch/customer-smoke.mjs          # exit 0 ✓
+node scratch/cors-check.cjs              # exit 0 ✓
+(cd frontend && npm run build)           # 2664 modules, 13.63s ✓
 ```
 
 ## Pass/Fail
