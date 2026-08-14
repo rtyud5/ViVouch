@@ -65,6 +65,14 @@ export async function sendImmediateEmail(message) {
     logger.info({ recipient: maskEmail(message.to), subject: message.subject }, 'Email delivery simulated');
     return { mode: 'LOG' };
   }
+  logger.info(
+    {
+      emailDeliveryMode: env.EMAIL_DELIVERY_MODE,
+      hasAppsScriptUrl: Boolean(process.env.APPS_SCRIPT_MAILER_URL),
+      hasAppsScriptSecret: Boolean(process.env.APPS_SCRIPT_MAILER_SECRET),
+    },
+    'Email delivery route'
+  );
   if (
     process.env.APPS_SCRIPT_MAILER_URL &&
     process.env.APPS_SCRIPT_MAILER_SECRET
