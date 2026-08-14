@@ -8,9 +8,15 @@ import { AUDIT_ACTIONS } from '../../constants/auditActions.js';
 import { logger } from '../../config/logger.js';
 import { issueVoucherCodesForOrder } from '../orders/orders.service.js';
 
-export function getPaymentStatus(userId, orderId) {
+export function getPaymentStatus(userId, orderIdOrCode) {
+  const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(orderIdOrCode);
   return prisma.order.findFirst({
-    where: { userId, OR: [{ id: orderId }, { payment: { providerOrderCode: orderId } }] },
+    where: { 
+      userId, 
+      OR: isUUID 
+        ? [{ id: orderIdOrCode }, { payment: { providerOrderCode: orderIdOrCode } }]
+        : [{ payment: { providerOrderCode: orderIdOrCode } }]
+    },
     select: {
       id: true,
       status: true,
@@ -44,7 +50,7 @@ export function getPaymentStatus(userId, orderId) {
 }
 
 export async function processPayOsWebhook(payload) {
-  if (!verifyPayOsWebhook(payload)) {
+  if (!(await verifyPayOsWebhook(payload))) {
     throw new AppError('Chữ ký webhook payOS không hợp lệ', 400, 'INVALID_PAYOS_SIGNATURE');
   }
 
@@ -92,7 +98,8 @@ export async function processPayOsWebhook(payload) {
     const paid = payload.success === true && (data.code === '00' || data.code === undefined);
     if (!paid) return { duplicate: false, ignored: true, orderId: payment.orderId };
 
-    if (Number(data.amount) !== Number(payment.amount)) {
+    const expectedPayOsAmount = Math.max(2000, Math.floor(Number(payment.amount) / 10));
+    if (Number(data.amount) !== expectedPayOsAmount) {
       throw new AppError('Số tiền webhook không khớp đơn hàng', 409, 'PAYMENT_AMOUNT_MISMATCH');
     }
     if (payment.status === 'PAID') return { duplicate: true, orderId: payment.orderId };
