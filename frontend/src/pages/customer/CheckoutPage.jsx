@@ -15,7 +15,6 @@ export function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, cartTotal, isLoading: isCartLoading, error: cartError } = useCart();
   const checkoutMutation = useCheckout();
-  const idempotencyKeyRef = useRef(sessionStorage.getItem('checkoutIdempotencyKey'));
   const user = useAuthStore((state) => state.user);
   const [paymentMethod, setPaymentMethod] = useState('VIVOUCH_WALLET');
   const [localError, setLocalError] = useState(null);
@@ -23,6 +22,7 @@ export function CheckoutPage() {
   const [recipientName, setRecipientName] = useState('');
   const [recipientPhone, setRecipientPhone] = useState('');
   const [note, setNote] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const cartItems = cart?.items || [];
   const items = useMemo(() => cartItems.map((item) => ({ id: item.voucherId ?? item.id, qty: item.qty })), [cartItems]);
@@ -38,21 +38,40 @@ export function CheckoutPage() {
     if (walletInsufficient) return setLocalError(new Error('Số dư Ví ViVouch không đủ. Hãy chọn payOS hoặc nhờ Admin cộng số dư demo.'));
 
     try {
-      if (!idempotencyKeyRef.current) {
-        idempotencyKeyRef.current = createCheckoutIdempotencyKey();
-        sessionStorage.setItem('checkoutIdempotencyKey', idempotencyKeyRef.current);
+      let currentIdempotencyKey = sessionStorage.getItem('checkoutIdempotencyKey');
+      if (!currentIdempotencyKey) {
+        currentIdempotencyKey = createCheckoutIdempotencyKey();
+        sessionStorage.setItem('checkoutIdempotencyKey', currentIdempotencyKey);
       }
+      
       const result = await checkoutMutation.mutateAsync({
         items,
         paymentMethod,
         recipientName: isGift ? recipientName.trim() : null,
         recipientPhone: isGift ? recipientPhone.trim() : null,
         note: note.trim() || null,
-        idempotencyKey: idempotencyKeyRef.current,
+        idempotencyKey: currentIdempotencyKey,
       });
+      
       if (!result?.orderId) throw new Error('Thiếu mã đơn hàng trong phản hồi thanh toán.');
+      
+      if (result.orderStatus === 'CANCELLED') {
+        sessionStorage.removeItem('checkoutIdempotencyKey');
+        throw new Error('Đơn hàng cũ đã bị hủy. Vui lòng thanh toán lại.');
+      }
+
+      if (result.orderStatus === 'COMPLETED' || result.paymentStatus === 'PAID') {
+        sessionStorage.removeItem('checkoutIdempotencyKey');
+        navigate('/customer/order-success', {
+          replace: true,
+          state: { orderId: result.orderId, voucherCodes: result.voucherCodes || [] },
+        });
+        return;
+      }
+
       if (result.paymentMethod === 'PAYOS') {
-        if (result.checkoutUrl) {
+        if (result.checkoutUrl && result.paymentStatus !== 'CANCELLED') {
+          setIsRedirecting(true);
           window.location.assign(result.checkoutUrl);
           return;
         }
@@ -60,7 +79,6 @@ export function CheckoutPage() {
         return;
       }
       sessionStorage.removeItem('checkoutIdempotencyKey');
-      idempotencyKeyRef.current = null;
       navigate('/customer/order-success', {
         replace: true,
         state: { orderId: result.orderId, voucherCodes: result.voucherCodes || [] },
@@ -68,6 +86,18 @@ export function CheckoutPage() {
     } catch (error) {
       setLocalError(error);
     }
+  }
+
+  if (isRedirecting) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-6 p-4 text-center">
+        <span className="loading loading-spinner w-16 text-primary" />
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Đang chuyển hướng đến cổng thanh toán</h2>
+          <p className="text-base-content/70">Vui lòng không đóng trình duyệt, hệ thống đang kết nối an toàn với payOS...</p>
+        </div>
+      </div>
+    );
   }
 
   if (isCartLoading && !cart) return <div className="min-h-[60vh] grid place-items-center"><span className="loading loading-spinner loading-lg" /></div>;
