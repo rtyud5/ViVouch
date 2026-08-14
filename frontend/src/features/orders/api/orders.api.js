@@ -11,3 +11,6 @@ export async function getOrders() {
 }
 export async function getVoucherCodes() { return (await apiClient.get(`${BASE}/voucher-codes`)).data.data; }
 export async function getPaymentStatus(orderId) { return (await apiClient.get(`/payments/${orderId}/status`)).data.data; }
+export async function cancelOrder(orderId) { return (await apiClient.post(`${BASE}/${orderId}/cancel`)).data; }
+export async function mockPayOrder(orderId) { return (await apiClient.post(`${BASE}/${orderId}/mock-pay`)).data; }
+export async function syncPayosOrder(orderId) { return (await apiClient.post(`${BASE}/${orderId}/sync-payos`)).data; }

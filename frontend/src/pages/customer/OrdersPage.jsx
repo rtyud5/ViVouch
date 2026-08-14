@@ -5,9 +5,39 @@ import { formatCurrency } from "../../utils/formatCurrency";
 import { useOrders } from "../../features/orders/hooks";
 import { OrderItemCard } from "../../components/voucher/OrderItemCard";
 import { OrderStatusBadge, CustomerEmptyState, LoadingSpinner, ErrorRetryPanel } from "../../components/common";
+import { cancelOrder, mockPayOrder } from "../../features/orders/api/orders.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function OrdersPage() {
   const { orders, isLoading, error, refetch } = useOrders();
+  const queryClient = useQueryClient();
+  const cancelMutation = useMutation({
+    mutationFn: cancelOrder,
+    onSuccess: () => {
+      alert("Hủy đơn hàng thành công");
+      sessionStorage.removeItem('checkoutIdempotencyKey');
+      queryClient.invalidateQueries(["customer-orders"]);
+      queryClient.invalidateQueries(["cart"]);
+    },
+    onError: (err) => {
+      alert(err?.response?.data?.message || "Không thể hủy đơn hàng");
+    }
+  });
+
+  const mockPayMutation = useMutation({
+    mutationFn: mockPayOrder,
+    onSuccess: () => {
+      alert("Đã mô phỏng thanh toán thành công!");
+      sessionStorage.removeItem('checkoutIdempotencyKey');
+      queryClient.invalidateQueries(["customer-orders"]);
+      queryClient.invalidateQueries(["cart"]);
+      queryClient.invalidateQueries(["voucher-codes"]);
+    },
+    onError: (err) => {
+      alert(err?.response?.data?.message || "Giả lập thanh toán thất bại");
+    }
+  });
+
   const [activeTab, setActiveTab] = useState("ALL");
   const [expandedOrders, setExpandedOrders] = useState(new Set());
 
@@ -169,6 +199,41 @@ export function OrdersPage() {
                           {order.payment?.status === "FAILED" && "Thất bại"}
                         </span>
                       </div>
+
+                      {order.status === "PENDING_PAYMENT" && order.payment?.method === "PAYOS" && order.payment?.checkoutUrl && (
+                        <div className="flex justify-end gap-3 mt-4 border-t border-base-200 pt-3">
+                          <button 
+                            className="btn btn-outline btn-sm text-base-content/70 hover:bg-base-200 hover:text-base-content"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (window.confirm("Bạn có chắc muốn hủy đơn hàng này không?")) {
+                                cancelMutation.mutate(order.id);
+                              }
+                            }}
+                            disabled={cancelMutation.isPending || mockPayMutation.isPending}
+                          >
+                            Hủy đơn
+                          </button>
+                          
+                          {/* DEV ONLY BUTTON */}
+                          <button 
+                            className="btn btn-secondary btn-sm"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (window.confirm("Chỉ dùng cho DEV: Bạn muốn giả lập thanh toán payOS thành công?")) {
+                                mockPayMutation.mutate(order.id);
+                              }
+                            }}
+                            disabled={cancelMutation.isPending || mockPayMutation.isPending}
+                          >
+                            Giả lập thanh toán
+                          </button>
+
+                          <a href={order.payment.checkoutUrl} className="btn btn-primary btn-sm px-6">
+                            Thanh toán tiếp
+                          </a>
+                        </div>
+                      )}
 
                       {(order.recipientName || order.recipientPhone || order.note) && (
                         <div className="border-t border-base-200 pt-3 mt-3 space-y-2">

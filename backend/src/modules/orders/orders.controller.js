@@ -108,3 +108,58 @@ export const getUserVoucherCodes = asyncHandler(async (req, res) => {
     data: codes
   });
 });
+
+/**
+ * Hủy đơn hàng đang chờ thanh toán
+ */
+export const cancelOrder = asyncHandler(async (req, res) => {
+  const userId = req.user?.userId;
+  const { orderId } = req.params;
+
+  if (!userId) {
+    throw new AppError("Chưa xác thực người dùng", 401, "UNAUTHORIZED");
+  }
+
+  await ordersService.cancelPendingOrder(userId, orderId);
+
+  return res.status(200).json({
+    success: true,
+    message: "Hủy đơn hàng thành công",
+  });
+});
+
+/**
+ * Giả lập thanh toán thành công (Chỉ dùng cho DEV)
+ */
+export const mockPayOrder = asyncHandler(async (req, res) => {
+  const userId = req.user?.userId;
+  const { orderId } = req.params;
+
+  if (!userId) {
+    throw new AppError("Chưa xác thực người dùng", 401, "UNAUTHORIZED");
+  }
+
+  await ordersService.mockPayOrder(userId, orderId);
+
+  return res.status(200).json({
+    success: true,
+    message: "Giả lập thanh toán thành công",
+  });
+});
+
+export const syncPayosOrder = asyncHandler(async (req, res) => {
+  const userId = req.user?.userId;
+  const { orderId } = req.params;
+
+  if (!userId) {
+    throw new AppError("Chưa xác thực người dùng", 401, "UNAUTHORIZED");
+  }
+
+  const result = await ordersService.syncPayosOrder(userId, orderId);
+
+  return res.status(200).json({
+    success: true,
+    message: "Đồng bộ thanh toán payOS thành công",
+    data: result
+  });
+});
