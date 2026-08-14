@@ -127,4 +127,74 @@ router.post("/checkout", checkoutRateLimiter, captureIdempotencyKey, ordersContr
  */
 router.post("/cart/checkout", checkoutRateLimiter, captureIdempotencyKey, ordersController.checkoutFromCart);
 
+/**
+ * @swagger
+ * /api/customer/orders/{orderId}/cancel:
+ *   post:
+ *     summary: Hủy đơn hàng đang chờ thanh toán
+ *     description: Hủy đơn hàng đang ở trạng thái PENDING_PAYMENT và trả lại tồn kho. Yêu cầu JWT Access Token hợp lệ.
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Hủy thành công
+ *       400:
+ *         description: Không thể hủy
+ *       404:
+ *         description: Không tìm thấy
+ */
+router.post("/:orderId/cancel", ordersController.cancelOrder);
+
+/**
+ * @swagger
+ * /api/customer/orders/{orderId}/mock-pay:
+ *   post:
+ *     summary: Giả lập thanh toán thành công (Chỉ dành cho DEV)
+ *     description: Mô phỏng việc payOS gọi webhook báo thanh toán thành công.
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.post("/:orderId/mock-pay", ordersController.mockPayOrder);
+
+/**
+ * @swagger
+ * /api/customer/orders/{orderId}/sync-payos:
+ *   post:
+ *     summary: Đồng bộ trạng thái thanh toán từ payOS
+ *     description: Lấy trạng thái mới nhất từ payOS bằng API để cập nhật đơn hàng, dùng cho trường hợp webhook không tới được máy.
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+router.post("/:orderId/sync-payos", ordersController.syncPayosOrder);
+
 export default router;

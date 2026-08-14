@@ -359,4 +359,129 @@ export function getUserVoucherCodes(userId) {
   });
 }
 
-export default { buyNow, checkoutFromCart, getUserOrders, getUserVoucherCodes };
+export async function cancelPendingOrder(userId, orderIdOrCode) {
+  return prisma.$transaction(async (tx) => {
+    let orderId = orderIdOrCode;
+    const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(orderIdOrCode);
+    
+    if (!isUUID) {
+      const orderLocator = await tx.order.findFirst({
+        where: { userId, payment: { providerOrderCode: orderIdOrCode } },
+        select: { id: true }
+      });
+      if (!orderLocator) throw new AppError('Không tìm thấy đơn hàng', 404, 'ORDER_NOT_FOUND');
+      orderId = orderLocator.id;
+    }
+
+    await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${orderId} FOR UPDATE`;
+    const paymentLocator = await tx.payment.findUnique({ where: { orderId }, select: { id: true } });
+    if (paymentLocator) {
+      await tx.$queryRaw`SELECT id FROM "Payment" WHERE id = ${paymentLocator.id} FOR UPDATE`;
+    }
+    const order = await tx.order.findUnique({ where: { id: orderId, userId }, include: { items: true, payment: true } });
+    if (!order) throw new AppError('Không tìm thấy đơn hàng', 404, 'ORDER_NOT_FOUND');
+    if (order.status !== 'PENDING_PAYMENT') throw new AppError('Chỉ có thể hủy đơn hàng đang chờ thanh toán', 400, 'ORDER_NOT_PENDING');
+
+    for (const item of order.items) {
+      await tx.voucher.update({ where: { id: item.voucherId }, data: { soldQty: { decrement: item.qty } } });
+    }
+    await tx.order.update({ where: { id: orderId }, data: { status: 'CANCELLED' } });
+    if (order.payment) {
+      await tx.payment.update({ where: { id: order.payment.id }, data: { status: 'CANCELLED' } });
+    }
+    await auditLog(userId, AUDIT_ACTIONS.CUSTOMER_ORDER_CANCEL || 'CUSTOMER_ORDER_CANCEL', 'Order', orderId, { method: order.payment?.method }, tx);
+    return true;
+  });
+}
+
+export async function mockPayOrder(userId, orderIdOrCode) {
+  return prisma.$transaction(async (tx) => {
+    let orderId = orderIdOrCode;
+    const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(orderIdOrCode);
+    if (!isUUID) {
+      const orderLocator = await tx.order.findFirst({
+        where: { payment: { providerOrderCode: orderIdOrCode } },
+        select: { id: true }
+      });
+      if (!orderLocator) throw new AppError('Không tìm thấy đơn hàng', 404, 'ORDER_NOT_FOUND');
+      orderId = orderLocator.id;
+    }
+
+    await tx.$queryRaw`SELECT id FROM "Order" WHERE id = ${orderId} FOR UPDATE`;
+    const paymentLocator = await tx.payment.findUnique({ where: { orderId }, select: { id: true } });
+    if (paymentLocator) {
+      await tx.$queryRaw`SELECT id FROM "Payment" WHERE id = ${paymentLocator.id} FOR UPDATE`;
+    }
+
+    const order = await tx.order.findUnique({ where: { id: orderId, userId }, include: { payment: true, user: true } });
+    if (!order) throw new AppError('Không tìm thấy đơn hàng', 404, 'ORDER_NOT_FOUND');
+    if (order.status !== 'PENDING_PAYMENT') throw new AppError('Chỉ có thể thanh toán đơn hàng đang chờ', 400, 'ORDER_NOT_PENDING');
+    if (!order.payment) throw new AppError('Đơn hàng không có giao dịch', 400, 'PAYMENT_NOT_FOUND');
+
+    const paidAt = new Date();
+    await tx.payment.update({
+      where: { id: order.payment.id },
+      data: { status: 'PAID', paidAt, providerReference: 'MOCK_DEV_' + Date.now() },
+    });
+    await tx.order.update({ where: { id: orderId }, data: { status: 'COMPLETED' } });
+    const codes = await issueVoucherCodesForOrder(tx, orderId, userId);
+
+    await auditLog(userId, AUDIT_ACTIONS.PAYMENT_PAYOS_WEBHOOK || 'PAYMENT_MOCKED', 'Payment', order.payment.id, {
+      mocked: true,
+      newValues: { status: 'PAID', paidAt },
+    }, tx);
+
+    return { orderId, voucherCount: codes.length };
+  }, { timeout: 10000 });
+}
+
+export async function syncPayosOrder(userId, orderIdOrCode) {
+  const { getPayOS } = await import('../payments/payos.service.js');
+  let orderId = orderIdOrCode;
+  let providerOrderCode = orderIdOrCode;
+  
+  let providerPaymentLinkId = null;
+  const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(orderIdOrCode);
+  if (isUUID) {
+    const payment = await prisma.payment.findUnique({ where: { orderId: orderIdOrCode }, select: { providerOrderCode: true, providerPaymentLinkId: true } });
+    if (!payment || (!payment.providerOrderCode && !payment.providerPaymentLinkId)) throw new AppError('Không tìm thấy mã giao dịch payOS', 404);
+    providerOrderCode = payment.providerOrderCode;
+    providerPaymentLinkId = payment.providerPaymentLinkId;
+  } else {
+    const orderLoc = await prisma.order.findFirst({ where: { payment: { providerOrderCode } }, select: { id: true, payment: { select: { providerPaymentLinkId: true } } } });
+    if (orderLoc) {
+      orderId = orderLoc.id;
+      providerPaymentLinkId = orderLoc.payment?.providerPaymentLinkId;
+    }
+  }
+
+  try {
+    const payos = getPayOS();
+    let paymentInfo;
+    const identifier = providerPaymentLinkId || String(providerOrderCode);
+    
+    if (typeof payos.getPaymentLinkInformation === 'function') {
+      paymentInfo = await payos.getPaymentLinkInformation(identifier);
+    } else if (payos.paymentLink && typeof payos.paymentLink.getPaymentLinkInformation === 'function') {
+      paymentInfo = await payos.paymentLink.getPaymentLinkInformation(identifier);
+    } else {
+      paymentInfo = await payos.paymentRequests.get(identifier);
+    }
+    
+    if (paymentInfo.status === 'PAID') {
+      // Kiểm tra trước xem đơn hàng đã được xử lý chưa để tránh lỗi
+      const orderCheck = await prisma.order.findUnique({ where: { id: orderId }, select: { status: true } });
+      if (orderCheck && orderCheck.status !== 'PENDING_PAYMENT') {
+        return { orderId, status: 'PAID', alreadyProcessed: true };
+      }
+      // Tái sử dụng logic của mockPayOrder để cập nhật vì mockPayOrder có logic transaction đầy đủ
+      return await mockPayOrder(userId, orderId);
+    }
+    
+    return { orderId, status: paymentInfo.status };
+  } catch (error) {
+    throw new AppError('Không thể đồng bộ trạng thái từ payOS: ' + error.message, 500);
+  }
+}
+
+export default { buyNow, checkoutFromCart, getUserOrders, getUserVoucherCodes, cancelPendingOrder, mockPayOrder, syncPayosOrder };
