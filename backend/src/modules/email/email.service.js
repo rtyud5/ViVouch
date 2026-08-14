@@ -20,6 +20,42 @@ export function clearTestMailbox() {
   testMailbox.length = 0;
 }
 
+async function sendAppsScriptEmail(message) {
+  const url = process.env.APPS_SCRIPT_MAILER_URL;
+  const secret = process.env.APPS_SCRIPT_MAILER_SECRET;
+
+  if (!url || !secret) {
+    throw new Error('Apps Script mailer is not configured');
+  }
+
+  const text =
+    message.text ||
+    String(message.html || '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      secret,
+      to: message.to,
+      subject: message.subject,
+      text,
+      html: message.html || ''
+    })
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.ok) {
+    throw new Error(result.error || `Apps Script mailer failed (${response.status})`);
+  }
+}
+
 export async function sendImmediateEmail(message) {
   if (env.EMAIL_DELIVERY_MODE === 'TEST') {
     testMailbox.push({ ...message, sentAt: new Date() });
@@ -29,6 +65,14 @@ export async function sendImmediateEmail(message) {
     logger.info({ recipient: maskEmail(message.to), subject: message.subject }, 'Email delivery simulated');
     return { mode: 'LOG' };
   }
+  if (
+    process.env.APPS_SCRIPT_MAILER_URL &&
+    process.env.APPS_SCRIPT_MAILER_SECRET
+  ) {
+    await sendAppsScriptEmail(message);
+    return { mode: 'APPS_SCRIPT' };
+  }
+
   await sendSmtpEmail(message);
   return { mode: 'SMTP' };
 }
