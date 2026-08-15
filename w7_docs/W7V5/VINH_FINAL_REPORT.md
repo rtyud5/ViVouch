@@ -36,7 +36,7 @@ Tài khoản test: `customer1@test.com` / `Test@123`
 
 ### 2.4. Kiểm tra chức năng Hỗ Trợ & Khiếu Nại (Support)
 - **Thao tác:** Truy cập vào `/customer/support`.
-- **Kết quả:** Form tạo ticket hỗ trợ được bố trí lại chuyên nghiệp và khoảng cách rộng rãi hơn. Textarea không bị giới hạn chiều rộng sai cách.
+- **Kết quả:** Form tạo ticket hỗ trợ được bố trí lại chuyên nghiệp và khoảng cách rộng rãi hơn. Text area không bị giới hạn chiều rộng sai cách.
 - **Đánh giá:** **(PASS)** 
 *(Xem screenshot đính kèm: `screenshots/customer_support_ui.png`)*
 
