@@ -21,6 +21,7 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
   const isCart = pathname === `${basePath}/cart`;
   const isVoucher = pathname === `${basePath}/my-vouchers`;
   const isProfile = pathname === `${basePath}/profile`;
+  const isOrders = pathname === `${basePath}/orders`;
 
   function tabClass(active) {
     return [
@@ -83,6 +84,18 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
         </svg>
         <span className="text-[10px] mt-0.5 leading-none font-semibold">Tìm kiếm</span>
       </Link>
+
+      {isCustomer && (
+        <Link
+          to={`${basePath}/orders`}
+          id="bottom-nav-orders"
+          className={tabClass(isOrders)}
+          aria-label="Đơn hàng"
+        >
+          <span className="material-symbols-outlined text-[24px]">receipt_long</span>
+          <span className="text-[10px] mt-0.5 leading-none font-semibold">Đơn hàng</span>
+        </Link>
+      )}
 
       <Link
         to={basePath ? `${basePath}/cart` : '/login'}

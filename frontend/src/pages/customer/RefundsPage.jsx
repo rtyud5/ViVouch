@@ -52,34 +52,143 @@ export function RefundsPage() {
     }
   }
 
-  return <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-    <header><h1 className="text-3xl font-bold">Hoàn tiền</h1><p className="text-base-content/60">Chỉ đơn đã thanh toán, voucher chưa dùng và có chính sách cho phép hoàn mới đủ điều kiện.</p></header>
-    {state.error && <div className="alert alert-error">{state.error}</div>}{state.success && <div className="alert alert-success">{state.success}</div>}
-    <div className="card bg-base-100 border border-base-300">
-      <div className="card-body">
-        <h2 className="card-title">Tạo yêu cầu</h2>
-        {state.loading ? (
-          <div className="py-8 text-center"><span className="loading loading-spinner" /></div>
-        ) : refundableOrders.length === 0 ? (
-          <div className="py-12 flex flex-col items-center justify-center text-center">
-            <div className="w-20 h-20 bg-base-200 rounded-full flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-base-content/40">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold">Không có đơn hàng đủ điều kiện</h3>
-            <p className="text-base-content/60 max-w-sm mt-2 mb-6">Bạn hiện không có đơn hàng nào đủ điều kiện để hoàn tiền. Chỉ những đơn hàng đã thanh toán, voucher chưa sử dụng và có chính sách cho phép hoàn mới có thể thực hiện thao tác này.</p>
-            <Link to="/customer/home" className="btn btn-outline border-base-300 shadow-sm hover:border-primary hover:bg-primary/10 hover:text-primary">Khám phá Voucher</Link>
+  return (
+    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-8 animate-fade-in">
+      <header className="flex flex-col gap-2">
+        <h1 className="text-3xl font-extrabold text-primary">Hoàn tiền</h1>
+        <p className="text-base-content/70">
+          Chỉ đơn đã thanh toán, voucher chưa dùng và có chính sách cho phép hoàn mới đủ điều kiện.
+        </p>
+      </header>
+
+      {state.error && (
+        <div className="alert alert-error shadow-sm rounded-xl">
+          <span className="material-symbols-outlined">error</span>
+          <span>{state.error}</span>
+        </div>
+      )}
+      {state.success && (
+        <div className="alert alert-success shadow-sm rounded-xl">
+          <span className="material-symbols-outlined">check_circle</span>
+          <span>{state.success}</span>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Form Yêu cầu */}
+        <div className="card bg-base-100 border border-base-200 shadow-md">
+          <div className="card-body">
+            <h2 className="card-title text-xl mb-4 border-b border-base-200 pb-2">Tạo yêu cầu</h2>
+            
+            {state.loading ? (
+              <div className="py-12 flex justify-center">
+                <span className="loading loading-spinner loading-lg text-primary" />
+              </div>
+            ) : refundableOrders.length === 0 ? (
+              <div className="py-12 flex flex-col items-center justify-center text-center">
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                  <span className="material-symbols-outlined text-4xl text-primary">inventory_2</span>
+                </div>
+                <h3 className="text-lg font-bold mb-2">Không có đơn hàng đủ điều kiện</h3>
+                <p className="text-sm text-base-content/60 max-w-xs mb-6">
+                  Bạn hiện không có đơn hàng nào đủ điều kiện để hoàn tiền.
+                </p>
+                <Link to="/customer/home" className="btn btn-outline btn-primary rounded-full px-6">
+                  Khám phá Voucher
+                </Link>
+              </div>
+            ) : (
+              <form onSubmit={submit} className="space-y-5">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-semibold text-base-content/80">Đơn đủ điều kiện</span>
+                  </label>
+                  <select 
+                    className="select select-bordered w-full rounded-xl focus:select-primary" 
+                    value={form.orderId} 
+                    onChange={(e) => setForm({ ...form, orderId: e.target.value })} 
+                    required
+                  >
+                    <option value="" disabled>Chọn đơn hàng cần hoàn...</option>
+                    {refundableOrders.map((order) => (
+                      <option key={order.id} value={order.id}>
+                        Đơn #{order.id.slice(0, 8)} — {Number(order.totalAmount).toLocaleString('vi-VN')}₫
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-semibold text-base-content/80">Lý do hoàn tiền</span>
+                  </label>
+                  <textarea 
+                    className="textarea textarea-bordered h-32 rounded-xl focus:textarea-primary" 
+                    placeholder="Vui lòng mô tả chi tiết lý do bạn muốn hoàn tiền..."
+                    minLength="10" 
+                    maxLength="1000" 
+                    value={form.reason} 
+                    onChange={(e) => setForm({ ...form, reason: e.target.value })} 
+                    required 
+                  />
+                  <label className="label">
+                    <span className="label-text-alt text-base-content/50">Tối thiểu 10 ký tự</span>
+                  </label>
+                </div>
+
+                <div className="pt-2">
+                  <button className="btn btn-primary w-full rounded-xl text-lg h-12" disabled={state.saving}>
+                    {state.saving ? <span className="loading loading-spinner" /> : 'Gửi yêu cầu hoàn tiền'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
-        ) : (
-          <form onSubmit={submit} className="space-y-2">
-            <label className="form-control"><span className="label-text mb-1">Đơn đủ điều kiện</span><select className="select select-bordered" value={form.orderId} onChange={(e) => setForm({ ...form, orderId: e.target.value })} required><option value="">Chọn đơn</option>{refundableOrders.map((order) => <option key={order.id} value={order.id}>#{order.id.slice(0, 8)} — {Number(order.totalAmount).toLocaleString('vi-VN')}₫ — {order.payment?.method}</option>)}</select></label>
-            <label className="form-control"><span className="label-text mb-1">Lý do</span><textarea className="textarea textarea-bordered min-h-28" minLength="10" maxLength="1000" value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} required /></label>
-            <div className="card-actions justify-end mt-4"><button className="btn btn-primary" disabled={state.saving}>{state.saving ? <span className="loading loading-spinner" /> : 'Gửi yêu cầu'}</button></div>
-          </form>
-        )}
+        </div>
+
+        {/* Lịch sử yêu cầu */}
+        <section className="card bg-base-100 border border-base-200 shadow-md h-fit">
+          <div className="card-body">
+            <h2 className="card-title text-xl mb-4 border-b border-base-200 pb-2">Lịch sử yêu cầu</h2>
+            
+            {state.loading ? (
+              <div className="py-12 flex justify-center">
+                <span className="loading loading-spinner loading-lg text-primary" />
+              </div>
+            ) : (
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                {refunds.map((refund) => (
+                  <article className="bg-base-50 border border-base-200 rounded-xl p-4 hover:shadow-sm transition-shadow" key={refund.id}>
+                    <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
+                      <b className="text-primary font-bold">Đơn #{refund.orderId.slice(0, 8)}</b>
+                      <span className={`badge ${refund.status === 'REFUNDED' ? 'badge-success text-white' : refund.status === 'REJECTED' ? 'badge-error text-white' : 'badge-warning'}`}>
+                        {statusLabel[refund.status] || refund.status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-base-content/80 bg-base-100 p-3 rounded-lg border border-base-200">
+                      <span className="font-semibold block mb-1 text-xs text-base-content/50">Lý do:</span>
+                      {refund.reason}
+                    </p>
+                    {refund.adminNote && (
+                      <div className="mt-3 text-sm bg-info/10 text-info-content p-3 rounded-lg border border-info/20">
+                        <span className="font-semibold block mb-1 text-xs">Phản hồi từ Admin:</span>
+                        <p>{refund.adminNote}</p>
+                      </div>
+                    )}
+                  </article>
+                ))}
+                
+                {refunds.length === 0 && (
+                  <div className="text-center py-12 text-base-content/50 flex flex-col items-center">
+                    <span className="material-symbols-outlined text-4xl mb-2 opacity-50">history</span>
+                    <p>Chưa có yêu cầu hoàn tiền nào.</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
       </div>
     </div>
-    <section className="card bg-base-100 border border-base-300"><div className="card-body"><h2 className="card-title">Lịch sử yêu cầu</h2>{state.loading ? <div className="py-8 text-center"><span className="loading loading-spinner" /></div> : <div className="space-y-3">{refunds.map((refund) => <article className="border border-base-300 rounded-xl p-4" key={refund.id}><div className="flex flex-wrap justify-between gap-2"><b>Đơn #{refund.orderId.slice(0, 8)}</b><span className="badge badge-outline">{statusLabel[refund.status] || refund.status}</span></div><p className="text-sm mt-2">{refund.reason}</p>{refund.adminNote && <p className="text-sm text-base-content/60 mt-2">Phản hồi: {refund.adminNote}</p>}</article>)}{refunds.length === 0 && <p className="text-center py-6 text-base-content/60">Chưa có yêu cầu.</p>}</div>}</div></section>
-  </div>;
+  );
 }
