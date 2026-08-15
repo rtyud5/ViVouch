@@ -27,7 +27,7 @@
     "express-rate-limit": "8.5.2",
     "helmet": "8.2.0",
     "jsonwebtoken": "9.0.3",
-    "nanoid": "5.1.11",
+    "nanoid": "^5.1.16",
     "pino": "10.3.1",
     "pino-http": "11.0.0",
     "swagger-jsdoc": "6.3.0",
@@ -40,5 +40,19 @@
     "prisma": "5.22.0",
     "supertest": "7.2.2",
     "vitest": "4.1.7"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "^1.1.5",
+    "@rolldown/binding-linux-x64-musl": "^1.1.5"
+  },
+  "supportedArchitectures": {
+    "os": [
+      "current",
+      "linux"
+    ],
+    "cpu": [
+      "current",
+      "x64"
+    ]
   }
 }
