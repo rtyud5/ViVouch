@@ -132,7 +132,7 @@ describe('PayOS Webhook API Tests', () => {
   });
 
   it('processes valid webhook and issues voucher codes exactly once', async () => {
-    const payload = makeWebhookPayload(10001, 50000);
+    const payload = makeWebhookPayload(10001, 5000);
     const res = await request(app).post('/api/payments/payos/webhook').send(payload);
     expect(res.status).toBe(200);
     expect(res.body.data.duplicate).toBe(false);
@@ -152,7 +152,7 @@ describe('PayOS Webhook API Tests', () => {
   });
 
   it('handles late PAID webhook on a cancelled order gracefully', async () => {
-    const payload = makeWebhookPayload(10002, 50000);
+    const payload = makeWebhookPayload(10002, 5000);
     const res = await request(app).post('/api/payments/payos/webhook').send(payload);
     expect(res.status).toBe(200);
     expect(res.body.data.ignored).toBe(true);
