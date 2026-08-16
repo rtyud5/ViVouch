@@ -478,6 +478,14 @@ export async function syncPayosOrder(userId, orderIdOrCode) {
       return await mockPayOrder(userId, orderId);
     }
     
+    if (['CANCELLED', 'EXPIRED'].includes(paymentInfo.status)) {
+      const orderCheck = await prisma.order.findUnique({ where: { id: orderId }, select: { status: true } });
+      if (orderCheck && orderCheck.status === 'PENDING_PAYMENT') {
+        await cancelPendingOrder(userId, orderId);
+      }
+      return { orderId, status: 'CANCELLED' };
+    }
+
     return { orderId, status: paymentInfo.status };
   } catch (error) {
     throw new AppError('Không thể đồng bộ trạng thái từ payOS: ' + error.message, 500);
