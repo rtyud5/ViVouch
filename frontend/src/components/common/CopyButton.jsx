@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Check, Copy } from 'lucide-react';
 
 /**
  * Reusable CopyButton component to copy text to clipboard with tooltip status.
@@ -30,9 +31,7 @@ export function CopyButton({ text, className = '' }) {
       title={copied ? 'Đã sao chép' : 'Sao chép'}
       type="button"
     >
-      <span className="material-symbols-outlined text-[20px]">
-        {copied ? 'check' : 'content_copy'}
-      </span>
+      {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
       {/* Tooltip */}
       <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-sm z-50">
         {copied ? 'Đã sao chép!' : 'Sao chép'}

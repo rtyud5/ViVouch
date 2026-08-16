@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { getOrders } from '../../features/orders/api/orders.api';
 import { listMyRefunds, requestRefund } from '../../features/marketplace/api/marketplace.api';
+import { CircleAlert, CircleCheck, History, Package } from 'lucide-react';
 const statusLabel = {
   REQUESTED: 'Chờ Admin xử lý',
   REJECTED: 'Đã từ chối',
@@ -63,13 +64,13 @@ export function RefundsPage() {
 
       {state.error && (
         <div className="alert alert-error shadow-sm rounded-xl">
-          <span className="material-symbols-outlined">error</span>
+          <CircleAlert className="h-5 w-5" />
           <span>{state.error}</span>
         </div>
       )}
       {state.success && (
         <div className="alert alert-success shadow-sm rounded-xl">
-          <span className="material-symbols-outlined">check_circle</span>
+          <CircleCheck className="h-5 w-5" />
           <span>{state.success}</span>
         </div>
       )}
@@ -87,7 +88,7 @@ export function RefundsPage() {
             ) : refundableOrders.length === 0 ? (
               <div className="py-12 flex flex-col items-center justify-center text-center">
                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                  <span className="material-symbols-outlined text-4xl text-primary">inventory_2</span>
+                  <Package className="h-10 w-10 text-primary" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Không có đơn hàng đủ điều kiện</h3>
                 <p className="text-sm text-base-content/60 max-w-xs mb-6">
@@ -180,7 +181,7 @@ export function RefundsPage() {
                 
                 {refunds.length === 0 && (
                   <div className="text-center py-12 text-base-content/50 flex flex-col items-center">
-                    <span className="material-symbols-outlined text-4xl mb-2 opacity-50">history</span>
+                    <History className="h-10 w-10 mb-2 opacity-50" />
                     <p>Chưa có yêu cầu hoàn tiền nào.</p>
                   </div>
                 )}

@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../utils/formatCurrency";
-
-// Fallback image shown when imageUrl is null or fails to load
-const PLACEHOLDER_IMAGE = "https://placehold.co/400x300/e2e8f0/94a3b8?text=No+Image";
+import { DEFAULT_VOUCHER_IMAGE, normalizeImageUrl } from "../../utils/image";
 
 /**
  * Calculates the discount percentage between originalPrice and salePrice.
@@ -98,7 +96,7 @@ export function VoucherCard({ voucher, variant = "home", disableClick = false })
   }
 
   function handleImageError(e) {
-    e.currentTarget.src = PLACEHOLDER_IMAGE;
+    e.currentTarget.src = DEFAULT_VOUCHER_IMAGE;
   }
 
   function handleBuyClick(e) {
@@ -119,11 +117,13 @@ export function VoucherCard({ voucher, variant = "home", disableClick = false })
       >
         <div className="relative h-48 w-full overflow-hidden">
           <img
-            src={imageUrl || PLACEHOLDER_IMAGE}
+            src={normalizeImageUrl(imageUrl || DEFAULT_VOUCHER_IMAGE)}
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             onError={handleImageError}
-            loading="lazy"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
           {discountPercent > 0 && (
             <div className="absolute top-2 right-2 bg-secondary text-on-secondary px-2 py-1 rounded-md font-label-md text-label-md z-10 shadow-md">
@@ -197,11 +197,13 @@ export function VoucherCard({ voucher, variant = "home", disableClick = false })
       {/* ── Image + discount badge ── */}
       <figure className="relative overflow-hidden h-44">
         <img
-          src={imageUrl || PLACEHOLDER_IMAGE}
+          src={normalizeImageUrl(imageUrl || DEFAULT_VOUCHER_IMAGE)}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           onError={handleImageError}
-          loading="lazy"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
 
         {/* Discount badge — only show if there is a discount */}

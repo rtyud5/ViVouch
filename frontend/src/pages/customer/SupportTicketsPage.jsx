@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { CircleAlert, CircleCheck, Headset } from 'lucide-react';
 import { getOrders } from '../../features/orders/api/orders.api';
 import { createTicket, listMyTickets } from '../../features/marketplace/api/marketplace.api';
 
@@ -44,13 +45,13 @@ export function SupportTicketsPage() {
 
       {state.error && (
         <div className="alert alert-error shadow-sm rounded-xl">
-          <span className="material-symbols-outlined">error</span>
+          <CircleAlert className="h-5 w-5" />
           <span>{state.error}</span>
         </div>
       )}
       {state.success && (
         <div className="alert alert-success shadow-sm rounded-xl">
-          <span className="material-symbols-outlined">check_circle</span>
+          <CircleCheck className="h-5 w-5" />
           <span>{state.success}</span>
         </div>
       )}
@@ -165,7 +166,7 @@ export function SupportTicketsPage() {
                 
                 {tickets.length === 0 && (
                   <div className="text-center py-12 text-base-content/50 flex flex-col items-center">
-                    <span className="material-symbols-outlined text-4xl mb-2 opacity-50">headset_mic</span>
+                    <Headset className="h-10 w-10 mb-2 opacity-50" />
                     <p>Chưa có yêu cầu hỗ trợ nào.</p>
                   </div>
                 )}

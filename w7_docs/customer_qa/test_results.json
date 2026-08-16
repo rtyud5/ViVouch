@@ -1,0 +1,190 @@
+[
+  {
+    "testId": "CUS-01",
+    "name": "Login + Logout Session Flow",
+    "status": "PASS",
+    "details": {
+      "postLoginUrl": "http://localhost:5173/customer/home",
+      "hasTokenBeforeLogout": true,
+      "hasTokenAfterLogout": false,
+      "postLogoutNavUrl": "http://localhost:5173/login",
+      "isProtectedBlocked": true
+    },
+    "timestamp": "2026-08-16T13:53:16.958Z"
+  },
+  {
+    "testId": "CUS-02",
+    "name": "Customer Role Guard",
+    "status": "PASS",
+    "details": {
+      "adminDashUrl": "http://localhost:5173/customer/home",
+      "adminDashBlocked": true,
+      "adminUsersUrl": "http://localhost:5173/customer/home",
+      "adminUsersBlocked": true,
+      "partnerDashUrl": "http://localhost:5173/customer/home",
+      "partnerDashBlocked": true,
+      "partnerVouchersUrl": "http://localhost:5173/customer/home",
+      "partnerVouchersBlocked": true
+    },
+    "timestamp": "2026-08-16T13:53:24.264Z"
+  },
+  {
+    "testId": "CUS-03",
+    "name": "Catalog / Home Voucher List & Detail",
+    "status": "PASS",
+    "details": {
+      "cardCount": 6,
+      "voucherTitles": [
+        "Buffet Lẩu 2 người — Haidilao",
+        "Set lẩu 1 người — Haidilao",
+        "Massage thư giãn 90 phút — Zen Spa",
+        "Gói chăm sóc da mặt — Zen Spa",
+        "Tour Đà Lạt 3N2Đ — GoTravel",
+        "Tour Phú Quốc 4N3Đ — GoTravel"
+      ],
+      "hasDuplicates": false,
+      "sampleDetailTitle": "Buffet Lẩu 2 người — Haidilao"
+    },
+    "timestamp": "2026-08-16T13:53:26.234Z"
+  },
+  {
+    "testId": "CUS-04",
+    "name": "Search Functionality",
+    "status": "PASS",
+    "details": {
+      "searchInputFound": true,
+      "fullSearchCount": 2,
+      "emptySearchCount": 0,
+      "restoredCount": 6
+    },
+    "timestamp": "2026-08-16T13:53:29.253Z"
+  },
+  {
+    "testId": "CUS-05",
+    "name": "Voucher Detail & Invalid State Handling",
+    "status": "PASS",
+    "details": {
+      "detailData": {
+        "title": "Buffet Lẩu 2 người — Haidilao",
+        "hasPrice": true,
+        "hasTabs": true,
+        "hasStock": true
+      },
+      "errorDisplayed": true
+    },
+    "timestamp": "2026-08-16T13:53:31.950Z"
+  },
+  {
+    "testId": "CUS-06",
+    "name": "Add To Cart & Persistence",
+    "status": "PASS",
+    "details": {
+      "cartSummary": {
+        "hasItems": true,
+        "hasOrderSummary": true,
+        "textSnippet": "ViVouch\nGiỏ hàng\n2\nVoucher\nreceipt_long\nĐơn hàng\ncurrency_exchange\nHoàn tiền\nsupport_agent\nHỗ trợ\nnotifications\nThông báo\nProfile\nC\nCustomer One QA Verified\nLogout\nGiỏ hàng của bạn\nTiếp tục mua sắm\nSẢN PHẨM (2)\nBuffet Lẩu 2 người — Haidilao\n179.000 đ\n325.000 đ\nSỐ LƯỢNG\nCòn lại 58 sản phẩm\nThành tiền"
+      }
+    },
+    "timestamp": "2026-08-16T13:53:36.824Z"
+  },
+  {
+    "testId": "CUS-07",
+    "name": "Cart Quantity Manipulation & Removal",
+    "status": "PASS",
+    "details": {
+      "plusBtnFound": true,
+      "minusBtnFound": true,
+      "removeBtnFound": true
+    },
+    "timestamp": "2026-08-16T13:53:41.177Z"
+  },
+  {
+    "testId": "CUS-08",
+    "name": "Empty Cart State",
+    "status": "PASS",
+    "details": {
+      "isEmptyCart": true
+    },
+    "timestamp": "2026-08-16T13:53:43.163Z"
+  },
+  {
+    "testId": "CUS-09",
+    "name": "Orders List & Ownership",
+    "status": "PASS",
+    "details": {
+      "orderCount": 6,
+      "firstOrderExpanded": true
+    },
+    "timestamp": "2026-08-16T13:53:45.332Z"
+  },
+  {
+    "testId": "CUS-10",
+    "name": "My Vouchers Tabs & QR View",
+    "status": "PASS",
+    "details": {
+      "usedTabFound": true,
+      "expiredTabFound": true,
+      "qrModalFound": true
+    },
+    "timestamp": "2026-08-16T13:53:49.705Z"
+  },
+  {
+    "testId": "CUS-11",
+    "name": "Profile Persistence",
+    "status": "PASS",
+    "details": {
+      "savedName": "Customer One QA Verified",
+      "savedPhone": "0987654321",
+      "emailReadOnly": true
+    },
+    "timestamp": "2026-08-16T13:53:53.463Z"
+  },
+  {
+    "testId": "CUS-12",
+    "name": "Support Ticket Submission & History",
+    "status": "PASS",
+    "details": {
+      "ticketCreated": true
+    },
+    "timestamp": "2026-08-16T13:53:58.446Z"
+  },
+  {
+    "testId": "CUS-13",
+    "name": "Notifications Center",
+    "status": "PASS",
+    "details": {
+      "notifData": {
+        "hasTitle": true,
+        "textSnippet": "ViVouch\nGiỏ hàng\nVoucher\nreceipt_long\nĐơn hàng\ncurrency_exchange\nHoàn tiền\nsupport_agent\nHỗ trợ\nnotifications\nThông báo\nProfile\nC\nCustomer One QA Verified\nLogout\nThông báo\n\nTheo dõi thanh toán, vouche"
+      }
+    },
+    "timestamp": "2026-08-16T13:53:59.529Z"
+  },
+  {
+    "testId": "CUS-14",
+    "name": "Responsive Mobile Smoke (390x844)",
+    "status": "PASS",
+    "details": {
+      "screensChecked": [
+        "Home",
+        "Voucher Detail",
+        "Cart",
+        "Orders",
+        "My Vouchers",
+        "Support"
+      ],
+      "viewport": "390x844"
+    },
+    "timestamp": "2026-08-16T13:54:17.148Z"
+  },
+  {
+    "testId": "CUS-15",
+    "name": "Error Handling / Offline State Resilience",
+    "status": "PASS",
+    "details": {
+      "offlineHandled": true,
+      "onlineRecovered": true
+    },
+    "timestamp": "2026-08-16T13:54:20.309Z"
+  }
+]

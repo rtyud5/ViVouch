@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { ReceiptText } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 
 /**
@@ -92,7 +93,7 @@ export function BottomNav({ cartCount = 0, basePath: initialBasePath }) {
           className={tabClass(isOrders)}
           aria-label="Đơn hàng"
         >
-          <span className="material-symbols-outlined text-[24px]">receipt_long</span>
+          <ReceiptText className="h-6 w-6" />
           <span className="text-[10px] mt-0.5 leading-none font-semibold">Đơn hàng</span>
         </Link>
       )}

@@ -6,6 +6,7 @@ import { ErrorRetryPanel } from "../../components/common";
 import { useVouchers, useCategories } from "../../features/vouchers/hooks";
 import { buildVoucherQueryParams } from "../../features/vouchers/utils/buildVoucherQueryParams";
 import { mapVoucherForCard } from "../../features/vouchers/utils/mapVoucherForCard";
+import { DEFAULT_VOUCHER_IMAGE, normalizeImageUrl } from "../../utils/image";
 
 function getSecondsUntilMidnight() {
   const now = new Date();
@@ -70,10 +71,14 @@ function HeroBanner() {
       aria-label="Banner khuyến mãi hôm nay"
     >
       <img
-        src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80"
+        src={normalizeImageUrl("https://images.unsplash.com/photo-1414235077428-338989a2e8c0", { width: 1600, height: 600, quality: 90 })}
         alt="Ưu đãi hôm nay"
         className="absolute inset-0 w-full h-full object-cover"
         loading="eager"
+        fetchPriority="high"
+        onError={(e) => {
+          e.currentTarget.src = DEFAULT_VOUCHER_IMAGE;
+        }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
       <div className="relative z-10 text-white">
