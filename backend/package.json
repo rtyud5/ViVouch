@@ -44,15 +44,5 @@
   "optionalDependencies": {
     "@rolldown/binding-linux-x64-gnu": "^1.1.5",
     "@rolldown/binding-linux-x64-musl": "^1.1.5"
-  },
-  "supportedArchitectures": {
-    "os": [
-      "current",
-      "linux"
-    ],
-    "cpu": [
-      "current",
-      "x64"
-    ]
   }
 }
