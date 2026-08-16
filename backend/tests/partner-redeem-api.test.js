@@ -352,4 +352,25 @@ describe('Partner Redeem API Tests', () => {
     // Should be a known business-level error
     expect([200, 403, 400].includes(res.status)).toBe(true);
   });
+
+  it('allows partner owner to get redeem history without null branchId error', async () => {
+    const res = await request(app)
+      .get('/api/partner/staff/me/redeem-history')
+      .set('Authorization', `Bearer ${partnerToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
+  });
+
+  it('allows access to GET /api/partner/redeem-history endpoint', async () => {
+    const res = await request(app)
+      .get('/api/partner/redeem-history')
+      .set('Authorization', `Bearer ${partnerToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
+  });
 });
+

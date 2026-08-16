@@ -287,6 +287,34 @@ export async function createVoucher(userId, data) {
   });
 }
 
+export async function getPartnerVoucherById(userId, voucherId) {
+  const partner = await getApprovedPartnerByUserId(userId);
+  const voucher = await prisma.voucher.findUnique({
+    where: { id: voucherId },
+    include: {
+      category: true,
+      voucherBranches: {
+        include: { branch: true },
+      },
+    },
+  });
+
+  if (!voucher) throw new AppError('Voucher not found', 404, 'VOUCHER_NOT_FOUND');
+  if (voucher.partnerId !== partner.id) throw new AppError('Không có quyền xem voucher này', 403, 'FORBIDDEN');
+
+  const [usedCount] = await Promise.all([
+    prisma.voucherUsageLog.count({
+      where: { voucherCode: { voucherId } },
+    }),
+  ]);
+
+  return {
+    ...mapPartnerVoucher(voucher, usedCount),
+    category: voucher.category,
+    branches: voucher.voucherBranches.map((vb) => vb.branch),
+  };
+}
+
 export async function updateVoucher(userId, voucherId, data) {
   const partner = await getApprovedPartnerByUserId(userId);
   const voucher = await prisma.voucher.findUnique({ where: { id: voucherId } });

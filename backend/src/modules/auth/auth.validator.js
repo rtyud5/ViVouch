@@ -7,7 +7,9 @@ const password = z.string()
   .regex(/[a-z]/, 'Mật khẩu phải có chữ thường')
   .regex(/[A-Z]/, 'Mật khẩu phải có chữ hoa')
   .regex(/\d/, 'Mật khẩu phải có chữ số');
-const phone = z.string().trim().min(9).max(15).optional().nullable().transform((value) => value || null);
+const phone = z.string().trim()
+  .regex(/^(\+84|0)\d{8,10}$/, 'Số điện thoại không hợp lệ (VD: 0901234567)')
+  .optional().nullable().transform((value) => value || null);
 
 export const registerSchema = z.object({
   email,

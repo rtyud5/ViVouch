@@ -87,7 +87,7 @@ export function RegisterPage() {
             </div>
           )}
 
-          <form className="space-y-5" onSubmit={submit}>
+          <form className="space-y-5" onSubmit={submit} autoComplete="off">
             <div>
               <label className="block font-label-md text-label-md text-on-surface mb-1.5" htmlFor="fullName">
                 Họ và tên
@@ -98,6 +98,7 @@ export function RegisterPage() {
                 type="text"
                 minLength={2}
                 required
+                autoComplete="name"
                 placeholder="Nhập họ và tên của bạn"
                 className="w-full px-4 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
               />
@@ -113,6 +114,7 @@ export function RegisterPage() {
                 name="email"
                 type="email"
                 required
+                autoComplete="email"
                 placeholder="email@example.com"
                 className="w-full px-4 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
               />
@@ -127,6 +129,7 @@ export function RegisterPage() {
                 id="phone"
                 name="phone"
                 type="tel"
+                autoComplete="tel"
                 placeholder="Nhập số điện thoại"
                 className="w-full px-4 py-3 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
               />
@@ -144,6 +147,7 @@ export function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   minLength={8}
                   required
+                  autoComplete="new-password"
                   placeholder="Tạo mật khẩu"
                   className="w-full px-4 py-3 pr-12 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
                 />
@@ -175,6 +179,7 @@ export function RegisterPage() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   minLength={8}
                   required
+                  autoComplete="new-password"
                   placeholder="Nhập lại mật khẩu"
                   className="w-full px-4 py-3 pr-12 border rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-1 transition-all duration-200 bg-surface border-outline-variant focus:border-primary focus:ring-primary"
                 />

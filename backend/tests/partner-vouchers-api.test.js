@@ -179,4 +179,35 @@ describe('Partner Vouchers API Contract Tests', () => {
       expect(res.body.success).toBe(false);
     });
   });
+
+  describe('GET /api/partner/vouchers/:id', () => {
+    it('returns voucher details for prefilling edit form', async () => {
+      const createRes = await request(app)
+        .post('/api/partner/vouchers')
+        .set('Authorization', `Bearer ${partnerToken}`)
+        .send({
+          categoryId,
+          title: 'Voucher To Edit Test',
+          originalPrice: 200000,
+          salePrice: 150000,
+          totalQty: 50,
+        });
+
+      expect(createRes.status).toBe(201);
+      const voucherId = createRes.body.data.id;
+
+      const getRes = await request(app)
+        .get(`/api/partner/vouchers/${voucherId}`)
+        .set('Authorization', `Bearer ${partnerToken}`);
+
+      expect(getRes.status).toBe(200);
+      expect(getRes.body.success).toBe(true);
+      expect(getRes.body.data.id).toBe(voucherId);
+      expect(getRes.body.data.title).toBe('Voucher To Edit Test');
+      expect(getRes.body.data.originalPrice).toBe(200000);
+      expect(getRes.body.data.salePrice).toBe(150000);
+      expect(getRes.body.data.totalQty).toBe(50);
+    });
+  });
 });
+

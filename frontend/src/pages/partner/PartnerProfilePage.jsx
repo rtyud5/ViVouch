@@ -236,29 +236,29 @@ export function PartnerProfilePage() {
           </div>
 
           <form className="space-y-4" onSubmit={handleProfileSubmit}>
-            <label className="form-control">
-              <div className="label"><span className="label-text">Tên doanh nghiệp</span></div>
-              <input className="input input-bordered" {...profileForm.register("businessName")} />
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium text-base-content">Tên doanh nghiệp</p>
+              <input className="input input-bordered w-full" {...profileForm.register("businessName")} />
               {profileForm.formState.errors.businessName && (
-                <div className="mt-1 text-sm text-error">{profileForm.formState.errors.businessName.message}</div>
+                <div className="text-sm text-error">{profileForm.formState.errors.businessName.message}</div>
               )}
-            </label>
+            </div>
 
-            <label className="form-control">
-              <div className="label"><span className="label-text">Mã số thuế</span></div>
-              <input className="input input-bordered" readOnly {...profileForm.register("taxCode")} />
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium text-base-content">Mã số thuế</p>
+              <input className="input input-bordered w-full bg-base-200 cursor-not-allowed" readOnly {...profileForm.register("taxCode")} />
               {profileForm.formState.errors.taxCode && (
-                <div className="mt-1 text-sm text-error">{profileForm.formState.errors.taxCode.message}</div>
+                <div className="text-sm text-error">{profileForm.formState.errors.taxCode.message}</div>
               )}
-            </label>
+            </div>
 
-            <label className="form-control">
-              <div className="label"><span className="label-text">Mô tả doanh nghiệp</span></div>
-              <textarea className="textarea textarea-bordered min-h-28" {...profileForm.register("description")} />
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium text-base-content">Mô tả doanh nghiệp</p>
+              <textarea className="textarea textarea-bordered min-h-28 w-full" {...profileForm.register("description")} />
               {profileForm.formState.errors.description && (
-                <div className="mt-1 text-sm text-error">{profileForm.formState.errors.description.message}</div>
+                <div className="text-sm text-error">{profileForm.formState.errors.description.message}</div>
               )}
-            </label>
+            </div>
 
             <button type="submit" className="btn btn-primary w-full" disabled={updateProfileMutation.isPending}>
               {updateProfileMutation.isPending ? <span className="loading loading-spinner loading-sm"></span> : <Check className="h-4 w-4" />}
@@ -295,29 +295,29 @@ export function PartnerProfilePage() {
               }`}
           >
             <form className="grid grid-cols-1 gap-4 md:grid-cols-3" onSubmit={handleBranchSubmit}>
-              <label className="form-control">
-                <div className="label"><span className="label-text">Tên chi nhánh</span></div>
-                <input className="input input-bordered" {...branchForm.register("name")} />
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-medium text-base-content">Tên chi nhánh</p>
+                <input className="input input-bordered w-full" {...branchForm.register("name")} />
                 {branchForm.formState.errors.name && (
-                  <div className="mt-1 text-sm text-error">{branchForm.formState.errors.name.message}</div>
+                  <div className="text-sm text-error">{branchForm.formState.errors.name.message}</div>
                 )}
-              </label>
+              </div>
 
-              <label className="form-control md:col-span-2">
-                <div className="label"><span className="label-text">Địa chỉ</span></div>
-                <input className="input input-bordered" {...branchForm.register("address")} />
+              <div className="flex flex-col gap-1 md:col-span-2">
+                <p className="text-sm font-medium text-base-content">Địa chỉ</p>
+                <input className="input input-bordered w-full" {...branchForm.register("address")} />
                 {branchForm.formState.errors.address && (
-                  <div className="mt-1 text-sm text-error">{branchForm.formState.errors.address.message}</div>
+                  <div className="text-sm text-error">{branchForm.formState.errors.address.message}</div>
                 )}
-              </label>
+              </div>
 
-              <label className="form-control">
-                <div className="label"><span className="label-text">Số điện thoại</span></div>
-                <input className="input input-bordered" {...branchForm.register("phone")} />
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-medium text-base-content">Số điện thoại</p>
+                <input className="input input-bordered w-full" {...branchForm.register("phone")} />
                 {branchForm.formState.errors.phone && (
-                  <div className="mt-1 text-sm text-error">{branchForm.formState.errors.phone.message}</div>
+                  <div className="text-sm text-error">{branchForm.formState.errors.phone.message}</div>
                 )}
-              </label>
+              </div>
 
               <div className="md:col-span-3 flex justify-end">
                 <button type="submit" className="btn btn-primary">

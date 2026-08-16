@@ -35,7 +35,7 @@ export default function VoucherApprovalsPage() {
 
   const handleReject = (voucherId) => {
     if (!rejectReason.trim()) {
-      alert("Vui lòng nhập lý do từ chối");
+      setToastError(new Error("Vui lòng nhập lý do từ chối"));
       return;
     }
     setToastError(null);

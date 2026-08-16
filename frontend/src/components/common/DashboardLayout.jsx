@@ -33,7 +33,7 @@ export function DashboardLayout({
       />
 
       {/* ── drawer-content ── */}
-      <div className={`drawer-content flex flex-col ${theme.contentBg}`}>
+      <div className={`drawer-content flex flex-col min-h-screen ${theme.contentBg}`}>
         <header className={`navbar sticky top-0 z-30 border-b min-h-14 px-4 lg:px-6 ${theme.topbarBg} ${theme.topbarBorder}`}>
           <div className="navbar-start lg:hidden">
             <button
@@ -48,19 +48,14 @@ export function DashboardLayout({
             <span className={`font-bold text-lg ml-1 ${theme.brandColor}`}>{brandName}</span>
           </div>
 
-          <div className="navbar-start hidden lg:flex">
-            <label className="input input-bordered flex items-center gap-2 w-64 h-9 text-[14px]">
-              <span className="material-symbols-outlined text-[18px] text-[#565e74]">search</span>
-              <input type="text" placeholder="Tìm kiếm..." aria-label="Tìm kiếm" className="grow bg-transparent outline-none" />
-            </label>
-          </div>
+          <div className="navbar-start hidden lg:flex"></div>
 
           <div className="navbar-end">
             {customAvatar}
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6 pb-20 lg:pb-6 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-6 pb-20 lg:pb-6">
           <Outlet />
         </main>
 
@@ -87,7 +82,7 @@ export function DashboardLayout({
       </div>
 
       {/* ── drawer-side ── */}
-      <div className="drawer-side z-50 lg:relative lg:overflow-visible">
+      <div className="drawer-side z-50 lg:sticky lg:top-0 lg:h-screen lg:overflow-visible">
         <label
           htmlFor={drawerId}
           aria-label="Đóng menu"
@@ -101,7 +96,7 @@ export function DashboardLayout({
         {isCollapsible && <div className="hidden lg:block w-[72px] shrink-0"></div>}
 
         <aside className={`
-          min-h-full text-white flex flex-col overflow-hidden
+          min-h-full h-full text-white flex flex-col overflow-y-auto
           ${theme.sidebarBg}
           ${isCollapsible
             ? 'w-[260px] lg:w-[72px] lg:hover:w-[260px] transition-[width] duration-300 ease-in-out group/sidebar lg:absolute lg:top-0 lg:left-0 lg:bottom-0 lg:z-[60]'

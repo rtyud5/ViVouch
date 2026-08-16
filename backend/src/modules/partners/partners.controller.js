@@ -70,6 +70,15 @@ export async function getPartnerVouchers(req, res, next) {
   }
 }
 
+export async function getPartnerVoucherById(req, res, next) {
+  try {
+    const voucher = await vouchersService.getPartnerVoucherById(req.user.userId, req.params.id);
+    res.json({ success: true, data: voucher });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function createVoucher(req, res, next) {
   try {
     const validatedData = createVoucherSchema.parse(req.body);

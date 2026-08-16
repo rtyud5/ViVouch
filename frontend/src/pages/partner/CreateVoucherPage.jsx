@@ -1,11 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { Save, Send } from "lucide-react";
+import { Save, Send, Lightbulb, CheckCircle2, AlertCircle } from "lucide-react";
 import { VoucherCard } from "../../components/voucher/VoucherCard";
-import { createVoucherDraft, submitVoucherForApproval, updateVoucher, getPartnerVouchers } from "../../features/partner/api/vouchers.api";
+import {
+  createVoucherDraft,
+  submitVoucherForApproval,
+  updateVoucher,
+  getPartnerVouchers,
+  getPartnerVoucherById,
+} from "../../features/partner/api/vouchers.api";
 import { getCategories } from "../../features/vouchers/api/vouchers.api";
 import { voucherFormSchema } from "./schemas/voucherFormSchema";
 import { apiClient } from "../../services/apiClient";
@@ -29,9 +35,22 @@ function getErrorMessage(error) {
 export function CreateVoucherPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  // NEW-B113: detect edit mode from route param
   const { id: voucherId } = useParams();
   const isEditMode = Boolean(voucherId);
+  const [toast, setToast] = useState({ show: false, type: "success", message: "" });
+
+  const showToast = (message, type = "success", redirect = null) => {
+    setToast({ show: true, type, message });
+    if (redirect) {
+      setTimeout(() => {
+        navigate(redirect);
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        setToast((prev) => ({ ...prev, show: false }));
+      }, 4000);
+    }
+  };
 
   const {
     register,
@@ -53,47 +72,54 @@ export function CreateVoucherPage() {
   const { data: categoriesData, isLoading: isCategoriesLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
-    staleTime: 5 * 60 * 1000, // Cache 5 phút vì categories ít thay đổi
+    staleTime: 5 * 60 * 1000,
   });
 
   const categories = categoriesData?.data ?? categoriesData ?? [];
 
-  // NEW-B113: Fetch voucher data when in edit mode to pre-fill the form
-  const { isLoading: isVoucherLoading } = useQuery({
+  // Fetch voucher data when in edit mode to pre-fill the form
+  const {
+    data: voucherData,
+    isLoading: isVoucherLoading,
+    isError: isVoucherError,
+    error: voucherError,
+  } = useQuery({
     queryKey: ["partnerVoucherDetail", voucherId],
-    queryFn: async () => {
-      const response = await apiClient.get(`/partner/vouchers/${voucherId}`);
-      return response.data?.data ?? response.data;
-    },
+    queryFn: () => getPartnerVoucherById(voucherId),
     enabled: isEditMode,
-    // Pre-fill form when data loads
-    onSuccess: (voucher) => {
-      if (!voucher) return;
-      // Convert ISO dates to datetime-local format (YYYY-MM-DDTHH:mm)
-      const toLocalInput = (iso) => {
-        if (!iso) return "";
-        return new Date(iso).toISOString().slice(0, 16);
-      };
-      reset({
-        name: voucher.title ?? "",
-        category: voucher.categoryId ?? "",
-        imageUrl: voucher.imageUrl ?? "",
-        location: voucher.location ?? "",
-        originalPrice: voucher.originalPrice ?? 0,
-        salePrice: voucher.salePrice ?? 0,
-        totalQuantity: voucher.totalQty ?? 1,
-        startDate: toLocalInput(voucher.saleStart),
-        endDate: toLocalInput(voucher.saleEnd),
-      });
-    },
   });
 
-  // Khi categories load xong lần đầu, tự động chọn category đầu tiên
+  // Pre-fill form when voucher data loads
   useEffect(() => {
-    if (categories.length > 0 && !formValues.category) {
+    if (voucherData) {
+      const toLocalInput = (iso) => {
+        if (!iso) return "";
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return "";
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      };
+
+      reset({
+        name: voucherData.title ?? "",
+        category: voucherData.categoryId ?? "",
+        imageUrl: voucherData.imageUrl ?? "",
+        location: voucherData.location ?? "",
+        originalPrice: Number(voucherData.originalPrice) || 0,
+        salePrice: Number(voucherData.salePrice) || 0,
+        totalQuantity: Number(voucherData.totalQty) || 1,
+        startDate: toLocalInput(voucherData.saleStart),
+        endDate: toLocalInput(voucherData.saleEnd),
+      });
+    }
+  }, [voucherData, reset]);
+
+  // Khi categories load xong lần đầu ở chế độ tạo mới, tự động chọn category đầu tiên
+  useEffect(() => {
+    if (!isEditMode && categories.length > 0 && !formValues.category) {
       setValue("category", categories[0].id, { shouldValidate: false });
     }
-  }, [categories, formValues.category, setValue]);
+  }, [isEditMode, categories, formValues.category, setValue]);
 
   const previewVoucher = {
     id: "preview-id",
@@ -119,20 +145,19 @@ export function CreateVoucherPage() {
     }
   };
 
-  // NEW-B113: update mutation for edit mode
+  // update mutation for edit mode
   const updateMutation = useMutation({
     mutationFn: (formData) => updateVoucher(voucherId, formData),
     onSuccess: () => {
       invalidateCaches();
-      alert("Cập nhật voucher thành công!");
-      navigate("/partner/vouchers");
+      showToast("Cập nhật voucher thành công!", "success", "/partner/vouchers");
     },
     onError: (error) => {
-      alert(getErrorMessage(error));
+      showToast(getErrorMessage(error), "error");
     },
   });
 
-  // NEW-B113: update + submit mutation for edit mode
+  // update + submit mutation for edit mode
   const updateAndSubmitMutation = useMutation({
     mutationFn: async (formData) => {
       await updateVoucher(voucherId, formData);
@@ -140,33 +165,29 @@ export function CreateVoucherPage() {
     },
     onSuccess: () => {
       invalidateCaches();
-      alert("Cập nhật và gửi kiểm duyệt thành công!");
-      navigate("/partner/vouchers");
+      showToast("Cập nhật và gửi kiểm duyệt thành công!", "success", "/partner/vouchers");
     },
     onError: (error) => {
-      alert(getErrorMessage(error));
+      showToast(getErrorMessage(error), "error");
     },
   });
 
   const draftMutation = useMutation({
     mutationFn: createVoucherDraft,
     onSuccess: () => {
-      // Invalidate all affected caches so Voucher List, Dashboard KPI, and Reports refresh
       queryClient.invalidateQueries({ queryKey: ["partnerVouchers"] });
       queryClient.invalidateQueries({ queryKey: ["partnerReports"] });
       queryClient.invalidateQueries({ queryKey: ["partnerProfile"] });
-      alert("Lưu nháp thành công!");
-      navigate("/partner/vouchers");
+      showToast("Lưu nháp voucher thành công!", "success", "/partner/vouchers");
     },
     onError: (error) => {
-      alert(getErrorMessage(error));
+      showToast(getErrorMessage(error), "error");
     },
   });
 
   const submitMutation = useMutation({
     mutationFn: async (formData) => {
       const created = await createVoucherDraft(formData);
-      // Backend trả về { data: { id, ... } } sau khi tạo
       const createdId = created?.data?.id || created?.id;
 
       if (!createdId) {
@@ -176,15 +197,13 @@ export function CreateVoucherPage() {
       return submitVoucherForApproval(createdId);
     },
     onSuccess: () => {
-      // Invalidate all affected caches so Voucher List, Dashboard KPI, and Reports refresh
       queryClient.invalidateQueries({ queryKey: ["partnerVouchers"] });
       queryClient.invalidateQueries({ queryKey: ["partnerReports"] });
       queryClient.invalidateQueries({ queryKey: ["partnerProfile"] });
-      alert("Gửi kiểm duyệt thành công!");
-      navigate("/partner/vouchers");
+      showToast("Gửi kiểm duyệt voucher thành công!", "success", "/partner/vouchers");
     },
     onError: (error) => {
-      alert(getErrorMessage(error));
+      showToast(getErrorMessage(error), "error");
     },
   });
 
@@ -225,8 +244,39 @@ export function CreateVoucherPage() {
     );
   }
 
+  if (isEditMode && isVoucherError) {
+    return (
+      <div className="max-w-7xl mx-auto py-12 px-4 text-center">
+        <div className="alert alert-error max-w-lg mx-auto mb-4">
+          <span>{getErrorMessage(voucherError)}</span>
+        </div>
+        <button
+          type="button"
+          className="btn btn-outline"
+          onClick={() => navigate("/partner/vouchers")}
+        >
+          Quay lại danh sách voucher
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="toast toast-top toast-center z-50 animate-bounce-in">
+          <div
+            className={`alert ${
+              toast.type === "success" ? "alert-success text-success-content" : "alert-error text-error-content"
+            } shadow-xl rounded-2xl px-6 py-3 font-medium flex items-center gap-3 border`}
+          >
+            {toast.type === "success" ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+            <span>{toast.message}</span>
+          </div>
+        </div>
+      )}
+
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div>
           <h1 className="text-2xl font-bold text-base-content">
@@ -482,9 +532,14 @@ export function CreateVoucherPage() {
               </div>
             </div>
 
-            <div className="mt-4 p-4 bg-info/10 rounded-xl text-sm text-info-content">
-              <p className="font-semibold mb-1">Mẹo tối ưu voucher:</p>
-              <ul className="list-disc pl-5 space-y-1 opacity-80">
+            <div className="mt-4 p-4 rounded-2xl bg-[#EDE9FE] border border-[#DDD6FE] text-[#2E1760] shadow-xs">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-[#DDD6FE] flex items-center justify-center text-[#4F2D96] shrink-0">
+                  <Lightbulb className="w-3.5 h-3.5" />
+                </div>
+                <p className="font-bold text-sm text-[#3B1F79]">Mẹo tối ưu voucher:</p>
+              </div>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-[#3B1F79] leading-relaxed font-medium">
                 <li>Tên voucher nên ngắn gọn, chứa mức giảm.</li>
                 <li>Ảnh rõ nét, tỷ lệ 4:3 giúp thu hút hơn.</li>
                 <li>Giá bán thấp hơn giá gốc sẽ hiển thị huy hiệu giảm % nổi bật.</li>
