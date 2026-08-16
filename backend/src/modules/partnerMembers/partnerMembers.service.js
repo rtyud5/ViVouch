@@ -107,11 +107,44 @@ export async function updateStaff(ownerId, partnerId, memberId, data) {
   });
 }
 
-export async function getStaffRedeemHistory(userId, branchId) {
+export async function getStaffRedeemHistory(accessOrUserId, branchIdOrQuery) {
+  let where = {};
+  if (typeof accessOrUserId === 'object' && accessOrUserId !== null) {
+    const access = accessOrUserId;
+    const query = branchIdOrQuery || {};
+    where = {
+      branch: { partnerId: access.partnerId },
+    };
+    if (access.role === 'STAFF') {
+      where.redeemedBy = access.userId;
+      if (access.branchId) {
+        where.branchId = access.branchId;
+      }
+    } else if (query?.branchId) {
+      where.branchId = query.branchId;
+    }
+  } else {
+    const userId = accessOrUserId;
+    const branchId = branchIdOrQuery;
+    where = {
+      ...(userId ? { redeemedBy: userId } : {}),
+      ...(branchId ? { branchId } : {}),
+    };
+  }
+
   return prisma.voucherUsageLog.findMany({
-    where: { redeemedBy: userId, branchId },
-    include: { voucherCode: { include: { voucher: { select: { title: true } } } }, branch: true },
+    where,
+    include: {
+      voucherCode: {
+        include: {
+          voucher: { select: { id: true, title: true, imageUrl: true, originalPrice: true, salePrice: true } },
+          owner: { select: { id: true, fullName: true, email: true } },
+        },
+      },
+      branch: true,
+    },
     orderBy: { redeemedAt: 'desc' },
     take: 100,
   });
 }
+

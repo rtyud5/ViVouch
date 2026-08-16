@@ -21,5 +21,17 @@ export const update = asyncHandler(async (req, res) => {
 });
 
 export const history = asyncHandler(async (req, res) => {
-  res.json({ success: true, data: await service.getStaffRedeemHistory(req.user.userId, req.partnerAccess.branchId) });
+  res.json({
+    success: true,
+    data: await service.getStaffRedeemHistory(
+      {
+        userId: req.user.userId,
+        role: req.partnerAccess.role,
+        partnerId: req.partnerAccess.partnerId,
+        branchId: req.partnerAccess.branchId,
+      },
+      req.query,
+    ),
+  });
 });
+

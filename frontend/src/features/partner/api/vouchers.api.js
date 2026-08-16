@@ -31,6 +31,12 @@ export async function getPartnerVouchers(params = {}) {
   return response.data;
 }
 
+// Lấy chi tiết 1 voucher của partner để chỉnh sửa
+export async function getPartnerVoucherById(voucherId) {
+  const response = await apiClient.get(`${BASE}/${voucherId}`);
+  return unwrap(response);
+}
+
 // Tạo voucher mới ở trạng thái DRAFT.
 export async function createVoucherDraft(formData) {
   const payload = mapVoucherFormToPayload(formData);

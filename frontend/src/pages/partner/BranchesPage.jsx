@@ -116,47 +116,51 @@ export function BranchesPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className="form-control">
-              <span className="label-text mb-2">Tên chi nhánh</span>
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium text-base-content">Tên chi nhánh</p>
               <input
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 value={form.name}
                 onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
                 maxLength={255}
                 required
               />
-            </label>
-            <label className="form-control">
-              <span className="label-text mb-2">Tỉnh/thành phố</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium text-base-content">Tỉnh/thành phố</p>
               <input
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 value={form.city}
                 onChange={(event) => setForm((current) => ({ ...current, city: event.target.value }))}
                 maxLength={255}
                 required
               />
-            </label>
-            <label className="form-control md:col-span-2">
-              <span className="label-text mb-2">Địa chỉ</span>
+            </div>
+            <div className="flex flex-col gap-1 md:col-span-2">
+              <p className="text-sm font-medium text-base-content">Địa chỉ</p>
               <input
-                className="input input-bordered"
+                className="input input-bordered w-full"
                 value={form.address}
                 onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))}
                 maxLength={255}
                 required
               />
-            </label>
+            </div>
           </div>
 
-          <label className="label cursor-pointer justify-start gap-3">
+          <div className="flex items-center gap-3 mt-1">
             <input
+              id="branch-isactive-toggle"
               type="checkbox"
-              className="toggle toggle-primary"
+              className="toggle"
+              style={form.isActive ? { backgroundColor: '#16a34a', borderColor: '#16a34a' } : {}}
               checked={form.isActive}
               onChange={(event) => setForm((current) => ({ ...current, isActive: event.target.checked }))}
             />
-            <span className="label-text">Kích hoạt ngay</span>
-          </label>
+            <label htmlFor="branch-isactive-toggle" className="text-sm font-medium cursor-pointer select-none">
+              Kích hoạt ngay
+            </label>
+          </div>
 
           <div className="card-actions justify-end">
             <button type="submit" className="btn btn-primary" disabled={isSaving || !form.name.trim() || !form.address.trim() || !form.city.trim()}>

@@ -6,6 +6,7 @@ import { requireRole } from '../../middlewares/role.middleware.js';
 import { requirePartnerMember, requirePartnerOwner } from '../../middlewares/partnerAccess.middleware.js';
 import reportsRouter from '../reports/reports.routes.js';
 import staffRouter from '../partnerMembers/partnerMembers.routes.js';
+import { history as redeemHistoryController } from '../partnerMembers/partnerMembers.controller.js';
 import { redeemCheckRateLimiter, redeemConfirmRateLimiter } from '../../middlewares/rateLimit.middleware.js';
 
 const router = Router();
@@ -20,6 +21,7 @@ router.put('/branches/:id', requirePartnerOwner(), partnersController.updateBran
 router.delete('/branches/:id', requirePartnerOwner(), partnersController.deleteBranch);
 
 router.get('/vouchers', requirePartnerOwner(), partnersController.getPartnerVouchers);
+router.get('/vouchers/:id', requirePartnerOwner(), partnersController.getPartnerVoucherById);
 router.post('/vouchers', requirePartnerOwner(), partnersController.createVoucher);
 router.put('/vouchers/:id', requirePartnerOwner(), partnersController.updateVoucher);
 router.post('/vouchers/:id/submit', requirePartnerOwner(), partnersController.submitVoucher);
@@ -27,6 +29,7 @@ router.post('/vouchers/:id/submit', requirePartnerOwner(), partnersController.su
 router.post('/redeem/check', requirePartnerMember(), redeemCheckRateLimiter, redeemController.checkVoucherCode);
 router.post('/redeem/confirm', requirePartnerMember(), redeemConfirmRateLimiter, redeemController.confirmVoucherCode);
 router.post('/redeem', requirePartnerMember(), redeemConfirmRateLimiter, redeemController.redeemVoucherCode);
+router.get('/redeem-history', requirePartnerMember(), redeemHistoryController);
 
 router.use('/staff', staffRouter);
 router.use('/reports', requirePartnerOwner(), reportsRouter);

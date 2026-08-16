@@ -8,5 +8,7 @@ router.get('/', requirePartnerOwner(), controller.list);
 router.post('/', requirePartnerOwner(), controller.create);
 router.patch('/:id', requirePartnerOwner(), controller.update);
 router.get('/me/redeem-history', requirePartnerMember(), controller.history);
+router.get('/redeem-history', requirePartnerMember(), controller.history);
 
 export default router;
+

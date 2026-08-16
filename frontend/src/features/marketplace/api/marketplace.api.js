@@ -24,9 +24,11 @@ export async function updateStaff(id, payload) {
   return (await apiClient.patch(`/partner/staff/${id}`, payload)).data.data;
 }
 
-export async function getStaffRedeemHistory() {
-  return (await apiClient.get('/partner/staff/me/redeem-history')).data.data;
+export async function getStaffRedeemHistory(params = {}) {
+  return (await apiClient.get('/partner/staff/me/redeem-history', { params })).data.data;
 }
+export const getRedeemHistory = getStaffRedeemHistory;
+
 
 export async function listMyRefunds() {
   return (await apiClient.get('/customer/refunds')).data.data;

@@ -64,6 +64,7 @@ export function PartnerLayout() {
       { label: 'Chi nhánh', path: '/partner/branches', icon: 'store' },
       { label: 'Nhân viên', path: '/partner/staff', icon: 'badge' },
       { label: 'Xác thực', path: '/partner/validation', icon: 'verified_user' },
+      { label: 'Lịch sử đổi mã', path: '/partner/redeem-history', icon: 'history' },
       { label: 'Báo cáo', path: '/partner/reports', icon: 'bar_chart' },
       { label: 'Thông báo', path: '/partner/notifications', icon: 'notifications' },
       { label: 'Cài đặt', path: '/partner/profile', icon: 'settings' },
