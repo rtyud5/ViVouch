@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../features/cart/hooks/useCart';
 import { useCheckout } from '../../features/orders/hooks';
@@ -30,6 +30,11 @@ export function CheckoutPage() {
   const totalAmount = cartTotal?.totalAmount ?? cartItems.reduce((sum, item) => sum + Number(item.voucher?.salePrice || 0) * item.qty, 0);
   const walletBalance = Number(user?.wallet?.balance || 0);
   const walletInsufficient = paymentMethod === 'VIVOUCH_WALLET' && walletBalance < Number(totalAmount);
+
+  // Clear stale idempotency key whenever checkout payload options change
+  useEffect(() => {
+    sessionStorage.removeItem('checkoutIdempotencyKey');
+  }, [paymentMethod, isGift, recipientName, recipientPhone, note]);
 
   async function handleCheckout() {
     setLocalError(null);
@@ -84,6 +89,7 @@ export function CheckoutPage() {
         state: { orderId: result.orderId, voucherCodes: result.voucherCodes || [] },
       });
     } catch (error) {
+      sessionStorage.removeItem('checkoutIdempotencyKey');
       setLocalError(error);
     }
   }
