@@ -32,8 +32,19 @@ export function CustomerLayout() {
   const queryClient = useQueryClient();
 
   // ── Cart badge ──────────────────────────────────────────────────────────────
-  // cartCount = tổng số lượng sản phẩm trong giỏ (từ React Query cache).
   const { cartCount } = useCart();
+
+  // ── Search State ────────────────────────────────────────────────────────────
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  function handleSearchSubmit(e) {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/vouchers?q=${encodeURIComponent(q)}`);
+    }
+  }
 
   // ── Handlers ────────────────────────────────────────────────────────────────
   async function handleLogout() {
@@ -47,14 +58,13 @@ export function CustomerLayout() {
   }
 
   // ── Avatar ──────────────────────────────────────────────────────────────────
-  // Nếu user có avatar URL thì hiển thị ảnh, không thì hiển thị chữ cái đầu.
   const avatarInitial = user?.fullName?.[0]?.toUpperCase() ?? 'U';
 
   // ── Nav links ───────────────────────────────────────────────────────────────
   function navLinkClass(path) {
     const isActive = currentPath === path;
     return [
-      'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-colors',
+      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-sm font-semibold transition-all duration-200',
       isActive
         ? 'bg-primary/10 text-primary'
         : 'text-base-content/70 hover:text-primary hover:bg-base-200',
@@ -66,7 +76,7 @@ export function CustomerLayout() {
 
       {/* ── Desktop Navbar ─────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 bg-base-100 border-b border-base-200 shadow-sm">
-        <div className="max-w-screen-xl mx-auto px-4 flex items-center h-16 gap-4">
+        <div className="max-w-screen-xl mx-auto px-4 flex items-center h-16 gap-3">
 
           {/* Logo */}
           <Link
@@ -77,25 +87,72 @@ export function CustomerLayout() {
             ViVouch
           </Link>
 
+          {/* Expandable Search Bar */}
+          <form
+            onSubmit={handleSearchSubmit}
+            className={`transition-all duration-300 ease-in-out flex items-center ${
+              isSearchExpanded ? 'flex-1 max-w-xl' : 'w-10 md:w-48'
+            }`}
+            role="search"
+          >
+            <label
+              className={`input input-bordered flex items-center gap-2 w-full rounded-full bg-base-100 transition-all duration-200 cursor-pointer ${
+                isSearchExpanded ? 'px-4 shadow-sm border-primary' : 'px-3 hover:bg-base-200'
+              }`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-4 h-4 text-base-content/60 shrink-0"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+                />
+              </svg>
+              <input
+                type="search"
+                className={`grow bg-transparent outline-none text-sm ${
+                  !isSearchExpanded ? 'hidden md:block w-full cursor-pointer' : 'w-full'
+                }`}
+                placeholder="Tìm kiếm voucher..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchExpanded(true)}
+                onBlur={() => {
+                  if (!searchQuery.trim()) {
+                    setIsSearchExpanded(false);
+                  }
+                }}
+                aria-label="Tìm kiếm voucher"
+              />
+            </label>
+          </form>
+
           {/* Spacer */}
-          <div className="flex-1" />
+          {!isSearchExpanded && <div className="flex-1" />}
 
           {/* Desktop nav links (md+) */}
-          <nav className="hidden md:flex items-center gap-1" aria-label="Menu khách hàng">
+          <nav className="hidden md:flex items-center gap-1 shrink-0" aria-label="Menu khách hàng">
 
             {/* Cart link + badge */}
             <Link
               to="/customer/cart"
               id="customer-nav-cart"
               className={`${navLinkClass('/customer/cart')} relative`}
+              title="Giỏ hàng"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round"
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184
                      1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span>Giỏ hàng</span>
+              <span className={isSearchExpanded ? 'hidden' : 'inline'}>Giỏ hàng</span>
               {/* Badge */}
               {cartCount > 0 && (
                 <span
@@ -114,32 +171,35 @@ export function CustomerLayout() {
               to="/customer/my-vouchers"
               id="customer-nav-vouchers"
               className={navLinkClass('/customer/my-vouchers')}
+              title="Voucher"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round"
                   d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002
                      2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
               </svg>
-              <span>Voucher</span>
+              <span className={isSearchExpanded ? 'hidden' : 'inline'}>Voucher</span>
             </Link>
 
-            <Link to="/customer/orders" className={navLinkClass('/customer/orders')}>
-              <span className="material-symbols-outlined text-[20px]">receipt_long</span>
-              <span>Đơn hàng</span>
+            <Link to="/customer/orders" className={navLinkClass('/customer/orders')} title="Đơn hàng">
+              <span className="material-symbols-outlined text-[20px] shrink-0">receipt_long</span>
+              <span className={isSearchExpanded ? 'hidden' : 'inline'}>Đơn hàng</span>
             </Link>
 
-            <Link to="/customer/refunds" className={navLinkClass('/customer/refunds')}>
-              <span className="material-symbols-outlined text-[20px]">currency_exchange</span>
-              <span>Hoàn tiền</span>
+            <Link to="/customer/refunds" className={navLinkClass('/customer/refunds')} title="Hoàn tiền">
+              <span className="material-symbols-outlined text-[20px] shrink-0">currency_exchange</span>
+              <span className={isSearchExpanded ? 'hidden' : 'inline'}>Hoàn tiền</span>
             </Link>
-            <Link to="/customer/support" className={navLinkClass('/customer/support')}>
-              <span className="material-symbols-outlined text-[20px]">support_agent</span>
-              <span>Hỗ trợ</span>
+
+            <Link to="/customer/support" className={navLinkClass('/customer/support')} title="Hỗ trợ">
+              <span className="material-symbols-outlined text-[20px] shrink-0">support_agent</span>
+              <span className={isSearchExpanded ? 'hidden' : 'inline'}>Hỗ trợ</span>
             </Link>
-            <Link to="/customer/notifications" className={navLinkClass('/customer/notifications')}>
-              <span className="material-symbols-outlined text-[20px]">notifications</span>
-              <span>Thông báo</span>
+
+            <Link to="/customer/notifications" className={navLinkClass('/customer/notifications')} title="Thông báo">
+              <span className="material-symbols-outlined text-[20px] shrink-0">notifications</span>
+              <span className={isSearchExpanded ? 'hidden' : 'inline'}>Thông báo</span>
             </Link>
 
             {/* Profile */}
@@ -147,13 +207,14 @@ export function CustomerLayout() {
               to="/customer/profile"
               id="customer-nav-profile"
               className={navLinkClass('/customer/profile')}
+              title="Profile"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                 <path strokeLinecap="round" strokeLinejoin="round"
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span>Profile</span>
+              <span className={isSearchExpanded ? 'hidden' : 'inline'}>Profile</span>
             </Link>
 
           </nav>
