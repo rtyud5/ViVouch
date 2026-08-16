@@ -49,8 +49,12 @@ export function PaymentResultPage() {
 
     const poll = async () => {
       try {
-        if (isPaidParams && attempt === 0) {
-          await syncPayosOrder(orderId);
+        if (attempt === 0) {
+          try {
+            await syncPayosOrder(orderId);
+          } catch (e) {
+            console.warn('Sync payos failed during poll:', e);
+          }
         }
 
         const data = await getPaymentStatus(orderId);
