@@ -7,6 +7,7 @@ import { OrderItemCard } from "../../components/voucher/OrderItemCard";
 import { OrderStatusBadge, CustomerEmptyState, LoadingSpinner, ErrorRetryPanel } from "../../components/common";
 import { cancelOrder, mockPayOrder } from "../../features/orders/api/orders.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ChevronDown } from "lucide-react";
 
 export function OrdersPage() {
   const { orders, isLoading, error, refetch } = useOrders();
@@ -164,13 +165,11 @@ export function OrdersPage() {
                       {formatCurrency(Number(order.totalAmount))}
                     </div>
                     <OrderStatusBadge status={normalizedStatus} />
-                    <span
-                      className={`material-symbols-outlined text-on-surface-variant transition-transform duration-300 ${
+                    <ChevronDown
+                      className={`h-6 w-6 text-on-surface-variant transition-transform duration-300 ${
                         isExpanded ? "rotate-180 text-primary" : "group-hover:text-primary"
                       }`}
-                    >
-                      expand_more
-                    </span>
+                    />
                   </div>
                 </button>
 

@@ -5,7 +5,11 @@ export const useVoucherDetail = (id) => {
   const query = useQuery({
     queryKey: ['voucher', id],
     queryFn: () => getVoucherById(id),
-    enabled: !!id, // Chỉ chạy khi có id hợp lệ
+    enabled: !!id,
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 404 || error?.response?.status === 400) return false;
+      return failureCount < 2;
+    }
   });
 
   return query;

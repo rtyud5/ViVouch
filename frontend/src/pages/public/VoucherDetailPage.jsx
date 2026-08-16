@@ -11,6 +11,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { useCart } from "../../features/cart/hooks/useCart";
 import { useReviews, useCreateReview, useReviewEligibility } from "../../features/vouchers/hooks/useReviews";
 import { apiClient } from "../../services/apiClient";
+import { DEFAULT_VOUCHER_IMAGE, normalizeImageUrl } from "../../utils/image";
 
 export function VoucherDetailPage() {
   const { id } = useParams();
@@ -235,9 +236,15 @@ export function VoucherDetailPage() {
           <div className="relative w-full aspect-video md:aspect-[4/3] rounded-2xl overflow-hidden shadow-md bg-base-300 border border-base-200">
             {voucher.imageUrl ? (
               <img
-                src={voucher.imageUrl}
+                src={normalizeImageUrl(voucher.imageUrl)}
                 alt={voucher.name}
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                onError={(e) => {
+                  e.currentTarget.src = DEFAULT_VOUCHER_IMAGE;
+                }}
               />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-base-300 to-base-200 text-base-content/40 gap-3">

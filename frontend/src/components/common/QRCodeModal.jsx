@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { Calendar, X } from 'lucide-react';
 import { CopyButton } from './CopyButton';
 import { formatDate } from '../../utils/formatDate';
 
@@ -60,7 +61,7 @@ export function QRCodeModal({ isOpen, onClose, voucherCode }) {
           onClick={onClose}
           aria-label="Đóng"
         >
-          <span className="material-symbols-outlined">close</span>
+          <X className="h-5 w-5" />
         </button>
 
         <h2 className="font-headline-md text-headline-md text-on-surface text-center mb-6 mt-4 px-4 line-clamp-2 leading-tight">
@@ -88,7 +89,7 @@ export function QRCodeModal({ isOpen, onClose, voucherCode }) {
 
         {displayExpiry && (
           <p className="text-on-surface-variant font-label-md text-label-md flex items-center mt-4 text-[13px]">
-            <span className="material-symbols-outlined mr-2 text-primary text-[16px]">event</span>
+            <Calendar className="mr-2 text-primary h-4 w-4" />
             Hạn dùng: {formatDate(displayExpiry)}
           </p>
         )}

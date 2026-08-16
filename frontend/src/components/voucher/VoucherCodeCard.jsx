@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Clock3, MessageSquareText, QrCode, Store, Timer } from 'lucide-react';
 import { formatDate } from '../../utils/formatDate';
+import { DEFAULT_VOUCHER_IMAGE, normalizeImageUrl } from '../../utils/image';
 
 const STATUS_CONFIG = {
   ISSUED: {
@@ -77,7 +79,7 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
 
   const displayExpiry = expiresAt || expirationDate;
   const voucherTitle = voucher?.title || voucher?.name || 'Voucher';
-  const voucherImage = voucher?.imageUrl || voucher?.image || 'https://placehold.co/100x100';
+  const voucherImage = normalizeImageUrl(voucher?.imageUrl || voucher?.image || DEFAULT_VOUCHER_IMAGE);
   const partnerName = voucher?.partner?.businessName || voucher?.partner?.name || 'Đối tác';
   const voucherId = voucher?.id || voucherCode?.voucherId;
 
@@ -109,7 +111,15 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
       {/* Mobile layout (Image left, details right) */}
       <div className="flex flex-1 md:hidden h-[120px]">
         <div className="w-[96px] h-full flex-shrink-0 bg-surface-container flex items-center justify-center p-3 relative z-0 pl-[14px]">
-          <img src={voucherImage} alt={voucherTitle} className="w-full h-full object-cover rounded-lg shadow-sm" />
+          <img
+            src={voucherImage}
+            alt={voucherTitle}
+            className="w-full h-full object-cover rounded-lg shadow-sm"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            onError={(e) => { e.currentTarget.src = DEFAULT_VOUCHER_IMAGE; }}
+          />
         </div>
         <div className="relative w-0 border-l border-dashed border-outline-variant my-4 z-0">
           <div className="absolute -top-6 -left-3 w-6 h-6 rounded-full bg-surface border-b border-outline-variant"></div>
@@ -126,12 +136,12 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
               </span>
             </div>
             <p className="font-body-md text-[12px] text-on-surface-variant flex items-center gap-1 truncate">
-              <span className="material-symbols-outlined text-[14px]">storefront</span> {partnerName}
+              <Store className="h-3.5 w-3.5 shrink-0" /> {partnerName}
             </p>
           </div>
           <div className="flex items-end justify-between mt-1 gap-2">
             <p className={`font-body-md text-[11px] font-medium flex items-center gap-1 shrink-0 ${upperStatus === 'EXPIRED' ? 'text-error' : 'text-on-surface-variant'}`}>
-              <span className="material-symbols-outlined text-[12px]">timer</span> HSD: {formatDate(displayExpiry)}
+              <Timer className="h-3 w-3 shrink-0" /> HSD: {formatDate(displayExpiry)}
             </p>
             {upperStatus === 'USED' && voucherId ? (
               <Link 
@@ -140,12 +150,12 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="font-label-md text-[12px] font-bold">Đánh giá</span>
-                <span className="material-symbols-outlined text-[14px]">rate_review</span>
+                <MessageSquareText className="h-3.5 w-3.5 shrink-0" />
               </Link>
             ) : (
               <div className="flex items-center gap-1.5 bg-surface-container-low border border-outline-variant/30 rounded px-1.5 py-1 min-w-0">
                 <span className={`font-mono text-[12px] font-bold tracking-widest truncate ${isUsable ? 'text-primary' : 'text-on-surface-variant'}`}>{code}</span>
-                <span className={`material-symbols-outlined text-[14px] shrink-0 ${isUsable ? 'text-primary' : 'text-on-surface-variant'}`}>qr_code_2</span>
+                <QrCode className={`h-3.5 w-3.5 shrink-0 ${isUsable ? 'text-primary' : 'text-on-surface-variant'}`} />
               </div>
             )}
           </div>
@@ -155,7 +165,15 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
       {/* Desktop layout */}
       <div className="hidden md:flex flex-1 items-center p-4 gap-4 pl-6 min-w-0">
         <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 shadow-sm border border-outline-variant/30">
-          <img src={voucherImage} alt={voucherTitle} className="w-full h-full object-cover" />
+          <img
+            src={voucherImage}
+            alt={voucherTitle}
+            className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            onError={(e) => { e.currentTarget.src = DEFAULT_VOUCHER_IMAGE; }}
+          />
         </div>
         <div className="flex flex-col justify-center flex-1 min-w-0">
           <span className={`inline-flex items-center px-2 py-0.5 rounded-full font-label-md text-[10px] w-fit mb-1 border uppercase tracking-wider ${currentStatus.badgeClass}`}>
@@ -164,7 +182,7 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
           <h2 className="font-headline-md text-[18px] leading-[24px] text-on-surface truncate mb-0.5">{voucherTitle}</h2>
           <p className="font-body-md text-[14px] text-on-surface-variant truncate mb-2">{partnerName}</p>
           <div className={`flex items-center gap-1.5 ${upperStatus === 'EXPIRED' ? 'text-error' : 'text-on-surface-variant'}`}>
-            <span className="material-symbols-outlined text-[14px]">schedule</span>
+            <Clock3 className="h-3.5 w-3.5 shrink-0" />
             <span className="font-body-md text-[12px]">HSD: {formatDate(displayExpiry)}</span>
           </div>
         </div>
@@ -177,9 +195,7 @@ export function VoucherCodeCard({ voucherCode = {}, onOpenQR }) {
 
       <div className="hidden md:flex w-[120px] shrink-0 bg-surface-container-lowest flex-col items-center justify-center p-4 relative group">
         <div className={`p-2 rounded-lg bg-surface-container mb-2 transition-colors ${isUsable && onOpenQR ? 'group-hover:bg-primary-fixed/20' : ''}`}>
-          <span className={`material-symbols-outlined text-[32px] text-on-surface-variant transition-colors ${isUsable && onOpenQR ? 'group-hover:text-primary' : ''}`}>
-            qr_code_2
-          </span>
+          <QrCode className={`h-8 w-8 text-on-surface-variant transition-colors ${isUsable && onOpenQR ? 'group-hover:text-primary' : ''}`} />
         </div>
         <div className="bg-surface px-2 py-1 rounded border border-outline-variant/30 w-full text-center truncate">
           <span className="font-mono text-[11px] font-bold tracking-widest text-on-surface">{code}</span>

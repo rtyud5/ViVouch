@@ -1,0 +1,516 @@
+[2m9:51:08 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:51:10 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:51:11 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:51:13 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:51:14 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:51:16 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:17 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:18 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:20 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:21 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:23 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:24 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:25 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:26 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at div
+    at div
+    at div
+    at VoucherDetailPage (http://localhost:5173/src/pages/public/VoucherDetailPage.jsx:20:17)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at div
+    at div
+    at PublicLayout (http://localhost:5173/src/layouts/PublicLayout.jsx:21:23)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:27 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at article
+    at VoucherCard (http://localhost:5173/src/components/voucher/VoucherCard.jsx:88:31)
+    at div
+    at main
+    at div
+    at VoucherListPage (http://localhost:5173/src/pages/public/VoucherListPage.jsx:55:19)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at div
+    at div
+    at PublicLayout (http://localhost:5173/src/layouts/PublicLayout.jsx:21:23)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:29 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at div
+    at div
+    at div
+    at VoucherDetailPage (http://localhost:5173/src/pages/public/VoucherDetailPage.jsx:20:17)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at div
+    at div
+    at PublicLayout (http://localhost:5173/src/layouts/PublicLayout.jsx:21:23)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:38 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at div
+    at article
+    at VoucherCodeCard (http://localhost:5173/src/components/voucher/VoucherCodeCard.jsx:73:35)
+    at div
+    at div
+    at MyVouchersPage (http://localhost:5173/src/pages/customer/MyVouchersPage.jsx:11:54)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:39 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at div
+    at article
+    at VoucherCodeCard (http://localhost:5173/src/components/voucher/VoucherCodeCard.jsx:73:35)
+    at div
+    at div
+    at MyVouchersPage (http://localhost:5173/src/pages/customer/MyVouchersPage.jsx:11:54)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:40 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at div
+    at article
+    at VoucherCodeCard (http://localhost:5173/src/components/voucher/VoucherCodeCard.jsx:73:35)
+    at div
+    at div
+    at MyVouchersPage (http://localhost:5173/src/pages/customer/MyVouchersPage.jsx:11:54)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:46 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at section
+    at HeroBanner
+    at main
+    at HomePage (http://localhost:5173/src/pages/public/HomePage.jsx:281:46)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:47 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at div
+    at div
+    at div
+    at VoucherDetailPage (http://localhost:5173/src/pages/public/VoucherDetailPage.jsx:20:17)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at div
+    at div
+    at PublicLayout (http://localhost:5173/src/layouts/PublicLayout.jsx:21:23)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App
+[2m9:53:50 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: React does not recognize the `fetchPriority` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `fetchpriority` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at div
+    at div
+    at article
+    at VoucherCodeCard (http://localhost:5173/src/components/voucher/VoucherCodeCard.jsx:73:35)
+    at div
+    at div
+    at MyVouchersPage (http://localhost:5173/src/pages/customer/MyVouchersPage.jsx:11:54)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Outlet (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4783:25)
+    at main
+    at div
+    at CustomerLayout (http://localhost:5173/src/layouts/CustomerLayout.jsx:14:19)
+    at RoleRoute (http://localhost:5173/src/routes/RoleRoute.jsx:7:29)
+    at ProtectedRoute (http://localhost:5173/src/routes/ProtectedRoute.jsx:6:34)
+    at RenderedRoute (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4156:26)
+    at Routes (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4836:19)
+    at Suspense
+    at GlobalErrorBoundary (http://localhost:5173/src/components/common/GlobalErrorBoundary.jsx:9:3)
+    at Router (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:4788:29)
+    at BrowserRouter (http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=015c07fd:7234:26)
+    at AppRoutes
+    at QueryClientProvider (http://localhost:5173/node_modules/.vite/deps/modern-CqHxA3pd.js?v=015c07fd:2552:30)
+    at QueryProvider (http://localhost:5173/src/app/providers/QueryProvider.jsx:6:33)
+    at App

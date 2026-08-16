@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { DEFAULT_VOUCHER_IMAGE, normalizeImageUrl } from '../../utils/image';
 
 /**
  * OrderItemCard component displays details for an individual item inside an order.
@@ -20,7 +21,7 @@ export function OrderItemCard({ item = {} }) {
   const { voucher, qty, quantity, unitPrice } = item;
 
   const voucherTitle = voucher?.title || voucher?.name || 'Voucher';
-  const voucherImage = voucher?.imageUrl || voucher?.image || 'https://placehold.co/100x100';
+  const voucherImage = normalizeImageUrl(voucher?.imageUrl || voucher?.image || DEFAULT_VOUCHER_IMAGE);
   const displayQty = quantity ?? qty ?? 1;
 
   return (
@@ -30,6 +31,10 @@ export function OrderItemCard({ item = {} }) {
           src={voucherImage}
           alt={voucherTitle}
           className="w-full h-full object-cover"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          onError={(e) => { e.currentTarget.src = DEFAULT_VOUCHER_IMAGE; }}
         />
       </div>
       <div className="flex-1 min-w-0 flex flex-col justify-between h-full py-0.5">
