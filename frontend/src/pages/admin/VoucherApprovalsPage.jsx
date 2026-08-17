@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AdminLayout } from '../../layouts/AdminLayout';
-import { AdminTable } from '../../features/admin/components';
+import { AdminTable, AdminStatusBadge } from '../../features/admin/components';
 import { useVoucherApprovals, useApproveVoucher, useRejectVoucher } from '../../features/admin/hooks/useVoucherApprovals';
 import { ApiSuccessToast } from '../../components/common/ApiSuccessToast';
 import { ApiErrorToast } from '../../components/common/ApiErrorToast';
@@ -79,6 +79,11 @@ export default function VoucherApprovalsPage() {
       ),
     },
     {
+      key: 'status',
+      label: 'Trạng thái',
+      render: (row) => <AdminStatusBadge status={row.status} />,
+    },
+    {
       key: 'actions',
       label: 'Thao tác',
       render: (row) => (
@@ -122,13 +127,13 @@ export default function VoucherApprovalsPage() {
 
       <div className="flex gap-6 border-b border-gray-200 mb-6">
         <button 
-          onClick={() => setParams(p => ({ ...p, status: 'PENDING_APPROVAL' }))}
+          onClick={() => setParams(p => ({ ...p, status: 'PENDING_APPROVAL', page: 1 }))}
           className={`pb-3 font-semibold ${params.status === 'PENDING_APPROVAL' ? 'text-amber-600 border-b-2 border-amber-500' : 'text-gray-500'}`}
         >
           Chờ duyệt
         </button>
         <button 
-          onClick={() => setParams(p => ({ ...p, status: 'APPROVED' }))}
+          onClick={() => setParams(p => ({ ...p, status: 'APPROVED', page: 1 }))}
           className={`pb-3 font-semibold ${params.status === 'APPROVED' ? 'text-amber-600 border-b-2 border-amber-500' : 'text-gray-500'}`}
         >
           Đã duyệt
@@ -153,6 +158,7 @@ export default function VoucherApprovalsPage() {
             <div className="p-6 overflow-y-auto flex-1 text-sm space-y-6">
                <div className="flex justify-between items-start">
                  <h2 className="text-2xl font-bold">{selectedVoucher.title}</h2>
+                 <AdminStatusBadge status={selectedVoucher.status} />
                </div>
                <p className="text-gray-600">{selectedVoucher.description}</p>
                
