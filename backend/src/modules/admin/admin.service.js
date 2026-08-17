@@ -374,7 +374,15 @@ export async function findManyVouchers(filters = {}, pagination = { page: 1, lim
   const skip = (page - 1) * limit;
 
   const where = {};
-  if (status) where.status = status;
+  if (status) {
+    if (status.includes(',')) {
+      where.status = { in: status.split(',').map((s) => s.trim()) };
+    } else if (status === 'APPROVED') {
+      where.status = { in: ['APPROVED', 'ON_SALE'] };
+    } else {
+      where.status = status;
+    }
+  }
   if (search) {
     where.OR = [
       { id: { contains: search, mode: 'insensitive' } },

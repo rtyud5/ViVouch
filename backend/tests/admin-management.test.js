@@ -241,6 +241,17 @@ describe("Admin Management API Tests", () => {
         expect(v.status).toBe("PENDING_APPROVAL");
       });
     });
+
+    it("200 filter theo status=APPROVED trả về cả APPROVED và ON_SALE", async () => {
+      const res = await request(app)
+        .get("/api/admin/vouchers?status=APPROVED")
+        .set("Authorization", `Bearer ${sharedState.adminToken}`);
+
+      expect(res.status).toBe(200);
+      res.body.data.vouchers.forEach((v) => {
+        expect(["APPROVED", "ON_SALE"]).toContain(v.status);
+      });
+    });
   });
 
   // ── Users ──
